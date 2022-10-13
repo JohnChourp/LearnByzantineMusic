@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">LearnByzantineMusic</string>
+    <string name="LearnBuzantineMusicWithLessons">Μάθε Βυζαντινή Μουσική Με Μαθήματα!</string>
+    <string name="Lesson_1">Μάθημα 1ο</string>
+    <string name="Lesson_2">Μάθημα 2ο</string>
+    <string name="Lesson_3">Μάθημα 3ο</string>
+    <string name="Lesson_4">Μάθημα 4ο</string>
+    <string name="Lesson_5">Μάθημα 5ο</string>
+    <string name="Lesson_6">Μάθημα 6ο</string>
+    <string name="PhthongNames">Ονόματα Φθόγγων</string>
+    <string name="Phthongs"> … Νη \t Πα \t Βου \t Γα \t Δι \t Κε \t Ζω \t Νη …</string>
+    <string name="Phthongs_definition">Οι Φθόγγοι προέρχονται από τα 7 πρώτα γράμματα του Ελληνικού Αλφάβητου:\n\n
+Π<b>Α</b> \t <b>Β</b>ΟΥ \t <b>Γ</b>Α \t <b>Δ</b>Ι \t Κ<b>Ε</b> \t <b>Ζ</b>Ω \t Ν<b>Η</b>\n\nΟι Φθόγγοι δεν σταματούν από δεξιά ούτε από αριστερά δηλαδή η παραπάνω οκτάδα αν την συνεχίζαμε απο δεξιά θα ήταν:\n\nΝη Πα Βου Γα Δι Κε Ζω … Νη Πα Βου Γα Δι Κε Ζω Νη\n\nΦανταστήτε τους φθόγγους να βρίσκονται πάνω σε μια σκάλα όπως φαίνεται παρακάτω:</string>
+    <string name="Testimonials">Μαρτυρίες</string>
+    <string name="Testimonials_definition">Οι Μαρτυρίες μας λένε σε ποιόν ήχο και φθόγγο είμαστε.</string>
+    <string name="Testimonials_examples">Παραδείγματα Μαρτυριών</string>
+    <string name="matching_phthongs_with_testimonials">Η Αντιστοιχία των φθόγγων με τις μαρτυρίες φαίνεται παρακάτω:</string>
+    <string name="Phthongs_with_more_spaces">Νη \t\t\t Πα \t\t\t Βου \t\t\t Γα \t\t\t Δι \t\t\t Κε \t\t\t Ζω \t\t\t Νη</string>
+</resources>
