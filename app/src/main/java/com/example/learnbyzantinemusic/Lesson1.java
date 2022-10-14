@@ -22,6 +22,8 @@ public class Lesson1 extends AppCompatActivity {
         TextView Testimonials_definition_txv = findViewById(R.id.Testimonials_definition_id);
         TextView Testimonials_examples_txv = findViewById(R.id.Testimonials_examples_id);
         TextView matching_phthongs_with_testimonials_txv = findViewById(R.id.matching_phthongs_with_testimonials_id);
-
+        TextView QuantityCharacters_txv = findViewById(R.id.QuantityCharacters_id);
+        TextView QuantityCharacters_definition_txv = findViewById(R.id.QuantityCharacters_definition_id);
+        ImageView ison_img = findViewById(R.id.ison_id);
     }
 }
