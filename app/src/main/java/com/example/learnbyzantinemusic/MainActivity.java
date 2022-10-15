@@ -16,13 +16,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView LearnBuzantineMusicWithLessons_txv = findViewById(R.id.LearnBuzantineMusicWithLessons_id);
         Button Lesson_1_btn = findViewById(R.id.Lesson_1_id);
 
         Lesson_1_btn.setOnClickListener(v -> openLesson1());
     }
-
-
 
 
     private void openLesson1() {
