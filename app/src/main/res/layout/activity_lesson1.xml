@@ -238,7 +238,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
-            android:text="Χαρακτήρες Ποσότητος"
+            android:text="@string/QuantityCharacters"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -246,7 +246,7 @@
             android:id="@+id/QuantityCharacters_definition_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Στους χαρακτήρες ποσότητος περιλαμβάνονται τα σημάδια, τα οποία δείχνουν πόσο ανεβαίνει ή κατεβαίνει η φωνή(φθόγγος):"
+            android:text="@string/QuantityCharacters_definition"
             android:textSize="20sp" />
 
         <LinearLayout

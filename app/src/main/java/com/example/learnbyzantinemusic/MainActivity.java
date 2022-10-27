@@ -17,8 +17,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button Lesson_1_btn = findViewById(R.id.Lesson_1_id);
+        Button Lesson_2_btn = findViewById(R.id.Lesson_2_id);
 
         Lesson_1_btn.setOnClickListener(v -> openLesson1());
+        Lesson_2_btn.setOnClickListener(v -> openLesson2());
     }
 
 
@@ -27,5 +29,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
+    private void openLesson2() {
+        Intent intent = new Intent(this, Lesson2.class);
+        startActivity(intent);
+    }
 }
