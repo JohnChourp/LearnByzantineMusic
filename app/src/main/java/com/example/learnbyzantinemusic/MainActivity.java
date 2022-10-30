@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -17,13 +16,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView LearnBuzantineMusicWithLessons_txv = findViewById(R.id.LearnBuzantineMusicWithLessons_id);
         Button Lesson_1_btn = findViewById(R.id.Lesson_1_id);
+        Button Lesson_2_btn = findViewById(R.id.Lesson_2_id);
 
         Lesson_1_btn.setOnClickListener(v -> openLesson1());
+        Lesson_2_btn.setOnClickListener(v -> openLesson2());
     }
-
-
 
 
     private void openLesson1() {
@@ -31,5 +29,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
+    private void openLesson2() {
+        Intent intent = new Intent(this, Lesson2.class);
+        startActivity(intent);
+    }
 }
