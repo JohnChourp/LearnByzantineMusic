@@ -274,7 +274,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center|center_horizontal|center_vertical"
-                android:text="1 φθόγγο σε 2 χρόνους"
+                android:text="1 φθόγγο για 2 χρόνους"
                 android:textSize="20sp" />
         </LinearLayout>
 
@@ -306,7 +306,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center|center_horizontal|center_vertical"
-                android:text="1 φθόγγο σε 2 χρόνους"
+                android:text="1 φθόγγο για 2 χρόνους"
                 android:textSize="20sp" />
         </LinearLayout>
 
@@ -338,7 +338,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center|center_horizontal|center_vertical"
-                android:text="1 φθόγγο σε 3 χρόνους"
+                android:text="1 φθόγγο για 3 χρόνους"
                 android:textSize="20sp" />
         </LinearLayout>
 
@@ -370,7 +370,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center|center_horizontal|center_vertical"
-                android:text="1 φθόγγο σε 4 χρόνους"
+                android:text="1 φθόγγο για 4 χρόνους"
                 android:textSize="20sp" />
         </LinearLayout>
 
