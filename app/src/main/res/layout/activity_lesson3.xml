@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Lesson3">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/Lesson_2_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/Lesson_3"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/duotrioquatro_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/kentimata"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/kentimata_definition_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Τα κεντήματα κάνουν το ίδιο που κάνει και το ολίγον,δηλαδή, ανεβάζουν μια φωνή.Χρησιμοποιούνται όταν θέλω να ενώσω έναν φθόγγο με έναν άλλον.Επίσης είναι σαν να σέρνω τη φωνή,δηλαδή, κάνω μια πιο ασθενή ανάβαση με λιγότερη ένταση εννόντας το φθόγγο."
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/kentimata_text_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="Κεντήματα"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/klasma_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/kentimata"
+                android:contentDescription="@string/todo" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/duotrioquatro_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="Πεταστή"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/duotrioquatro_definition_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Η πεταστή κάνει το ίδιο με το ολίγον, δηλαδή, ανεβάζει μια φωνή.Χρησιμοποιήτε όταν θέλω να κάνω μια πιο τονική ανάβαση με πολύ ένταση εννόνοτας το φθόγγο."
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/kentimata_text_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="Πεταστή"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/klasma_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/petasti"
+                android:contentDescription="@string/todo" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
