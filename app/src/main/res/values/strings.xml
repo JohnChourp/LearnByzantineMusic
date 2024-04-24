@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">LearnByzantineMusic</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="lesson_1">Μάθημα 1</string>
+    <string name="welcome_text">ΜΑΘΕΤΕ ΒΥΖΑΝΤΙΝΗ ΜΟΥΣΙΚΗ</string>
+    <string name="lesson_2">Μάθημα 2</string>
+    <string name="lesson_3">Μάθημα 3</string>
+    <string name="lesson_4">Μάθημα 4</string>
+    <string name="lesson_5">Μάθημα 5</string>
+    <string name="lesson_6">Μάθημα 6</string>
+    <string name="lesson_7">Μάθημα 7</string>
+    <string name="lesson_8">Μάθημα 8</string>
+</resources>
