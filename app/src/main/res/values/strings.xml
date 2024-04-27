@@ -37,11 +37,11 @@
     <string name="examples_quantitycharacters">Παραδείγματα Χαρακτήρες Ποσότητος</string>
     <string name="ison">Το Ίσον</string>
     <string name="oligon">Το Ολίγον</string>
-    <string name="apostrofos">Η Απόστροφος</string>
+    <string name="apostrophe">Η Απόστροφος</string>
     <string name="exersise_1">Άσκηση 1</string>
     <string name="title_activity_lesson2">lesson2</string>
     <string name="duotrioquatro">Δίσημος, Τρίσημος, Τετράσημος</string>
-    <string name="duotrioquatro_definition">Δίσημος σημαίνει ότι κάθε 2 χρόνο(ή χτύπημα) 2 φθόγγοι λέγονται, Τρίσημος κάθε 3 χρόνο(ή χτυπήματα) 3 φθόγγοι λέγονται κ.λ.π.</string>
+    <string name="disimos_definition">Δίσημος σημαίνει ότι κάθε 2 χρόνους(ή χτυπήματα) 2 φθόγγοι λέγονται.</string>
     <string name="disimos">Δίσημος</string>
     <string name="trisimos">Τρίσημος</string>
     <string name="tetrasimos">Τετράσημος</string>
@@ -49,7 +49,7 @@
     <string name="time_characters_definition">Στους χαρακτήρες χρόνου περιλαμβάνονται τα σημάδια, τα οποία δείχνουν πόσο χρόνο προσθέτουν σε έναν φθόγγο η μια παύση:</string>
     <string name="time_1">1 χρόνο</string>
     <string name="add_time_1">Προσθέτει 1 χρόνο στο σύμβολο</string>
-    <string name="heavy_definition">Βαρεία είναι άχρονη, χωρίς χρονικότητα, χωρίς τονικότητα και χρησιμοποιείται για παύση και είναι κενή (δεν λέμε τίποτα).</string>
+    <string name="heavy_definition">Βαρεία είναι άχρονη, χωρίς χρονικότητα, χωρίς τονικότητα.</string>
     <string name="heavy">Βαρεία</string>
     <string name="pause_time_1">1 χρόνο παύση</string>
     <string name="pause_time_2">2 χρόνους παύση</string>
@@ -63,4 +63,18 @@
     <string name="phthong_1_for_3_time">1 φθόγγο για 3 χρόνους</string>
     <string name="dot_3">3 κουκίδες</string>
     <string name="phthong_1_for_4_time">1 φθόγγο για 4 χρόνους</string>
+    <string name="title_activity_lesson3">Lesson3</string>
+    <string name="yfen">Υφέν</string>
+    <string name="yfen_definition">Υφέν σημαίνει ότι η νότα εκτελείται με μικρές διακυμάνσεις στο ύψος της.</string>
+    <string name="embroideries">Κεντήματα</string>
+    <string name="embroideries_definition">Τα κεντήματα κάνουν το ίδιο που κάνει και το ολίγον, δηλαδή, ανεβάζουν μια φωνή.\nΧρησιμοποιούνται όταν θέλω να ενώσω έναν φθόγγο με έναν άλλον.\nΕπίσης είναι σαν να σέρνω τη φωνή,δηλαδή, κάνω μια πιο ασθενή ανάβαση με λιγότερη ένταση εννόντας το φθόγγο:</string>
+    <string name="two_voice">2 φωνές</string>
+    <string name="flyer">Πεταστή</string>
+    <string name="flyer_definition">Η πεταστή κάνει το ίδιο με το ολίγον, δηλαδή, ανεβάζει μια φωνή.\nΧρησιμοποιήτε όταν θέλω να κάνω μια πιο τονική ανάβαση με πολύ ένταση εννόνοτας το φθόγγο:</string>
+    <string name="climbing_compositions">Συνθέσεις ανάβασης</string>
+    <string name="equal">=</string>
+    <string name="yfen_examples">Παραδείγματα Υφέν</string>
+    <string name="trisimos_definition">Τρίσημος σημαίνει ότι κάθε 3 χρόνους(ή χτυπήματα) 3 φθόγγοι λέγονται.</string>
+    <string name="tetrasimos_definition">Τρίσημος σημαίνει ότι κάθε 4 χρόνους(ή χτυπήματα) 4 φθόγγοι λέγονται.</string>
+    <string name="heavy_definition_used">Χρησιμοποιείται για παύση και είναι κενή (δεν λέμε τίποτα).</string>
 </resources>
