@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">LearnByzantineMusic</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="lesson_1">Μάθημα 1</string>
@@ -10,7 +10,7 @@
     <string name="lesson_6">Μάθημα 6</string>
     <string name="lesson_7">Μάθημα 7</string>
     <string name="lesson_8">Μάθημα 8</string>
-    <string name="title_activity_lesson1">lesson1</string>
+    <string name="title_activity_lesson1" tools:ignore="Typos">Lesson1</string>
     <string name="phthong_names">Ονόματα Φθόγγων</string>
     <string name="phthongs">… Νη \t Πα \t Βου \t Γα \t Δι \t Κε \t Ζω \t Νη …</string>
     <string name="phthongs_definition">Οι Φθόγγοι προέρχονται από τα 7 πρώτα γράμματα του Ελληνικού Αλφάβητου:\n<b>Α</b>,<b>Β</b>,<b>Γ</b>,<b>Δ</b>,<b>Ε</b>,<b>Ζ</b>,<b>Η</b>\nΠ<b>Α</b> \t <b>Β</b>ΟΥ \t <b>Γ</b>Α \t <b>Δ</b>Ι \t Κ<b>Ε</b> \t <b>Ζ</b>Ω \t Ν<b>Η</b>\n\nΟι Φθόγγοι δεν σταματούν από δεξιά ούτε από αριστερά δηλαδή η παραπάνω οκτάδα αν την συνεχίζαμε απο δεξιά θα ήταν:\n\nΝη Πα Βου Γα Δι Κε Ζω … Νη Πα Βου Γα Δι Κε Ζω Νη\n\nΦανταστήτε τους φθόγγους να βρίσκονται πάνω σε μια σκάλα όπως φαίνεται παρακάτω:</string>
@@ -34,12 +34,12 @@
     <string name="zero_voice_definition">Ίδια φωνή</string>
     <string name="one_voice_definition">Ανεβαίνω φωνή</string>
     <string name="minus_one_voice_definition">Κατεβαίνω φωνή</string>
-    <string name="examples_quantitycharacters">Παραδείγματα Χαρακτήρες Ποσότητος</string>
+    <string name="examples_quantity_characters">Παραδείγματα Χαρακτήρες Ποσότητος</string>
     <string name="ison">Το Ίσον</string>
     <string name="oligon">Το Ολίγον</string>
     <string name="apostrophe">Η Απόστροφος</string>
-    <string name="exersise_1">Άσκηση 1</string>
-    <string name="title_activity_lesson2">lesson2</string>
+    <string name="exercise_1">Άσκηση 1</string>
+    <string name="title_activity_lesson2">Lesson2</string>
     <string name="duotrioquatro">Δίσημος, Τρίσημος, Τετράσημος</string>
     <string name="disimos_definition">Δίσημος σημαίνει ότι κάθε 2 χρόνους(ή χτυπήματα) 2 φθόγγοι λέγονται.</string>
     <string name="disimos">Δίσημος</string>
@@ -70,7 +70,7 @@
     <string name="embroideries_definition">Τα κεντήματα κάνουν το ίδιο που κάνει και το ολίγον, δηλαδή, ανεβάζουν μια φωνή.\nΧρησιμοποιούνται όταν θέλω να ενώσω έναν φθόγγο με έναν άλλον.\nΕπίσης είναι σαν να σέρνω τη φωνή,δηλαδή, κάνω μια πιο ασθενή ανάβαση με λιγότερη ένταση εννόντας το φθόγγο:</string>
     <string name="two_voice">2 φωνές</string>
     <string name="flyer">Πεταστή</string>
-    <string name="flyer_definition">Η πεταστή κάνει το ίδιο με το ολίγον, δηλαδή, ανεβάζει μια φωνή.\nΧρησιμοποιήτε όταν θέλω να κάνω μια πιο τονική ανάβαση με πολύ ένταση εννόνοτας το φθόγγο:</string>
+    <string name="flyer_definition">Η πεταστή κάνει το ίδιο με το ολίγον, δηλαδή, ανεβάζει μια φωνή.\nΧρησιμοποιείται όταν θέλω να κάνω μια πιο τονική ανάβαση με πολύ ένταση εννόντας το φθόγγο:</string>
     <string name="climbing_compositions">Συνθέσεις ανάβασης</string>
     <string name="equal">=</string>
     <string name="yfen_examples">Παραδείγματα Υφέν</string>
