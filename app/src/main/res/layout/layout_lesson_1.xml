@@ -331,11 +331,11 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/examples_quantitycharacters_text_view"
+            android:id="@+id/examples_quantity_characters_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
-            android:text="@string/examples_quantitycharacters"
+            android:text="@string/examples_quantity_characters"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -409,20 +409,20 @@
                 android:gravity="center">
 
                 <TextView
-                    android:id="@+id/apostrofos_text_view"
+                    android:id="@+id/apostrophe_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/apostrofos"
+                    android:text="@string/apostrophe"
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:id="@+id/apostrofos_image_view"
+                    android:id="@+id/apostrophe_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrofos" />
+                    android:src="@drawable/apostrophe" />
 
                 <TextView
                     android:id="@+id/minus_one_voice_example_text_view"
@@ -436,11 +436,11 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/exersise_1_text_view"
+            android:id="@+id/exercise_1_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
-            android:text="@string/exersise_1"
+            android:text="@string/exercise_1"
             android:textSize="20sp"
             android:textStyle="bold" />
 

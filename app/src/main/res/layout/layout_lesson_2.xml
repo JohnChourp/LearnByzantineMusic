@@ -28,10 +28,24 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/duotrioquatro_definition_text_view"
+            android:id="@+id/disimos_definition_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/duotrioquatro_definition"
+            android:text="@string/disimos_definition"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/trisimos_definition_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/trisimos_definition"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tetrasimos_definition_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/tetrasimos_definition"
             android:textSize="20sp" />
 
         <TableLayout
@@ -129,8 +143,8 @@
                 android:id="@+id/time_1_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center|center_horizontal|center_vertical"
                 android:layout_weight="1"
+                android:gravity="center|center_horizontal|center_vertical"
                 android:text="@string/time_1"
                 android:textSize="20sp" />
 
@@ -138,8 +152,8 @@
                 android:id="@+id/add_time_1_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center|center_horizontal|center_vertical"
                 android:layout_weight="1"
+                android:gravity="center|center_horizontal|center_vertical"
                 android:text="@string/add_time_1"
                 android:textSize="20sp" />
 
@@ -150,6 +164,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/heavy_definition"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/heavy_definition_used_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/heavy_definition_used"
             android:textSize="20sp" />
 
         <TableLayout
@@ -196,6 +217,7 @@
                 <Space
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
+
                 <TextView
                     android:id="@+id/pause_time_1_text_view"
                     android:layout_width="match_parent"
@@ -220,6 +242,7 @@
                 <Space
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
+
                 <TextView
                     android:id="@+id/pause_time_2_text_view"
                     android:layout_width="match_parent"
@@ -244,6 +267,7 @@
                 <Space
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
+
                 <TextView
                     android:id="@+id/pause_time_3_text_view"
                     android:layout_width="match_parent"
@@ -393,6 +417,119 @@
             </TableRow>
         </TableLayout>
 
+
+        <TextView
+            android:id="@+id/yfen_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/yfen"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/yfen_definition_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/yfen_definition"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/yfen_image_view"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/yfen" />
+
+            <Space
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/yfen_duplicate_1_text_view"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/yfen"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/yfen_examples_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/yfen_examples"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/fraction_duplicate_1_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/fraction" />
+
+                <TextView
+                    android:id="@+id/equal_duplicate_1_view"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/equal"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:id="@+id/yfen_2_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/yfen_2" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/add_time_2_duplicate_1_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/add_time_2" />
+
+                <TextView
+                    android:id="@+id/equal_duplicate_2_text_view"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/equal"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:id="@+id/yfen_3_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/yfen_3" />
+            </TableRow>
+        </TableLayout>
 
     </LinearLayout>
 
