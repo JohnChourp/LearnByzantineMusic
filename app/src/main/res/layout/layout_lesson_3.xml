@@ -37,12 +37,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/embroideries_image_view"
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
@@ -64,7 +64,6 @@
         </LinearLayout>
 
 
-
         <TextView
             android:id="@+id/flyer_text_view"
             android:layout_width="match_parent"
@@ -84,12 +83,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/flyer_image_view"
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
@@ -289,6 +288,114 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/embroideries" />
             </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/underflow_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/underflow"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/underflow_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/underflow" />
+
+                <TextView
+                    android:id="@+id/equal_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/equal"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:id="@+id/apostrophe_duplicate_1_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/apostrophe" />
+
+                <ImageView
+                    android:id="@+id/apostrophe_duplicate_2_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/apostrophe" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/underflow_duplicate_1_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_dot_and_underflow" />
+
+                <TextView
+                    android:id="@+id/equal_duplicate_1_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/equal"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:id="@+id/ison_duplicate_1_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:id="@+id/apostrophe_duplicate_3_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/apostrophe" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_apostrophe_and_fraction_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_apostrophe_and_fraction" />
+
+            </TableRow>
+
         </TableLayout>
 
     </LinearLayout>

@@ -12,10 +12,12 @@ class MainActivity : ComponentActivity() {
         val lesson1Btn = findViewById<Button>(R.id.lesson1_btn)
         val lesson2Btn = findViewById<Button>(R.id.lesson2_btn)
         val lesson3Btn = findViewById<Button>(R.id.lesson3_btn)
+        val lesson4Btn = findViewById<Button>(R.id.lesson4_btn)
 
         lesson1Btn.setOnClickListener { openLesson1() }
         lesson2Btn.setOnClickListener { openLesson2() }
         lesson3Btn.setOnClickListener { openLesson3() }
+        lesson4Btn.setOnClickListener { openLesson4() }
     }
 
     private fun openLesson1() {
@@ -30,6 +32,11 @@ class MainActivity : ComponentActivity() {
 
     private fun openLesson3() {
         val intent = Intent(this, com.example.learnbyzantinemusic.lessons.Lesson3::class.java)
+        startActivity(intent)
+    }
+
+    private fun openLesson4() {
+        val intent = Intent(this, com.example.learnbyzantinemusic.lessons.Lesson4::class.java)
         startActivity(intent)
     }
 }
