@@ -13,10 +13,9 @@
         android:textSize="22sp"
         android:textStyle="bold" />
 
-    <LinearLayout
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:orientation="vertical" />
+        android:layout_height="30dp" />
 
     <TableLayout
         android:layout_width="match_parent"

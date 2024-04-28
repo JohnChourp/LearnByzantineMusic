@@ -68,7 +68,6 @@
     <string name="yfen_definition">Υφέν σημαίνει ότι η νότα εκτελείται με μικρές διακυμάνσεις στο ύψος της.</string>
     <string name="embroideries">Κεντήματα</string>
     <string name="embroideries_definition">Τα κεντήματα κάνουν το ίδιο που κάνει και το ολίγον, δηλαδή, ανεβάζουν μια φωνή.\nΧρησιμοποιούνται όταν θέλω να ενώσω έναν φθόγγο με έναν άλλον.\nΕπίσης είναι σαν να σέρνω τη φωνή,δηλαδή, κάνω μια πιο ασθενή ανάβαση με λιγότερη ένταση εννόντας το φθόγγο:</string>
-    <string name="two_voice">2 φωνές</string>
     <string name="flyer">Πεταστή</string>
     <string name="flyer_definition">Η πεταστή κάνει το ίδιο με το ολίγον, δηλαδή, ανεβάζει μια φωνή.\nΧρησιμοποιείται όταν θέλω να κάνω μια πιο τονική ανάβαση με πολύ ένταση εννόντας το φθόγγο:</string>
     <string name="climbing_compositions">Συνθέσεις ανάβασης</string>
@@ -77,4 +76,19 @@
     <string name="trisimos_definition">Τρίσημος σημαίνει ότι κάθε 3 χρόνους(ή χτυπήματα) 3 φθόγγοι λέγονται.</string>
     <string name="tetrasimos_definition">Τρίσημος σημαίνει ότι κάθε 4 χρόνους(ή χτυπήματα) 4 φθόγγοι λέγονται.</string>
     <string name="heavy_definition_used">Χρησιμοποιείται για παύση και είναι κενή (δεν λέμε τίποτα).</string>
+    <string name="title_activity_lesson4">Lesson4</string>
+    <string name="underflow">Υπορροή</string>
+    <string name="gorgo">Γοργό</string>
+    <string name="time_1_by_2">&#189;</string>
+    <string name="gorgo_definition">Σε ένα χρόνο λέμε δύο φθόγγους ίσον.\nΤο γοργό διαιρεί το χρόνο στο φθόγγο που βρίσκεται και το προηγούμενο.</string>
+    <string name="gorgo_in_climbing_compositions_and_underflow">Το γοργό στις συνθέσεις ανάβασης και την Υπορροή</string>
+    <string name="presented_gorgo">Παρεστιγμένο Γοργό</string>
+    <string name="presented_gorgo_definition">Το παρεστιγμένο γοργό διαιρεί το χρόνο στο φθόγγο που βρίσκεται και τον ξαναδιαιρεί.\nΕπίσης από την μεριά που βρίσκεται η κουκίδα δίνει τον χρόνο που διαιρέθηκε.</string>
+    <string name="time_3_by_4">&#190;</string>
+    <string name="time_1_by_4">&#188;</string>
+    <string name="digorgo">Δίγοργο</string>
+    <string name="time_1_by_3">&#8531;</string>
+    <string name="trigorgo">Τρίγοργο</string>
+    <string name="presented_digorgo">Παρεστιγμένο Δίγοργο</string>
+    <string name="digorgo_in_climbing_compositions_and_underflow">Το δίγοργο στις συνθέσεις ανάβασης και την Υπορροή</string>
 </resources>

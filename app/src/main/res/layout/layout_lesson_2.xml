@@ -69,6 +69,7 @@
                     android:id="@+id/disimos_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/disimos" />
             </TableRow>
@@ -90,6 +91,7 @@
                     android:id="@+id/trisimos_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/trisimos" />
             </TableRow>
@@ -111,6 +113,7 @@
                     android:id="@+id/tetrasimos_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/tetrasimos" />
             </TableRow>
@@ -186,6 +189,7 @@
                     android:id="@+id/heavy_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/heavy" />
 
@@ -208,11 +212,12 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/pause_1_image_view"
+                    android:id="@+id/phthong_with_heavy_and_dot_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/pause_1" />
+                    android:src="@drawable/phthong_with_heavy_and_dot" />
 
                 <Space
                     android:layout_width="50dp"
@@ -233,11 +238,12 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/pause_2_image_view"
+                    android:id="@+id/phthong_with_heavy_and_two_dots_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/pause_2" />
+                    android:src="@drawable/phthong_with_heavy_and_two_dots" />
 
                 <Space
                     android:layout_width="50dp"
@@ -258,11 +264,12 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/pause_3_image_view"
+                    android:id="@+id/phthong_with_heavy_and_three_dots_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/pause_3" />
+                    android:src="@drawable/phthong_with_heavy_and_three_dots" />
 
                 <Space
                     android:layout_width="50dp"
@@ -317,6 +324,7 @@
                     android:id="@+id/fraction_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/fraction" />
 
@@ -343,11 +351,12 @@
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:id="@+id/add_time_1_image_view"
+                    android:id="@+id/dot_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/add_time_1" />
+                    android:src="@drawable/dot" />
 
                 <TextView
                     android:id="@+id/phthong_1_for_2_time_duplicate_1_text_view"
@@ -372,11 +381,12 @@
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:id="@+id/add_time_2_image_view"
+                    android:id="@+id/two_dots_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/add_time_2" />
+                    android:src="@drawable/two_dots" />
 
                 <TextView
                     android:id="@+id/phthong_1_for_3_time_text_view"
@@ -401,11 +411,12 @@
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:id="@+id/add_time_3_image_view"
+                    android:id="@+id/three_dots_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/add_time_3" />
+                    android:src="@drawable/three_dots" />
 
                 <TextView
                     android:id="@+id/phthong_1_for_4_time_text_view"
@@ -442,8 +453,9 @@
 
             <ImageView
                 android:id="@+id/yfen_image_view"
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:adjustViewBounds="true"
                 android:contentDescription="@string/todo"
                 android:src="@drawable/yfen" />
 
@@ -480,15 +492,16 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/fraction_duplicate_1_image_view"
+                    android:id="@+id/phthong_with_ison_and_fraction_duplicate_1_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/fraction" />
+                    android:src="@drawable/phthong_with_ison_and_fraction" />
 
                 <TextView
                     android:id="@+id/equal_duplicate_1_view"
-                    android:layout_width="50dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/equal"
@@ -498,6 +511,7 @@
                     android:id="@+id/yfen_2_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/yfen_2" />
             </TableRow>
@@ -508,15 +522,16 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/add_time_2_duplicate_1_image_view"
+                    android:id="@+id/phthong_with_two_dots_and_ison_duplicate_1_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/add_time_2" />
+                    android:src="@drawable/phthong_with_two_dots_and_ison" />
 
                 <TextView
                     android:id="@+id/equal_duplicate_2_text_view"
-                    android:layout_width="50dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/equal"
@@ -526,6 +541,7 @@
                     android:id="@+id/yfen_3_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/yfen_3" />
             </TableRow>
