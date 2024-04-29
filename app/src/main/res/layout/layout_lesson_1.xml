@@ -264,7 +264,7 @@
                     android:text="@string/zero_voice"
                     android:textSize="20sp" />
 
-                <Space
+                <View
                     android:layout_width="60dp"
                     android:layout_height="match_parent" />
 
@@ -290,7 +290,7 @@
                     android:text="@string/add_one_voice"
                     android:textSize="20sp" />
 
-                <Space
+                <View
                     android:layout_width="60dp"
                     android:layout_height="match_parent" />
 
@@ -316,7 +316,7 @@
                     android:text="@string/minus_one_voice"
                     android:textSize="20sp" />
 
-                <Space
+                <View
                     android:layout_width="60dp"
                     android:layout_height="match_parent" />
 

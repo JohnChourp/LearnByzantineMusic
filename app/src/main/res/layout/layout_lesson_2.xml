@@ -193,7 +193,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/heavy" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -219,7 +219,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_heavy_and_dot" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -245,7 +245,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_heavy_and_two_dots" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -271,7 +271,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_heavy_and_three_dots" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -459,7 +459,7 @@
                 android:contentDescription="@string/todo"
                 android:src="@drawable/yfen" />
 
-            <Space
+            <View
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
