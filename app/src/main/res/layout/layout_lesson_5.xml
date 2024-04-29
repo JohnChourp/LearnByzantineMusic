@@ -367,7 +367,7 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/ascent_of_two_voices_image_view"
+            android:id="@+id/ascent_of_two_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -465,7 +465,7 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/continuous_slight"
+            android:id="@+id/continuous_slight_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -588,7 +588,7 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/ascent_of_three_voices_image_view"
+            android:id="@+id/ascent_of_three_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -658,7 +658,7 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/ascent_of_four_voices_image_view"
+            android:id="@+id/ascent_of_four_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -728,7 +728,7 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/descent_of_four_voices_image_view"
+            android:id="@+id/descent_of_four_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -765,7 +765,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/ascent_of_five_voices_image_view"
+            android:id="@+id/ascent_of_five_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -835,7 +835,7 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/descent_of_five_voices_image_view"
+            android:id="@+id/descent_of_five_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -872,7 +872,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/ascent_of_six_voices_image_view"
+            android:id="@+id/ascent_of_six_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -942,7 +942,7 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/descent_of_six_voices_image_view"
+            android:id="@+id/descent_of_six_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -974,6 +974,113 @@
                 android:layout_height="match_parent"
                 android:gravity="center|center_horizontal|center_vertical"
                 android:text="@string/minus_six_voice"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/ascent_of_seven_voices_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/ascent_of_seven_voices"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_oligon_and_underflow_and_high_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_oligon_and_underflow_and_high" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_seven_voice_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_seven_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_flyer_and_underflow_and_high_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_flyer_and_underflow_and_high" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_seven_voice_duplicate_1_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_seven_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/descent_of_seven_voices_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/descent_of_seven_voices"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/phthong_with_apostrophe_and_slight_and_low_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/phthong_with_slight_and_low" />
+
+            <Space
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/minus_seven_voice_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/minus_seven_voice"
                 android:textSize="20sp" />
 
         </LinearLayout>

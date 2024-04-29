@@ -2,7 +2,7 @@
     <string name="app_name">LearnByzantineMusic</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="lesson_1">Μάθημα 1</string>
-    <string name="welcome_text">ΜΑΘΕΤΕ ΒΥΖΑΝΤΙΝΗ ΜΟΥΣΙΚΗ</string>
+    <string name="learn_byzantine_music">ΜΑΘΕΤΕ ΒΥΖΑΝΤΙΝΗ ΜΟΥΣΙΚΗ</string>
     <string name="lesson_2">Μάθημα 2</string>
     <string name="lesson_3">Μάθημα 3</string>
     <string name="lesson_4">Μάθημα 4</string>
@@ -115,4 +115,17 @@
     <string name="add_six_voice">+6 φωνές</string>
     <string name="descent_of_six_voices">Κατάβαση έξι φωνών</string>
     <string name="minus_six_voice">-6 φωνές</string>
+    <string name="ascent_of_seven_voices">Ανάβαση επτά φωνών</string>
+    <string name="add_seven_voice">+7 φωνές</string>
+    <string name="descent_of_seven_voices">Κατάβαση επτά φωνών</string>
+    <string name="minus_seven_voice">-7 φωνές</string>
+    <string name="summary_theory">ΣΥΝΤΟΜΗ ΘΕΩΡΙΑ</string>
+    <string name="characters">Χαρακτήρες</string>
+    <string name="quality">Ποιότητος</string>
+    <string name="time">Χρόνου</string>
+    <string name="ascents">Ανιόντες</string>
+    <string name="descents">Κατιόντες</string>
+    <string name="transcendent_ascents">Υπερβατές Αναβάσεις</string>
+    <string name="transcendent_descents">Υπερβατές Καταβάσεις</string>
+    <string name="characters_quantity">Χαρακτήρες Ποσότητος</string>
 </resources>
