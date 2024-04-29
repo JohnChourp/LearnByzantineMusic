@@ -94,7 +94,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="10dp"
@@ -106,7 +106,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -423,7 +423,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_3"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_3_duplicate_1_text_view"
@@ -431,7 +431,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_3"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_3_duplicate_2_text_view"
@@ -439,7 +439,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_3"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -540,7 +540,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_2_duplicate_3_text_view"
@@ -548,7 +548,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -560,7 +560,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_4_text_view"
@@ -568,7 +568,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_4_duplicate_1_text_view"
@@ -576,7 +576,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
             </TableRow>
         </TableLayout>
@@ -664,7 +664,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_4_duplicate_2_text_view"
@@ -672,7 +672,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_4_duplicate_3_text_view"
@@ -680,7 +680,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_4_duplicate_4_text_view"
@@ -688,7 +688,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -782,7 +782,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_3_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="10dp"
@@ -794,7 +794,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -866,7 +866,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="10dp"
@@ -878,7 +878,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_3_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -969,7 +969,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_4_duplicate_7_text_view"
@@ -977,7 +977,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_4_duplicate_8_text_view"
@@ -985,7 +985,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -1062,7 +1062,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_2_duplicate_7_text_view"
@@ -1070,7 +1070,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_4_duplicate_10_text_view"
@@ -1078,7 +1078,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -1155,7 +1155,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_4_duplicate_12_text_view"
@@ -1163,7 +1163,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_4"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/time_1_by_2_duplicate_8_text_view"
@@ -1171,7 +1171,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
-                    android:textSize="20sp" />
+                    android:textSize="30sp" />
 
                 <Space
                     android:layout_width="match_parent"

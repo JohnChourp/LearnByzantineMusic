@@ -54,11 +54,11 @@
                 android:layout_height="match_parent" />
 
             <TextView
-                android:id="@+id/one_voice_text_view"
+                android:id="@+id/add_one_voice_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center|center_horizontal|center_vertical"
-                android:text="@string/one_voice"
+                android:text="@string/add_one_voice"
                 android:textSize="20sp" />
 
         </LinearLayout>
@@ -100,11 +100,11 @@
                 android:layout_height="match_parent" />
 
             <TextView
-                android:id="@+id/one_voice_duplicate_1_text_view"
+                android:id="@+id/add_one_voice_duplicate_1_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center|center_horizontal|center_vertical"
-                android:text="@string/one_voice"
+                android:text="@string/add_one_voice"
                 android:textSize="20sp" />
 
         </LinearLayout>
