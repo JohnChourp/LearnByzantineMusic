@@ -95,15 +95,15 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
@@ -211,15 +211,15 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
@@ -327,15 +327,15 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
@@ -393,7 +393,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_embroidery" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -421,7 +421,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_embroidery_and_oligon" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -449,7 +449,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_flyer_and_oligon" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -482,7 +482,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
@@ -521,7 +521,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/apostrophe" />
 
-                <Space
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
@@ -614,7 +614,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_embroidery_on_top" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -642,7 +642,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_flyer_and_embroidery_on_top" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -684,7 +684,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_high_on_right" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -712,7 +712,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_flyer_and_high_on_right" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -750,7 +750,7 @@
                 android:contentDescription="@string/todo"
                 android:src="@drawable/low" />
 
-            <Space
+            <View
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
@@ -791,7 +791,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_high_on_left" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -819,7 +819,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_flyer_and_high_on_left" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -857,7 +857,7 @@
                 android:contentDescription="@string/todo"
                 android:src="@drawable/phthong_with_apostrophe_and_low" />
 
-            <Space
+            <View
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
@@ -898,7 +898,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_embroidery_and_high" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -926,7 +926,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_flyer_and_embroidery_and_high" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -964,7 +964,7 @@
                 android:contentDescription="@string/todo"
                 android:src="@drawable/phthong_with_slight_and_low" />
 
-            <Space
+            <View
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
@@ -1005,7 +1005,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_underflow_and_high" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -1033,7 +1033,7 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_flyer_and_underflow_and_high" />
 
-                <Space
+                <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
@@ -1069,9 +1069,9 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/todo"
-                android:src="@drawable/phthong_with_slight_and_low" />
+                android:src="@drawable/phthong_with_apostrophe_and_slight_and_low" />
 
-            <Space
+            <View
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
