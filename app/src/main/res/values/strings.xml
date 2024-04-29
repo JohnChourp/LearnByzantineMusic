@@ -29,7 +29,7 @@
     <string name="quantity_characters">Χαρακτήρες Ποσότητος</string>
     <string name="quantity_characters_definition">Στους χαρακτήρες ποσότητος περιλαμβάνονται τα σημάδια, τα οποία δείχνουν πόσο ανεβαίνει ή κατεβαίνει η φωνή(φθόγγος):</string>
     <string name="zero_voice">0 φωνή</string>
-    <string name="one_voice">1 φωνή</string>
+    <string name="add_one_voice">+1 φωνή</string>
     <string name="minus_one_voice">-1 φωνή</string>
     <string name="zero_voice_definition">Ίδια φωνή</string>
     <string name="one_voice_definition">Ανεβαίνω φωνή</string>
@@ -91,4 +91,28 @@
     <string name="trigorgo">Τρίγοργο</string>
     <string name="presented_digorgo">Παρεστιγμένο Δίγοργο</string>
     <string name="digorgo_in_climbing_compositions_and_underflow">Το δίγοργο στις συνθέσεις ανάβασης και την Υπορροή</string>
+    <string name="title_activity_lesson5">Lesson5</string>
+    <string name="argo">Αργό</string>
+    <string name="time_2">2</string>
+    <string name="diargo">Δίαργο</string>
+    <string name="time_3">3</string>
+    <string name="triargo">Τρίαργο</string>
+    <string name="time_4">4</string>
+    <string name="ascent_of_two_voices">Ανάβαση δύο φωνών</string>
+    <string name="add_two_voice">+2 φωνές</string>
+    <string name="continuous_slight">Συνεχές ελαφρόν</string>
+    <string name="ascent_of_three_voices">Ανάβαση τριών φωνών</string>
+    <string name="add_three_voice">+3 φωνές</string>
+    <string name="ascent_of_four_voices">Ανάβαση τεσσάρων φωνών</string>
+    <string name="add_four_voice">+4 φωνές</string>
+    <string name="descent_of_four_voices">Κατάβαση τεσσάρων φωνών</string>
+    <string name="minus_four_voice">-4 φωνές</string>
+    <string name="ascent_of_five_voices">Ανάβαση πέντε φωνών</string>
+    <string name="add_five_voice">+5 φωνές</string>
+    <string name="descent_of_five_voices">Κατάβαση πέντε φωνών</string>
+    <string name="minus_five_voice">-5 φωνές</string>
+    <string name="ascent_of_six_voices">Ανάβαση έξι φωνών</string>
+    <string name="add_six_voice">+6 φωνές</string>
+    <string name="descent_of_six_voices">Κατάβαση έξι φωνών</string>
+    <string name="minus_six_voice">-6 φωνές</string>
 </resources>

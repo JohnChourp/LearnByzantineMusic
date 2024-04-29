@@ -1,0 +1,982 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/lesson_5_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/lesson_5"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/argo_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/argo"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/ison_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_embroideries_and_argo_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_embroideries_and_argo" />
+
+                <TextView
+                    android:id="@+id/equal_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/equal"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:id="@+id/ison_duplicate_1_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_embroideries_and_gorgo_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_oligon_and_fraction_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_oligon_and_fraction" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/time_1_by_2_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/time_1_by_2_duplicate_1_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/time_1_by_4_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_2"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/diargo_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/diargo"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/ison_duplicate_2_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_embroideries_and_oligon_and_diargo_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_embroideries_and_oligon_and_diargo" />
+
+                <TextView
+                    android:id="@+id/equal_text_duplicate_1_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/equal"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:id="@+id/ison_duplicate_3_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_embroideries_and_gorgo_duplicate_1_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_two_dots_and_oligon_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_two_dots_and_oligon" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/time_1_by_2_duplicate_2_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/time_1_by_2_duplicate_3_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/time_3_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_3"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/triargo_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/triargo"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/ison_duplicate_4_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_embroideries_and_oligon_and_triargo_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_embroideries_and_oligon_and_triargo" />
+
+                <TextView
+                    android:id="@+id/equal_text_duplicate_2_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/equal"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:id="@+id/ison_duplicate_5_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_embroideries_and_gorgo_duplicate_2_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_three_dots_and_oligon_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_three_dots_and_oligon" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/time_1_by_2_duplicate_4_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/time_1_by_2_duplicate_5_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/time_4_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_4"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/ascent_of_two_voices_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/ascent_of_two_voices"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_oligon_and_embroidery_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_oligon_and_embroidery" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_two_voice_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_two_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_embroidery_and_oligon_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_embroidery_and_oligon" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_two_voice_duplicate_1_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_two_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_flyer_and_oligon_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_flyer_and_oligon" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_two_voice_duplicate_2_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_two_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/continuous_slight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/continuous_slight"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <ImageView
+                    android:id="@+id/continuous_slight_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/continuous_slight" />
+
+                <TextView
+                    android:id="@+id/equal_text_duplicate_3_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/equal"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_apostrophe_and_gorgo_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_apostrophe_and_gorgo" />
+
+                <ImageView
+                    android:id="@+id/apostrophe_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/apostrophe" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/ison_duplicate_6_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:id="@+id/continuous_slight_duplicate_1_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/continuous_slight" />
+
+                <TextView
+                    android:id="@+id/equal_text_duplicate_4_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/equal"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:id="@+id/ison_duplicate_7_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:id="@+id/phthong_with_apostrophe_and_gorgo_duplicate_1_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_apostrophe_and_gorgo" />
+
+                <ImageView
+                    android:id="@+id/apostrophe_duplicate_1_image_view"
+                    android:layout_width="75dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/apostrophe" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/ascent_of_three_voices_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/ascent_of_three_voices"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_oligon_and_embroidery_on_top_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_oligon_and_embroidery_on_top" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_three_voice_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_three_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_flyer_and_embroidery_on_top_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_flyer_and_embroidery_on_top" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_three_voice_duplicate_1_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_three_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/ascent_of_four_voices_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/ascent_of_four_voices"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_oligon_and_high_on_right_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_oligon_and_high_on_right" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_four_voice_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_four_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_flyer_and_high_on_right_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_flyer_and_high_on_right" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_four_voice_duplicate_1_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_four_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/descent_of_four_voices_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/descent_of_four_voices"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/low_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/low" />
+
+            <Space
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/minus_four_voice_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/minus_four_voice"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/ascent_of_five_voices_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/ascent_of_five_voices"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_oligon_and_high_on_left_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_oligon_and_high_on_left" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_five_voice_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_five_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_flyer_and_high_on_left_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_flyer_and_high_on_left" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_five_voice_duplicate_1_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_five_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/descent_of_five_voices_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/descent_of_five_voices"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/phthong_with_apostrophe_and_low_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/phthong_with_apostrophe_and_low" />
+
+            <Space
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/minus_five_voice_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/minus_five_voice"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/ascent_of_six_voices_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/ascent_of_six_voices"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_oligon_and_embroidery_and_high_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_oligon_and_embroidery_and_high" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_six_voice_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_six_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/phthong_with_flyer_and_embroidery_and_high_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_flyer_and_embroidery_and_high" />
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/add_six_voice_duplicate_1_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/add_six_voice"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/descent_of_six_voices_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/descent_of_six_voices"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/phthong_with_slight_and_low_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/phthong_with_slight_and_low" />
+
+            <Space
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/minus_six_voice_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/minus_six_voice"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

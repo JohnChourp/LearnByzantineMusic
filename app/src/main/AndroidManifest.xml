@@ -13,6 +13,11 @@
         android:theme="@style/Theme.LearnByzantineMusic"
         tools:targetApi="31">
         <activity
+            android:name=".lessons.Lesson5"
+            android:exported="false"
+            android:label="@string/title_activity_lesson5"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
             android:name=".lessons.Lesson4"
             android:exported="false"
             android:label="@string/title_activity_lesson4"
