@@ -10,7 +10,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/lesson_5_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -19,7 +18,6 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/argo_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -37,7 +35,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/ison_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -46,7 +43,6 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_embroideries_and_argo_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -55,7 +51,6 @@
                     android:src="@drawable/phthong_with_embroideries_and_argo" />
 
                 <TextView
-                    android:id="@+id/equal_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -63,7 +58,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/ison_duplicate_1_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -72,7 +66,6 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_embroideries_and_gorgo_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -81,7 +74,6 @@
                     android:src="@drawable/phthong_with_embroideries_and_gorgo" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_oligon_and_fraction_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -108,7 +100,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/time_1_by_2_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -116,7 +107,6 @@
                     android:textSize="30sp" />
 
                 <TextView
-                    android:id="@+id/time_1_by_2_duplicate_1_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -124,7 +114,6 @@
                     android:textSize="30sp" />
 
                 <TextView
-                    android:id="@+id/time_1_by_4_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -135,7 +124,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/diargo_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -153,7 +141,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/ison_duplicate_2_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -162,7 +149,6 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_embroideries_and_oligon_and_diargo_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -171,7 +157,6 @@
                     android:src="@drawable/phthong_with_embroideries_and_oligon_and_diargo" />
 
                 <TextView
-                    android:id="@+id/equal_text_duplicate_1_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -179,7 +164,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/ison_duplicate_3_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -188,7 +172,6 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_embroideries_and_gorgo_duplicate_1_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -197,7 +180,6 @@
                     android:src="@drawable/phthong_with_embroideries_and_gorgo" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_two_dots_and_oligon_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -224,7 +206,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/time_1_by_2_duplicate_2_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -232,7 +213,6 @@
                     android:textSize="30sp" />
 
                 <TextView
-                    android:id="@+id/time_1_by_2_duplicate_3_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -240,7 +220,6 @@
                     android:textSize="30sp" />
 
                 <TextView
-                    android:id="@+id/time_3_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -251,7 +230,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/triargo_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -269,7 +247,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/ison_duplicate_4_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -278,7 +255,6 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_embroideries_and_oligon_and_triargo_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -287,7 +263,6 @@
                     android:src="@drawable/phthong_with_embroideries_and_oligon_and_triargo" />
 
                 <TextView
-                    android:id="@+id/equal_text_duplicate_2_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -295,7 +270,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/ison_duplicate_5_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -304,7 +278,6 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_embroideries_and_gorgo_duplicate_2_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -313,7 +286,6 @@
                     android:src="@drawable/phthong_with_embroideries_and_gorgo" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_three_dots_and_oligon_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -340,7 +312,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/time_1_by_2_duplicate_4_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -348,7 +319,6 @@
                     android:textSize="30sp" />
 
                 <TextView
-                    android:id="@+id/time_1_by_2_duplicate_5_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -356,7 +326,6 @@
                     android:textSize="30sp" />
 
                 <TextView
-                    android:id="@+id/time_4_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -367,7 +336,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/ascent_of_two_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -385,7 +353,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_oligon_and_embroidery_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -398,7 +365,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_two_voice_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -413,7 +379,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_embroidery_and_oligon_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -426,7 +391,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_two_voice_duplicate_1_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -441,7 +405,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_flyer_and_oligon_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -454,7 +417,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_two_voice_duplicate_2_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -465,7 +427,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/continuous_slight_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -487,7 +448,6 @@
                     android:layout_height="match_parent" />
 
                 <ImageView
-                    android:id="@+id/continuous_slight_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -496,7 +456,6 @@
                     android:src="@drawable/continuous_slight" />
 
                 <TextView
-                    android:id="@+id/equal_text_duplicate_3_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -504,7 +463,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_apostrophe_and_gorgo_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -513,7 +471,6 @@
                     android:src="@drawable/phthong_with_apostrophe_and_gorgo" />
 
                 <ImageView
-                    android:id="@+id/apostrophe_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -533,7 +490,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/ison_duplicate_6_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -542,7 +498,6 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:id="@+id/continuous_slight_duplicate_1_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -551,7 +506,6 @@
                     android:src="@drawable/continuous_slight" />
 
                 <TextView
-                    android:id="@+id/equal_text_duplicate_4_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -559,7 +513,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/ison_duplicate_7_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -568,7 +521,6 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_apostrophe_and_gorgo_duplicate_1_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -577,7 +529,6 @@
                     android:src="@drawable/phthong_with_apostrophe_and_gorgo" />
 
                 <ImageView
-                    android:id="@+id/apostrophe_duplicate_1_image_view"
                     android:layout_width="75dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -588,7 +539,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/ascent_of_three_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -606,7 +556,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_oligon_and_embroidery_on_top_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -619,7 +568,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_three_voice_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -634,7 +582,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_flyer_and_embroidery_on_top_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -647,7 +594,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_three_voice_duplicate_1_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -658,7 +604,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/ascent_of_four_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -676,7 +621,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_oligon_and_high_on_right_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -689,7 +633,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_four_voice_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -704,7 +647,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_flyer_and_high_on_right_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -717,7 +659,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_four_voice_duplicate_1_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -728,7 +669,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/descent_of_four_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -742,7 +682,6 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/low_image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -755,7 +694,6 @@
                 android:layout_height="match_parent" />
 
             <TextView
-                android:id="@+id/minus_four_voice_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center|center_horizontal|center_vertical"
@@ -765,7 +703,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/ascent_of_five_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -783,7 +720,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_oligon_and_high_on_left_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -796,7 +732,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_five_voice_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -811,7 +746,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_flyer_and_high_on_left_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -824,7 +758,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_five_voice_duplicate_1_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -835,7 +768,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/descent_of_five_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -849,7 +781,6 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/phthong_with_apostrophe_and_low_image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -862,7 +793,6 @@
                 android:layout_height="match_parent" />
 
             <TextView
-                android:id="@+id/minus_five_voice_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center|center_horizontal|center_vertical"
@@ -872,7 +802,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/ascent_of_six_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -890,7 +819,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_oligon_and_embroidery_and_high_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -903,7 +831,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_six_voice_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -918,7 +845,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_flyer_and_embroidery_and_high_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -931,7 +857,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_six_voice_duplicate_1_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -942,7 +867,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/descent_of_six_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -956,7 +880,6 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/phthong_with_slight_and_low_image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -969,7 +892,6 @@
                 android:layout_height="match_parent" />
 
             <TextView
-                android:id="@+id/minus_six_voice_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center|center_horizontal|center_vertical"
@@ -979,7 +901,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/ascent_of_seven_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -997,7 +918,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_oligon_and_underflow_and_high_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -1010,7 +930,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_seven_voice_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -1025,7 +944,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_flyer_and_underflow_and_high_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -1038,7 +956,6 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/add_seven_voice_duplicate_1_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -1049,7 +966,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/descent_of_seven_voices_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -1063,7 +979,6 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/phthong_with_apostrophe_and_slight_and_low_image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -1076,14 +991,11 @@
                 android:layout_height="match_parent" />
 
             <TextView
-                android:id="@+id/minus_seven_voice_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center|center_horizontal|center_vertical"
                 android:text="@string/minus_seven_voice"
                 android:textSize="20sp" />
-
         </LinearLayout>
-
     </LinearLayout>
 </ScrollView>

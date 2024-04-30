@@ -10,7 +10,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/lesson_3_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -19,7 +18,6 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/embroideries_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -28,7 +26,6 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/embroideries_definition_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/embroideries_definition"
@@ -41,7 +38,6 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/embroideries_image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -54,7 +50,6 @@
                 android:layout_height="match_parent" />
 
             <TextView
-                android:id="@+id/add_one_voice_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center|center_horizontal|center_vertical"
@@ -65,7 +60,6 @@
 
 
         <TextView
-            android:id="@+id/flyer_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -74,7 +68,6 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/flyer_definition_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/flyer_definition"
@@ -87,7 +80,6 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/flyer_image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -100,7 +92,6 @@
                 android:layout_height="match_parent" />
 
             <TextView
-                android:id="@+id/add_one_voice_duplicate_1_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center|center_horizontal|center_vertical"
@@ -110,7 +101,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/climbing_compositions_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -128,7 +118,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_oligon_and_embroideries_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -137,7 +126,6 @@
                     android:src="@drawable/phthong_with_oligon_and_embroideries" />
 
                 <TextView
-                    android:id="@+id/equal_duplicate_2_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -145,7 +133,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/oligon_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -154,7 +141,6 @@
                     android:src="@drawable/oligon" />
 
                 <ImageView
-                    android:id="@+id/embroideries_duplicate_1_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -170,7 +156,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_embroideries_and_oligon_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -179,7 +164,6 @@
                     android:src="@drawable/phthong_with_embroideries_and_oligon" />
 
                 <TextView
-                    android:id="@+id/equal_duplicate_3_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -187,7 +171,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/embroideries_duplicate_2_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -196,7 +179,6 @@
                     android:src="@drawable/embroideries" />
 
                 <ImageView
-                    android:id="@+id/oligon_duplicate_1_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -212,7 +194,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_oligon_and_apostrophe_and_embroideries_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -221,7 +202,6 @@
                     android:src="@drawable/phthong_with_oligon_and_apostrophe_and_embroideries" />
 
                 <TextView
-                    android:id="@+id/equal_duplicate_4_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -229,7 +209,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/apostrophe_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -238,7 +217,6 @@
                     android:src="@drawable/apostrophe" />
 
                 <ImageView
-                    android:id="@+id/embroideries_duplicate_3_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -254,7 +232,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/phthong_with_oligon_and_ison_embroideries_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -263,7 +240,6 @@
                     android:src="@drawable/phthong_with_oligon_and_ison_embroideries" />
 
                 <TextView
-                    android:id="@+id/equal_duplicate_5_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -271,7 +247,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/ison_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -280,7 +255,6 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:id="@+id/embroideries_duplicate_4_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -291,7 +265,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/underflow_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
@@ -309,7 +282,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/underflow_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -318,7 +290,6 @@
                     android:src="@drawable/underflow" />
 
                 <TextView
-                    android:id="@+id/equal_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -326,7 +297,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/apostrophe_duplicate_1_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -335,7 +305,6 @@
                     android:src="@drawable/apostrophe" />
 
                 <ImageView
-                    android:id="@+id/apostrophe_duplicate_2_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -351,7 +320,6 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/underflow_duplicate_1_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -360,7 +328,6 @@
                     android:src="@drawable/phthong_with_dot_and_underflow" />
 
                 <TextView
-                    android:id="@+id/equal_duplicate_1_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
@@ -368,7 +335,6 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:id="@+id/ison_duplicate_1_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -377,7 +343,6 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:id="@+id/apostrophe_duplicate_3_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -386,14 +351,12 @@
                     android:src="@drawable/apostrophe" />
 
                 <ImageView
-                    android:id="@+id/phthong_with_apostrophe_and_fraction_image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_apostrophe_and_fraction" />
-
             </TableRow>
 
         </TableLayout>

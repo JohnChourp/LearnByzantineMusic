@@ -15,11 +15,21 @@ class MainActivity : ComponentActivity() {
         val lesson4Btn = findViewById<Button>(R.id.lesson4_btn)
         val lesson5Btn = findViewById<Button>(R.id.lesson5_btn)
 
+        val ascentsBtn = findViewById<Button>(R.id.ascents_btn)
+        val descentsBtn = findViewById<Button>(R.id.descents_btn)
+        val transcendentAscentsBtn = findViewById<Button>(R.id.transcendent_ascents_btn)
+        val transcendentDescentsBtn = findViewById<Button>(R.id.transcendent_descents_btn)
+
         lesson1Btn.setOnClickListener { openLesson1() }
         lesson2Btn.setOnClickListener { openLesson2() }
         lesson3Btn.setOnClickListener { openLesson3() }
         lesson4Btn.setOnClickListener { openLesson4() }
         lesson5Btn.setOnClickListener { openLesson5() }
+
+        ascentsBtn.setOnClickListener { openAscents() }
+        descentsBtn.setOnClickListener { openDescents() }
+        transcendentAscentsBtn.setOnClickListener { openTranscendentAscents() }
+        transcendentDescentsBtn.setOnClickListener { openTranscendentDescents() }
     }
 
     private fun openLesson1() {
@@ -44,6 +54,26 @@ class MainActivity : ComponentActivity() {
 
     private fun openLesson5() {
         val intent = Intent(this, com.example.learnbyzantinemusic.lessons.Lesson5::class.java)
+        startActivity(intent)
+    }
+
+    private fun openAscents() {
+        val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.Ascents::class.java)
+        startActivity(intent)
+    }
+
+    private fun openDescents() {
+        val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.Descents::class.java)
+        startActivity(intent)
+    }
+
+    private fun openTranscendentAscents() {
+        val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.TranscendentAscents::class.java)
+        startActivity(intent)
+    }
+
+    private fun openTranscendentDescents() {
+        val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.TranscendentDescents::class.java)
         startActivity(intent)
     }
 }
