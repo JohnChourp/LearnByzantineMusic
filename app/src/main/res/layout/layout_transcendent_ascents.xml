@@ -27,21 +27,21 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_embroidery" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_embroidery_and_oligon" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -65,14 +65,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_embroidery_on_top" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -100,14 +100,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_high_on_right" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -135,14 +135,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_high_on_left" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -170,14 +170,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_embroidery_and_high" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -205,14 +205,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_underflow_and_high" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -240,14 +240,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_high_on_left_and_right" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -275,14 +275,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_with_oligon_and_on_left_embroideries_and_on_top_high_and_on_left_high" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -310,14 +310,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_add_ten_voice_with_oligon" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -345,14 +345,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_add_eleven_voice_with_oligon" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -380,14 +380,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_add_twelve_voice_with_oligon" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -415,14 +415,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_add_thirteen_voice_with_oligon" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -450,14 +450,14 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/phthong_add_fourteen_voice_with_oligon" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"

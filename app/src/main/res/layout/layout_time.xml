@@ -13,9 +13,231 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
-            android:text="@string/lesson_4"
+            android:text="@string/time"
             android:textSize="34sp"
             android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/fraction"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/fraction" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/phthong_1_for_2_time"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/dot_simple"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/dot" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/phthong_1_for_2_time"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/dot_double"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/two_dots" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/phthong_1_for_3_time"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/dot_triple"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/three_dots" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/phthong_1_for_4_time"
+                    android:textSize="20sp" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/pause"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/heavy" />
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/heavy"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_heavy_and_dot" />
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/pause_time_1"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_heavy_and_two_dots" />
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/pause_time_2"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_heavy_and_three_dots" />
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/pause_time_3"
+                    android:textSize="20sp" />
+            </TableRow>
+        </TableLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -24,12 +246,6 @@
             android:text="@string/gorgo"
             android:textSize="20sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/gorgo_definition"
-            android:textSize="20sp" />
 
         <TableLayout
             android:layout_width="match_parent"
@@ -109,210 +325,6 @@
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1"
                     android:textSize="20sp" />
-
-            </TableRow>
-
-        </TableLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|center_horizontal|center_vertical"
-            android:text="@string/gorgo_in_climbing_compositions_and_underflow"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_embroideries_and_gorgo" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_gorgo_and_embroideries" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_oligon_and_gorgo" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_gorgo_and_embroideries" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_ison_and_embroideries_and_gorgo" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_apostrophe_and_embroideries_and_gorgo" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_underflow_and_gorgo" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_apostrophe_and_gorgo" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
 
             </TableRow>
         </TableLayout>
@@ -411,119 +423,6 @@
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1"
                     android:textSize="20sp" />
-
-            </TableRow>
-
-        </TableLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|center_horizontal|center_vertical"
-            android:text="@string/digorgo_in_climbing_compositions_and_underflow"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_oligon_digorgo" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_digorgo" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_2"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_2"
-                    android:textSize="30sp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_2"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_4"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_4"
-                    android:textSize="30sp" />
 
             </TableRow>
         </TableLayout>
@@ -645,15 +544,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
-            android:text="@string/presented_gorgo"
+            android:text="@string/argo"
             android:textSize="20sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/presented_gorgo_definition"
-            android:textSize="20sp" />
 
         <TableLayout
             android:layout_width="match_parent"
@@ -672,17 +565,13 @@
                     android:contentDescription="@string/todo"
                     android:src="@drawable/ison" />
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
-
                 <ImageView
                     android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_presented_and_gorgo" />
+                    android:src="@drawable/phthong_with_embroideries_and_argo" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -698,48 +587,6 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/ison" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_3_by_4"
-                    android:textSize="30sp" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_4"
-                    android:textSize="30sp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1"
-                    android:textSize="20sp" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
 
                 <ImageView
                     android:layout_width="65dp"
@@ -747,11 +594,7 @@
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
+                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
 
                 <ImageView
                     android:layout_width="65dp"
@@ -759,22 +602,7 @@
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_gorgo_and_presented" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    android:src="@drawable/phthong_with_oligon_and_fraction" />
             </TableRow>
 
             <TableRow
@@ -782,23 +610,13 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_4"
-                    android:textSize="30sp" />
-
                 <View
-                    android:layout_width="10dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <TextView
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_3_by_4"
-                    android:textSize="30sp" />
+                    android:layout_height="match_parent" />
 
                 <View
                     android:layout_width="match_parent"
@@ -808,7 +626,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_2"
                     android:textSize="20sp" />
 
             </TableRow>
@@ -818,7 +650,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
-            android:text="@string/presented_digorgo"
+            android:text="@string/diargo"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -845,15 +677,7 @@
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_presented_and_digorgo_first" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    android:src="@drawable/phthong_with_embroideries_and_oligon_and_diargo" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -869,6 +693,22 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/ison" />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_two_dots_and_oligon" />
             </TableRow>
 
             <TableRow
@@ -876,26 +716,13 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <TextView
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_2"
-                    android:textSize="30sp" />
+                    android:layout_height="match_parent" />
 
-                <TextView
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_4"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_4"
-                    android:textSize="30sp" />
+                    android:layout_height="match_parent" />
 
                 <View
                     android:layout_width="match_parent"
@@ -905,65 +732,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1"
-                    android:textSize="20sp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_presented_and_digorgo_second" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_4"
+                    android:text="@string/time_1_by_2"
                     android:textSize="30sp" />
 
                 <TextView
@@ -977,104 +746,117 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_4"
-                    android:textSize="30sp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1"
+                    android:text="@string/time_3"
                     android:textSize="20sp" />
 
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_digorgo_and_presented_third" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_4"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_4"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1_by_2"
-                    android:textSize="30sp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/time_1"
-                    android:textSize="20sp" />
             </TableRow>
         </TableLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/triargo"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_embroideries_and_oligon_and_triargo" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/equal"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ison" />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/phthong_with_three_dots_and_oligon" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_4"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
     </LinearLayout>
 </ScrollView>

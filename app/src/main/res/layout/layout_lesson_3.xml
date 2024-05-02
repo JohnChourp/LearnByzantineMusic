@@ -38,7 +38,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="65dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
@@ -80,7 +80,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="65dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
@@ -118,7 +118,7 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
@@ -133,7 +133,7 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
@@ -141,7 +141,7 @@
                     android:src="@drawable/oligon" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
@@ -156,7 +156,7 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
@@ -171,7 +171,7 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
@@ -179,7 +179,7 @@
                     android:src="@drawable/embroideries" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
@@ -194,8 +194,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="65dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -209,16 +209,15 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
+                    android:layout_width="65dp"
+                    android:layout_height="25dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/apostrophe" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="65dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -232,12 +231,12 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_ison_embroideries" />
+                    android:src="@drawable/phthong_with_oligon_and_ison_and_embroideries" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -247,7 +246,7 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
@@ -255,7 +254,7 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
@@ -282,8 +281,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="65dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -297,17 +296,15 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
+                    android:layout_width="65dp"
+                    android:layout_height="25dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/apostrophe" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
+                    android:layout_width="65dp"
+                    android:layout_height="25dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/apostrophe" />
@@ -320,8 +317,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="65dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -335,7 +332,7 @@
                     android:textSize="50sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
@@ -343,15 +340,15 @@
                     android:src="@drawable/ison" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="65dp"
+                    android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/apostrophe" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:adjustViewBounds="true"

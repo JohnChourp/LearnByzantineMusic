@@ -169,7 +169,7 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -193,7 +193,7 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -217,7 +217,7 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -241,7 +241,7 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -259,7 +259,6 @@
                     android:textSize="20sp" />
             </TableRow>
         </TableLayout>
-
 
         <TextView
             android:layout_width="match_parent"
@@ -293,7 +292,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -316,11 +315,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/dot_1"
+                    android:text="@string/dot_simple"
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -343,11 +342,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/dot_2"
+                    android:text="@string/dot_double"
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -370,11 +369,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/dot_3"
+                    android:text="@string/dot_triple"
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -388,7 +387,6 @@
                     android:textSize="20sp" />
             </TableRow>
         </TableLayout>
-
 
         <TextView
             android:layout_width="match_parent"
@@ -407,26 +405,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:gravity="center">
 
             <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="65dp"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/todo"
                 android:src="@drawable/yfen" />
-
-            <View
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:gravity="center|center_horizontal|center_vertical"
-                android:text="@string/yfen"
-                android:textSize="20sp" />
 
         </LinearLayout>
 
@@ -448,7 +434,7 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -470,7 +456,7 @@
             </TableRow>
 
             <TableRow
-                android:layout_width="match_parent"
+                android:layout_width="65dp"
                 android:layout_height="match_parent"
                 android:gravity="center">
 
