@@ -322,7 +322,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -349,7 +349,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -376,8 +376,8 @@
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="65dp"
+                    android:layout_height="25dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/apostrophe" />

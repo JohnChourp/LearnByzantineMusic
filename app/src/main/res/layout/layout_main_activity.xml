@@ -15,7 +15,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="30dp" />
+        android:layout_height="10dp" />
 
     <TableLayout
         android:layout_width="match_parent"
@@ -68,7 +68,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="30dp" />
+        android:layout_height="10dp" />
 
     <TextView
         android:id="@+id/summary_theory_text_view"
@@ -81,7 +81,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="30dp" />
+        android:layout_height="10dp" />
 
     <TextView
         android:id="@+id/characters_quantity_text_view"
@@ -91,6 +91,10 @@
         android:text="@string/characters_quantity"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
 
     <TableLayout
         android:layout_width="match_parent"
@@ -135,6 +139,10 @@
         </TableRow>
     </TableLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
     <TextView
         android:id="@+id/characters_text_view"
         android:layout_width="match_parent"
@@ -143,6 +151,10 @@
         android:text="@string/characters"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

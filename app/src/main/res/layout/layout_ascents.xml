@@ -38,7 +38,7 @@
                     android:layout_height="match_parent" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -73,7 +73,7 @@
                     android:layout_height="match_parent" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -108,7 +108,7 @@
                     android:layout_height="match_parent" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -144,7 +144,7 @@
                     android:layout_height="match_parent" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -179,7 +179,7 @@
                     android:layout_height="match_parent" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
@@ -203,7 +203,7 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="65dp"
                     android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/high"
