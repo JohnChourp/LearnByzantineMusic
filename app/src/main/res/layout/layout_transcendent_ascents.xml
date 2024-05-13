@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,41 +21,57 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_embroidery" />
+                <FrameLayout
+                    android:layout_width="90dp"
+                    android:layout_height="18dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroidery_and_oligon" />
+                    <ImageView style="@style/oligon_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_flyer_and_oligon" />
+                    <ImageView
+                        style="@style/embroidery_image_view_id"
+                        android:translationX="45dp" />
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/embroidery_small_image_view_id"
+                        android:translationX="15dp"
+                        android:translationY="11dp" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp">
+
+                    <ImageView
+                        style="@style/flyer_image_view_id"
+                        android:translationY="7dp" />
+
+                    <ImageView
+                        style="@style/oligon_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-1dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_two_voice"
                     android:textSize="20sp" />
@@ -64,31 +82,36 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_embroidery_on_top" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_flyer_and_embroidery_on_top" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="36dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/oligon_image_view_id"
+                        android:translationY="5dp" />
+
+                    <ImageView
+                        style="@style/embroidery_image_view_id"
+                        android:layout_gravity="center_horizontal" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/flyer_image_view_id" />
+
+                    <ImageView
+                        style="@style/embroidery_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-1dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_three_voice"
                     android:textSize="20sp" />
@@ -99,31 +122,39 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_high_on_right" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_flyer_and_high_on_right" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="72dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/oligon_image_view_id"
+                        android:translationY="5dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/flyer_image_view_id"
+                        android:translationY="2dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_four_voice"
                     android:textSize="20sp" />
@@ -134,31 +165,38 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_high_on_left" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_flyer_and_high_on_left" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="3dp" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/flyer_image_view_id"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-15dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_five_voice"
                     android:textSize="20sp" />
@@ -169,31 +207,48 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_embroidery_and_high" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_flyer_and_embroidery_and_high" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/embroidery_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="23dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp"
+                        android:translationY="3dp" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/flyer_image_view_id"
+                        android:translationY="2dp" />
+
+                    <ImageView
+                        style="@style/embroidery_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="20dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_six_voice"
                     android:textSize="20sp" />
@@ -204,31 +259,48 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_underflow_and_high" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_flyer_and_underflow_and_high" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/embroidery_medium_image_view_id"
+                        android:layout_gravity="center"
+                        android:translationY="-11dp" />
+
+                    <ImageView
+                        style="@style/oligon_image_view_id" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/embroidery_medium_image_view_id"
+                        android:layout_gravity="center"
+                        android:translationY="-11dp" />
+
+                    <ImageView
+                        style="@style/flyer_image_view_id"
+                        android:translationY="2dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_seven_voice"
                     android:textSize="20sp" />
@@ -239,31 +311,48 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_high_on_left_and_right" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_flyer_and_high_on_top_left_and_right" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp"
+                        android:translationY="3dp"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView style="@style/flyer_image_view_id"
+                        android:translationY="2dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp"/>
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_eight_voice"
                     android:textSize="20sp" />
@@ -274,31 +363,61 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_on_left_embroideries_and_on_top_high_and_on_left_high" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_flyer_andembroideries_and_high_on_left_and_right" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="25dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp"
+                        android:translationY="3dp"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView style="@style/flyer_image_view_id"
+                        android:translationY="2dp" />
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="22dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp"/>
+
+                </FrameLayout>
+
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_nine_voice"
                     android:textSize="20sp" />
@@ -309,31 +428,60 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_add_ten_voice_with_oligon" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_add_ten_voice_with_flyer" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/embroidery_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="28dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp"
+                        android:translationY="3dp"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView style="@style/flyer_image_view_id"
+                        android:translationY="2dp" />
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp" />
+
+                    <ImageView
+                        style="@style/embroidery_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="24dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp"/>
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_ten_voice"
                     android:textSize="20sp" />
@@ -344,31 +492,61 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_add_eleven_voice_with_oligon" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_add_eleven_voice_with_flyer" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="3dp"/>
+
+                    <ImageView
+                        style="@style/embroidery_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="20dp"
+                        android:translationY="28dp" />
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="20dp"
+                        android:translationY="3dp" />
+
+                </FrameLayout>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView style="@style/flyer_image_view_id"
+                        android:translationY="2dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"/>
+
+                    <ImageView
+                        style="@style/embroidery_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="20dp"
+                        android:translationY="25dp" />
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="20dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_eleven_voice"
                     android:textSize="20sp" />
@@ -379,31 +557,57 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_add_twelve_voice_with_oligon" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_add_twelve_voice_with_flyer" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp"
+                        android:translationY="3dp"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView style="@style/flyer_image_view_id"
+                        android:translationY="2dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="22dp"/>
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_twelve_voice"
                     android:textSize="20sp" />
@@ -414,31 +618,67 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_add_thirteen_voice_with_oligon" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_add_thirteen_voice_with_flyer" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="25dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="25dp"
+                        android:translationY="3dp"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView style="@style/flyer_image_view_id"
+                        android:translationY="2dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp" />
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="22dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="25dp"/>
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_thirteen_voice"
                     android:textSize="20sp" />
@@ -449,31 +689,67 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_add_fourteen_voice_with_oligon" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_add_fourteen_voice_with_oligon" />
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="3dp" />
+
+                    <ImageView
+                        style="@style/embroidery_medium_image_view_id"
+                        android:layout_gravity="center"
+                        android:translationY="-12dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="25dp"
+                        android:translationY="3dp"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView style="@style/flyer_image_view_id"
+                        android:translationY="2dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp" />
+
+                    <ImageView
+                        style="@style/high_small_image_view_id"
+                        android:layout_gravity="center_horizontal" />
+
+                    <ImageView
+                        style="@style/embroidery_medium_image_view_id"
+                        android:layout_gravity="center"
+                        android:translationY="-12dp" />
+
+                    <ImageView
+                        style="@style/high_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="25dp"/>
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_fourteen_voice"
                     android:textSize="20sp" />

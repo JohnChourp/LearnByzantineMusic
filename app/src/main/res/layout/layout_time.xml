@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,22 +29,17 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/fraction"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/fraction" />
+                <ImageView style="@style/fraction_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/phthong_1_for_2_time"
                     android:textSize="20sp" />
@@ -54,22 +51,17 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/dot_simple"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/dot" />
+                <ImageView style="@style/simple_dot_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/phthong_1_for_2_time"
                     android:textSize="20sp" />
@@ -81,22 +73,17 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/dot_double"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/two_dots" />
+                <ImageView style="@style/double_dots_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/phthong_1_for_3_time"
                     android:textSize="20sp" />
@@ -108,22 +95,17 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/dot_triple"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/three_dots" />
+                <ImageView style="@style/triple_dots_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/phthong_1_for_4_time"
                     android:textSize="20sp" />
@@ -140,27 +122,19 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/heavy" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/heavy_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/heavy"
                     android:textSize="20sp" />
@@ -171,20 +145,11 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_heavy_and_dot" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/heavy_simple_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/pause_time_1"
                     android:textSize="20sp" />
@@ -195,20 +160,11 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_heavy_and_two_dots" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/heavy_double_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/pause_time_2"
                     android:textSize="20sp" />
@@ -219,20 +175,11 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_heavy_and_three_dots" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/heavy_triple_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/pause_time_3"
                     android:textSize="20sp" />
@@ -256,40 +203,24 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                <ImageView style="@style/ison_image_view_id" />
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
+                <FrameLayout
+                    android:layout_width="70dp"
+                    android:layout_height="36dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_gorgo" />
+                    <ImageView style="@style/ison_image_view_id" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    <ImageView
+                        style="@style/gorgo_small_image_view_id"
+                        android:translationX="5dp"
+                        android:translationY="-5dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
             </TableRow>
 
             <TableRow
@@ -298,19 +229,15 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
                     android:textSize="30sp" />
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
-
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1_by_2"
                     android:textSize="30sp" />
@@ -320,8 +247,8 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1"
                     android:textSize="20sp" />
@@ -346,45 +273,27 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                <ImageView style="@style/ison_image_view_id" />
 
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_digorgo" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    <ImageView style="@style/ison_image_view_id" />
+
+                    <ImageView
+                        style="@style/digorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="8dp"
+                        android:translationY="9dp" />
+
+                </FrameLayout>
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
             </TableRow>
 
             <TableRow
@@ -425,6 +334,7 @@
                     android:textSize="20sp" />
 
             </TableRow>
+
         </TableLayout>
 
         <TextView
@@ -444,52 +354,29 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                <ImageView style="@style/ison_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_trigorgo" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    <ImageView style="@style/ison_image_view_id" />
+
+                    <ImageView
+                        style="@style/trigorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="12dp"
+                        android:translationY="4dp" />
+
+                </FrameLayout>
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
             </TableRow>
 
             <TableRow
@@ -554,55 +441,65 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="54dp"
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/ison_image_view_id"
+                    android:translationY="-4dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_argo" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal|end"
+                        android:translationX="-4dp"
+                        android:translationY="28dp" />
+
+                    <ImageView
+                        style="@style/argo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="6dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/ison_image_view_id"
+                    android:translationY="-4dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_fraction" />
+                    <ImageView style="@style/embroideries_image_view_id" />
+
+                    <ImageView
+                        style="@style/gorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="2dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/fraction_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="14dp" />
+                </FrameLayout>
+
             </TableRow>
 
             <TableRow
@@ -664,51 +561,62 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/ison_image_view_id"
+                    android:translationY="-4dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_oligon_and_diargo" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal|end"
+                        android:translationX="-4dp"
+                        android:translationY="28dp" />
+
+                    <ImageView
+                        style="@style/diargo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="4dp"
+                        android:translationY="1dp" />
+
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/ison_image_view_id"
+                    android:translationY="-4dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_two_dots_and_oligon" />
+                    <ImageView style="@style/embroideries_image_view_id" />
+
+                    <ImageView
+                        style="@style/gorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="2dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/double_dots_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="8dp"
+                        android:translationY="19dp" />
+                </FrameLayout>
+
             </TableRow>
 
             <TableRow
@@ -770,51 +678,63 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/ison_image_view_id"
+                    android:translationY="-4dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_oligon_and_triargo" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal|end"
+                        android:translationX="-4dp"
+                        android:translationY="28dp" />
+
+                    <ImageView
+                        style="@style/triargo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="4dp"
+                        android:translationY="1dp" />
+
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/ison_image_view_id"
+                    android:translationY="-4dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_gorgo" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_three_dots_and_oligon" />
+                    <ImageView style="@style/embroideries_image_view_id" />
+
+                    <ImageView
+                        style="@style/gorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="2dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp">
+
+                    <ImageView
+                        style="@style/oligon_image_view_id"
+                        android:layout_height="wrap_content" />
+
+                    <ImageView
+                        style="@style/triple_dots_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="6dp"
+                        android:translationY="19dp" />
+                </FrameLayout>
             </TableRow>
 
             <TableRow

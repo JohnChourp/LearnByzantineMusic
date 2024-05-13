@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +21,8 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -27,30 +30,17 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/ison"
                     android:textSize="20sp" />
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/ison_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/zero_voice"
                     android:textSize="20sp" />
@@ -62,30 +52,17 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/oligon"
                     android:textSize="20sp" />
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
-
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/oligon_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_one_voice"
                     android:textSize="20sp" />
@@ -97,30 +74,17 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/flyer"
                     android:textSize="20sp" />
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/flyer" />
-
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/flyer_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_one_voice"
                     android:textSize="20sp" />
@@ -133,30 +97,17 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/embroideries"
                     android:textSize="20sp" />
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/embroideries" />
-
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/embroideries_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_one_voice"
                     android:textSize="20sp" />
@@ -168,30 +119,17 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/embroidery"
                     android:textSize="20sp" />
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/embroidery" />
-
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/embroidery_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_two_voice"
                     android:textSize="20sp" />
@@ -203,29 +141,17 @@
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/high"
                     android:textSize="20sp" />
 
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/high_image_view_id" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/high" />
-
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent" />
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_four_voice"
                     android:textSize="20sp" />

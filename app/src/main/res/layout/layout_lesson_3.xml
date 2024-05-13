@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,33 +33,13 @@
             android:text="@string/embroideries_definition"
             android:textSize="20sp" />
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:drawableTop="@drawable/embroideries"
             android:gravity="center"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/embroideries" />
-
-            <View
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center|center_horizontal|center_vertical"
-                android:text="@string/add_one_voice"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-
+            android:text="@string/add_one_voice"
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -73,32 +55,13 @@
             android:text="@string/flyer_definition"
             android:textSize="20sp" />
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:drawableTop="@drawable/flyer"
             android:gravity="center"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/flyer" />
-
-            <View
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center|center_horizontal|center_vertical"
-                android:text="@string/add_one_voice"
-                android:textSize="20sp" />
-
-        </LinearLayout>
+            android:text="@string/add_one_voice"
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -117,36 +80,24 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_embroideries" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    android:layout_height="36dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+                    <ImageView style="@style/oligon_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/embroideries" />
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="-2dp" />
+
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/oligon_image_view_id" />
+
+                <ImageView style="@style/embroideries_image_view_id" />
 
             </TableRow>
 
@@ -155,36 +106,24 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_oligon" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    android:layout_height="36dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/embroideries" />
+                    <ImageView style="@style/oligon_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal|end"
+                        android:translationX="-4dp"
+                        android:translationY="20dp" />
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/embroideries_image_view_id" />
+
+                <ImageView style="@style/oligon_image_view_id" />
 
             </TableRow>
 
@@ -193,35 +132,30 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_apostrophe_and_embroideries" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
+                    <ImageView style="@style/oligon_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/embroideries" />
+                    <ImageView
+                        style="@style/apostrophe_image_view_id"
+                        android:layout_gravity="start"
+                        android:translationY="4dp" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="end"
+                        android:translationX="-5dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/apostrophe_image_view_id" />
+
+                <ImageView style="@style/embroideries_image_view_id" />
 
             </TableRow>
 
@@ -230,36 +164,32 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_ison_and_embroideries" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    <ImageView style="@style/oligon_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/embroideries" />
+                    <ImageView
+                        style="@style/ison_small_image_view_id"
+                        android:layout_width="36dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="start"
+                        android:translationY="6dp" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="end"
+                        android:translationX="-5dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <ImageView style="@style/embroideries_image_view_id" />
             </TableRow>
         </TableLayout>
 
@@ -280,34 +210,13 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/underflow" />
+                <ImageView style="@style/underflow_image_view_id" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                <TextView style="@style/equal_text_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
+                <ImageView style="@style/apostrophe_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
+                <ImageView style="@style/apostrophe_image_view_id" />
 
             </TableRow>
 
@@ -316,44 +225,38 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_dot_and_underflow" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    android:layout_height="36dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    <ImageView style="@style/underflow_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
+                    <ImageView
+                        style="@style/simple_dot_small_image_view_id"
+                        android:layout_gravity="center_horizontal|bottom"
+                        android:translationX="-3dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_apostrophe_and_fraction" />
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <ImageView style="@style/apostrophe_image_view_id" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp">
+
+                    <ImageView style="@style/apostrophe_image_view_id" />
+
+                    <ImageView
+                        style="@style/fraction_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-3dp"
+                        android:translationY="-4dp" />
+
+                </FrameLayout>
             </TableRow>
 
         </TableLayout>

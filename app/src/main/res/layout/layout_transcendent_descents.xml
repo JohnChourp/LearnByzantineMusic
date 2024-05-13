@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,27 +21,19 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/slight" />
-
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/slight_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_two_voice"
                     android:textSize="20sp" />
@@ -50,20 +44,11 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_slight_minus_three_voice" />
-
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/slight_apostrophe_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_three_voice"
                     android:textSize="20sp" />
@@ -74,20 +59,11 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/low" />
-
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/low_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_four_voice"
                     android:textSize="20sp" />
@@ -98,20 +74,22 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_apostrophe_and_low" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/low_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="5dp" />
+
+                    <ImageView style="@style/apostrophe_image_view_id" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_five_voice"
                     android:textSize="20sp" />
@@ -122,20 +100,24 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_slight_and_low" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/slight_image_view_id"
+                        android:translationX="2dp" />
+
+                    <ImageView
+                        style="@style/low_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="5dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_six_voice"
                     android:textSize="20sp" />
@@ -146,20 +128,24 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_apostrophe_and_slight_and_low" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/slight_apostrophe_image_view_id"
+                        android:translationX="2dp" />
+
+                    <ImageView
+                        style="@style/low_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="5dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_seven_voice"
                     android:textSize="20sp" />
@@ -170,20 +156,21 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_minus_eight_voice" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="10dp" />
+
+                    <ImageView style="@style/low_small_image_view_id" />
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_eight_voice"
                     android:textSize="20sp" />
@@ -194,20 +181,26 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_minus_nine_voice" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="10dp" />
+
+                    <ImageView style="@style/low_small_image_view_id" />
+
+                    <ImageView
+                        style="@style/apostrophe_image_view_id"
+                        android:translationY="20dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_nine_voice"
                     android:textSize="20sp" />
@@ -218,20 +211,26 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_minus_ten_voice" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="10dp" />
+
+                    <ImageView style="@style/low_small_image_view_id" />
+
+                    <ImageView
+                        style="@style/slight_image_view_id"
+                        android:translationY="20dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_ten_voice"
                     android:textSize="20sp" />
@@ -242,20 +241,26 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_minus_eleven_voice" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="10dp" />
+
+                    <ImageView style="@style/low_small_image_view_id" />
+
+                    <ImageView
+                        style="@style/slight_apostrophe_image_view_id"
+                        android:translationY="20dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_eleven_voice"
                     android:textSize="20sp" />
@@ -266,20 +271,26 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_minus_twelve_voice" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
 
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="10dp" />
+
+                    <ImageView style="@style/low_small_image_view_id" />
+
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:translationY="21dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_twelve_voice"
                     android:textSize="20sp" />

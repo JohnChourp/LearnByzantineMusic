@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,14 +56,20 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/disimos"
                     android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="176dp"
+                    android:layout_height="18dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/disimos" />
@@ -74,14 +82,20 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/trisimos"
                     android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="256dp"
+                    android:layout_height="18dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/trisimos" />
@@ -94,14 +108,21 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/tetrasimos"
                     android:textSize="20sp" />
 
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="339dp"
+                    android:layout_height="18dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/tetrasimos" />
@@ -154,34 +175,26 @@
             android:textSize="20sp" />
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/heavy_definition_used"
             android:textSize="20sp" />
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="54dp"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/heavy" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/heavy_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/heavy"
                     android:textSize="20sp" />
@@ -189,23 +202,14 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="54dp"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_heavy_and_dot" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/heavy_simple_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/pause_time_1"
                     android:textSize="20sp" />
@@ -213,23 +217,14 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="54dp"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_heavy_and_two_dots" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/heavy_double_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/pause_time_2"
                     android:textSize="20sp" />
@@ -237,23 +232,14 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="54dp"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_heavy_and_three_dots" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/heavy_triple_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/pause_time_3"
                     android:textSize="20sp" />
@@ -274,33 +260,28 @@
             android:text="@string/time_characters_examples_definition"
             android:textSize="20sp" />
 
-
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="18dp"
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/fraction"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/fraction" />
+                <ImageView style="@style/fraction_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/phthong_1_for_2_time"
                     android:textSize="20sp" />
@@ -308,26 +289,21 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="18dp"
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/dot_simple"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/dot" />
+                <ImageView style="@style/simple_dot_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/phthong_1_for_2_time"
                     android:textSize="20sp" />
@@ -335,26 +311,21 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="18dp"
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/dot_double"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/two_dots" />
+                <ImageView style="@style/double_dots_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/phthong_1_for_3_time"
                     android:textSize="20sp" />
@@ -362,26 +333,21 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="18dp"
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/dot_triple"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/three_dots" />
+                <ImageView style="@style/triple_dots_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/phthong_1_for_4_time"
                     android:textSize="20sp" />
@@ -404,15 +370,10 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="18dp"
             android:gravity="center">
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/yfen" />
+            <ImageView style="@style/yfen_image_view_id" />
 
         </LinearLayout>
 
@@ -430,56 +391,90 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="36dp"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_fraction" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
-
-                <ImageView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/yfen_2" />
+                    android:layout_height="match_parent">
+
+                    <ImageView style="@style/ison_image_view_id" />
+
+                    <ImageView
+                        style="@style/fraction_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="17dp" />
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <FrameLayout
+                    android:layout_width="145dp"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        style="@style/ison_image_view_id"
+                        android:translationX="-73dp" />
+                    <!--the space between ison with 15dp and the first ison has 6dp space in start-->
+                    <ImageView
+                        style="@style/ison_image_view_id"
+                        android:translationX="4dp" />
+
+                    <ImageView
+                        style="@style/yfen_image_view_id"
+                        android:layout_gravity="bottom"
+                        android:translationX="46dp" />
+
+                </FrameLayout>
             </TableRow>
 
             <TableRow
-                android:layout_width="65dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
                 android:gravity="center">
 
-                <ImageView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_two_dots_and_ison" />
+                    android:layout_height="match_parent">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="50sp" />
+                    <ImageView style="@style/ison_image_view_id" />
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/yfen_3" />
+                    <ImageView
+                        style="@style/double_dots_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="8dp"
+                        android:translationY="37dp" />
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <FrameLayout
+                    android:layout_width="220dp"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        style="@style/ison_image_view_id"
+                        android:translationX="-79dp" />
+
+                    <ImageView style="@style/ison_image_view_id" />
+
+                    <ImageView
+                        style="@style/ison_image_view_id"
+                        android:translationX="79dp" />
+
+                    <ImageView
+                        style="@style/yfen_image_view_id"
+                        android:layout_gravity="bottom"
+                        android:translationX="36dp"
+                        android:translationY="-2dp" />
+
+                    <ImageView
+                        style="@style/yfen_image_view_id"
+                        android:layout_gravity="bottom"
+                        android:translationX="120dp"
+                        android:translationY="-2dp" />
+
+                </FrameLayout>
             </TableRow>
         </TableLayout>
 

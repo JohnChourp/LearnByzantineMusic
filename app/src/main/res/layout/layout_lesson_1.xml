@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -144,64 +146,64 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="54dp"
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="50dp"
+                    android:layout_height="54dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/testimonial_ni" />
+                    android:src="@drawable/diatonic_intermediates_testimonial_ni" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="50dp"
+                    android:layout_height="54dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/testimonial_pa" />
+                    android:src="@drawable/diatonic_intermediates_testimonial_pa" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="50dp"
+                    android:layout_height="54dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/testimonial_bou" />
+                    android:src="@drawable/diatonic_intermediates_testimonial_bou" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="50dp"
+                    android:layout_height="54dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/testimonial_ga" />
+                    android:src="@drawable/diatonic_intermediates_testimonial_ga" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="50dp"
+                    android:layout_height="54dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/testimonial_di" />
+                    android:src="@drawable/diatonic_intermediates_testimonial_di" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="50dp"
+                    android:layout_height="54dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/testimonial_ke" />
+                    android:src="@drawable/diatonic_intermediates_testimonial_ke" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="50dp"
+                    android:layout_height="54dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/testimonial_zo" />
+                    android:src="@drawable/diatonic_filamentous_testimonial_zo" />
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="50dp"
+                    android:layout_height="54dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/testimonial_ni_top" />
+                    android:src="@drawable/diatonic_filamentous_testimonial_ni" />
             </TableRow>
         </TableLayout>
 
@@ -311,26 +313,21 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="18dp"
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/ison"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                <ImageView style="@style/ison_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/zero_voice"
                     android:textSize="20sp" />
@@ -338,26 +335,21 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="18dp"
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/oligon"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+                <ImageView style="@style/oligon_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/add_one_voice"
                     android:textSize="20sp" />
@@ -365,26 +357,21 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="18dp"
                 android:gravity="center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/apostrophe"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
+                <ImageView style="@style/apostrophe_image_view_id" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_one_voice"
                     android:textSize="20sp" />
