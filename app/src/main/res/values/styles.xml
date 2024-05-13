@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+ison,oligon,apostrophe,fraction,
+
+heavy,heavy_simple,heavy_double,heavy_triple,
+
+simple_dot,double_dots,triple_dots,
+
+yfen,equal,embroidery,embroideries,flyer,underflow,continuous_slight
+-->
+
+<!--
+embroidery_medium
+-->
+
+<!--
+ison_small,fraction_small,embroidery_small,embroideries_small,
+
+simple_dot_small,double_dots_small,triple_dots_small,
+
+gorgo_small,presented_gorgo_small,gorgo_presented_small,
+
+digorgo_small,presented_bottom_digorgo_small,presented_middle_digorgo_small,
+presented_top_digorgo_small
+
+trigorgo_small,argo_small,diargo_small,triargo_small
+-->
+<resources>
+    <!--Normal Start-->
+    <style name="ison_image_view_id">
+        <item name="android:layout_width">62dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/ison</item>
+    </style>
+
+    <style name="oligon_image_view_id">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/oligon</item>
+    </style>
+
+    <style name="oligon_super_resolution_image_view_id">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/oligon</item>
+    </style>
+
+    <style name="apostrophe_image_view_id">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/apostrophe</item>
+    </style>
+
+    <style name="fraction_image_view_id">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/fraction</item>
+    </style>
+
+    <style name="heavy_image_view_id">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">54dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/heavy</item>
+    </style>
+
+    <style name="heavy_simple_image_view_id">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">54dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/heavy_simple_dot</item>
+    </style>
+
+    <style name="heavy_double_image_view_id">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">54dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/heavy_double_dots</item>
+    </style>
+
+    <style name="heavy_triple_image_view_id">
+        <item name="android:layout_width">66dp</item>
+        <item name="android:layout_height">54dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/heavy_triple_dots</item>
+    </style>
+
+    <style name="simple_dot_image_view_id">
+        <item name="android:layout_width">22dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/simple_dot</item>
+    </style>
+
+    <style name="double_dots_image_view_id">
+        <item name="android:layout_width">56dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/double_dots</item>
+    </style>
+
+    <style name="triple_dots_image_view_id">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/triple_dots</item>
+    </style>
+
+    <style name="yfen_image_view_id">
+        <item name="android:layout_width">62dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/yfen</item>
+    </style>
+
+    <style name="equal_text_view_id">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:text">@string/equal</item>
+        <item name="android:textSize">50sp</item>
+    </style>
+
+    <style name="embroidery_image_view_id">
+        <item name="android:layout_width">15dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/embroidery</item>
+    </style>
+
+    <style name="embroideries_image_view_id">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/embroideries</item>
+    </style>
+
+    <style name="flyer_image_view_id">
+        <item name="android:layout_width">62dp</item>
+        <item name="android:layout_height">23dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/flyer</item>
+    </style>
+
+    <style name="underflow_image_view_id">
+        <item name="android:layout_width">19dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/underflow</item>
+    </style>
+
+    <style name="slight_image_view_id">
+        <item name="android:layout_width">52dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/slight</item>
+    </style>
+
+    <style name="slight_continuous_image_view_id">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/slight_continuous</item>
+    </style>
+
+    <style name="high_image_view_id">
+        <item name="android:layout_width">42dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/high</item>
+    </style>
+
+    <style name="low_image_view_id">
+        <item name="android:layout_width">58dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/low</item>
+    </style>
+
+    <style name="slight_apostrophe_image_view_id">
+        <item name="android:layout_width">42dp</item>
+        <item name="android:layout_height">22dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/slight_apostrophe</item>
+    </style>
+
+    <style name="digital_image_view_id">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/digital</item>
+    </style>
+
+    <style name="all_right_image_view_id">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/all_right</item>
+    </style>
+
+    <style name="vaccum_image_view_id">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/vaccum</item>
+    </style>
+
+    <style name="vaccum_simple_image_view_id">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/vaccum_simple</item>
+    </style>
+
+    <style name="link_image_view_id">
+        <item name="android:layout_width">65dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/link</item>
+    </style>
+    <!--Normal End-->
+
+
+    <!--Big Start-->
+    <style name="oligon_big_image_view_id">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/oligon</item>
+    </style>
+    <!--Big End-->
+
+
+    <!--Medium Start-->
+    <style name="embroidery_medium_image_view_id">
+        <item name="android:layout_width">15dp</item>
+        <item name="android:layout_height">15dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/embroidery</item>
+    </style>
+    <!--Medium End-->
+
+
+    <!--Small Start-->
+    <style name="ison_small_image_view_id">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/ison</item>
+    </style>
+
+    <style name="fraction_small_image_view_id">
+        <item name="android:layout_width">23dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/fraction</item>
+    </style>
+
+    <style name="embroidery_small_image_view_id">
+        <item name="android:layout_width">15dp</item>
+        <item name="android:layout_height">11dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/embroidery</item>
+    </style>
+
+    <style name="embroideries_small_image_view_id">
+        <item name="android:layout_width">25dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/embroideries</item>
+    </style>
+
+    <style name="simple_dot_small_image_view_id">
+        <item name="android:layout_width">9dp</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/simple_dot</item>
+    </style>
+
+    <style name="double_dots_small_image_view_id">
+        <item name="android:layout_width">15dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/double_dots</item>
+    </style>
+
+    <style name="triple_dots_small_image_view_id">
+        <item name="android:layout_width">25dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/triple_dots</item>
+    </style>
+
+    <style name="gorgo_small_image_view_id">
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">9dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/gorgo</item>
+    </style>
+
+    <style name="presented_gorgo_small_image_view_id">
+        <item name="android:layout_width">21dp</item>
+        <item name="android:layout_height">10dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/presented_gorgo</item>
+    </style>
+
+    <style name="gorgo_presented_small_image_view_id">
+        <item name="android:layout_width">21dp</item>
+        <item name="android:layout_height">10dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/gorgo_presented</item>
+    </style>
+
+    <style name="digorgo_small_image_view_id">
+        <item name="android:layout_width">22dp</item>
+        <item name="android:layout_height">15dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/digorgo</item>
+    </style>
+
+    <style name="presented_bottom_digorgo_small_image_view_id">
+        <item name="android:layout_width">35dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/presented_bottom_digorgo</item>
+    </style>
+
+    <style name="presented_middle_digorgo_small_image_view_id">
+        <item name="android:layout_width">27dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/presented_middle_digorgo</item>
+    </style>
+
+    <style name="presented_top_digorgo_small_image_view_id">
+        <item name="android:layout_width">35dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/presented_top_digorgo</item>
+    </style>
+
+    <style name="trigorgo_small_image_view_id">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/trigorgo</item>
+    </style>
+
+    <style name="argo_small_image_view_id">
+        <item name="android:layout_width">13dp</item>
+        <item name="android:layout_height">10dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/argo</item>
+    </style>
+
+    <style name="diargo_small_image_view_id">
+        <item name="android:layout_width">17dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/diargo</item>
+    </style>
+
+    <style name="triargo_small_image_view_id">
+        <item name="android:layout_width">27dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/triargo</item>
+    </style>
+
+    <style name="low_small_image_view_id">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">27dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/low</item>
+    </style>
+
+    <style name="high_small_image_view_id">
+        <item name="android:layout_width">42dp</item>
+        <item name="android:layout_height">23dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@string/todo</item>
+        <item name="android:src">@drawable/high</item>
+    </style>
+    <!--Small End-->
+</resources>

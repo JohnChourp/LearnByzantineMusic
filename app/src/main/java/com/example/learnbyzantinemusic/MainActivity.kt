@@ -64,27 +64,36 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun openAscents() {
-        val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.Ascents::class.java)
+        val intent =
+            Intent(this, com.example.learnbyzantinemusic.summary_theory.Ascents::class.java)
         startActivity(intent)
     }
 
     private fun openDescents() {
-        val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.Descents::class.java)
+        val intent =
+            Intent(this, com.example.learnbyzantinemusic.summary_theory.Descents::class.java)
         startActivity(intent)
     }
 
     private fun openTranscendentAscents() {
-        val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.TranscendentAscents::class.java)
+        val intent = Intent(
+            this,
+            com.example.learnbyzantinemusic.summary_theory.TranscendentAscents::class.java
+        )
         startActivity(intent)
     }
 
     private fun openTranscendentDescents() {
-        val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.TranscendentDescents::class.java)
+        val intent = Intent(
+            this,
+            com.example.learnbyzantinemusic.summary_theory.TranscendentDescents::class.java
+        )
         startActivity(intent)
     }
 
     private fun openQuality() {
-        val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.Quality::class.java)
+        val intent =
+            Intent(this, com.example.learnbyzantinemusic.summary_theory.Quality::class.java)
         startActivity(intent)
     }
 

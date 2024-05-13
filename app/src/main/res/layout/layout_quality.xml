@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,13 +33,7 @@
             android:text="@string/heavy_example_definition"
             android:textSize="20sp" />
 
-        <ImageView
-            android:layout_width="65dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/todo"
-            android:src="@drawable/heavy" />
+        <ImageView style="@style/heavy_image_view_id" />
 
         <TextView
             android:layout_width="match_parent"
@@ -48,31 +44,25 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/ison" />
+            <ImageView style="@style/ison_image_view_id" />
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/phthong_with_apostrophe_and_gorgo" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="54dp">
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/oligon" />
+                <ImageView style="@style/apostrophe_image_view_id" />
+
+                <ImageView
+                    style="@style/gorgo_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationX="-1dp"
+                    android:translationY="5dp" />
+            </FrameLayout>
+
+            <ImageView style="@style/oligon_image_view_id" />
 
         </LinearLayout>
 
@@ -85,39 +75,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/heavy" />
+            <ImageView style="@style/heavy_image_view_id" />
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/ison" />
+            <ImageView style="@style/ison_image_view_id" />
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/phthong_with_apostrophe_and_gorgo" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="54dp">
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/oligon" />
+                <ImageView style="@style/apostrophe_image_view_id" />
+
+                <ImageView
+                    style="@style/gorgo_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationX="-1dp"
+                    android:translationY="5dp" />
+            </FrameLayout>
+
+            <ImageView style="@style/oligon_image_view_id" />
 
         </LinearLayout>
 
@@ -138,29 +116,11 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/phthong_with_heavy_and_dot" />
+            <ImageView style="@style/heavy_simple_image_view_id" />
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/phthong_with_heavy_and_two_dots" />
+            <ImageView style="@style/heavy_double_image_view_id" />
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/phthong_with_heavy_and_three_dots" />
+            <ImageView style="@style/heavy_triple_image_view_id" />
 
         </LinearLayout>
 
@@ -178,13 +138,7 @@
             android:text="@string/digital_definition"
             android:textSize="20sp" />
 
-        <ImageView
-            android:layout_width="65dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/todo"
-            android:src="@drawable/digital" />
+        <ImageView style="@style/digital_image_view_id" />
 
         <TextView
             android:layout_width="match_parent"
@@ -195,28 +149,29 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="35dp"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/phthong_with_digital_and_embroidery_and_oligon" />
+            <FrameLayout
+                android:layout_width="75dp"
+                android:layout_height="54dp">
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="25dp"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/apostrophe" />
+                <ImageView style="@style/oligon_image_view_id" />
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="25dp"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/apostrophe" />
+                <ImageView
+                    style="@style/embroidery_small_image_view_id"
+                    android:translationX="11dp"
+                    android:translationY="10dp" />
+
+                <ImageView
+                    style="@style/digital_image_view_id"
+                    android:translationY="18dp" />
+
+            </FrameLayout>
+
+            <ImageView style="@style/apostrophe_image_view_id" />
+
+            <ImageView style="@style/apostrophe_image_view_id" />
 
         </LinearLayout>
 
@@ -226,18 +181,23 @@
             android:text="@string/digital_example_oligon_definition"
             android:textSize="20sp" />
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center">
+            android:layout_height="54dp">
+
+            <ImageView style="@style/oligon_image_view_id" />
 
             <ImageView
-                android:layout_width="65dp"
-                android:layout_height="35dp"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/phthong_with_digital_and_embroideries_and_oligon" />
-        </LinearLayout>
+                style="@style/embroideries_small_image_view_id"
+                android:layout_gravity="center_horizontal"
+                android:translationX="4dp"
+                android:translationY="28dp" />
+
+            <ImageView
+                style="@style/digital_image_view_id"
+                android:translationY="18dp" />
+
+        </FrameLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -247,41 +207,54 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_digital_and_oligon_and_embroideries" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_digital_and_ison_and_embroideries" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <View
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="25dp" />
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="6dp" />
+
+                    <ImageView
+                        style="@style/digital_image_view_id"
+                        android:translationY="15dp" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/ison_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-15dp"
+                        android:translationY="6dp" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="16dp"
+                        android:translationY="6dp" />
+
+                    <ImageView
+                        style="@style/digital_image_view_id"
+                        android:translationY="15dp" />
+
+                </FrameLayout>
 
             </TableRow>
 
@@ -290,24 +263,53 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_digital_and_oligon_and_apostrophe_and_embroideries" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_digital_and_oligon_and_slight_and_embroideries" />
+                    <ImageView
+                        style="@style/apostrophe_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-20dp"
+                        android:translationY="4dp" />
 
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="17dp"
+                        android:translationY="6dp" />
+
+                    <ImageView
+                        style="@style/digital_image_view_id"
+                        android:translationY="15dp" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/oligon_big_image_view_id" />
+
+                    <ImageView
+                        style="@style/slight_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-14dp"
+                        android:translationY="4dp" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="21dp"
+                        android:translationY="6dp" />
+
+                    <ImageView
+                        style="@style/digital_image_view_id"
+                        android:translationY="15dp" />
+
+                </FrameLayout>
             </TableRow>
         </TableLayout>
 
@@ -325,13 +327,7 @@
             android:text="@string/all_right_definition"
             android:textSize="20sp" />
 
-        <ImageView
-            android:layout_width="65dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/todo"
-            android:src="@drawable/all_right" />
+        <ImageView style="@style/all_right_image_view_id" />
 
         <TextView
             android:layout_width="match_parent"
@@ -339,105 +335,53 @@
             android:text="@string/all_right_examples"
             android:textSize="20sp" />
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+            <FrameLayout
+                android:layout_width="150dp"
+                android:layout_height="match_parent">
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="35sp" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
+                    style="@style/oligon_image_view_id"
+                    android:translationX="-36dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+                    style="@style/ison_image_view_id"
+                    android:translationX="44dp"
+                    android:translationY="-4dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="40dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_presented_and_gorgo_andembroideries" />
+                    style="@style/all_right_image_view_id"
+                    android:translationX="15dp"
+                    android:translationY="18dp" />
+
+            </FrameLayout>
+
+            <TextView style="@style/equal_text_view_id" />
+
+            <ImageView style="@style/oligon_image_view_id" />
+
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="54dp">
+
+                <ImageView style="@style/embroideries_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
+                    style="@style/presented_gorgo_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationX="2dp"
+                    android:translationY="37dp" />
 
-            </TableRow>
+            </FrameLayout>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+            <ImageView style="@style/apostrophe_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </TableRow>
-        </TableLayout>
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -468,69 +412,45 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_oligon_and_fraction" />
+                <FrameLayout
+                    android:layout_width="80dp"
+                    android:layout_height="54dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="35sp" />
+                    <ImageView
+                        style="@style/fraction_small_image_view_id"
+                        android:translationY="-10dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/embroideries" />
+                    <ImageView style="@style/oligon_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="40dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="4dp"
+                        android:translationY="27dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    <ImageView
+                        style="@style/all_right_image_view_id"
+                        android:translationX="4dp"
+                        android:translationY="18dp" />
 
-            </TableRow>
+                </FrameLayout>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/embroideries_image_view_id" />
+
+                <ImageView style="@style/oligon_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    style="@style/ison_image_view_id"
+                    android:translationX="11dp"
+                    android:translationY="-4dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
+                    style="@style/all_right_image_view_id"
+                    android:translationX="-85dp"
+                    android:translationY="18dp" />
+
             </TableRow>
 
             <TableRow
@@ -552,68 +472,58 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_oligon_and_argo" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="35sp" />
+                    android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_gorgo_and_embroideries" />
+                    <ImageView
+                        style="@style/argo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="6dp"
+                        android:translationY="12dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="40dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="4dp"
+                        android:translationY="27dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-            </TableRow>
+                    <ImageView style="@style/oligon_image_view_id" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                    <ImageView
+                        style="@style/all_right_image_view_id"
+                        android:translationX="4dp"
+                        android:translationY="18dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
+                </FrameLayout>
 
-                <View
+                <TextView style="@style/equal_text_view_id" />
+
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="36dp">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/embroideries_image_view_id" />
+
+                    <ImageView
+                        style="@style/gorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="2dp"
+                        android:translationY="27dp" />
+
+                </FrameLayout>
+
+                <ImageView style="@style/oligon_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
+                    style="@style/ison_image_view_id"
+                    android:translationX="11dp"
+                    android:translationY="-4dp" />
+
+                <ImageView
+                    style="@style/all_right_image_view_id"
+                    android:translationX="-85dp"
+                    android:translationY="18dp" />
             </TableRow>
 
             <TableRow
@@ -635,65 +545,35 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_fraction" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="35sp" />
+                    android:layout_height="54dp">
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/ison_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="40dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    <ImageView
+                        style="@style/fraction_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="15dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-            </TableRow>
+                    <ImageView
+                        style="@style/all_right_image_view_id"
+                        android:translationX="4dp"
+                        android:translationY="18dp" />
+                </FrameLayout>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    style="@style/ison_image_view_id"
+                    android:translationX="11dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
+                    style="@style/all_right_image_view_id"
+                    android:translationX="-85dp"
+                    android:translationY="18dp" />
             </TableRow>
 
             <TableRow
@@ -715,66 +595,38 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_fraction" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/equal"
-                    android:textSize="35sp" />
+                    android:layout_height="54dp">
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/fraction_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="9dp" />
+
+                    <ImageView
+                        style="@style/all_right_image_view_id"
+                        android:translationX="4dp"
+                        android:translationY="18dp" />
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/oligon_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="40dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+                    style="@style/ison_image_view_id"
+                    android:translationX="11dp"
+                    android:translationY="-4dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/all_right_image_view_id"
+                    android:translationX="-85dp"
+                    android:translationY="18dp" />
             </TableRow>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
-            </TableRow>
         </TableLayout>
 
         <TextView
@@ -783,55 +635,41 @@
             android:text="@string/all_right_under_three_characters_example"
             android:textSize="20sp" />
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+            <ImageView style="@style/oligon_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+            <FrameLayout
+                android:layout_width="70dp"
+                android:layout_height="54dp">
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_ison_and_gorgo" />
+                    style="@style/ison_image_view_id"
+                    android:translationY="-4dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="40dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/gorgo_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationX="5dp"
+                    android:translationY="10dp" />
 
-            </TableRow>
+            </FrameLayout>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+            <ImageView
+                style="@style/all_right_image_view_id"
+                android:translationX="-100dp"
+                android:translationY="18dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
+            <ImageView
+                style="@style/ison_image_view_id"
+                android:translationX="-55dp"
+                android:translationY="-4dp" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </TableRow>
-        </TableLayout>
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -839,55 +677,52 @@
             android:text="@string/all_right_under_three_characters_example_definition"
             android:textSize="20sp" />
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_embroideries_and_trigorgo" />
+            <FrameLayout
+                android:layout_width="70dp"
+                android:layout_height="72dp">
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_apostrophe_and_embroideries" />
+                    style="@style/trigorgo_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationX="13dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="35dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
+                    style="@style/embroideries_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationY="16dp" />
 
-            </TableRow>
+                <ImageView style="@style/oligon_image_view_id" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="70dp"
+                android:layout_height="54dp">
+
+                <ImageView style="@style/oligon_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/all_right" />
+                    style="@style/apostrophe_image_view_id"
+                    android:layout_gravity="start"
+                    android:translationY="4dp" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </TableRow>
-        </TableLayout>
+                <ImageView
+                    style="@style/embroideries_small_image_view_id"
+                    android:layout_gravity="end"
+                    android:translationX="-5dp"
+                    android:translationY="6dp" />
+
+            </FrameLayout>
+
+            <ImageView style="@style/apostrophe_image_view_id" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -903,13 +738,7 @@
             android:text="@string/vaccum_definition"
             android:textSize="20sp" />
 
-        <ImageView
-            android:layout_width="65dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/todo"
-            android:src="@drawable/vaccum" />
+        <ImageView style="@style/vaccum_image_view_id" />
 
         <TextView
             android:layout_width="match_parent"
@@ -917,88 +746,50 @@
             android:text="@string/vaccum_examples"
             android:textSize="20sp" />
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
 
+            <FrameLayout
+                android:layout_width="70dp"
+                android:layout_height="54dp">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+                <ImageView style="@style/oligon_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
+                    style="@style/vaccum_image_view_id"
+                    android:translationY="18dp" />
+            </FrameLayout>
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+            <ImageView style="@style/apostrophe_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_gorgo" />
+            <View
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
+
+            <FrameLayout
+                android:layout_width="70dp"
+                android:layout_height="54dp">
+
+                <ImageView style="@style/oligon_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                    style="@style/gorgo_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationX="5dp"
+                    android:translationY="10dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/vaccum" />
+                    style="@style/vaccum_image_view_id"
+                    android:translationY="18dp" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+            </FrameLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+            <ImageView style="@style/apostrophe_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/vaccum" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </TableRow>
-        </TableLayout>
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -1006,86 +797,67 @@
             android:text="@string/vaccum_examples_with_one_dot"
             android:textSize="20sp" />
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+            <FrameLayout
+                android:layout_width="70dp"
+                android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                <ImageView style="@style/ison_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_apostrophe_and_gorgo" />
+                    style="@style/vaccum_simple_image_view_id"
+                    android:translationY="18dp" />
+            </FrameLayout>
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+            <FrameLayout
+                android:layout_width="30dp"
+                android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+                <ImageView style="@style/apostrophe_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_apostrophe_and_gorgo" />
-            </TableRow>
+                    style="@style/gorgo_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationX="-1dp"
+                    android:translationY="5dp" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+            </FrameLayout>
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_one_dot_and_vaccum" />
+            <View
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+            <FrameLayout
+                android:layout_width="70dp"
+                android:layout_height="54dp">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                <ImageView style="@style/oligon_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_one_dot_and_vaccum" />
+                    style="@style/vaccum_simple_image_view_id"
+                    android:translationY="18dp" />
+            </FrameLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </TableRow>
-        </TableLayout>
+            <FrameLayout
+                android:layout_width="30dp"
+                android:layout_height="54dp">
+
+                <ImageView style="@style/apostrophe_image_view_id" />
+
+                <ImageView
+                    style="@style/gorgo_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationX="-1dp"
+                    android:translationY="5dp" />
+
+            </FrameLayout>
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -1134,59 +906,48 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_embroideries_and_oligon" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal|end"
+                        android:translationX="-4dp"
+                        android:translationY="40dp" />
+
+                    <ImageView
+                        style="@style/vaccum_simple_image_view_id"
+                        android:translationY="27dp" />
+                </FrameLayout>
 
                 <View
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_flyer_and_embroidery_on_top" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp">
 
+                    <ImageView
+                        style="@style/flyer_image_view_id"
+                        android:translationY="7dp" />
+
+                    <ImageView
+                        style="@style/embroidery_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-1dp"
+                        android:translationY="16dp" />
+
+                    <ImageView
+                        style="@style/vaccum_simple_image_view_id"
+                        android:translationY="27dp" />
+                </FrameLayout>
 
             </TableRow>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_one_dot_and_vaccum" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_one_dot_and_vaccum" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </TableRow>
         </TableLayout>
 
         <TextView
@@ -1203,13 +964,7 @@
             android:text="@string/link_definition"
             android:textSize="20sp" />
 
-        <ImageView
-            android:layout_width="65dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/todo"
-            android:src="@drawable/link" />
+        <ImageView style="@style/link_image_view_id" />
 
         <TextView
             android:layout_width="match_parent"
@@ -1253,76 +1008,42 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="54dp"
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/ison_image_view_id"
+                    android:translationX="30dp" />
+
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/ison_image_view_id"
+                    android:translationX="41dp" />
+
+                <ImageView
+                    style="@style/link_image_view_id"
+                    android:translationX="-70dp"
+                    android:translationY="18dp" />
 
                 <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                    android:layout_width="20dp"
+                    android:layout_height="54dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/oligon" />
+                    style="@style/oligon_image_view_id"
+                    android:translationX="20dp" />
+
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/ison_image_view_id"
+                    android:translationX="31dp" />
+
+                <ImageView
+                    style="@style/link_image_view_id"
+                    android:translationX="-80dp"
+                    android:translationY="18dp" />
             </TableRow>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/link" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/link" />
-
-            </TableRow>
 
             <View
                 android:layout_width="match_parent"
@@ -1362,71 +1083,34 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
+                    style="@style/apostrophe_image_view_id"
+                    android:translationX="30dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                    style="@style/ison_image_view_id"
+                    android:translationX="21dp" />
+
+                <ImageView
+                    style="@style/link_image_view_id"
+                    android:translationX="-90dp"
+                    android:translationY="18dp" />
 
                 <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                    android:layout_width="20dp"
+                    android:layout_height="54dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/slight" />
+                    style="@style/slight_image_view_id"
+                    android:translationX="30dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                    style="@style/ison_image_view_id"
+                    android:translationX="31dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/link" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/link" />
-
+                    style="@style/link_image_view_id"
+                    android:translationX="-70dp"
+                    android:translationY="18dp" />
             </TableRow>
 
             <View
@@ -1466,73 +1150,64 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_apostrophe_and_gorgo" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/apostrophe_image_view_id" />
+
+                    <ImageView
+                        style="@style/gorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="-1dp"
+                        android:translationY="5dp" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="7dp" />
+
+                    <ImageView
+                        style="@style/gorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="1dp" />
+
+                </FrameLayout>
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_embroideries_and_gorgo" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                    style="@style/link_image_view_id"
+                    android:translationX="-120dp"
+                    android:translationY="18dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_underflow_and_gorgo" />
+                    style="@style/link_image_view_id"
+                    android:translationX="80dp"
+                    android:translationY="18dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ison" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/underflow_image_view_id" />
+
+                    <ImageView
+                        style="@style/gorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="5dp"
+                        android:translationY="5dp" />
+
+                </FrameLayout>
+
+                <ImageView style="@style/ison_image_view_id" />
             </TableRow>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/link" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/link" />
-
-            </TableRow>
         </TableLayout>
 
         <TextView
@@ -1559,83 +1234,57 @@
             android:text="@string/link_with_dots_examples"
             android:textSize="20sp" />
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+            <FrameLayout
+                android:layout_width="70dp"
+                android:layout_height="54dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_two_dots_and_ison" />
+                <ImageView style="@style/ison_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
+                    style="@style/double_dots_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationX="8dp"
+                    android:translationY="29dp" />
+            </FrameLayout>
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+            <ImageView style="@style/apostrophe_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_three_dots_and_ison" />
+            <ImageView
+                style="@style/link_image_view_id"
+                android:translationX="-75dp"
+                android:translationY="18dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/apostrophe" />
-            </TableRow>
+            <View
+                android:layout_width="20dp"
+                android:layout_height="match_parent" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+            <FrameLayout
+                android:layout_width="70dp"
+                android:layout_height="54dp">
+
+                <ImageView style="@style/ison_image_view_id" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/link" />
+                    style="@style/triple_dots_small_image_view_id"
+                    android:layout_gravity="center_horizontal"
+                    android:translationX="8dp"
+                    android:translationY="29dp" />
+            </FrameLayout>
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+            <ImageView style="@style/apostrophe_image_view_id" />
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+            <ImageView
+                style="@style/link_image_view_id"
+                android:translationX="-80dp"
+                android:translationY="18dp" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/link" />
-
-            </TableRow>
-        </TableLayout>
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -1691,109 +1340,92 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_fraction" />
-
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_ison_and_embroideries" />
-
                 <View
-                    android:layout_width="50dp"
+                    android:layout_width="70dp"
                     android:layout_height="match_parent" />
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                <FrameLayout
+                    android:layout_width="70dp"
+                    android:layout_height="36dp">
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_fraction" />
+                    <ImageView style="@style/oligon_image_view_id" />
 
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/phthong_with_oligon_and_ison_and_embroideries" />
-            </TableRow>
+                    <ImageView
+                        style="@style/fraction_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="-1dp" />
+                </FrameLayout>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                <FrameLayout
+                    android:layout_width="70dp"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/ison_small_image_view_id"
+                        android:layout_width="36dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="start"
+                        android:translationY="6dp" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="end"
+                        android:translationX="-5dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/link" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                    style="@style/link_image_view_id"
+                    android:translationX="-100dp"
+                    android:translationY="18dp" />
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/link" />
-            </TableRow>
+                    style="@style/link_image_view_id"
+                    android:translationX="110dp"
+                    android:translationY="18dp" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                <FrameLayout
+                    android:layout_width="70dp"
+                    android:layout_height="36dp">
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                    <ImageView
+                        style="@style/fraction_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="-1dp" />
+                </FrameLayout>
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                <FrameLayout
+                    android:layout_width="70dp"
+                    android:layout_height="54dp">
 
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent" />
+                    <ImageView style="@style/oligon_image_view_id" />
+
+                    <ImageView
+                        style="@style/ison_small_image_view_id"
+                        android:layout_width="36dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="start"
+                        android:translationY="6dp" />
+
+                    <ImageView
+                        style="@style/embroideries_small_image_view_id"
+                        android:layout_gravity="end"
+                        android:translationX="-5dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/digital" />
+                    style="@style/digital_image_view_id"
+                    android:layout_height="90dp"
+                    android:translationX="-80dp"
+                    android:translationY="25dp" />
+
             </TableRow>
         </TableLayout>
 
@@ -1812,8 +1444,8 @@
             android:textSize="20sp" />
 
         <ImageView
-            android:layout_width="65dp"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="18dp"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:contentDescription="@string/todo"

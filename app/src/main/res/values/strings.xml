@@ -80,7 +80,8 @@
     <string name="underflow">Υπορροή</string>
     <string name="gorgo">Γοργό</string>
     <string name="time_1_by_2">&#189;</string>
-    <string name="gorgo_definition">Σε ένα χρόνο λέμε δύο φθόγγους ίσον.\nΤο γοργό διαιρεί το χρόνο στο φθόγγο που βρίσκεται και το προηγούμενο.</string>
+    <string name="gorgo_definition_1">Σε ένα χρόνο λέμε δύο φθόγγους ίσον.</string>
+    <string name="gorgo_definition_2">Το γοργό διαιρεί το χρόνο στο φθόγγο που βρίσκεται και το προηγούμενο.</string>
     <string name="gorgo_in_climbing_compositions_and_underflow">Το γοργό στις συνθέσεις ανάβασης και την Υπορροή</string>
     <string name="presented_gorgo">Παρεστιγμένο Γοργό</string>
     <string name="presented_gorgo_definition">Το παρεστιγμένο γοργό διαιρεί το χρόνο στο φθόγγο που βρίσκεται και τον ξαναδιαιρεί.\nΕπίσης από την μεριά που βρίσκεται η κουκίδα δίνει τον χρόνο που διαιρέθηκε.</string>
@@ -193,4 +194,5 @@
     <string name="heavy_example_definition_5">Όταν η βαρεία βρίσκεται μπροστά από μια ή δυο κλπ. κουκκίδες, τότε δεν συνδέεται πλέον με αυτήν, παρα παύσιν ή σιωπή ενός χρόνου ή δυο κλπ.</string>
     <string name="pause">Παύση</string>
     <string name="title_activity_time">Time</string>
+    <string name="continuous_slight_definition">Το συνεχες ελαφρόν το ξεχωρίζουμε παρατηρώντας οτι η απόστροφος και το ελαφρόν είναι σχεδόν κολλητά(υπαρχεί πολυ μικρο κενο ανάμεσά τους).\nΕνεργεί πρώτα η απόστροφος και μετα το ελαφρόν το οποίο όμως σε αυτή τη σύνθεση κάνει κατάβαση μόνος ενός φθόγγου.</string>
 </resources>
