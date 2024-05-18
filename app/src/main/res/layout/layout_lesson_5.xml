@@ -548,6 +548,19 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:text="@string/continuous_slight_definition_2"
+            android:textSize="20sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/lesson5_continuous_slight_example" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
             android:text="@string/ascent_of_three_voices"
             android:textSize="20sp"
