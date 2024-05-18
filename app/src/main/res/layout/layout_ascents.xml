@@ -58,7 +58,9 @@
                     android:text="@string/oligon"
                     android:textSize="20sp" />
 
-                <ImageView style="@style/oligon_image_view_id" />
+                <ImageView style="@style/oligon_image_view_id"
+                    android:layout_height="8dp"
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
