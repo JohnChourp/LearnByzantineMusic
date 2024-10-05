@@ -23,16 +23,6 @@
             android:label="@string/title_activity_quality"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
-            android:name=".summary_theory.TranscendentDescents"
-            android:exported="false"
-            android:label="@string/title_activity_transcendent_descents"
-            android:theme="@style/Theme.LearnByzantineMusic" />
-        <activity
-            android:name=".summary_theory.TranscendentAscents"
-            android:exported="false"
-            android:label="@string/title_activity_transcendent_ascents"
-            android:theme="@style/Theme.LearnByzantineMusic" />
-        <activity
             android:name=".summary_theory.Descents"
             android:exported="false"
             android:label="@string/title_activity_descents"

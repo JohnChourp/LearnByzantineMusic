@@ -17,8 +17,6 @@ class MainActivity : ComponentActivity() {
 
         val ascentsBtn = findViewById<Button>(R.id.ascents_btn)
         val descentsBtn = findViewById<Button>(R.id.descents_btn)
-        val transcendentAscentsBtn = findViewById<Button>(R.id.transcendent_ascents_btn)
-        val transcendentDescentsBtn = findViewById<Button>(R.id.transcendent_descents_btn)
 
         val qualityBtn = findViewById<Button>(R.id.quality_btn)
         val timeBtn = findViewById<Button>(R.id.time_btn)
@@ -31,8 +29,6 @@ class MainActivity : ComponentActivity() {
 
         ascentsBtn.setOnClickListener { openAscents() }
         descentsBtn.setOnClickListener { openDescents() }
-        transcendentAscentsBtn.setOnClickListener { openTranscendentAscents() }
-        transcendentDescentsBtn.setOnClickListener { openTranscendentDescents() }
 
         qualityBtn.setOnClickListener { openQuality() }
         timeBtn.setOnClickListener { openTime() }
@@ -72,22 +68,6 @@ class MainActivity : ComponentActivity() {
     private fun openDescents() {
         val intent =
             Intent(this, com.example.learnbyzantinemusic.summary_theory.Descents::class.java)
-        startActivity(intent)
-    }
-
-    private fun openTranscendentAscents() {
-        val intent = Intent(
-            this,
-            com.example.learnbyzantinemusic.summary_theory.TranscendentAscents::class.java
-        )
-        startActivity(intent)
-    }
-
-    private fun openTranscendentDescents() {
-        val intent = Intent(
-            this,
-            com.example.learnbyzantinemusic.summary_theory.TranscendentDescents::class.java
-        )
         startActivity(intent)
     }
 

@@ -113,5 +113,291 @@
             </TableRow>
 
         </TableLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/transcendent_descents"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView style="@style/slight_image_view_id" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_two_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView style="@style/slight_apostrophe_image_view_id" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_three_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView style="@style/low_image_view_id" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_four_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/low_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="5dp" />
+
+                    <ImageView style="@style/apostrophe_image_view_id" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_five_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/slight_image_view_id"
+                        android:translationX="2dp" />
+
+                    <ImageView
+                        style="@style/low_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="5dp" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_six_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/slight_apostrophe_image_view_id"
+                        android:translationX="2dp" />
+
+                    <ImageView
+                        style="@style/low_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="5dp" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_seven_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="10dp" />
+
+                    <ImageView style="@style/low_small_image_view_id" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_eight_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="10dp" />
+
+                    <ImageView style="@style/low_small_image_view_id" />
+
+                    <ImageView
+                        style="@style/apostrophe_image_view_id"
+                        android:translationY="20dp" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_nine_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="10dp" />
+
+                    <ImageView style="@style/low_small_image_view_id" />
+
+                    <ImageView
+                        style="@style/slight_image_view_id"
+                        android:translationY="20dp" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_ten_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="10dp" />
+
+                    <ImageView style="@style/low_small_image_view_id" />
+
+                    <ImageView
+                        style="@style/slight_apostrophe_image_view_id"
+                        android:translationY="20dp" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_eleven_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp">
+
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationY="10dp" />
+
+                    <ImageView style="@style/low_small_image_view_id" />
+
+                    <ImageView
+                        style="@style/low_small_image_view_id"
+                        android:translationY="21dp" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/minus_twelve_voice"
+                    android:textSize="20sp" />
+            </TableRow>
+        </TableLayout>
     </LinearLayout>
 </ScrollView>
