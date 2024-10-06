@@ -10,8 +10,8 @@
     <string name="lesson_6">Μάθημα 6</string>
     <string name="lesson_7">Μάθημα 7</string>
     <string name="lesson_8">Μάθημα 8</string>
-    <string name="title_activity_lesson1" tools:ignore="Typos">Lesson1</string>
-    <string name="phthong_names">Ονόματα Φθόγγων</string>
+    <string name="title_activity_phthongs_names">Phthongs Names</string>
+    <string name="phthongs_names">Ονόματα Φθόγγων</string>
     <string name="phthongs">… Νη \t Πα \t Βου \t Γα \t Δι \t Κε \t Ζω \t Νη …</string>
     <string name="phthongs_definition">Οι Φθόγγοι προέρχονται από τα 7 πρώτα γράμματα του Ελληνικού Αλφάβητου:\n<b>Α</b>,<b>Β</b>,<b>Γ</b>,<b>Δ</b>,<b>Ε</b>,<b>Ζ</b>,<b>Η</b>\nΠ<b>Α</b> \t <b>Β</b>ΟΥ \t <b>Γ</b>Α \t <b>Δ</b>Ι \t Κ<b>Ε</b> \t <b>Ζ</b>Ω \t Ν<b>Η</b>\n\nΟι Φθόγγοι δεν σταματούν από δεξιά ούτε από αριστερά δηλαδή η παραπάνω οκτάδα αν την συνεχίζαμε απο δεξιά θα ήταν:\n\nΝη Πα Βου Γα Δι Κε Ζω … Νη Πα Βου Γα Δι Κε Ζω Νη\n\nΦανταστήτε τους φθόγγους να βρίσκονται πάνω σε μια σκάλα όπως φαίνεται παρακάτω:</string>
     <string name="todo">TODO</string>
@@ -27,7 +27,7 @@
     <string name="phthong_ke">Κε</string>
     <string name="phthong_zo">Ζω</string>
     <string name="quantity_characters">Χαρακτήρες Ποσότητος</string>
-    <string name="quantity_characters_definition">Στους χαρακτήρες ποσότητος περιλαμβάνονται τα σημάδια, τα οποία δείχνουν πόσο ανεβαίνει ή κατεβαίνει η φωνή(φθόγγος):</string>
+    <string name="quantity_characters_definition">Χαρακτήρες ποσότητος οι οποίοι δείχνουν πόσο ανεβαίνει ή κατεβαίνει η φωνή(φθόγγος):</string>
     <string name="zero_voice">0 φωνή</string>
     <string name="add_one_voice">+1 φωνή</string>
     <string name="minus_one_voice">-1 φωνή</string>
@@ -67,22 +67,22 @@
     <string name="yfen">Υφέν</string>
     <string name="yfen_definition">Υφέν σημαίνει ότι η νότα εκτελείται με μικρές διακυμάνσεις στο ύψος της.</string>
     <string name="embroideries">Κεντήματα</string>
-    <string name="embroideries_definition">Τα κεντήματα κάνουν το ίδιο που κάνει και το ολίγον, δηλαδή, ανεβάζουν μια φωνή.\nΧρησιμοποιούνται όταν θέλω να ενώσω έναν φθόγγο με έναν άλλον.\nΕπίσης είναι σαν να σέρνω τη φωνή,δηλαδή, κάνω μια πιο ασθενή ανάβαση με λιγότερη ένταση εννόντας το φθόγγο:</string>
+    <string name="embroideries_definition">Τα κεντήματα χρησιμοποιούνται όταν θέλω να ενώσω έναν φθόγγο με έναν άλλον.\nΕπίσης είναι σαν να σέρνω τη φωνή,δηλαδή, κάνω μια πιο ασθενή ανάβαση με λιγότερη ένταση εννόντας το φθόγγο:</string>
     <string name="flyer">Πεταστή</string>
-    <string name="flyer_definition">Η πεταστή κάνει το ίδιο με το ολίγον, δηλαδή, ανεβάζει μια φωνή.\nΧρησιμοποιείται όταν θέλω να κάνω μια πιο τονική ανάβαση με πολύ ένταση εννόντας το φθόγγο:</string>
+    <string name="flyer_definition">Η πεταστή χρησιμοποιείται όταν θέλω να κάνω μια πιο τονική ανάβαση με πολύ ένταση εννόντας το φθόγγο:</string>
     <string name="climbing_compositions">Συνθέσεις ανάβασης</string>
     <string name="equal">=</string>
     <string name="yfen_examples">Παραδείγματα Υφέν</string>
     <string name="trisimos_definition">Τρίσημος σημαίνει ότι κάθε 3 χρόνους(ή χτυπήματα) 3 φθόγγοι λέγονται.</string>
     <string name="tetrasimos_definition">Τρίσημος σημαίνει ότι κάθε 4 χρόνους(ή χτυπήματα) 4 φθόγγοι λέγονται.</string>
-    <string name="heavy_definition_used">Χρησιμοποιείται για παύση και είναι κενή (δεν λέμε τίποτα).</string>
+    <string name="heavy_definition_used">Η Βαρεία χρησιμοποιείται και για παύση και είναι κενή (δεν λέμε τίποτα).</string>
     <string name="title_activity_lesson4">Lesson4</string>
     <string name="underflow">Υπορροή</string>
     <string name="gorgo">Γοργό</string>
     <string name="time_1_by_2">&#189;</string>
     <string name="gorgo_definition_1">Σε ένα χρόνο λέμε δύο φθόγγους ίσον.</string>
     <string name="gorgo_definition_2">Το γοργό διαιρεί το χρόνο στο φθόγγο που βρίσκεται και το προηγούμενο.</string>
-    <string name="gorgo_in_climbing_compositions_and_underflow">Το γοργό στις συνθέσεις ανάβασης και την Υπορροή</string>
+    <string name="gorgo_in_climbing_compositions">Το γοργό στις συνθέσεις ανάβασης</string>
     <string name="presented_gorgo">Παρεστιγμένο Γοργό</string>
     <string name="presented_gorgo_definition">Το παρεστιγμένο γοργό διαιρεί το χρόνο στο φθόγγο που βρίσκεται και τον ξαναδιαιρεί.\nΕπίσης από την μεριά που βρίσκεται η κουκίδα δίνει τον χρόνο που διαιρέθηκε.</string>
     <string name="time_3_by_4">&#190;</string>
@@ -91,7 +91,7 @@
     <string name="time_1_by_3">&#8531;</string>
     <string name="trigorgo">Τρίγοργο</string>
     <string name="presented_digorgo">Παρεστιγμένο Δίγοργο</string>
-    <string name="digorgo_in_climbing_compositions_and_underflow">Το δίγοργο στις συνθέσεις ανάβασης και την Υπορροή</string>
+    <string name="digorgo_in_climbing_compositions">Το δίγοργο στις συνθέσεις ανάβασης</string>
     <string name="title_activity_lesson5">Lesson5</string>
     <string name="argo">Αργό</string>
     <string name="time_2">2</string>
@@ -128,7 +128,6 @@
     <string name="descents">Κατιόντες</string>
     <string name="transcendent_ascents">Υπερβατές Αναβάσεις</string>
     <string name="transcendent_descents">Υπερβατές Καταβάσεις</string>
-    <string name="characters_quantity">Χαρακτήρες Ποσότητος</string>
     <string name="title_activity_ascents">Ascents</string>
     <string name="embroidery">Κέντημα</string>
     <string name="high">Υψηλή</string>
@@ -196,4 +195,7 @@
     <string name="title_activity_time">Time</string>
     <string name="continuous_slight_definition">Το συνεχες ελαφρόν το ξεχωρίζουμε παρατηρώντας οτι η απόστροφος και το ελαφρόν είναι σχεδόν κολλητά(υπαρχεί πολυ μικρο κενο ανάμεσά τους).\nΕνεργεί πρώτα η απόστροφος και μετα το ελαφρόν το οποίο όμως σε αυτή τη σύνθεση κάνει κατάβαση μόνος ενός φθόγγου.</string>
     <string name="continuous_slight_definition_2">Στην παρακάτω σύνθεση δεν εκτελώ συνεχές ελαφρόν επειδή αλλάζει συλλαβή και έχει κλάσμα πάνω την απόστροφο.</string>
+    <string name="title_activity_testimonies">Testimonies</string>
+    <string name="testimonies">Μαρτυρίες</string>
+    <string name="testimonies_of_phthongs">Μαρτυρίες των φθόγγων</string>
 </resources>

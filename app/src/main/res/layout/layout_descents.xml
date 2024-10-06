@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
             android:text="@string/descents"
-            android:textSize="34sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TableLayout
@@ -44,6 +44,9 @@
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_one_voice"
                     android:textSize="20sp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </TableRow>
 
             <TableRow
@@ -66,8 +69,10 @@
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_two_voice"
                     android:textSize="20sp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </TableRow>
-
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -83,12 +88,21 @@
                 <ImageView style="@style/underflow_image_view_id" />
 
                 <TextView
+                    style="@style/equal_small_text_view_id" />
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/minus_one_plus_minus_one_voice"
-                    android:textSize="20sp" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView style="@style/apostrophe_image_view_id" />
+
+                    <View
+                        android:layout_width="15dp"
+                        android:layout_height="match_parent" />
+                    <ImageView style="@style/apostrophe_image_view_id" />
+                </LinearLayout>
             </TableRow>
+
 
             <TableRow
                 android:layout_width="match_parent"
@@ -110,6 +124,9 @@
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/minus_four_voice"
                     android:textSize="20sp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </TableRow>
 
         </TableLayout>

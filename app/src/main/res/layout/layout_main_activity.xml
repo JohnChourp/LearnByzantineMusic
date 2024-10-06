@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
     <TextView
         android:id="@+id/learn_byzantine_music_text_view"
         android:layout_width="match_parent"
@@ -27,28 +33,11 @@
             android:gravity="center">
 
             <Button
-                android:id="@+id/lesson1_btn"
+                android:id="@+id/phthongs_names_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lesson_1" />
+                android:text="@string/phthongs_names" />
 
-            <Button
-                android:id="@+id/lesson2_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lesson_2" />
-
-            <Button
-                android:id="@+id/lesson3_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lesson_3" />
-
-            <Button
-                android:id="@+id/lesson4_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lesson_4" />
 
         </TableRow>
 
@@ -58,10 +47,10 @@
             android:gravity="center">
 
             <Button
-                android:id="@+id/lesson5_btn"
+                android:id="@+id/duotrioquatro_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lesson_5" />
+                android:text="@string/duotrioquatro" />
 
         </TableRow>
     </TableLayout>
@@ -71,26 +60,96 @@
         android:layout_height="10dp" />
 
     <TextView
-        android:id="@+id/summary_theory_text_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/summary_theory"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
-
-    <TextView
-        android:id="@+id/characters_quantity_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="center|center_horizontal|center_vertical"
-        android:text="@string/characters_quantity"
+        android:text="@string/quantity_characters"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/quantity_characters_definition"
+        android:textSize="20sp" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/zero_voice"
+                android:textSize="20sp" />
+
+            <View
+                android:layout_width="60dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/zero_voice_definition"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/add_one_voice"
+                android:textSize="20sp" />
+
+            <View
+                android:layout_width="60dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/one_voice_definition"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/minus_one_voice"
+                android:textSize="20sp" />
+
+            <View
+                android:layout_width="60dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/minus_one_voice_definition"
+                android:textSize="20sp" />
+        </TableRow>
+
+    </TableLayout>
 
     <View
         android:layout_width="match_parent"
@@ -98,7 +157,7 @@
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <TableRow
             android:layout_width="match_parent"
@@ -116,8 +175,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/descents" />
-
+            <Button
+                android:id="@+id/climbing_compositions_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/climbing_compositions" />
         </TableRow>
+
     </TableLayout>
 
     <View
@@ -155,4 +219,27 @@
             android:text="@string/time" />
     </LinearLayout>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/testimonies_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:text="@string/testimonies_of_phthongs"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/testimonies_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/testimonies" />
+
+    </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

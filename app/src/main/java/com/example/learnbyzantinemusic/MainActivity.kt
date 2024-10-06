@@ -9,11 +9,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_main_activity) // Set the layout resource ID
-        val lesson1Btn = findViewById<Button>(R.id.lesson1_btn)
-        val lesson2Btn = findViewById<Button>(R.id.lesson2_btn)
-        val lesson3Btn = findViewById<Button>(R.id.lesson3_btn)
-        val lesson4Btn = findViewById<Button>(R.id.lesson4_btn)
-        val lesson5Btn = findViewById<Button>(R.id.lesson5_btn)
+        val phthongsNamesBtn = findViewById<Button>(R.id.phthongs_names_btn)
+        val duotrioquatroBtn = findViewById<Button>(R.id.duotrioquatro_btn)
+        val climbingCompositionsBtn = findViewById<Button>(R.id.climbing_compositions_btn)
 
         val ascentsBtn = findViewById<Button>(R.id.ascents_btn)
         val descentsBtn = findViewById<Button>(R.id.descents_btn)
@@ -21,41 +19,34 @@ class MainActivity : ComponentActivity() {
         val qualityBtn = findViewById<Button>(R.id.quality_btn)
         val timeBtn = findViewById<Button>(R.id.time_btn)
 
-        lesson1Btn.setOnClickListener { openLesson1() }
-        lesson2Btn.setOnClickListener { openLesson2() }
-        lesson3Btn.setOnClickListener { openLesson3() }
-        lesson4Btn.setOnClickListener { openLesson4() }
-        lesson5Btn.setOnClickListener { openLesson5() }
+
+        val testimoniesBtn = findViewById<Button>(R.id.testimonies_btn)
+
+        phthongsNamesBtn.setOnClickListener { openPhthongsNames() }
+        duotrioquatroBtn.setOnClickListener { openDuotrioquatro() }
+        climbingCompositionsBtn.setOnClickListener { openClimbingCompositions() }
 
         ascentsBtn.setOnClickListener { openAscents() }
         descentsBtn.setOnClickListener { openDescents() }
 
         qualityBtn.setOnClickListener { openQuality() }
         timeBtn.setOnClickListener { openTime() }
+
+        testimoniesBtn.setOnClickListener { openTestimonies() }
     }
 
-    private fun openLesson1() {
-        val intent = Intent(this, com.example.learnbyzantinemusic.lessons.Lesson1::class.java)
+    private fun openPhthongsNames() {
+        val intent = Intent(this, com.example.learnbyzantinemusic.lessons.PhthongsNames::class.java)
         startActivity(intent)
     }
 
-    private fun openLesson2() {
-        val intent = Intent(this, com.example.learnbyzantinemusic.lessons.Lesson2::class.java)
+    private fun openDuotrioquatro() {
+        val intent = Intent(this, com.example.learnbyzantinemusic.lessons.Duotrioquatro::class.java)
         startActivity(intent)
     }
 
-    private fun openLesson3() {
-        val intent = Intent(this, com.example.learnbyzantinemusic.lessons.Lesson3::class.java)
-        startActivity(intent)
-    }
-
-    private fun openLesson4() {
-        val intent = Intent(this, com.example.learnbyzantinemusic.lessons.Lesson4::class.java)
-        startActivity(intent)
-    }
-
-    private fun openLesson5() {
-        val intent = Intent(this, com.example.learnbyzantinemusic.lessons.Lesson5::class.java)
+    private fun openClimbingCompositions() {
+        val intent = Intent(this, com.example.learnbyzantinemusic.lessons.ClimbingCompositions::class.java)
         startActivity(intent)
     }
 
@@ -79,6 +70,11 @@ class MainActivity : ComponentActivity() {
 
     private fun openTime() {
         val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.Time::class.java)
+        startActivity(intent)
+    }
+
+    private fun openTestimonies() {
+        val intent = Intent(this, com.example.learnbyzantinemusic.summary_theory.Testimonies::class.java)
         startActivity(intent)
     }
 }

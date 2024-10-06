@@ -15,9 +15,44 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_horizontal|center_vertical"
-            android:text="@string/time"
-            android:textSize="34sp"
+            android:text="@string/time_characters"
+            android:textSize="20sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/time_characters_definition"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/time_1"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:text="@string/add_time_1"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/time_characters_examples_definition"
+            android:textSize="20sp" />
 
         <TableLayout
             android:layout_width="match_parent"
@@ -120,25 +155,18 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/heavy_definition_used"
+            android:textSize="20sp" />
+
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:stretchColumns="*">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ImageView style="@style/heavy_image_view_id" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:text="@string/heavy"
-                    android:textSize="20sp" />
-            </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
@@ -193,6 +221,18 @@
             android:text="@string/gorgo"
             android:textSize="20sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/gorgo_definition_1"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/gorgo_definition_2"
+            android:textSize="20sp" />
 
         <TableLayout
             android:layout_width="match_parent"
@@ -249,6 +289,156 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1"
+                    android:textSize="20sp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/presented_gorgo"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/presented_gorgo_definition"
+            android:textSize="20sp" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/ison_image_view_id" />
+
+                    <ImageView
+                        style="@style/presented_gorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="2dp"
+                        android:translationY="12dp" />
+
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_3_by_4"
+                    android:textSize="30sp" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_4"
+                    android:textSize="30sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/ison_image_view_id" />
+
+                    <ImageView
+                        style="@style/gorgo_presented_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="2dp"
+                        android:translationY="12dp" />
+                </FrameLayout>
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_4"
+                    android:textSize="30sp" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_3_by_4"
+                    android:textSize="30sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/time_1"
                     android:textSize="20sp" />
@@ -335,6 +525,218 @@
 
             </TableRow>
 
+        </TableLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/presented_digorgo"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/ison_image_view_id" />
+
+                    <ImageView
+                        style="@style/presented_bottom_digorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="8dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_4"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_4"
+                    android:textSize="30sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1"
+                    android:textSize="20sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/ison_image_view_id" />
+
+                    <ImageView
+                        style="@style/presented_middle_digorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="8dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_4"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_4"
+                    android:textSize="30sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <ImageView style="@style/ison_image_view_id" />
+
+                    <ImageView
+                        style="@style/presented_top_digorgo_small_image_view_id"
+                        android:layout_gravity="center_horizontal"
+                        android:translationX="8dp"
+                        android:translationY="6dp" />
+
+                </FrameLayout>
+
+                <ImageView style="@style/ison_image_view_id" />
+
+                <TextView style="@style/equal_text_view_id" />
+
+                <ImageView style="@style/ison_image_view_id" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_4"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_4"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1_by_2"
+                    android:textSize="30sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/time_1"
+                    android:textSize="20sp" />
+            </TableRow>
         </TableLayout>
 
         <TextView

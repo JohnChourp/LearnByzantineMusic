@@ -4,9 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import com.example.learnbyzantinemusic.R
 
-class Lesson1 : ComponentActivity() {
+class ClimbingCompositions : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_lesson_1) // Set the layout resource ID
+        setContentView(R.layout.climbing_compositions) // Set the layout resource ID
     }
 }

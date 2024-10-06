@@ -70,6 +70,11 @@
                     android:textSize="20sp" />
             </TableRow>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/flyer_definition"
+                android:textSize="20sp" />
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -92,6 +97,11 @@
                     android:textSize="20sp" />
             </TableRow>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/embroideries_definition"
+                android:textSize="20sp" />
 
             <TableRow
                 android:layout_width="match_parent"

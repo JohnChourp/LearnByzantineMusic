@@ -13,6 +13,11 @@
         android:theme="@style/Theme.LearnByzantineMusic"
         tools:targetApi="31">
         <activity
+            android:name=".summary_theory.Testimonies"
+            android:exported="false"
+            android:label="@string/title_activity_testimonies"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
             android:name=".summary_theory.Time"
             android:exported="false"
             android:label="@string/title_activity_time"
@@ -33,29 +38,19 @@
             android:label="@string/title_activity_ascents"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
-            android:name=".lessons.Lesson5"
-            android:exported="false"
-            android:label="@string/title_activity_lesson5"
-            android:theme="@style/Theme.LearnByzantineMusic" />
-        <activity
-            android:name=".lessons.Lesson4"
-            android:exported="false"
-            android:label="@string/title_activity_lesson4"
-            android:theme="@style/Theme.LearnByzantineMusic" />
-        <activity
-            android:name=".lessons.Lesson3"
+            android:name=".lessons.ClimbingCompositions"
             android:exported="false"
             android:label="@string/title_activity_lesson3"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
-            android:name=".lessons.Lesson2"
+            android:name=".lessons.Duotrioquatro"
             android:exported="false"
             android:label="@string/title_activity_lesson2"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
-            android:name=".lessons.Lesson1"
+            android:name=".lessons.PhthongsNames"
             android:exported="false"
-            android:label="@string/title_activity_lesson1"
+            android:label="@string/title_activity_phthongs_names"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
             android:name=".MainActivity"

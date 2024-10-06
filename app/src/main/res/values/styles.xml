@@ -133,6 +133,14 @@ trigorgo_small,argo_small,diargo_small,triargo_small
         <item name="android:src">@drawable/yfen</item>
     </style>
 
+    <style name="equal_small_text_view_id">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:text">@string/equal</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
     <style name="equal_text_view_id">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
