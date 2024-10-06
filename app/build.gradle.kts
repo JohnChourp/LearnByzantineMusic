@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.learnbyzantinemusic"
+    namespace = "com.johnchourp.learnbyzantinemusic"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.learnbyzantinemusic"
+        applicationId = "com.johnchourp.learnbyzantinemusic"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

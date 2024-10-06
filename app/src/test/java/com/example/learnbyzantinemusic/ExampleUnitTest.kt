@@ -1,4 +1,4 @@
-package com.example.learnbyzantinemusic
+package com.johnchourp.learnbyzantinemusic
 
 import org.junit.Test
 

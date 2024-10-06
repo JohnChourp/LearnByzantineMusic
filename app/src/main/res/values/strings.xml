@@ -1,5 +1,5 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">LearnByzantineMusic</string>
+<resources>
+    <string name="app_name">Μάθετε Βυζαντινή Μουσική</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="lesson_1">Μάθημα 1</string>
     <string name="learn_byzantine_music">ΜΑΘΕΤΕ ΒΥΖΑΝΤΙΝΗ ΜΟΥΣΙΚΗ</string>
