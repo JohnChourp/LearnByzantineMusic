@@ -14,6 +14,16 @@
         android:theme="@style/Theme.LearnByzantineMusic"
         tools:targetApi="31">
         <activity
+            android:name=".editor.ComposerImagesActivity"
+            android:exported="false"
+            android:label="@string/composer_images_title"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
+            android:name=".editor.ComposerActivity"
+            android:exported="false"
+            android:label="@string/composer_title"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
             android:name=".summary_theory.Testimonies"
             android:exported="false"
             android:label="@string/title_activity_testimonies"

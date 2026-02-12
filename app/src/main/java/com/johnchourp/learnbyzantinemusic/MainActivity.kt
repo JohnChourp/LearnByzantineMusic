@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
+import com.johnchourp.learnbyzantinemusic.editor.ComposerActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,6 +22,7 @@ class MainActivity : ComponentActivity() {
 
 
         val testimoniesBtn = findViewById<Button>(R.id.testimonies_btn)
+        val composerBtn = findViewById<Button>(R.id.composer_btn)
 
         phthongsNamesBtn.setOnClickListener { openPhthongsNames() }
         duotrioquatroBtn.setOnClickListener { openDuotrioquatro() }
@@ -33,6 +35,7 @@ class MainActivity : ComponentActivity() {
         timeBtn.setOnClickListener { openTime() }
 
         testimoniesBtn.setOnClickListener { openTestimonies() }
+        composerBtn.setOnClickListener { openComposer() }
     }
 
     private fun openPhthongsNames() {
@@ -75,6 +78,11 @@ class MainActivity : ComponentActivity() {
 
     private fun openTestimonies() {
         val intent = Intent(this, com.johnchourp.learnbyzantinemusic.summary_theory.Testimonies::class.java)
+        startActivity(intent)
+    }
+
+    private fun openComposer() {
+        val intent = Intent(this, ComposerActivity::class.java)
         startActivity(intent)
     }
 }

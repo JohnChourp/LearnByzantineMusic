@@ -1,0 +1,18 @@
+[
+  {"key":"ison","label":"Ίσον","text":"\uD834\uDC00","category":"basic","defaultDyDp":-24.0},
+  {"key":"oligon","label":"Ολίγον","text":"\uD834\uDC01","category":"basic","defaultDyDp":-24.0},
+  {"key":"apostrophos","label":"Απόστροφος","text":"\uD834\uDC02","category":"basic","defaultDyDp":-24.0},
+  {"key":"kentemata","label":"Κεντήματα","text":"\uD834\uDC04","category":"quality","defaultDyDp":-26.0},
+  {"key":"petaste","label":"Πεταστή","text":"\uD834\uDC06","category":"quality","defaultDyDp":-26.0},
+  {"key":"yporroi","label":"Υπορροή","text":"\uD834\uDC0A","category":"descent","defaultDyDp":-24.0},
+  {"key":"elafron","label":"Ελαφρόν","text":"\uD834\uDC0B","category":"descent","defaultDyDp":-24.0},
+  {"key":"hamili","label":"Χαμηλή","text":"\uD834\uDC0C","category":"descent","defaultDyDp":-24.0},
+  {"key":"omalon","label":"Ομαλόν","text":"\uD834\uDC12","category":"quality","defaultDyDp":18.0},
+  {"key":"psifiston","label":"Ψηφιστόν","text":"\uD834\uDC13","category":"quality","defaultDyDp":18.0},
+  {"key":"antikenoma","label":"Αντικένωμα","text":"\uD834\uDC16","category":"quality","defaultDyDp":20.0},
+  {"key":"gorgon","label":"Γοργόν","text":"\uD834\uDC1B","category":"time","defaultDyDp":-46.0},
+  {"key":"digorgon","label":"Δίγοργον","text":"\uD834\uDC1C","category":"time","defaultDyDp":-46.0},
+  {"key":"trigorgon","label":"Τρίγοργον","text":"\uD834\uDC1D","category":"time","defaultDyDp":-46.0},
+  {"key":"argon","label":"Αργόν","text":"\uD834\uDC20","category":"time","defaultDyDp":-46.0},
+  {"key":"vareia","label":"Βαρεία","text":"\uD834\uDC22","category":"time","defaultDyDp":-46.0}
+]
