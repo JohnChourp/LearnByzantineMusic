@@ -13,6 +13,7 @@
 - Επεκτάθηκε το schema συμβόλων με `fontId`/`symbolFontId` για multi-font rendering και backward compatibility στα αποθηκευμένα projects.
 - Ο Συνθέτης ξεκινά πλέον με 1 γραμμή και οι επιπλέον γραμμές προστίθενται μόνο με `+ Γραμμή`.
 - Προστέθηκε σελίδα `Εικόνες Συνθέτη` που εμφανίζει λίστα από εξαγόμενα PNG και περιλαμβάνει κουμπί `Άνοιγμα φακέλου εικόνων` με ασφαλές fallback αντιγραφής path στο clipboard.
+- Αναβαθμίστηκε το build toolchain για συμβατότητα με νεότερο Gradle deprecation policy (Kotlin plugin 1.9.24 + Compose compiler 1.5.14) και αφαιρέθηκε το `package` attribute από το `AndroidManifest.xml`.
 
 ## In Progress
 - [ ] No in-progress items identified in the current codebase.
@@ -23,3 +24,4 @@
 - [ ] Προσθήκη επεξεργασίας scale ανά σύμβολο από το UI (όχι μόνο default τιμή).
 - [ ] Προσθήκη μηχανισμού autosave και ανάκτησης τελευταίας συνεδρίας μετά από απροσδόκητο κλείσιμο.
 - [ ] Επέκταση symbol sets (επιλογή family/σετ γραμματοσειράς από UI) με συμβατότητα schema migration.
+- [ ] Σχεδιασμός πλήρους migration σε AGP 9.x / Gradle 9.x / Kotlin 2.x όταν επιβεβαιωθεί συμβατότητα με το υπάρχον Compose stack.

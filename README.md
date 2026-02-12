@@ -75,6 +75,11 @@
 - `compileSdk = 34`
 - `minSdk = 24`
 - `targetSdk = 34`
+- `Android Gradle Plugin (AGP) = 8.5.2`
+- `Gradle Wrapper = 8.7`
+- `Kotlin Gradle Plugin = 1.9.24`
+- `Compose Compiler Extension = 1.5.14`
+- Το `namespace` ορίζεται από το Gradle (`app/build.gradle.kts`) και όχι από `package` attribute στο `AndroidManifest.xml`.
 
 - Πόροι που απαιτούνται για Composer:
 - `app/src/main/assets/editor_symbols_local_v1.json` (generated local mapping)
@@ -144,6 +149,14 @@
 - Τρέξτε `scripts/prepare-local-mk-assets.sh` και ξανακάντε install.
 - Ελέγξτε `adb logcat` για πιθανά errors σε φόρτωση local fonts/symbols.
 - Η τρέχουσα υλοποίηση κάνει fallback ώστε να μη γίνεται crash.
+
+### Βλέπω warning για deprecated Gradle features. Τι να ελέγξω;
+- Επιβεβαιώστε ότι χρησιμοποιούνται οι εκδόσεις:
+- `Kotlin Gradle Plugin 1.9.24`
+- `Compose Compiler Extension 1.5.14`
+- `Gradle 8.7` και `AGP 8.5.2`
+- Τρέξτε `./gradlew clean :app:help --warning-mode all -Dorg.gradle.deprecation.trace=true` για έλεγχο ότι δεν εμφανίζεται πλέον warning `org.gradle.api.plugins.Convention`.
+- Αν δείτε warning για `package="..."` στο manifest, αφαιρέστε το `package` attribute από το root `<manifest>` και κρατήστε μόνο το `namespace` στο Gradle script.
 
 ### Πώς επηρεάζονται άλλα components;
 - Η νέα λειτουργία επηρεάζει τα εξής app components:
