@@ -61,12 +61,11 @@
             android:layout_marginTop="6dp"
             android:textSize="18sp" />
 
-        <LinearLayout
-            android:id="@+id/ascending_intervals_container"
+        <com.johnchourp.learnbyzantinemusic.modes.ScaleDiagramView
+            android:id="@+id/ascending_diagram_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical" />
+            android:layout_height="340dp"
+            android:layout_marginTop="8dp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -83,11 +82,10 @@
             android:layout_marginTop="6dp"
             android:textSize="18sp" />
 
-        <LinearLayout
-            android:id="@+id/descending_intervals_container"
+        <com.johnchourp.learnbyzantinemusic.modes.ScaleDiagramView
+            android:id="@+id/descending_diagram_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical" />
+            android:layout_height="340dp"
+            android:layout_marginTop="8dp" />
     </LinearLayout>
 </ScrollView>

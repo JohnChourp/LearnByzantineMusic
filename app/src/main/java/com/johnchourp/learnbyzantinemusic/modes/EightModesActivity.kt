@@ -2,7 +2,6 @@ package com.johnchourp.learnbyzantinemusic.modes
 
 import android.os.Bundle
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -14,8 +13,8 @@ class EightModesActivity : ComponentActivity() {
     private lateinit var selectedModeType: TextView
     private lateinit var ascendingScaleText: TextView
     private lateinit var descendingScaleText: TextView
-    private lateinit var ascendingIntervalsContainer: LinearLayout
-    private lateinit var descendingIntervalsContainer: LinearLayout
+    private lateinit var ascendingDiagramView: ScaleDiagramView
+    private lateinit var descendingDiagramView: ScaleDiagramView
 
     private val ascendingPhthongs = listOf("Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω", "Νη΄")
     private val descendingPhthongs = listOf("Νη΄", "Ζω", "Κε", "Δι", "Γα", "Βου", "Πα", "Νη")
@@ -82,8 +81,8 @@ class EightModesActivity : ComponentActivity() {
         selectedModeType = findViewById(R.id.selected_mode_type)
         ascendingScaleText = findViewById(R.id.ascending_scale_text)
         descendingScaleText = findViewById(R.id.descending_scale_text)
-        ascendingIntervalsContainer = findViewById(R.id.ascending_intervals_container)
-        descendingIntervalsContainer = findViewById(R.id.descending_intervals_container)
+        ascendingDiagramView = findViewById(R.id.ascending_diagram_view)
+        descendingDiagramView = findViewById(R.id.descending_diagram_view)
 
         setupSelector()
     }
@@ -126,39 +125,15 @@ class EightModesActivity : ComponentActivity() {
             descendingPhthongs.joinToString(" - ")
         )
 
-        bindIntervals(
-            container = ascendingIntervalsContainer,
-            fromToPhthongs = ascendingPhthongs,
-            intervals = mode.ascendingIntervals
+        ascendingDiagramView.setDiagramData(
+            phthongsTopToBottom = ascendingPhthongs.reversed(),
+            intervalsTopToBottom = mode.ascendingIntervals.reversed()
         )
-        bindIntervals(
-            container = descendingIntervalsContainer,
-            fromToPhthongs = descendingPhthongs,
-            intervals = mode.descendingIntervals
+        descendingDiagramView.setDiagramData(
+            phthongsTopToBottom = descendingPhthongs,
+            intervalsTopToBottom = mode.descendingIntervals
         )
     }
-
-    private fun bindIntervals(
-        container: LinearLayout,
-        fromToPhthongs: List<String>,
-        intervals: List<Int>
-    ) {
-        container.removeAllViews()
-        for (index in intervals.indices) {
-            val from = fromToPhthongs[index]
-            val to = fromToPhthongs[index + 1]
-            val interval = intervals[index]
-            val intervalText = getString(R.string.mode_interval_row, from, to, interval)
-            val rowView = TextView(this).apply {
-                text = intervalText
-                textSize = 18f
-                setPadding(0, dpToPx(4), 0, dpToPx(4))
-            }
-            container.addView(rowView)
-        }
-    }
-
-    private fun dpToPx(dp: Int): Int = (dp * resources.displayMetrics.density).toInt()
 
     private data class ModeDefinition(
         val nameRes: Int,
