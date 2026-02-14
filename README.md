@@ -12,11 +12,13 @@
 - Προεπιλεγμένος είναι ο `Α’ Ήχος`.
 - Με αλλαγή ήχου από το selector, ανανεώνονται γένος, φθόγγοι ανόδου, διαστήματα (μόρια) και το διάγραμμα «σκάλα».
 - Το ύψος κάθε οπτικού διαστήματος παραμένει αναλογικό στα μόρια.
+- Με press-and-hold πάνω στο όνομα φθόγγου στο διάγραμμα, αναπαράγεται συνεχής τόνος στη συχνότητα του συγκεκριμένου φθόγγου για τον επιλεγμένο ήχο.
+- Με απελευθέρωση (`UP`) ή έξοδο του δαχτύλου εκτός label (`EXIT`), ο τόνος σταματά άμεσα.
 - Για νέα έκδοση app, ο maintainer τρέχει `scripts/release-and-tag.sh` (ή το skill wrapper), γίνεται bump έκδοσης, build release artifacts, commit + tag push.
 - Με push tag `vX.Y.Z`, το GitHub Actions workflow δημοσιεύει αυτόματα GitHub Release με release packages.
 
 Κύριες αμετάβλητες αρχές:
-- Η σελίδα `8 Ήχοι` είναι read-only εκπαιδευτική προβολή.
+- Η σελίδα `8 Ήχοι` είναι εκπαιδευτική προβολή με τοπικό interaction ακρόασης φθόγγων (χωρίς αποθήκευση κατάστασης).
 - Δεν υπάρχει backend API/cloud.
 - Κάθε release πρέπει να έχει μοναδικό `versionCode` και semantic `versionName`.
 
@@ -35,6 +37,27 @@
   "genus": "Διατονικό",
   "ascending_phthongs": ["Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω", "Νη΄"],
   "ascending_moria": [12, 10, 8, 12, 12, 10, 8]
+}
+```
+
+### Input (touch φθόγγου στο διάγραμμα)
+```json
+{
+  "mode": "Α’ Ήχος",
+  "touch_action": "DOWN",
+  "phthong_label": "Πα",
+  "index_top_to_bottom": 6
+}
+```
+
+### Output (ήχος φθόγγου)
+```json
+{
+  "base_frequency_hz": 220.0,
+  "moria_from_low_ni": 12,
+  "formula": "f = 220 * 2^(moria/72)",
+  "frequency_hz": 246.94,
+  "playback": "continuous_while_pressed"
 }
 ```
 
@@ -70,6 +93,7 @@
 - `EightModesActivity`
 - `layout_eight_modes.xml`
 - `ScaleDiagramView`
+- `PhthongTonePlayer`
 
 - Release automation scripts:
 - `scripts/bump-version.sh`
@@ -96,6 +120,7 @@
 ### Happy path (UI)
 - Ο χρήστης ανοίγει την αρχική οθόνη και βλέπει στο κάτω μέρος `poweredby JohnChourp v.1.0.3`.
 - Έπειτα ανοίγει `8 Ήχοι`, επιλέγει `Πλάγιος του Β’` και βλέπει άμεσα ενημερωμένη κλίμακα/διαστήματα με σωστή οπτική αναλογία.
+- Κρατά πατημένο τον φθόγγο `Νη` και ακούει συνεχή τόνο, ο οποίος σταματά μόλις αφήσει το δάχτυλο.
 
 ### Happy path (release)
 ```bash
@@ -133,6 +158,11 @@
 - Δεν υπάρχει dispatch/routes ροή στην εφαρμογή.
 - Η λογική είναι αποκλειστικά τοπική προβολή περιεχομένου.
 
+### Δεν ακούγεται ο τόνος στους φθόγγους. Τι να ελέγξω;
+- Επιβεβαίωσε ότι γίνεται press-and-hold πάνω στο ίδιο το label του φθόγγου (όχι στο κενό του διαγράμματος).
+- Έλεγξε ένταση media του device και ότι δεν είναι σε muted/silent mode.
+- Αν άλλαξες ήχο από selector την ώρα που έπαιζε τόνος, ξαναπάτησε hold σε label για νέο playback.
+
 ### Έγινε delete/cleanup και έμειναν “ορφανά” δεδομένα. Τι κάνουμε;
 - Δεν υπάρχουν cloud resources για cleanup.
 - Για local build artifacts, χρησιμοποίησε διαγραφή φακέλων `app/build/` και `build-artifacts/release/` αν χρειάζεται reset.
@@ -148,7 +178,7 @@
 - `scripts/release-and-tag.sh`: χτίζει release artifacts, κάνει commit/tag/push.
 - `.github/workflows/android-release.yml`: δημιουργεί GitHub Release και release packages.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
-- Το runtime UI flow της εφαρμογής παραμένει αμετάβλητο.
+- `EightModesActivity`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels και αναπαραγωγή συχνοτήτων με αναφορά `Νη = 220Hz`.
 
 ### Παραδείγματα
 **Happy path**

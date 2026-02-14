@@ -6,11 +6,15 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import com.johnchourp.learnbyzantinemusic.R
+import kotlin.math.pow
 
 class EightModesActivity : ComponentActivity() {
     private lateinit var modeSelector: Spinner
     private lateinit var selectedModeType: TextView
     private lateinit var ascendingDiagramView: ScaleDiagramView
+    private lateinit var touchHintText: TextView
+    private val tonePlayer: PhthongTonePlayer by lazy { PhthongTonePlayer() }
+    private var frequenciesTopToBottom: List<Double> = emptyList()
 
     private val ascendingPhthongs = listOf("Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω", "Νη΄")
 
@@ -66,8 +70,11 @@ class EightModesActivity : ComponentActivity() {
         modeSelector = findViewById(R.id.mode_selector)
         selectedModeType = findViewById(R.id.selected_mode_type)
         ascendingDiagramView = findViewById(R.id.ascending_diagram_view)
+        touchHintText = findViewById(R.id.touch_hint_text)
 
         setupSelector()
+        setupPhthongTouchPlayback()
+        touchHintText.text = getString(R.string.eight_modes_touch_hint)
     }
 
     private fun setupSelector() {
@@ -98,6 +105,9 @@ class EightModesActivity : ComponentActivity() {
     private fun renderMode(position: Int) {
         val mode = modes.getOrElse(position) { modes.first() }
         selectedModeType.text = getString(mode.typeRes)
+        frequenciesTopToBottom = calculateFrequenciesTopToBottom(mode.ascendingIntervals)
+        tonePlayer.stop()
+        ascendingDiagramView.clearTouchState()
 
         ascendingDiagramView.setDiagramData(
             phthongsTopToBottom = ascendingPhthongs.reversed(),
@@ -105,9 +115,54 @@ class EightModesActivity : ComponentActivity() {
         )
     }
 
+    private fun setupPhthongTouchPlayback() {
+        ascendingDiagramView.setOnPhthongTouchListener { event ->
+            when (event.action) {
+                PhthongTouchAction.DOWN,
+                PhthongTouchAction.MOVE -> playFrequencyForIndex(event.indexTopToBottom)
+
+                PhthongTouchAction.UP,
+                PhthongTouchAction.CANCEL,
+                PhthongTouchAction.EXIT -> tonePlayer.stop()
+            }
+        }
+    }
+
+    private fun playFrequencyForIndex(indexTopToBottom: Int) {
+        val frequencyHz = frequenciesTopToBottom.getOrNull(indexTopToBottom) ?: return
+        tonePlayer.start(frequencyHz)
+    }
+
+    private fun calculateFrequenciesTopToBottom(ascendingIntervals: List<Int>): List<Double> {
+        val cumulativeMoriaBottomToTop = mutableListOf(0)
+        var currentMoria = 0
+        for (interval in ascendingIntervals) {
+            currentMoria += interval
+            cumulativeMoriaBottomToTop.add(currentMoria)
+        }
+        return cumulativeMoriaBottomToTop
+            .map { moria -> BASE_NI_FREQUENCY_HZ * 2.0.pow(moria / MORIA_PER_OCTAVE) }
+            .reversed()
+    }
+
+    override fun onStop() {
+        tonePlayer.stop()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        tonePlayer.release()
+        super.onDestroy()
+    }
+
     private data class ModeDefinition(
         val nameRes: Int,
         val typeRes: Int,
         val ascendingIntervals: List<Int>
     )
+
+    private companion object {
+        const val BASE_NI_FREQUENCY_HZ = 220.0
+        const val MORIA_PER_OCTAVE = 72.0
+    }
 }

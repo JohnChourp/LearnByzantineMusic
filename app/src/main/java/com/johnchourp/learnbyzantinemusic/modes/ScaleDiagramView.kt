@@ -4,10 +4,25 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.MotionEvent
 import android.view.View
 import kotlin.math.max
+
+enum class PhthongTouchAction {
+    DOWN,
+    MOVE,
+    UP,
+    CANCEL,
+    EXIT
+}
+
+data class PhthongTouchEvent(
+    val indexTopToBottom: Int,
+    val action: PhthongTouchAction
+)
 
 class ScaleDiagramView @JvmOverloads constructor(
     context: Context,
@@ -43,15 +58,40 @@ class ScaleDiagramView @JvmOverloads constructor(
         isFakeBoldText = true
     }
 
+    private val phthongActiveTextPaint = Paint(phthongTextPaint).apply {
+        color = Color.parseColor("#0D47A1")
+    }
+
+    private var phthongTouchListener: ((PhthongTouchEvent) -> Unit)? = null
+    private var labelHitAreasTopToBottom: List<RectF> = emptyList()
+    private var activeLabelIndexTopToBottom: Int = -1
+    private var isTouchSequenceActive: Boolean = false
+
     fun setDiagramData(phthongsTopToBottom: List<String>, intervalsTopToBottom: List<Int>) {
         this.phthongsTopToBottom = phthongsTopToBottom
         this.intervalsTopToBottom = intervalsTopToBottom
+        if (activeLabelIndexTopToBottom !in phthongsTopToBottom.indices) {
+            activeLabelIndexTopToBottom = -1
+        }
         invalidate()
+    }
+
+    fun setOnPhthongTouchListener(listener: ((PhthongTouchEvent) -> Unit)?) {
+        phthongTouchListener = listener
+    }
+
+    fun clearTouchState() {
+        isTouchSequenceActive = false
+        if (activeLabelIndexTopToBottom != -1) {
+            activeLabelIndexTopToBottom = -1
+            invalidate()
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (intervalsTopToBottom.isEmpty() || phthongsTopToBottom.size != intervalsTopToBottom.size + 1) {
+            labelHitAreasTopToBottom = emptyList()
             return
         }
 
@@ -66,6 +106,7 @@ class ScaleDiagramView @JvmOverloads constructor(
         val chartBottom = height - paddingBottom - insets - labelHalfHeight
 
         if (chartRight <= chartLeft || chartBottom <= chartTop) {
+            labelHitAreasTopToBottom = emptyList()
             return
         }
 
@@ -73,6 +114,7 @@ class ScaleDiagramView @JvmOverloads constructor(
 
         val segmentHeights = calculateSegmentHeights(chartTop, chartBottom)
         if (segmentHeights.isEmpty()) {
+            labelHitAreasTopToBottom = emptyList()
             return
         }
         val boundaries = buildBoundaries(chartTop, segmentHeights)
@@ -92,16 +134,111 @@ class ScaleDiagramView @JvmOverloads constructor(
             )
         }
 
+        val hitAreaPadding = dp(8f)
+        val hitAreas = mutableListOf<RectF>()
         for (index in phthongsTopToBottom.indices) {
             val boundaryY = boundaries[index]
+            val text = phthongsTopToBottom[index]
+            val baselineY = boundaryY + centeredBaseline(phthongTextPaint)
+            val drawPaint = if (index == activeLabelIndexTopToBottom) phthongActiveTextPaint else phthongTextPaint
             canvas.drawText(
-                phthongsTopToBottom[index],
+                text,
                 chartRight + labelGap,
-                boundaryY + centeredBaseline(phthongTextPaint),
-                phthongTextPaint
+                baselineY,
+                drawPaint
             )
+
+            val textWidth = phthongTextPaint.measureText(text)
+            val hitRect = RectF(
+                chartRight + labelGap - hitAreaPadding,
+                baselineY + phthongTextPaint.ascent() - hitAreaPadding,
+                chartRight + labelGap + textWidth + hitAreaPadding,
+                baselineY + phthongTextPaint.descent() + hitAreaPadding
+            )
+            hitAreas.add(hitRect)
+        }
+        labelHitAreasTopToBottom = hitAreas
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (labelHitAreasTopToBottom.isEmpty()) {
+            return super.onTouchEvent(event)
+        }
+        val touchedIndex = findLabelIndex(event.x, event.y)
+        return when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> handleDown(touchedIndex)
+            MotionEvent.ACTION_MOVE -> handleMove(touchedIndex)
+            MotionEvent.ACTION_UP -> handleUp()
+            MotionEvent.ACTION_CANCEL -> handleCancel()
+            else -> super.onTouchEvent(event)
         }
     }
+
+    private fun handleDown(touchedIndex: Int): Boolean {
+        if (touchedIndex < 0) {
+            return false
+        }
+        isTouchSequenceActive = true
+        activeLabelIndexTopToBottom = touchedIndex
+        phthongTouchListener?.invoke(PhthongTouchEvent(touchedIndex, PhthongTouchAction.DOWN))
+        parent?.requestDisallowInterceptTouchEvent(true)
+        invalidate()
+        return true
+    }
+
+    private fun handleMove(touchedIndex: Int): Boolean {
+        if (!isTouchSequenceActive) {
+            return false
+        }
+        val activeIndex = activeLabelIndexTopToBottom
+        if (activeIndex < 0) {
+            if (touchedIndex >= 0) {
+                activeLabelIndexTopToBottom = touchedIndex
+                phthongTouchListener?.invoke(PhthongTouchEvent(touchedIndex, PhthongTouchAction.MOVE))
+                invalidate()
+            }
+            return true
+        }
+        if (touchedIndex == activeIndex) {
+            return true
+        }
+        if (touchedIndex >= 0) {
+            activeLabelIndexTopToBottom = touchedIndex
+            phthongTouchListener?.invoke(PhthongTouchEvent(touchedIndex, PhthongTouchAction.MOVE))
+        } else {
+            activeLabelIndexTopToBottom = -1
+            phthongTouchListener?.invoke(PhthongTouchEvent(activeIndex, PhthongTouchAction.EXIT))
+        }
+        invalidate()
+        return true
+    }
+
+    private fun handleUp(): Boolean {
+        val activeIndex = activeLabelIndexTopToBottom
+        isTouchSequenceActive = false
+        if (activeIndex < 0) {
+            return true
+        }
+        phthongTouchListener?.invoke(PhthongTouchEvent(activeIndex, PhthongTouchAction.UP))
+        activeLabelIndexTopToBottom = -1
+        invalidate()
+        return true
+    }
+
+    private fun handleCancel(): Boolean {
+        val activeIndex = activeLabelIndexTopToBottom
+        isTouchSequenceActive = false
+        if (activeIndex < 0) {
+            return true
+        }
+        phthongTouchListener?.invoke(PhthongTouchEvent(activeIndex, PhthongTouchAction.CANCEL))
+        activeLabelIndexTopToBottom = -1
+        invalidate()
+        return true
+    }
+
+    private fun findLabelIndex(x: Float, y: Float): Int =
+        labelHitAreasTopToBottom.indexOfFirst { it.contains(x, y) }
 
     private fun calculateSegmentHeights(chartTop: Float, chartBottom: Float): List<Float> {
         if (intervalsTopToBottom.isEmpty()) {
