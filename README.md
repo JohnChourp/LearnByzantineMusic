@@ -3,11 +3,16 @@
 ## Overview
 Το `LearnByzantineMusic` είναι Android εφαρμογή εκμάθησης Βυζαντινής Μουσικής με ενότητες θεωρίας.
 Η λειτουργία `Συνθέτης` έχει καταργηθεί και έχει αντικατασταθεί από σελίδα `8 Ήχοι` με οπτική απόδοση κλιμάκων και διαστημάτων.
+Προστέθηκε σελίδα `Ρυθμίσεις` με discrete slider για μέγεθος γραμμάτων (`20/40/60/80/100`) που εφαρμόζει global font scaling σε όλες τις οθόνες.
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και packaged artifacts (`APK`, `AAB`, checksums, zip).
 
 ## Business flow
 - Ο χρήστης ανοίγει την αρχική οθόνη και επιλέγει θεωρητική ενότητα.
 - Στο κάτω μέρος της αρχικής οθόνης εμφανίζεται footer με μορφή `poweredby JohnChourp v.<release_version>`.
+- Το footer με το `poweredby JohnChourp v.<release_version>` είναι σταθερό στο κάτω μέρος της αρχικής σελίδας (εκτός scroll περιοχής).
+- Από την αρχική οθόνη ο χρήστης μπορεί να ανοίξει τη σελίδα `Ρυθμίσεις`.
+- Στη σελίδα `Ρυθμίσεις` ο χρήστης αλλάζει το μέγεθος γραμμάτων με slider που κουμπώνει μόνο στις τιμές `20/40/60/80/100` (προεπιλογή `60`).
+- Η αλλαγή αποθηκεύεται άμεσα σε local preferences (`app_font_step`) και εφαρμόζεται global σε όλες τις activities.
 - Πατώντας `8 Ήχοι`, ανοίγει η οθόνη επιλογής ήχου.
 - Προεπιλεγμένος είναι ο `Α’ Ήχος`.
 - Με αλλαγή ήχου από το selector, ανανεώνονται γένος, φθόγγοι ανόδου, διαστήματα (μόρια) και το διάγραμμα «σκάλα».
@@ -63,6 +68,24 @@
 }
 ```
 
+### Input (ρύθμιση μεγέθους γραμμάτων)
+```json
+{
+  "settings_page": true,
+  "font_size_step": 80
+}
+```
+
+### Output (global font scale)
+```json
+{
+  "stored_key": "app_font_step",
+  "stored_value": 80,
+  "font_scale": 1.1,
+  "scope": "all_activities"
+}
+```
+
 ### Input (release automation)
 ```json
 {
@@ -93,10 +116,20 @@
 
 - Κύρια components:
 - `MainActivity`
+- `SettingsActivity`
 - `EightModesActivity`
+- `BaseActivity`
+- `AppFontScale`
 - `layout_eight_modes.xml`
+- `layout_settings.xml`
 - `ScaleDiagramView`
 - `PhthongTonePlayer`
+
+- Ρυθμίσεις εφαρμογής:
+- SharedPreferences file: `learn_byzantine_music_settings`
+- Key: `app_font_step`
+- Allowed values: `20 | 40 | 60 | 80 | 100`
+- Default value: `60`
 
 - Release automation scripts:
 - `scripts/bump-version.sh`
@@ -122,6 +155,7 @@
 ## Examples
 ### Happy path (UI)
 - Ο χρήστης ανοίγει την αρχική οθόνη και βλέπει στο κάτω μέρος `poweredby JohnChourp v.1.0.3`.
+- Πατά `Ρυθμίσεις`, μετακινεί το slider στο `80` και η εφαρμογή εμφανίζει άμεσα μεγαλύτερα γράμματα.
 - Έπειτα ανοίγει `8 Ήχοι`, επιλέγει `Πλάγιος του Β’` και βλέπει άμεσα ενημερωμένη κλίμακα/διαστήματα με σωστή οπτική αναλογία.
 - Κρατά πατημένο τον φθόγγο `Νη` και ακούει συνεχή τόνο, ο οποίος σταματά μόλις αφήσει το δάχτυλο.
 
@@ -167,6 +201,11 @@
 - Έλεγξε ένταση media του device και ότι δεν είναι σε muted/silent mode.
 - Αν άλλαξες ήχο από selector την ώρα που έπαιζε τόνος, ξαναπάτησε hold σε label για νέο playback.
 
+### Δεν αλλάζει το μέγεθος γραμμάτων. Τι να ελέγξω;
+- Άνοιξε `Ρυθμίσεις` και επιβεβαίωσε ότι η τιμή άλλαξε σε ένα από τα επιτρεπτά βήματα (`20/40/60/80/100`).
+- Έλεγξε ότι δεν δοκιμάζεις την ίδια τιμή με πριν (αν μείνει ίδια, δεν αλλάζει scale).
+- Αν υπάρχει παλαιά τιμή εκτός επιτρεπτών βημάτων, το app την κανονικοποιεί αυτόματα στο κοντινότερο επιτρεπτό βήμα.
+
 ### Έγινε delete/cleanup και έμειναν “ορφανά” δεδομένα. Τι κάνουμε;
 - Δεν υπάρχουν cloud resources για cleanup.
 - Για local build artifacts, χρησιμοποίησε διαγραφή φακέλων `app/build/` και `build-artifacts/release/` αν χρειάζεται reset.
@@ -182,6 +221,7 @@
 - `scripts/release-and-tag.sh`: χτίζει release artifacts, κάνει commit/tag/push, παράγει user-friendly `RELEASE_NOTES.md` (previous tag → νέο tag) και δημιουργεί/ενημερώνει direct GitHub Release με assets και περιγραφή αλλαγών.
 - `.github/workflows/android-release.yml`: δημιουργεί GitHub Release και release packages.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
+- `SettingsActivity`, `layout_settings.xml`, `AppFontScale` και `BaseActivity`: διαχειρίζονται την αποθήκευση/εφαρμογή global font scaling για όλη την εφαρμογή.
 - `EightModesActivity`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels και αναπαραγωγή συχνοτήτων με αναφορά `Νη = 220Hz`.
 
 ### Παραδείγματα

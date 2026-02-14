@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.activity.ComponentActivity
+import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 import kotlin.math.pow
 
-class EightModesActivity : ComponentActivity() {
+class EightModesActivity : BaseActivity() {
     private lateinit var modeSelector: Spinner
     private lateinit var selectedModeType: TextView
     private lateinit var ascendingDiagramView: ScaleDiagramView

@@ -219,4 +219,10 @@
     <string name="mode_varys">Βαρύς</string>
     <string name="mode_plagal_fourth">Πλάγιος του Δ’</string>
     <string name="powered_by_version">poweredby JohnChourp v.%1$s</string>
+    <string name="title_activity_settings">Ρυθμίσεις</string>
+    <string name="settings_button">Ρυθμίσεις</string>
+    <string name="settings_page_title">Ρυθμίσεις Εφαρμογής</string>
+    <string name="settings_font_size_label">Μέγεθος γραμμάτων</string>
+    <string name="settings_font_size_value">%1$d%%</string>
+    <string name="settings_font_size_hint">Σύρε την κουκκίδα αριστερά ή δεξιά. Η τιμή αλλάζει μόνο στα σημεία 20, 40, 60, 80 και 100.</string>
 </resources>

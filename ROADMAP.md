@@ -11,6 +11,9 @@
 - Προστέθηκε local release automation με scripts για version bump, build, commit, tag και push.
 - Προστέθηκε reusable Codex skill για one-command release update του app.
 - Προστέθηκε footer στην αρχική σελίδα με μορφή `poweredby JohnChourp v.<version>` που τραβάει την τιμή από το τρέχον release version του app.
+- Προστέθηκε νέα σελίδα `Ρυθμίσεις` με discrete slider (`20/40/60/80/100`) και άμεση αποθήκευση προτίμησης μεγέθους γραμμάτων.
+- Εφαρμόστηκε global font scaling σε όλες τις activities μέσω `BaseActivity` + `AppFontScale` με μόνιμη αποθήκευση key `app_font_step`.
+- Το `poweredby` στην αρχική σελίδα μεταφέρθηκε σε σταθερό footer στο κάτω μέρος του screen.
 
 ## In Progress
 - [ ] No in-progress items identified in the current codebase.

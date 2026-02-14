@@ -4,10 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import androidx.activity.ComponentActivity
 import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_main_activity) // Set the layout resource ID
@@ -24,6 +23,7 @@ class MainActivity : ComponentActivity() {
 
         val testimoniesBtn = findViewById<Button>(R.id.testimonies_btn)
         val eightModesBtn = findViewById<Button>(R.id.eight_modes_btn)
+        val settingsBtn = findViewById<Button>(R.id.settings_btn)
         val poweredByTextView = findViewById<TextView>(R.id.powered_by_text_view)
 
         poweredByTextView.text =
@@ -41,6 +41,7 @@ class MainActivity : ComponentActivity() {
 
         testimoniesBtn.setOnClickListener { openTestimonies() }
         eightModesBtn.setOnClickListener { openEightModes() }
+        settingsBtn.setOnClickListener { openSettings() }
     }
 
     private fun openPhthongsNames() {
@@ -88,6 +89,11 @@ class MainActivity : ComponentActivity() {
 
     private fun openEightModes() {
         val intent = Intent(this, EightModesActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openSettings() {
+        val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 }
