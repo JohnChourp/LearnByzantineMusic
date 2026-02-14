@@ -3,7 +3,7 @@
 ## Overview
 Το `LearnByzantineMusic` είναι Android εφαρμογή εκμάθησης Βυζαντινής Μουσικής με ενότητες θεωρίας.
 Η λειτουργία `Συνθέτης` έχει καταργηθεί και έχει αντικατασταθεί από σελίδα `8 Ήχοι` με οπτική απόδοση κλιμάκων και διαστημάτων.
-Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish και packaged artifacts (`APK`, `AAB`, checksums, zip).
+Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και packaged artifacts (`APK`, `AAB`, checksums, zip).
 
 ## Business flow
 - Ο χρήστης ανοίγει την αρχική οθόνη και επιλέγει θεωρητική ενότητα.
@@ -15,7 +15,8 @@
 - Με press-and-hold πάνω στο όνομα φθόγγου στο διάγραμμα, αναπαράγεται συνεχής τόνος στη συχνότητα του συγκεκριμένου φθόγγου για τον επιλεγμένο ήχο.
 - Με απελευθέρωση (`UP`) ή έξοδο του δαχτύλου εκτός label (`EXIT`), ο τόνος σταματά άμεσα.
 - Για νέα έκδοση app, ο maintainer τρέχει `scripts/release-and-tag.sh` (ή το skill wrapper), γίνεται bump έκδοσης, build release artifacts, commit + tag push.
-- Το release script δημοσιεύει άμεσα GitHub Release με assets μέσω `gh release create/upload` (συμπεριλαμβάνει και `apk-release.apk` για εύκολο mobile install download).
+- Το release script δημιουργεί αυτόματα συνοπτική, user-friendly περιγραφή αλλαγών από previous tag σε νέο tag (`RELEASE_NOTES.md`) με πλήρη λίστα commits.
+- Το release script δημοσιεύει άμεσα GitHub Release με assets μέσω `gh release create/upload` (συμπεριλαμβάνει και `apk-release.apk` για εύκολο mobile install download) και χρησιμοποιεί τα generated notes ως release description.
 - Με push tag `vX.Y.Z`, το GitHub Actions workflow παραμένει ως επιπλέον fallback για release packaging.
 
 Κύριες αμετάβλητες αρχές:
@@ -76,6 +77,7 @@
   "version_code": 3,
   "tag": "v1.0.3",
   "github_release": "published",
+  "release_notes": "build-artifacts/release/v1.0.3/RELEASE_NOTES.md",
   "assets": ["apk", "aab", "zip", "sha256"]
 }
 ```
@@ -128,6 +130,7 @@
 ./scripts/release-and-tag.sh --bump patch
 ```
 - Αναμενόμενο: νέο commit έκδοσης, νέο tag `vX.Y.Z`, push στο GitHub, direct publish GitHub Release και upload `APK/AAB/ZIP/SHA256`.
+- Το GitHub Release description περιλαμβάνει συνοπτική εικόνα (commits/files/contributors), περιοχές που επηρεάστηκαν και πλήρη λίστα αλλαγών από το προηγούμενο release.
 
 ### Failure example
 ```json
@@ -176,7 +179,7 @@
 ### Πώς επηρεάζονται άλλα components;
 - `app/build.gradle.kts`: προστέθηκε conditional release signing από environment variables.
 - `scripts/bump-version.sh`: χειρίζεται `versionName/versionCode` bump.
-- `scripts/release-and-tag.sh`: χτίζει release artifacts, κάνει commit/tag/push και δημιουργεί/ενημερώνει direct GitHub Release με assets.
+- `scripts/release-and-tag.sh`: χτίζει release artifacts, κάνει commit/tag/push, παράγει user-friendly `RELEASE_NOTES.md` (previous tag → νέο tag) και δημιουργεί/ενημερώνει direct GitHub Release με assets και περιγραφή αλλαγών.
 - `.github/workflows/android-release.yml`: δημιουργεί GitHub Release και release packages.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
 - `EightModesActivity`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels και αναπαραγωγή συχνοτήτων με αναφορά `Νη = 220Hz`.

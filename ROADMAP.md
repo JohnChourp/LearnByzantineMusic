@@ -6,6 +6,7 @@
 - Προστέθηκε tap-and-hold αλληλεπίδραση στους φθόγγους της σελίδας `8 Ήχοι` με αναπαραγωγή συχνοτήτων βάσει μορίων (`Νη = 220Hz`, `f = 220 * 2^(m/72)`).
 - Ρυθμίστηκε αυτοματοποιημένο Android release pipeline με tag trigger (`vX.Y.Z`) σε GitHub Actions.
 - Προστέθηκε direct GitHub Release publish στο `scripts/release-and-tag.sh` με upload assets και σταθερό alias `apk-release.apk` για εύκολο mobile download/install.
+- Προστέθηκε αυτόματη δημιουργία user-friendly release notes στο `scripts/release-and-tag.sh` με σύνοψη και πλήρη λίστα αλλαγών από previous tag στο νέο release.
 - Προστέθηκε release packaging με artifacts `APK`, `AAB`, checksums και zip bundle ανά έκδοση.
 - Προστέθηκε local release automation με scripts για version bump, build, commit, tag και push.
 - Προστέθηκε reusable Codex skill για one-command release update του app.
@@ -15,7 +16,6 @@
 - [ ] No in-progress items identified in the current codebase.
 
 ## Next
-- [ ] Ενσωμάτωση changelog template ανά release για πιο στοχευμένες release notes.
 - [ ] Προσθήκη αυτόματου smoke test (launch sanity) πριν το publish του release.
 - [ ] Προσθήκη προστασίας ώστε το release script να μπλοκάρει όταν ο remote branch δεν είναι up-to-date.
 - [ ] Προσθήκη επιλογής για prerelease tags (π.χ. `v1.1.0-rc.1`) όταν απαιτούνται δοκιμαστικές διανομές.

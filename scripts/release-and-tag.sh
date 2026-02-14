@@ -67,7 +67,8 @@ fi
 ensure_gh_release() {
     local tag="$1"
     local target_branch="$2"
-    shift 2
+    local notes_file="$3"
+    shift 3
     local assets=("$@")
 
     if [[ "$PUBLISH_GH_RELEASE" -eq 0 ]]; then
@@ -88,12 +89,15 @@ ensure_gh_release() {
     local release_title="LearnByzantineMusic $tag"
     if gh release view "$tag" >/dev/null 2>&1; then
         gh release upload "$tag" "${assets[@]}" --clobber
-        gh release edit "$tag" --title "$release_title" --latest
+        gh release edit "$tag" \
+            --title "$release_title" \
+            --notes-file "$notes_file" \
+            --latest
     else
         gh release create "$tag" "${assets[@]}" \
             --title "$release_title" \
             --target "$target_branch" \
-            --generate-notes \
+            --notes-file "$notes_file" \
             --latest
     fi
 
@@ -106,13 +110,141 @@ ensure_gh_release() {
     echo "[release] GitHub Release URL: $release_url"
 }
 
+get_origin_repo_slug() {
+    local origin_url
+    origin_url="$(git remote get-url origin 2>/dev/null || true)"
+    if [[ -z "$origin_url" ]]; then
+        return 0
+    fi
+
+    origin_url="${origin_url#git@github.com:}"
+    origin_url="${origin_url#https://github.com/}"
+    origin_url="${origin_url#http://github.com/}"
+    origin_url="${origin_url%.git}"
+
+    if [[ "$origin_url" == */* ]]; then
+        echo "$origin_url"
+    fi
+}
+
+find_previous_tag() {
+    local current_tag="$1"
+    local old_version_name="$2"
+    local candidate_tag=""
+
+    if [[ -n "$old_version_name" ]]; then
+        candidate_tag="v${old_version_name}"
+        if [[ "$candidate_tag" != "$current_tag" ]] && git rev-parse "$candidate_tag" >/dev/null 2>&1; then
+            echo "$candidate_tag"
+            return 0
+        fi
+    fi
+
+    candidate_tag="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+    if [[ -n "$candidate_tag" && "$candidate_tag" != "$current_tag" ]]; then
+        echo "$candidate_tag"
+        return 0
+    fi
+
+    echo ""
+}
+
+write_release_notes() {
+    local previous_tag="$1"
+    local current_tag="$2"
+    local notes_path="$3"
+    local range_spec="$current_tag"
+    if [[ -n "$previous_tag" ]]; then
+        range_spec="${previous_tag}..${current_tag}"
+    fi
+
+    local -a commits=()
+    while IFS=$'\x1f' read -r sha subject; do
+        [[ -z "$sha" || -z "$subject" ]] && continue
+        if [[ "$subject" =~ ^release:\ v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            continue
+        fi
+        commits+=("${sha}"$'\x1f'"${subject}")
+    done < <(git log --reverse --pretty=format:'%H%x1f%s' "$range_spec")
+
+    local -a changed_files=()
+    mapfile -t changed_files < <(git log --pretty='' --name-only "$range_spec" | sed '/^$/d' | sort -u)
+
+    local commit_count="${#commits[@]}"
+    local file_count="${#changed_files[@]}"
+    local contributor_count
+    contributor_count="$(git log --pretty='%an' "$range_spec" | sed '/^$/d' | sort -u | wc -l | tr -d ' ')"
+
+    local -A area_counts=()
+    local file area
+    for file in "${changed_files[@]}"; do
+        area="${file%%/*}"
+        if [[ "$file" != */* ]]; then
+            area="(root)"
+        fi
+        area_counts["$area"]=$((area_counts["$area"] + 1))
+    done
+
+    local repo_slug
+    repo_slug="$(get_origin_repo_slug)"
+    local compare_url=""
+    if [[ -n "$previous_tag" && -n "$repo_slug" ]]; then
+        compare_url="https://github.com/${repo_slug}/compare/${previous_tag}...${current_tag}"
+    fi
+
+    {
+        echo "# LearnByzantineMusic ${current_tag}"
+        echo
+        echo "## Τι νέο περιλαμβάνει αυτή η έκδοση"
+        if [[ -n "$previous_tag" ]]; then
+            echo "- Συνοπτική εικόνα αλλαγών από \`${previous_tag}\` έως \`${current_tag}\`."
+        else
+            echo "- Πρώτη διαθέσιμη έκδοση με συνοπτική καταγραφή όλων των αλλαγών έως \`${current_tag}\`."
+        fi
+        echo "- Συνολικά commits: **${commit_count}**"
+        echo "- Επηρεασμένα αρχεία: **${file_count}**"
+        echo "- Συνεισφέροντες: **${contributor_count}**"
+        if [[ -n "$compare_url" ]]; then
+            echo "- Σύγκριση στο GitHub: [${previous_tag}...${current_tag}](${compare_url})"
+        fi
+        echo
+        echo "## Περιοχές που επηρεάστηκαν περισσότερο"
+        if [[ "${#area_counts[@]}" -eq 0 ]]; then
+            echo "- Δεν εντοπίστηκαν αλλαγές αρχείων για το συγκεκριμένο εύρος."
+        else
+            while IFS=$'\t' read -r count top_area; do
+                echo "- \`${top_area}\`: ${count} αρχείο(α)"
+            done < <(
+                for top_area in "${!area_counts[@]}"; do
+                    printf '%s\t%s\n' "${area_counts[$top_area]}" "$top_area"
+                done | sort -rn | head -n 8
+            )
+        fi
+        echo
+        echo "## Αναλυτική λίστα αλλαγών"
+        if [[ "$commit_count" -eq 0 ]]; then
+            echo "- Δεν βρέθηκαν επιπλέον λειτουργικές αλλαγές πέρα από το release bump."
+        else
+            local entry sha subject short_sha
+            for entry in "${commits[@]}"; do
+                sha="${entry%%$'\x1f'*}"
+                subject="${entry#*$'\x1f'}"
+                short_sha="${sha:0:7}"
+                echo "- ${subject} (\`${short_sha}\`)"
+            done
+        fi
+    } > "$notes_path"
+}
+
 mapfile -t bump_output < <("$BUMP_SCRIPT" "${BUMP_ARGS[@]}")
 printf '%s\n' "${bump_output[@]}"
 
 NEW_VERSION_NAME=""
 NEW_VERSION_CODE=""
+OLD_VERSION_NAME=""
 for line in "${bump_output[@]}"; do
     case "$line" in
+        OLD_VERSION_NAME=*) OLD_VERSION_NAME="${line#OLD_VERSION_NAME=}" ;;
         NEW_VERSION_NAME=*) NEW_VERSION_NAME="${line#NEW_VERSION_NAME=}" ;;
         NEW_VERSION_CODE=*) NEW_VERSION_CODE="${line#NEW_VERSION_CODE=}" ;;
     esac
@@ -131,6 +263,13 @@ fi
 if git ls-remote --tags origin "$TAG" | grep -q "$TAG"; then
     echo "ERROR: Το tag $TAG υπάρχει ήδη στο origin." >&2
     exit 1
+fi
+
+PREVIOUS_TAG="$(find_previous_tag "$TAG" "$OLD_VERSION_NAME")"
+if [[ -n "$PREVIOUS_TAG" ]]; then
+    echo "[release] Previous release tag: $PREVIOUS_TAG"
+else
+    echo "[release] Previous release tag: none (first release baseline)"
 fi
 
 echo "[release] Build release artifacts για $TAG"
@@ -188,11 +327,15 @@ git add app/build.gradle.kts
 git commit -m "release: $TAG"
 git tag -a "$TAG" -m "Release $TAG"
 
+RELEASE_NOTES_PATH="$RELEASE_DIR/RELEASE_NOTES.md"
+write_release_notes "$PREVIOUS_TAG" "$TAG" "$RELEASE_NOTES_PATH"
+echo "[release] Δημιουργήθηκαν release notes: $RELEASE_NOTES_PATH"
+
 BRANCH="$(git branch --show-current)"
 if [[ "$PUSH_CHANGES" -eq 1 ]]; then
     git push origin "$BRANCH"
     git push origin "$TAG"
-    ensure_gh_release "$TAG" "$BRANCH" "$APK_ALIAS_PATH" "$AAB_ALIAS_PATH" "$ZIP_PATH" "$CHECKSUMS_PATH"
+    ensure_gh_release "$TAG" "$BRANCH" "$RELEASE_NOTES_PATH" "$APK_ALIAS_PATH" "$AAB_ALIAS_PATH" "$ZIP_PATH" "$CHECKSUMS_PATH"
     echo "[release] Έγινε push branch=$BRANCH και tag=$TAG"
     echo "[release] Το GitHub Action παραμένει ενεργό ως επιπλέον fallback."
 else
