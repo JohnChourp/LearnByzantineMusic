@@ -15,7 +15,8 @@
 - Με press-and-hold πάνω στο όνομα φθόγγου στο διάγραμμα, αναπαράγεται συνεχής τόνος στη συχνότητα του συγκεκριμένου φθόγγου για τον επιλεγμένο ήχο.
 - Με απελευθέρωση (`UP`) ή έξοδο του δαχτύλου εκτός label (`EXIT`), ο τόνος σταματά άμεσα.
 - Για νέα έκδοση app, ο maintainer τρέχει `scripts/release-and-tag.sh` (ή το skill wrapper), γίνεται bump έκδοσης, build release artifacts, commit + tag push.
-- Με push tag `vX.Y.Z`, το GitHub Actions workflow δημοσιεύει αυτόματα GitHub Release με release packages.
+- Το release script δημοσιεύει άμεσα GitHub Release με assets μέσω `gh release create/upload` (συμπεριλαμβάνει και `apk-release.apk` για εύκολο mobile install download).
+- Με push tag `vX.Y.Z`, το GitHub Actions workflow παραμένει ως επιπλέον fallback για release packaging.
 
 Κύριες αμετάβλητες αρχές:
 - Η σελίδα `8 Ήχοι` είναι εκπαιδευτική προβολή με τοπικό interaction ακρόασης φθόγγων (χωρίς αποθήκευση κατάστασης).
@@ -126,7 +127,7 @@
 ```bash
 ./scripts/release-and-tag.sh --bump patch
 ```
-- Αναμενόμενο: νέο commit έκδοσης, νέο tag `vX.Y.Z`, push στο GitHub, και αυτόματο Release με `APK/AAB/ZIP/SHA256`.
+- Αναμενόμενο: νέο commit έκδοσης, νέο tag `vX.Y.Z`, push στο GitHub, direct publish GitHub Release και upload `APK/AAB/ZIP/SHA256`.
 
 ### Failure example
 ```json
@@ -168,14 +169,14 @@
 - Για local build artifacts, χρησιμοποίησε διαγραφή φακέλων `app/build/` και `build-artifacts/release/` αν χρειάζεται reset.
 
 ### Γιατί δεν δημοσιεύεται release όταν κάνω push;
-- Το workflow ενεργοποιείται μόνο σε push tag μορφής `v*.*.*`.
+- Το script κάνει direct publish με `gh`; έλεγξε πρώτα ότι υπάρχει ενεργό `gh auth login`.
+- Αν χρησιμοποιείς `--skip-gh-release`, τότε η δημοσίευση εξαρτάται από το workflow tag trigger `v*.*.*`.
 - Έλεγξε ότι έγινε push και του tag (`git push origin vX.Y.Z`), όχι μόνο branch.
-- Έλεγξε στο GitHub Actions αν το job `Android Tag Release` ολοκληρώθηκε επιτυχώς.
 
 ### Πώς επηρεάζονται άλλα components;
 - `app/build.gradle.kts`: προστέθηκε conditional release signing από environment variables.
 - `scripts/bump-version.sh`: χειρίζεται `versionName/versionCode` bump.
-- `scripts/release-and-tag.sh`: χτίζει release artifacts, κάνει commit/tag/push.
+- `scripts/release-and-tag.sh`: χτίζει release artifacts, κάνει commit/tag/push και δημιουργεί/ενημερώνει direct GitHub Release με assets.
 - `.github/workflows/android-release.yml`: δημιουργεί GitHub Release και release packages.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
 - `EightModesActivity`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels και αναπαραγωγή συχνοτήτων με αναφορά `Νη = 220Hz`.

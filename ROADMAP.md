@@ -5,6 +5,7 @@
 - Προστέθηκε αναλογική οπτική αποτύπωση διαστημάτων τύπου «σκάλα» στην ενότητα `8 Ήχοι`.
 - Προστέθηκε tap-and-hold αλληλεπίδραση στους φθόγγους της σελίδας `8 Ήχοι` με αναπαραγωγή συχνοτήτων βάσει μορίων (`Νη = 220Hz`, `f = 220 * 2^(m/72)`).
 - Ρυθμίστηκε αυτοματοποιημένο Android release pipeline με tag trigger (`vX.Y.Z`) σε GitHub Actions.
+- Προστέθηκε direct GitHub Release publish στο `scripts/release-and-tag.sh` με upload assets και σταθερό alias `apk-release.apk` για εύκολο mobile download/install.
 - Προστέθηκε release packaging με artifacts `APK`, `AAB`, checksums και zip bundle ανά έκδοση.
 - Προστέθηκε local release automation με scripts για version bump, build, commit, tag και push.
 - Προστέθηκε reusable Codex skill για one-command release update του app.
