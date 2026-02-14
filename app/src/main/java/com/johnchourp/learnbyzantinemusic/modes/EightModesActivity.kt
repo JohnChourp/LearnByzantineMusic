@@ -9,9 +9,7 @@ import com.johnchourp.learnbyzantinemusic.R
 
 class EightModesActivity : ComponentActivity() {
     private lateinit var modeSelector: Spinner
-    private lateinit var selectedModeTitle: TextView
     private lateinit var selectedModeType: TextView
-    private lateinit var ascendingScaleText: TextView
     private lateinit var ascendingDiagramView: ScaleDiagramView
 
     private val ascendingPhthongs = listOf("Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω", "Νη΄")
@@ -66,9 +64,7 @@ class EightModesActivity : ComponentActivity() {
         setContentView(R.layout.layout_eight_modes)
 
         modeSelector = findViewById(R.id.mode_selector)
-        selectedModeTitle = findViewById(R.id.selected_mode_title)
         selectedModeType = findViewById(R.id.selected_mode_type)
-        ascendingScaleText = findViewById(R.id.ascending_scale_text)
         ascendingDiagramView = findViewById(R.id.ascending_diagram_view)
 
         setupSelector()
@@ -101,12 +97,7 @@ class EightModesActivity : ComponentActivity() {
 
     private fun renderMode(position: Int) {
         val mode = modes.getOrElse(position) { modes.first() }
-        selectedModeTitle.text = getString(R.string.mode_selected_label, getString(mode.nameRes))
         selectedModeType.text = getString(mode.typeRes)
-        ascendingScaleText.text = getString(
-            R.string.mode_scale_notes,
-            ascendingPhthongs.joinToString(" - ")
-        )
 
         ascendingDiagramView.setDiagramData(
             phthongsTopToBottom = ascendingPhthongs.reversed(),

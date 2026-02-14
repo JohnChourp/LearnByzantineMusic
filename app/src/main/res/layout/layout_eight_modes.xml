@@ -32,39 +32,16 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/selected_mode_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
             android:id="@+id/selected_mode_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textSize="18sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="@string/mode_ascending_label"
-            android:textSize="19sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/ascending_scale_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="16dp"
             android:textSize="18sp" />
 
         <com.johnchourp.learnbyzantinemusic.modes.ScaleDiagramView
             android:id="@+id/ascending_diagram_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="18dp" />
     </LinearLayout>
 </ScrollView>
