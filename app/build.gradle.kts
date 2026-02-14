@@ -6,6 +6,15 @@ plugins {
 android {
     namespace = "com.johnchourp.learnbyzantinemusic"
     compileSdk = 34
+    val signingStoreFile = System.getenv("ANDROID_SIGNING_STORE_FILE")
+    val signingStorePassword = System.getenv("ANDROID_SIGNING_STORE_PASSWORD")
+    val signingKeyAlias = System.getenv("ANDROID_SIGNING_KEY_ALIAS")
+    val signingKeyPassword = System.getenv("ANDROID_SIGNING_KEY_PASSWORD")
+    val hasReleaseSigning =
+        !signingStoreFile.isNullOrBlank() &&
+            !signingStorePassword.isNullOrBlank() &&
+            !signingKeyAlias.isNullOrBlank() &&
+            !signingKeyPassword.isNullOrBlank()
 
     defaultConfig {
         applicationId = "com.johnchourp.learnbyzantinemusic"
@@ -20,10 +29,24 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            if (hasReleaseSigning) {
+                storeFile = file(signingStoreFile!!)
+                storePassword = signingStorePassword
+                keyAlias = signingKeyAlias
+                keyPassword = signingKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     compileOptions {
