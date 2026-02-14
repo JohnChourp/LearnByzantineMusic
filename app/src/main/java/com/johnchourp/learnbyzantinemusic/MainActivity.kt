@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
-import com.johnchourp.learnbyzantinemusic.editor.ComposerActivity
+import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
 
         val testimoniesBtn = findViewById<Button>(R.id.testimonies_btn)
-        val composerBtn = findViewById<Button>(R.id.composer_btn)
+        val eightModesBtn = findViewById<Button>(R.id.eight_modes_btn)
 
         phthongsNamesBtn.setOnClickListener { openPhthongsNames() }
         duotrioquatroBtn.setOnClickListener { openDuotrioquatro() }
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
         timeBtn.setOnClickListener { openTime() }
 
         testimoniesBtn.setOnClickListener { openTestimonies() }
-        composerBtn.setOnClickListener { openComposer() }
+        eightModesBtn.setOnClickListener { openEightModes() }
     }
 
     private fun openPhthongsNames() {
@@ -81,8 +81,8 @@ class MainActivity : ComponentActivity() {
         startActivity(intent)
     }
 
-    private fun openComposer() {
-        val intent = Intent(this, ComposerActivity::class.java)
+    private fun openEightModes() {
+        val intent = Intent(this, EightModesActivity::class.java)
         startActivity(intent)
     }
 }
