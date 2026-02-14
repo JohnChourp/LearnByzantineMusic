@@ -3,6 +3,7 @@ package com.johnchourp.learnbyzantinemusic
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
 
@@ -23,6 +24,10 @@ class MainActivity : ComponentActivity() {
 
         val testimoniesBtn = findViewById<Button>(R.id.testimonies_btn)
         val eightModesBtn = findViewById<Button>(R.id.eight_modes_btn)
+        val poweredByTextView = findViewById<TextView>(R.id.powered_by_text_view)
+
+        poweredByTextView.text =
+            getString(R.string.powered_by_version, BuildConfig.VERSION_NAME)
 
         phthongsNamesBtn.setOnClickListener { openPhthongsNames() }
         duotrioquatroBtn.setOnClickListener { openDuotrioquatro() }

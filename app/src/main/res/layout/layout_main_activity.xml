@@ -257,5 +257,20 @@
             android:text="@string/eight_modes_open" />
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="24dp" />
+
+    <TextView
+        android:id="@+id/powered_by_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="14sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="12dp" />
+
     </LinearLayout>
 </ScrollView>

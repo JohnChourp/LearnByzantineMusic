@@ -7,6 +7,7 @@
 
 ## Business flow
 - Ο χρήστης ανοίγει την αρχική οθόνη και επιλέγει θεωρητική ενότητα.
+- Στο κάτω μέρος της αρχικής οθόνης εμφανίζεται footer με μορφή `poweredby JohnChourp v.<release_version>`.
 - Πατώντας `8 Ήχοι`, ανοίγει η οθόνη επιλογής ήχου.
 - Προεπιλεγμένος είναι ο `Α’ Ήχος`.
 - Με αλλαγή ήχου από το selector, ανανεώνονται γένος, φθόγγοι ανόδου, διαστήματα (μόρια) και το διάγραμμα «σκάλα».
@@ -93,7 +94,8 @@
 
 ## Examples
 ### Happy path (UI)
-- Ο χρήστης ανοίγει `8 Ήχοι`, επιλέγει `Πλάγιος του Β’` και βλέπει άμεσα ενημερωμένη κλίμακα/διαστήματα με σωστή οπτική αναλογία.
+- Ο χρήστης ανοίγει την αρχική οθόνη και βλέπει στο κάτω μέρος `poweredby JohnChourp v.1.0.3`.
+- Έπειτα ανοίγει `8 Ήχοι`, επιλέγει `Πλάγιος του Β’` και βλέπει άμεσα ενημερωμένη κλίμακα/διαστήματα με σωστή οπτική αναλογία.
 
 ### Happy path (release)
 ```bash
@@ -145,6 +147,7 @@
 - `scripts/bump-version.sh`: χειρίζεται `versionName/versionCode` bump.
 - `scripts/release-and-tag.sh`: χτίζει release artifacts, κάνει commit/tag/push.
 - `.github/workflows/android-release.yml`: δημιουργεί GitHub Release και release packages.
+- `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
 - Το runtime UI flow της εφαρμογής παραμένει αμετάβλητο.
 
 ### Παραδείγματα

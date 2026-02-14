@@ -7,6 +7,7 @@
 - Προστέθηκε release packaging με artifacts `APK`, `AAB`, checksums και zip bundle ανά έκδοση.
 - Προστέθηκε local release automation με scripts για version bump, build, commit, tag και push.
 - Προστέθηκε reusable Codex skill για one-command release update του app.
+- Προστέθηκε footer στην αρχική σελίδα με μορφή `poweredby JohnChourp v.<version>` που τραβάει την τιμή από το τρέχον release version του app.
 
 ## In Progress
 - [ ] No in-progress items identified in the current codebase.
