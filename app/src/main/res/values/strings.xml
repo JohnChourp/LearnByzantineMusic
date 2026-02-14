@@ -204,7 +204,6 @@
     <string name="eight_modes_selector_label">Επιλογή ήχου</string>
     <string name="mode_selected_label">Επιλεγμένος ήχος: %1$s</string>
     <string name="mode_ascending_label">Άνοδος</string>
-    <string name="mode_descending_label">Κάθοδος</string>
     <string name="mode_scale_notes">Φθόγγοι: %1$s</string>
     <string name="mode_interval_row">%1$s → %2$s : %3$d μόρια</string>
     <string name="mode_type_diatonic">Γένος: Διατονικό</string>

@@ -12,62 +12,51 @@ class EightModesActivity : ComponentActivity() {
     private lateinit var selectedModeTitle: TextView
     private lateinit var selectedModeType: TextView
     private lateinit var ascendingScaleText: TextView
-    private lateinit var descendingScaleText: TextView
     private lateinit var ascendingDiagramView: ScaleDiagramView
-    private lateinit var descendingDiagramView: ScaleDiagramView
 
     private val ascendingPhthongs = listOf("Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω", "Νη΄")
-    private val descendingPhthongs = listOf("Νη΄", "Ζω", "Κε", "Δι", "Γα", "Βου", "Πα", "Νη")
 
     private val modes: List<ModeDefinition> by lazy {
         listOf(
             ModeDefinition(
                 nameRes = R.string.mode_first,
                 typeRes = R.string.mode_type_diatonic,
-                ascendingIntervals = listOf(12, 10, 8, 12, 12, 10, 8),
-                descendingIntervals = listOf(8, 10, 12, 12, 8, 10, 12)
+                ascendingIntervals = listOf(12, 10, 8, 12, 12, 10, 8)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_second,
                 typeRes = R.string.mode_type_hard_chromatic,
-                ascendingIntervals = listOf(6, 20, 4, 12, 6, 20, 4),
-                descendingIntervals = listOf(4, 20, 6, 12, 4, 20, 6)
+                ascendingIntervals = listOf(6, 20, 4, 12, 6, 20, 4)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_third,
                 typeRes = R.string.mode_type_diatonic,
-                ascendingIntervals = listOf(8, 12, 12, 10, 8, 12, 10),
-                descendingIntervals = listOf(10, 12, 8, 10, 12, 12, 8)
+                ascendingIntervals = listOf(8, 12, 12, 10, 8, 12, 10)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_fourth,
                 typeRes = R.string.mode_type_diatonic,
-                ascendingIntervals = listOf(10, 8, 12, 12, 10, 8, 12),
-                descendingIntervals = listOf(12, 8, 10, 12, 12, 8, 10)
+                ascendingIntervals = listOf(10, 8, 12, 12, 10, 8, 12)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_plagal_first,
                 typeRes = R.string.mode_type_diatonic,
-                ascendingIntervals = listOf(10, 8, 12, 12, 10, 8, 12),
-                descendingIntervals = listOf(12, 8, 10, 12, 12, 8, 10)
+                ascendingIntervals = listOf(10, 8, 12, 12, 10, 8, 12)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_plagal_second,
                 typeRes = R.string.mode_type_soft_chromatic,
-                ascendingIntervals = listOf(8, 14, 8, 12, 8, 14, 8),
-                descendingIntervals = listOf(8, 14, 8, 12, 8, 14, 8)
+                ascendingIntervals = listOf(8, 14, 8, 12, 8, 14, 8)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_varys,
                 typeRes = R.string.mode_type_enharmonic,
-                ascendingIntervals = listOf(12, 12, 6, 12, 12, 6, 12),
-                descendingIntervals = listOf(12, 6, 12, 12, 6, 12, 12)
+                ascendingIntervals = listOf(12, 12, 6, 12, 12, 6, 12)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_plagal_fourth,
                 typeRes = R.string.mode_type_diatonic,
-                ascendingIntervals = listOf(12, 10, 8, 12, 12, 10, 8),
-                descendingIntervals = listOf(8, 10, 12, 12, 8, 10, 12)
+                ascendingIntervals = listOf(12, 10, 8, 12, 12, 10, 8)
             )
         )
     }
@@ -80,9 +69,7 @@ class EightModesActivity : ComponentActivity() {
         selectedModeTitle = findViewById(R.id.selected_mode_title)
         selectedModeType = findViewById(R.id.selected_mode_type)
         ascendingScaleText = findViewById(R.id.ascending_scale_text)
-        descendingScaleText = findViewById(R.id.descending_scale_text)
         ascendingDiagramView = findViewById(R.id.ascending_diagram_view)
-        descendingDiagramView = findViewById(R.id.descending_diagram_view)
 
         setupSelector()
     }
@@ -120,25 +107,16 @@ class EightModesActivity : ComponentActivity() {
             R.string.mode_scale_notes,
             ascendingPhthongs.joinToString(" - ")
         )
-        descendingScaleText.text = getString(
-            R.string.mode_scale_notes,
-            descendingPhthongs.joinToString(" - ")
-        )
 
         ascendingDiagramView.setDiagramData(
             phthongsTopToBottom = ascendingPhthongs.reversed(),
             intervalsTopToBottom = mode.ascendingIntervals.reversed()
-        )
-        descendingDiagramView.setDiagramData(
-            phthongsTopToBottom = descendingPhthongs,
-            intervalsTopToBottom = mode.descendingIntervals
         )
     }
 
     private data class ModeDefinition(
         val nameRes: Int,
         val typeRes: Int,
-        val ascendingIntervals: List<Int>,
-        val descendingIntervals: List<Int>
+        val ascendingIntervals: List<Int>
     )
 }

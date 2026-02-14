@@ -71,16 +71,19 @@ class ScaleDiagramView @JvmOverloads constructor(
 
         canvas.drawRect(chartLeft, chartTop, chartRight, chartBottom, borderPaint)
 
-        val segmentCount = intervalsTopToBottom.size
-        val segmentHeight = (chartBottom - chartTop) / segmentCount.toFloat()
+        val segmentHeights = calculateSegmentHeights(chartTop, chartBottom)
+        if (segmentHeights.isEmpty()) {
+            return
+        }
+        val boundaries = buildBoundaries(chartTop, segmentHeights)
 
-        for (index in 1 until segmentCount) {
-            val y = chartTop + index * segmentHeight
+        for (index in 1 until boundaries.lastIndex) {
+            val y = boundaries[index]
             canvas.drawLine(chartLeft, y, chartRight, y, linePaint)
         }
 
         for (index in intervalsTopToBottom.indices) {
-            val centerY = chartTop + (index + 0.5f) * segmentHeight
+            val centerY = (boundaries[index] + boundaries[index + 1]) / 2f
             canvas.drawText(
                 intervalsTopToBottom[index].toString(),
                 (chartLeft + chartRight) / 2f,
@@ -90,7 +93,7 @@ class ScaleDiagramView @JvmOverloads constructor(
         }
 
         for (index in phthongsTopToBottom.indices) {
-            val boundaryY = chartTop + index * segmentHeight
+            val boundaryY = boundaries[index]
             canvas.drawText(
                 phthongsTopToBottom[index],
                 chartRight + labelGap,
@@ -100,9 +103,44 @@ class ScaleDiagramView @JvmOverloads constructor(
         }
     }
 
+    private fun calculateSegmentHeights(chartTop: Float, chartBottom: Float): List<Float> {
+        if (intervalsTopToBottom.isEmpty()) {
+            return emptyList()
+        }
+
+        val totalHeight = chartBottom - chartTop
+        if (totalHeight <= 0f) {
+            return emptyList()
+        }
+
+        val minSegmentHeight = dp(12f)
+        val freeHeight = max(0f, totalHeight - minSegmentHeight * intervalsTopToBottom.size)
+        val totalInterval = intervalsTopToBottom.sum().toFloat()
+
+        return if (totalInterval > 0f) {
+            intervalsTopToBottom.map { interval ->
+                minSegmentHeight + (freeHeight * (interval / totalInterval))
+            }
+        } else {
+            val equalHeight = totalHeight / intervalsTopToBottom.size
+            List(intervalsTopToBottom.size) { equalHeight }
+        }
+    }
+
+    private fun buildBoundaries(chartTop: Float, segmentHeights: List<Float>): List<Float> {
+        val boundaries = MutableList(segmentHeights.size + 1) { 0f }
+        boundaries[0] = chartTop
+        var current = chartTop
+        for (index in segmentHeights.indices) {
+            current += segmentHeights[index]
+            boundaries[index + 1] = current
+        }
+        return boundaries
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val desiredHeight = dp(340f).toInt()
+        val desiredHeight = dp(520f).toInt()
         setMeasuredDimension(measuredWidth, resolveSize(max(desiredHeight, suggestedMinimumHeight), heightMeasureSpec))
     }
 
