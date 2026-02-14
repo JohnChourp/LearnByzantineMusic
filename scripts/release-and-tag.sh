@@ -60,8 +60,7 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 if [[ -n "$(git status --porcelain)" ]]; then
-    echo "ERROR: Υπάρχουν μη αποθηκευμένες αλλαγές (tracked ή untracked). Κάνε commit/stash πρώτα." >&2
-    exit 1
+    echo "[release] Εντοπίστηκαν αλλαγές στο working tree. Θα συμπεριληφθούν στο release commit."
 fi
 
 ensure_gh_release() {
@@ -149,6 +148,39 @@ find_previous_tag() {
     echo ""
 }
 
+build_release_commit_summary() {
+    local -a staged_files=()
+    mapfile -t staged_files < <(git diff --cached --name-only --diff-filter=ACMRD)
+
+    if [[ "${#staged_files[@]}" -eq 0 ]]; then
+        echo "version bump"
+        return
+    fi
+
+    local -A seen_areas=()
+    local -a ordered_areas=()
+    local file area
+    for file in "${staged_files[@]}"; do
+        area="${file%%/*}"
+        if [[ "$file" != */* ]]; then
+            area="root"
+        fi
+        if [[ -z "${seen_areas[$area]+x}" ]]; then
+            seen_areas["$area"]=1
+            ordered_areas+=("$area")
+        fi
+    done
+
+    local area_count="${#ordered_areas[@]}"
+    if [[ "$area_count" -eq 1 ]]; then
+        echo "updates in ${ordered_areas[0]}"
+    elif [[ "$area_count" -eq 2 ]]; then
+        echo "updates in ${ordered_areas[0]}, ${ordered_areas[1]}"
+    else
+        echo "updates in ${ordered_areas[0]}, ${ordered_areas[1]} +$((area_count - 2)) more"
+    fi
+}
+
 write_release_notes() {
     local previous_tag="$1"
     local current_tag="$2"
@@ -161,7 +193,7 @@ write_release_notes() {
     local -a commits=()
     while IFS=$'\x1f' read -r sha subject; do
         [[ -z "$sha" || -z "$subject" ]] && continue
-        if [[ "$subject" =~ ^release:\ v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        if [[ "$subject" =~ ^release:\ v[0-9]+\.[0-9]+\.[0-9]+($|[[:space:]]-[[:space:]]) ]]; then
             continue
         fi
         commits+=("${sha}"$'\x1f'"${subject}")
@@ -193,8 +225,6 @@ write_release_notes() {
     fi
 
     {
-        echo "# LearnByzantineMusic ${current_tag}"
-        echo
         echo "## Τι νέο περιλαμβάνει αυτή η έκδοση"
         if [[ -n "$previous_tag" ]]; then
             echo "- Συνοπτική εικόνα αλλαγών από \`${previous_tag}\` έως \`${current_tag}\`."
@@ -323,8 +353,15 @@ AAB_ALIAS_PATH="$RELEASE_DIR/aab-release.aab"
 CHECKSUMS_PATH="$RELEASE_DIR/SHA256SUMS.txt"
 
 
-git add app/build.gradle.kts
-git commit -m "release: $TAG"
+git add -A
+if git diff --cached --quiet; then
+    echo "ERROR: Δεν βρέθηκαν αλλαγές για commit στο release." >&2
+    exit 1
+fi
+
+COMMIT_SUMMARY="$(build_release_commit_summary)"
+COMMIT_MESSAGE="release: $TAG - $COMMIT_SUMMARY"
+git commit -m "$COMMIT_MESSAGE"
 git tag -a "$TAG" -m "Release $TAG"
 
 RELEASE_NOTES_PATH="$RELEASE_DIR/RELEASE_NOTES.md"

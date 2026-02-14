@@ -14,6 +14,8 @@
 - Προστέθηκε νέα σελίδα `Ρυθμίσεις` με discrete slider (`20/40/60/80/100`) και άμεση αποθήκευση προτίμησης μεγέθους γραμμάτων.
 - Εφαρμόστηκε global font scaling σε όλες τις activities μέσω `BaseActivity` + `AppFontScale` με μόνιμη αποθήκευση key `app_font_step`.
 - Το `poweredby` στην αρχική σελίδα μεταφέρθηκε σε σταθερό footer στο κάτω μέρος του screen.
+- Βελτιώθηκε το release script ώστε να κάνει ενιαίο release commit με όλες τις αλλαγές του working tree και σύντομο auto-summary στο commit message.
+- Βελτιώθηκε η παραγωγή release notes ώστε να μη διπλασιάζεται ο τίτλος του GitHub Release.
 
 ## In Progress
 - [ ] No in-progress items identified in the current codebase.

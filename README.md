@@ -19,8 +19,8 @@
 - Το ύψος κάθε οπτικού διαστήματος παραμένει αναλογικό στα μόρια.
 - Με press-and-hold πάνω στο όνομα φθόγγου στο διάγραμμα, αναπαράγεται συνεχής τόνος στη συχνότητα του συγκεκριμένου φθόγγου για τον επιλεγμένο ήχο.
 - Με απελευθέρωση (`UP`) ή έξοδο του δαχτύλου εκτός label (`EXIT`), ο τόνος σταματά άμεσα.
-- Για νέα έκδοση app, ο maintainer τρέχει `scripts/release-and-tag.sh` (ή το skill wrapper), γίνεται bump έκδοσης, build release artifacts, commit + tag push.
-- Το release script δημιουργεί αυτόματα συνοπτική, user-friendly περιγραφή αλλαγών από previous tag σε νέο tag (`RELEASE_NOTES.md`) με πλήρη λίστα commits.
+- Για νέα έκδοση app, ο maintainer τρέχει `scripts/release-and-tag.sh` (ή το skill wrapper), γίνεται bump έκδοσης, build release artifacts, ενιαίο commit με όλες τις αλλαγές του working tree, και tag push.
+- Το release script δημιουργεί αυτόματα συνοπτική, user-friendly περιγραφή αλλαγών από previous tag σε νέο tag (`RELEASE_NOTES.md`) με πλήρη λίστα commits, χωρίς να επαναλαμβάνει τον τίτλο του release.
 - Το release script δημοσιεύει άμεσα GitHub Release με assets μέσω `gh release create/upload` (συμπεριλαμβάνει και `apk-release.apk` για εύκολο mobile install download) και χρησιμοποιεί τα generated notes ως release description.
 - Με push tag `vX.Y.Z`, το GitHub Actions workflow παραμένει ως επιπλέον fallback για release packaging.
 
@@ -164,7 +164,8 @@
 ./scripts/release-and-tag.sh --bump patch
 ```
 - Αναμενόμενο: νέο commit έκδοσης, νέο tag `vX.Y.Z`, push στο GitHub, direct publish GitHub Release και upload `APK/AAB/ZIP/SHA256`.
-- Το GitHub Release description περιλαμβάνει συνοπτική εικόνα (commits/files/contributors), περιοχές που επηρεάστηκαν και πλήρη λίστα αλλαγών από το προηγούμενο release.
+- Το commit του release δημιουργείται αυτόματα ως ένα ενιαίο commit που περιλαμβάνει όλες τις διαθέσιμες αλλαγές (tracked/untracked, εκτός ignored) με σύντομο summary στο commit message.
+- Το GitHub Release description περιλαμβάνει συνοπτική εικόνα (commits/files/contributors), περιοχές που επηρεάστηκαν και πλήρη λίστα αλλαγών από το προηγούμενο release, χωρίς διπλό τίτλο.
 
 ### Failure example
 ```json
@@ -218,7 +219,7 @@
 ### Πώς επηρεάζονται άλλα components;
 - `app/build.gradle.kts`: προστέθηκε conditional release signing από environment variables.
 - `scripts/bump-version.sh`: χειρίζεται `versionName/versionCode` bump.
-- `scripts/release-and-tag.sh`: χτίζει release artifacts, κάνει commit/tag/push, παράγει user-friendly `RELEASE_NOTES.md` (previous tag → νέο tag) και δημιουργεί/ενημερώνει direct GitHub Release με assets και περιγραφή αλλαγών.
+- `scripts/release-and-tag.sh`: χτίζει release artifacts, κάνει commit/tag/push, κάνει stage+commit όλες τις αλλαγές του working tree σε ένα release commit με σύντομο summary, παράγει user-friendly `RELEASE_NOTES.md` (previous tag → νέο tag) χωρίς διπλό τίτλο, και δημιουργεί/ενημερώνει direct GitHub Release με assets και περιγραφή αλλαγών.
 - `.github/workflows/android-release.yml`: δημιουργεί GitHub Release και release packages.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
 - `SettingsActivity`, `layout_settings.xml`, `AppFontScale` και `BaseActivity`: διαχειρίζονται την αποθήκευση/εφαρμογή global font scaling για όλη την εφαρμογή.
@@ -237,7 +238,7 @@
 **Failure example**
 ```json
 {
-  "error": "dirty_worktree",
-  "message": "Υπάρχουν μη αποθηκευμένες αλλαγές. Κάνε commit/stash πρώτα."
+  "error": "gh_auth_missing",
+  "message": "Δεν υπάρχει ενεργό gh auth session. Τρέξε gh auth login ή χρησιμοποίησε --skip-gh-release."
 }
 ```
