@@ -5,6 +5,7 @@
 Η λειτουργία `Συνθέτης` έχει καταργηθεί και έχει αντικατασταθεί από σελίδα `8 Ήχοι` με οπτική απόδοση κλιμάκων και διαστημάτων.
 Προστέθηκε σελίδα `Ρυθμίσεις` με discrete slider για μέγεθος γραμμάτων (`20/40/60/80/100`) που εφαρμόζει global font scaling σε όλες τις οθόνες.
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
+Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.14.0`, `protobuf-java` σε `3.25.5`, `jdom2` σε `2.0.6.1`, `netty-codec` σε `4.1.129.Final`, `netty-codec-http` σε `4.1.129.Final`, `netty-codec-http2` σε `4.1.129.Final`, `netty-handler` σε `4.1.129.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.26.0`, `bcpkix-jdk18on` σε `1.79`, `bcprov-jdk18on` σε `1.79` και `bcutil-jdk18on` σε `1.79`.
 
 ## Business flow
 - Ο χρήστης ανοίγει την αρχική οθόνη και επιλέγει θεωρητική ενότητα.
@@ -118,6 +119,19 @@
 - `Compose Compiler Extension = 1.5.14`
 - `Kotlin Gradle Plugin = 1.9.24`
 - `AGP = 8.5.2`
+- Buildscript classpath override:
+- `commons-io:commons-io = 2.14.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `com.google.protobuf:protobuf-java = 3.25.5` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `org.jdom:jdom2 = 2.0.6.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `io.netty:netty-codec = 4.1.129.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `io.netty:netty-codec-http = 4.1.129.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `io.netty:netty-codec-http2 = 4.1.129.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `io.netty:netty-handler = 4.1.129.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `org.bitbucket.b_c:jose4j = 0.9.6` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `org.apache.commons:commons-compress = 1.26.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `org.bouncycastle:bcpkix-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `org.bouncycastle:bcprov-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `org.bouncycastle:bcutil-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 
 - Κύρια components:
 - `MainActivity`
@@ -215,6 +229,61 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ```
 
 ## Συχνές ερωτήσεις (FAQ)
+### Γιατί εμφανίστηκε Dependabot alert για `commons-io`;
+- Το `commons-io` δεν υπάρχει ως direct dependency στο app module.
+- Έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.5.2`) και σχετικά UTP artifacts.
+- Το project κάνει forced resolve σε `commons-io:2.14.0` στο build classpath ώστε να καλύπτεται το patched range του advisory.
+
+### Γιατί εμφανίστηκε Dependabot alert για `protobuf-java`;
+- Το `protobuf-java` έρχεται transitive από AGP/UTP dependencies και όχι από direct declaration στο app module.
+- Η προηγούμενη resolved έκδοση ήταν `3.22.3` και το advisory ζητά patched έκδοση `>= 3.25.5`.
+- Το project κάνει forced resolve σε `com.google.protobuf:protobuf-java:3.25.5` στο build classpath.
+
+### Γιατί εμφανίστηκε Dependabot alert για `jdom2`;
+- Το `jdom2` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.5.2`).
+- Η προηγούμενη resolved έκδοση ήταν `2.0.6` και το advisory ζητά patched έκδοση `>= 2.0.6.1`.
+- Το project κάνει forced resolve σε `org.jdom:jdom2:2.0.6.1` στο build classpath.
+
+### Γιατί εμφανίστηκε Dependabot alert για `netty-codec`;
+- Το `io.netty:netty-codec` έρχεται transitive από AGP/UTP dependencies.
+- Η προηγούμενη resolved έκδοση ήταν `4.1.93.Final` και το advisory ζητά patched έκδοση `>= 4.1.125.Final`.
+- Το project κάνει forced resolve σε `io.netty:netty-codec:4.1.129.Final` στο build classpath.
+
+### Γιατί εμφανίστηκε Dependabot alert για `netty-codec-http`;
+- Το `io.netty:netty-codec-http` έρχεται transitive από AGP/UTP dependencies.
+- Η προηγούμενη resolved έκδοση ήταν `4.1.93.Final` και το advisory ζητά patched έκδοση `>= 4.1.129.Final`.
+- Το project κάνει forced resolve σε `io.netty:netty-codec-http:4.1.129.Final` στο build classpath.
+
+### Γιατί εμφανίστηκε Dependabot alert για `netty-codec-http2`;
+- Το `io.netty:netty-codec-http2` έρχεται transitive από AGP/UTP dependencies.
+- Η προηγούμενη resolved έκδοση ήταν `4.1.93.Final` και τα advisories καλύπτονται από patched έκδοση `4.1.129.Final`.
+- Το project κάνει forced resolve σε `io.netty:netty-codec-http2:4.1.129.Final`, που ανεβάζει και τα σχετικά Netty modules στο ίδιο resolved graph.
+
+### Γιατί εμφανίστηκε Dependabot alert για `netty-handler`;
+- Το `io.netty:netty-handler` έρχεται transitive από AGP/UTP dependencies.
+- Το advisory καλύπτει εύρος `4.1.91.Final` έως `4.1.117.Final` και απαιτεί `>= 4.1.118.Final`.
+- Το project κάνει explicit forced resolve σε `io.netty:netty-handler:4.1.129.Final` στο build classpath.
+
+### Γιατί εμφανίστηκε Dependabot alert για `jose4j`;
+- Το `org.bitbucket.b_c:jose4j` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.5.2`).
+- Η προηγούμενη resolved έκδοση ήταν `0.9.5` και το advisory ζητά patched έκδοση `>= 0.9.6`.
+- Το project κάνει forced resolve σε `org.bitbucket.b_c:jose4j:0.9.6` στο build classpath.
+
+### Γιατί εμφανίστηκε Dependabot alert για `commons-compress`;
+- Το `org.apache.commons:commons-compress` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.5.2`).
+- Η προηγούμενη resolved έκδοση ήταν `1.21` και το advisory ζητά patched έκδοση `>= 1.26.0`.
+- Το project κάνει forced resolve σε `org.apache.commons:commons-compress:1.26.0` στο build classpath.
+
+### Γιατί εμφανίστηκε Dependabot alert για `bcpkix-jdk18on`;
+- Το `org.bouncycastle:bcpkix-jdk18on` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.5.2`).
+- Η προηγούμενη resolved έκδοση ήταν `1.77` και το advisory ζητά patched έκδοση `>= 1.79`.
+- Το project κάνει forced resolve σε `org.bouncycastle:bcpkix-jdk18on:1.79` στο build classpath και ευθυγραμμίζει `bcprov`/`bcutil` στην ίδια έκδοση.
+
+### Γιατί εμφανίστηκε Dependabot alert για `bcprov-jdk18on`;
+- Το `org.bouncycastle:bcprov-jdk18on` έρχεται transitive από AGP dependencies (`bcpkix-jdk18on`/`bcutil-jdk18on`).
+- Η προηγούμενη resolved έκδοση ήταν `1.77` και τα advisories καλύπτονται με έκδοση `1.79`.
+- Το project κάνει forced resolve σε `org.bouncycastle:bcprov-jdk18on:1.79` στο build classpath.
+
 ### Γιατί αποτυγχάνει το login/auth;
 - Η εφαρμογή δεν χρησιμοποιεί login/auth ροή.
 - Δεν απαιτούνται token/session ή identity provider.

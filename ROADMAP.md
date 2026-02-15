@@ -11,6 +11,16 @@
 - Προστέθηκε ξεχωριστό workflow `Security Guard` που εκτελείται σε κάθε push/PR για συνεχή έλεγχο repository secrets σε public περιβάλλον.
 - Προστέθηκε αξιόπιστη ρύθμιση CodeQL για Java/Kotlin με manual build mode, setup JDK 17 και compile μέσω `:app:compileDebugKotlin`.
 - Προστέθηκε project-specific αρχείο `.codex/AGENTS.md` με υποχρεωτικούς κανόνες security-check για κάθε μελλοντική εργασία στο repository.
+- Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `commons-io` σε `2.14.0` για mitigation του `XmlStreamReader` DoS advisory.
+- Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `protobuf-java` σε `3.25.5` για mitigation DoS advisory (nested unknown-fields parsing).
+- Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `jdom2` σε `2.0.6.1` για mitigation XXE advisory.
+- Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `netty-codec` σε `4.1.129.Final` για mitigation DoS advisory τύπου zip-bomb στους Netty decompressing decoders.
+- Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `netty-codec-http` σε `4.1.129.Final` για mitigation CRLF injection advisory στο `HttpRequestEncoder`.
+- Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `netty-codec-http2` σε `4.1.129.Final` για mitigation HTTP/2 DoS advisories.
+- Προστέθηκε buildscript classpath hardening με explicit forced transitive αναβάθμιση `netty-handler` σε `4.1.129.Final` για mitigation SslHandler/SniHandler advisories.
+- Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `jose4j` σε `0.9.6` για mitigation DoS advisory σε compressed JWE content.
+- Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `commons-compress` σε `1.26.0` για mitigation OOM advisory σε unpacking Pack200 αρχείων.
+- Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `bcpkix-jdk18on`/`bcprov-jdk18on`/`bcutil-jdk18on` σε `1.79` για mitigation Excessive Allocation και Ed25519 infinite-loop advisories.
 - Προστέθηκε script `scripts/setup-release-signing.sh` για ασφαλή αρχική δημιουργία keystore, local signing env setup και προαιρετική αυτόματη ενημέρωση GitHub Actions signing secrets.
 - Απλοποιήθηκαν τα GitHub Release custom assets ώστε να ανεβαίνει μόνο το `apk-release.apk` (με τα source archives να παρέχονται αυτόματα από το GitHub).
 - Προστέθηκε αυτόματη δημιουργία user-friendly release notes στο `scripts/release-and-tag.sh` με σύνοψη και πλήρη λίστα αλλαγών από previous tag στο νέο release.
