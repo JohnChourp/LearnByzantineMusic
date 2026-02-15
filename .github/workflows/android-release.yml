@@ -66,45 +66,18 @@ jobs:
         id: package
         run: |
           set -euo pipefail
-          TAG="${GITHUB_REF_NAME}"
-          PACKAGE_DIR="$GITHUB_WORKSPACE/release-packages/$TAG"
-          mkdir -p "$PACKAGE_DIR"
-
           APK_PATH="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' ! -name '*-unsigned.apk' | sort | tail -n1 || true)"
           UNSIGNED_APK_PATH="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*-unsigned.apk' | sort | tail -n1 || true)"
-          AAB_PATH="$(find app/build/outputs/bundle/release -maxdepth 1 -type f -name '*.aab' | sort | tail -n1 || true)"
-          MAPPING_PATH="$(find app/build/outputs/mapping/release -maxdepth 1 -type f -name 'mapping.txt' | sort | tail -n1 || true)"
 
-          if [[ -z "$APK_PATH" || -z "$AAB_PATH" ]]; then
+          if [[ -z "$APK_PATH" ]]; then
             if [[ -n "$UNSIGNED_APK_PATH" ]]; then
               echo "Only unsigned APK found: $UNSIGNED_APK_PATH" >&2
             fi
-            echo "Missing APK/AAB outputs" >&2
+            echo "Missing signed APK output" >&2
             exit 1
           fi
 
-          cp "$APK_PATH" "$PACKAGE_DIR/"
-          cp "$AAB_PATH" "$PACKAGE_DIR/"
-          if [[ -n "$MAPPING_PATH" ]]; then
-            cp "$MAPPING_PATH" "$PACKAGE_DIR/"
-          fi
-
-          ZIP_PATH="$GITHUB_WORKSPACE/release-packages/LearnByzantineMusic-$TAG-packages.zip"
-          (
-            cd "$PACKAGE_DIR"
-            zip -q -r "$ZIP_PATH" .
-          )
-
-          CHECKSUMS_PATH="$GITHUB_WORKSPACE/release-packages/SHA256SUMS-$TAG.txt"
-          (
-            cd "$PACKAGE_DIR"
-            sha256sum ./* > "$CHECKSUMS_PATH"
-          )
-
           echo "apk_path=$APK_PATH" >> "$GITHUB_OUTPUT"
-          echo "aab_path=$AAB_PATH" >> "$GITHUB_OUTPUT"
-          echo "zip_path=$ZIP_PATH" >> "$GITHUB_OUTPUT"
-          echo "checksums_path=$CHECKSUMS_PATH" >> "$GITHUB_OUTPUT"
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
@@ -114,6 +87,3 @@ jobs:
           generate_release_notes: true
           files: |
             ${{ steps.package.outputs.apk_path }}
-            ${{ steps.package.outputs.aab_path }}
-            ${{ steps.package.outputs.zip_path }}
-            ${{ steps.package.outputs.checksums_path }}

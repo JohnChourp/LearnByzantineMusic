@@ -4,7 +4,7 @@
 Το `LearnByzantineMusic` είναι Android εφαρμογή εκμάθησης Βυζαντινής Μουσικής με ενότητες θεωρίας.
 Η λειτουργία `Συνθέτης` έχει καταργηθεί και έχει αντικατασταθεί από σελίδα `8 Ήχοι` με οπτική απόδοση κλιμάκων και διαστημάτων.
 Προστέθηκε σελίδα `Ρυθμίσεις` με discrete slider για μέγεθος γραμμάτων (`20/40/60/80/100`) που εφαρμόζει global font scaling σε όλες τις οθόνες.
-Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και packaged artifacts (`APK`, `AAB`, checksums, zip).
+Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
 
 ## Business flow
 - Ο χρήστης ανοίγει την αρχική οθόνη και επιλέγει θεωρητική ενότητα.
@@ -21,7 +21,8 @@
 - Με απελευθέρωση (`UP`) ή έξοδο του δαχτύλου εκτός label (`EXIT`), ο τόνος σταματά άμεσα.
 - Για νέα έκδοση app, ο maintainer τρέχει `scripts/release-and-tag.sh` (ή το skill wrapper), γίνεται bump έκδοσης, build release artifacts, ενιαίο commit με όλες τις αλλαγές του working tree, και tag push.
 - Το release script δημιουργεί αυτόματα συνοπτική, user-friendly περιγραφή αλλαγών από previous tag σε νέο tag (`RELEASE_NOTES.md`) με πλήρη λίστα commits, χωρίς να επαναλαμβάνει τον τίτλο του release.
-- Το release script δημοσιεύει άμεσα GitHub Release με assets μέσω `gh release create/upload` (συμπεριλαμβάνει και `apk-release.apk` για εύκολο mobile install download) και χρησιμοποιεί τα generated notes ως release description.
+- Το release script δημοσιεύει άμεσα GitHub Release με μόνο custom asset το `apk-release.apk` (για εύκολο mobile install download) και χρησιμοποιεί τα generated notes ως release description.
+- Τα `Source code (zip)` και `Source code (tar.gz)` εμφανίζονται αυτόματα από το GitHub σε κάθε tag release.
 - Το release script και το GitHub Action δημοσιεύουν μόνο signed APK· αν λείπουν signing credentials, το release μπλοκάρεται πριν το upload.
 - Πριν από release γίνεται αυτόματος έλεγχος ότι δεν υπάρχουν committed secrets/keystore αρχεία στο repository.
 - Σε κάθε push/pull request τρέχει αυτόματα ο έλεγχος `Security Guard` για ανίχνευση committed secrets.
@@ -104,7 +105,7 @@
   "tag": "v1.0.3",
   "github_release": "published",
   "release_notes": "build-artifacts/release/v1.0.3/RELEASE_NOTES.md",
-  "assets": ["apk", "aab", "zip", "sha256"]
+  "assets": ["apk-release.apk", "source-code-zip", "source-code-tar-gz"]
 }
 ```
 
@@ -181,7 +182,7 @@
 source "$HOME/.android/learnbyzantine/release-signing.env"
 ./scripts/release-and-tag.sh --bump patch
 ```
-- Αναμενόμενο: νέο commit έκδοσης, νέο tag `vX.Y.Z`, push στο GitHub, direct publish GitHub Release και upload `APK/AAB/ZIP/SHA256`.
+- Αναμενόμενο: νέο commit έκδοσης, νέο tag `vX.Y.Z`, push στο GitHub, direct publish GitHub Release και upload μόνο `apk-release.apk`.
 - Το commit του release δημιουργείται αυτόματα ως ένα ενιαίο commit που περιλαμβάνει όλες τις διαθέσιμες αλλαγές (tracked/untracked, εκτός ignored) με σύντομο summary στο commit message.
 - Το GitHub Release description περιλαμβάνει συνοπτική εικόνα (commits/files/contributors), περιοχές που επηρεάστηκαν και πλήρη λίστα αλλαγών από το προηγούμενο release, χωρίς διπλό τίτλο.
 
@@ -247,6 +248,10 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Από εδώ και πέρα το pipeline αποτυγχάνει όταν λείπουν signing secrets και δεν ανεβάζει unsigned `apk-release.apk`.
 - Έλεγξε στο GitHub Release ότι κατεβάζεις το artifact `apk-release.apk` του τελευταίου επιτυχημένου release.
 
+### Το `SHA256SUMS.txt` έχει secrets και πρέπει να αφαιρείται;
+- Όχι, ένα αρχείο SHA256 checksums περιέχει μόνο hashes αρχείων και όχι κωδικούς/keys.
+- Παρ' όλα αυτά, το release policy του project πλέον ανεβάζει μόνο `apk-release.apk` ως custom asset για απλούστερη δημόσια διανομή.
+
 ### Πώς κρύβω ευαίσθητα στοιχεία ώστε να μη φαίνονται στον κώδικα;
 - Βάλε τα σε `Settings -> Secrets and variables -> Actions` στο GitHub repository.
 - Για signing χρησιμοποίησε τα `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`.
@@ -266,11 +271,11 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Πώς επηρεάζονται άλλα components;
 - `app/build.gradle.kts`: προστέθηκε conditional release signing από environment variables.
 - `scripts/bump-version.sh`: χειρίζεται `versionName/versionCode` bump.
-- `scripts/release-and-tag.sh`: χτίζει release artifacts, απαιτεί υποχρεωτικά signing env vars, μπλοκάρει unsigned APK outputs, κάνει commit/tag/push, κάνει stage+commit όλες τις αλλαγές του working tree σε ένα release commit με σύντομο summary, παράγει user-friendly `RELEASE_NOTES.md` (previous tag → νέο tag) χωρίς διπλό τίτλο, και δημιουργεί/ενημερώνει direct GitHub Release με assets και περιγραφή αλλαγών.
+- `scripts/release-and-tag.sh`: χτίζει release artifacts, απαιτεί υποχρεωτικά signing env vars, μπλοκάρει unsigned APK outputs, κάνει commit/tag/push, κάνει stage+commit όλες τις αλλαγές του working tree σε ένα release commit με σύντομο summary, παράγει user-friendly `RELEASE_NOTES.md` (previous tag → νέο tag) χωρίς διπλό τίτλο, και δημιουργεί/ενημερώνει direct GitHub Release μόνο με custom asset `apk-release.apk`.
 - `scripts/check-no-secrets.sh`: αποτρέπει commit/release όταν υπάρχουν tracked μυστικά ή υπογεγραμμένα κλειδιά μέσα στο repository.
 - `scripts/setup-release-signing.sh`: δημιουργεί release keystore εκτός repository, γράφει local env file signing και ενημερώνει προαιρετικά αυτόματα τα GitHub Actions secrets.
 - `.github/workflows/security-guard.yml`: τρέχει secrets guard σε κάθε push/PR.
-- `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, μπλοκάρει unsigned APK outputs και δημιουργεί GitHub Release packages.
+- `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, μπλοκάρει unsigned APK outputs και δημοσιεύει μόνο το `apk-release.apk` ως custom asset.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
 - `SettingsActivity`, `layout_settings.xml`, `AppFontScale` και `BaseActivity`: διαχειρίζονται την αποθήκευση/εφαρμογή global font scaling για όλη την εφαρμογή.
 - `EightModesActivity`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels και αναπαραγωγή συχνοτήτων με αναφορά `Νη = 220Hz`.
@@ -281,7 +286,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 {
   "command": "./scripts/release-and-tag.sh --bump patch",
   "tag": "v1.0.3",
-  "release_assets": ["app-release.apk", "app-release.aab", "LearnByzantineMusic-v1.0.3-packages.zip"]
+  "release_assets": ["apk-release.apk", "Source code (zip)", "Source code (tar.gz)"]
 }
 ```
 

@@ -338,51 +338,21 @@ mkdir -p "$RELEASE_DIR"
 
 APK_PATH="$(find "$ROOT_DIR/app/build/outputs/apk/release" -maxdepth 1 -type f -name '*.apk' ! -name '*-unsigned.apk' | sort | tail -n1 || true)"
 UNSIGNED_APK_PATH="$(find "$ROOT_DIR/app/build/outputs/apk/release" -maxdepth 1 -type f -name '*-unsigned.apk' | sort | tail -n1 || true)"
-AAB_PATH="$(find "$ROOT_DIR/app/build/outputs/bundle/release" -maxdepth 1 -type f -name '*.aab' | sort | tail -n1 || true)"
-MAPPING_PATH="$(find "$ROOT_DIR/app/build/outputs/mapping/release" -maxdepth 1 -type f -name 'mapping.txt' | sort | tail -n1 || true)"
 
-if [[ -z "$APK_PATH" || -z "$AAB_PATH" ]]; then
+if [[ -z "$APK_PATH" ]]; then
     if [[ -n "$UNSIGNED_APK_PATH" ]]; then
         echo "ERROR: Βρέθηκε μόνο unsigned APK: $UNSIGNED_APK_PATH" >&2
     fi
-    echo "ERROR: Δεν βρέθηκαν APK/AAB release artifacts." >&2
+    echo "ERROR: Δεν βρέθηκε signed APK release artifact." >&2
     exit 1
 fi
 
 cp "$APK_PATH" "$RELEASE_DIR/"
-cp "$AAB_PATH" "$RELEASE_DIR/"
-if [[ -n "$MAPPING_PATH" ]]; then
-    cp "$MAPPING_PATH" "$RELEASE_DIR/"
-fi
 
 # Stable asset aliases for direct end-user downloads.
 cp "$APK_PATH" "$RELEASE_DIR/apk-release.apk"
-cp "$AAB_PATH" "$RELEASE_DIR/aab-release.aab"
-
-ZIP_PATH="$RELEASE_DIR/LearnByzantineMusic-$TAG-packages.zip"
-archive_files=()
-while IFS= read -r file; do
-    archive_files+=("$(basename "$file")")
-done < <(find "$RELEASE_DIR" -maxdepth 1 -type f \( -name '*.apk' -o -name '*.aab' -o -name 'mapping.txt' \) | sort)
-
-if [[ "${#archive_files[@]}" -eq 0 ]]; then
-    echo "ERROR: Δεν υπάρχουν αρχεία για zip package." >&2
-    exit 1
-fi
-
-(
-    cd "$RELEASE_DIR"
-    zip -q "$(basename "$ZIP_PATH")" "${archive_files[@]}"
-)
-
-(
-    cd "$RELEASE_DIR"
-    sha256sum ./* > SHA256SUMS.txt
-)
 
 APK_ALIAS_PATH="$RELEASE_DIR/apk-release.apk"
-AAB_ALIAS_PATH="$RELEASE_DIR/aab-release.aab"
-CHECKSUMS_PATH="$RELEASE_DIR/SHA256SUMS.txt"
 
 
 git add -A
@@ -404,7 +374,7 @@ BRANCH="$(git branch --show-current)"
 if [[ "$PUSH_CHANGES" -eq 1 ]]; then
     git push origin "$BRANCH"
     git push origin "$TAG"
-    ensure_gh_release "$TAG" "$BRANCH" "$RELEASE_NOTES_PATH" "$APK_ALIAS_PATH" "$AAB_ALIAS_PATH" "$ZIP_PATH" "$CHECKSUMS_PATH"
+    ensure_gh_release "$TAG" "$BRANCH" "$RELEASE_NOTES_PATH" "$APK_ALIAS_PATH"
     echo "[release] Έγινε push branch=$BRANCH και tag=$TAG"
     echo "[release] Το GitHub Action παραμένει ενεργό ως επιπλέον fallback."
 else
