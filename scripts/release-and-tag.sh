@@ -16,9 +16,15 @@ USAGE
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BUMP_SCRIPT="$SCRIPT_DIR/bump-version.sh"
+SECRETS_GUARD_SCRIPT="$SCRIPT_DIR/check-no-secrets.sh"
 
 if [[ ! -x "$BUMP_SCRIPT" ]]; then
     echo "ERROR: Δεν βρέθηκε εκτελέσιμο bump script στο $BUMP_SCRIPT" >&2
+    exit 1
+fi
+
+if [[ ! -x "$SECRETS_GUARD_SCRIPT" ]]; then
+    echo "ERROR: Δεν βρέθηκε εκτελέσιμο secrets guard script στο $SECRETS_GUARD_SCRIPT" >&2
     exit 1
 fi
 
@@ -62,6 +68,27 @@ fi
 if [[ -n "$(git status --porcelain)" ]]; then
     echo "[release] Εντοπίστηκαν αλλαγές στο working tree. Θα συμπεριληφθούν στο release commit."
 fi
+
+"$SECRETS_GUARD_SCRIPT"
+
+ensure_release_signing_env() {
+    local -a missing_vars=()
+    [[ -z "${ANDROID_SIGNING_STORE_FILE:-}" ]] && missing_vars+=("ANDROID_SIGNING_STORE_FILE")
+    [[ -z "${ANDROID_SIGNING_STORE_PASSWORD:-}" ]] && missing_vars+=("ANDROID_SIGNING_STORE_PASSWORD")
+    [[ -z "${ANDROID_SIGNING_KEY_ALIAS:-}" ]] && missing_vars+=("ANDROID_SIGNING_KEY_ALIAS")
+    [[ -z "${ANDROID_SIGNING_KEY_PASSWORD:-}" ]] && missing_vars+=("ANDROID_SIGNING_KEY_PASSWORD")
+
+    if [[ "${#missing_vars[@]}" -gt 0 ]]; then
+        echo "ERROR: Λείπουν υποχρεωτικά Android release signing env vars: ${missing_vars[*]}" >&2
+        echo "ERROR: Χωρίς signing το APK είναι invalid για εγκατάσταση. Όρισε τα vars και ξανατρέξε release." >&2
+        exit 1
+    fi
+
+    if [[ ! -f "${ANDROID_SIGNING_STORE_FILE}" ]]; then
+        echo "ERROR: Δεν βρέθηκε keystore αρχείο στο ANDROID_SIGNING_STORE_FILE=${ANDROID_SIGNING_STORE_FILE}" >&2
+        exit 1
+    fi
+}
 
 ensure_gh_release() {
     local tag="$1"
@@ -303,16 +330,21 @@ else
 fi
 
 echo "[release] Build release artifacts για $TAG"
+ensure_release_signing_env
 ./gradlew clean assembleRelease bundleRelease
 
 RELEASE_DIR="$ROOT_DIR/build-artifacts/release/$TAG"
 mkdir -p "$RELEASE_DIR"
 
-APK_PATH="$(find "$ROOT_DIR/app/build/outputs/apk/release" -maxdepth 1 -type f -name '*.apk' | sort | tail -n1 || true)"
+APK_PATH="$(find "$ROOT_DIR/app/build/outputs/apk/release" -maxdepth 1 -type f -name '*.apk' ! -name '*-unsigned.apk' | sort | tail -n1 || true)"
+UNSIGNED_APK_PATH="$(find "$ROOT_DIR/app/build/outputs/apk/release" -maxdepth 1 -type f -name '*-unsigned.apk' | sort | tail -n1 || true)"
 AAB_PATH="$(find "$ROOT_DIR/app/build/outputs/bundle/release" -maxdepth 1 -type f -name '*.aab' | sort | tail -n1 || true)"
 MAPPING_PATH="$(find "$ROOT_DIR/app/build/outputs/mapping/release" -maxdepth 1 -type f -name 'mapping.txt' | sort | tail -n1 || true)"
 
 if [[ -z "$APK_PATH" || -z "$AAB_PATH" ]]; then
+    if [[ -n "$UNSIGNED_APK_PATH" ]]; then
+        echo "ERROR: Βρέθηκε μόνο unsigned APK: $UNSIGNED_APK_PATH" >&2
+    fi
     echo "ERROR: Δεν βρέθηκαν APK/AAB release artifacts." >&2
     exit 1
 fi

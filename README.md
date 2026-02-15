@@ -22,6 +22,9 @@
 - Για νέα έκδοση app, ο maintainer τρέχει `scripts/release-and-tag.sh` (ή το skill wrapper), γίνεται bump έκδοσης, build release artifacts, ενιαίο commit με όλες τις αλλαγές του working tree, και tag push.
 - Το release script δημιουργεί αυτόματα συνοπτική, user-friendly περιγραφή αλλαγών από previous tag σε νέο tag (`RELEASE_NOTES.md`) με πλήρη λίστα commits, χωρίς να επαναλαμβάνει τον τίτλο του release.
 - Το release script δημοσιεύει άμεσα GitHub Release με assets μέσω `gh release create/upload` (συμπεριλαμβάνει και `apk-release.apk` για εύκολο mobile install download) και χρησιμοποιεί τα generated notes ως release description.
+- Το release script και το GitHub Action δημοσιεύουν μόνο signed APK· αν λείπουν signing credentials, το release μπλοκάρεται πριν το upload.
+- Πριν από release γίνεται αυτόματος έλεγχος ότι δεν υπάρχουν committed secrets/keystore αρχεία στο repository.
+- Σε κάθε push/pull request τρέχει αυτόματα ο έλεγχος `Security Guard` για ανίχνευση committed secrets.
 - Με push tag `vX.Y.Z`, το GitHub Actions workflow παραμένει ως επιπλέον fallback για release packaging.
 
 Κύριες αμετάβλητες αρχές:
@@ -134,18 +137,31 @@
 - Release automation scripts:
 - `scripts/bump-version.sh`
 - `scripts/release-and-tag.sh`
+- `scripts/check-no-secrets.sh`
+- `scripts/setup-release-signing.sh`
+- `.codex/AGENTS.md` (project-specific Codex safety instructions)
 
 - GitHub Actions:
 - `.github/workflows/android-release.yml` (trigger σε tags `v*.*.*`)
+- `.github/workflows/security-guard.yml` (trigger σε κάθε push/pull request)
 
-- Προαιρετικό release signing μέσω GitHub Secrets:
+- Υποχρεωτικό release signing για installable GitHub APK:
 - `ANDROID_KEYSTORE_BASE64`
 - `ANDROID_KEYSTORE_PASSWORD`
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
+- Για local release script απαιτούνται επίσης env vars:
+- `ANDROID_SIGNING_STORE_FILE`
+- `ANDROID_SIGNING_STORE_PASSWORD`
+- `ANDROID_SIGNING_KEY_ALIAS`
+- `ANDROID_SIGNING_KEY_PASSWORD`
 
 - Required GitHub permissions:
 - `contents: write` για δημιουργία release και upload assets.
+
+- Κανόνας ασφάλειας:
+- Δεν γίνεται commit σε `.env*`, `*.jks`, `*.keystore`, `*.p12`, `*.pfx`, `*.pem`, `key.properties`.
+- Ευαίσθητες τιμές περνάνε μόνο από GitHub Secrets και runtime env vars.
 
 - Δεν απαιτούνται:
 - login/auth provider
@@ -161,6 +177,8 @@
 
 ### Happy path (release)
 ```bash
+./scripts/setup-release-signing.sh --set-github-secrets
+source "$HOME/.android/learnbyzantine/release-signing.env"
 ./scripts/release-and-tag.sh --bump patch
 ```
 - Αναμενόμενο: νέο commit έκδοσης, νέο tag `vX.Y.Z`, push στο GitHub, direct publish GitHub Release και upload `APK/AAB/ZIP/SHA256`.
@@ -179,8 +197,16 @@
 ```json
 {
   "error": "missing_signing_secrets",
-  "result": "release_build_unsigned",
-  "action": "ορισμός ANDROID_KEYSTORE_* secrets για production publish"
+  "result": "release_aborted_before_publish",
+  "action": "ορισμός ANDROID_KEYSTORE_* secrets στο GitHub και ANDROID_SIGNING_* vars στο local release environment"
+}
+```
+
+### Failure example (secrets guard)
+```json
+{
+  "error": "tracked_secret_detected",
+  "message": "Βρέθηκε committed secret/keystore αρχείο. Μεταφορά σε GitHub Secrets και αφαίρεση από git history/index."
 }
 ```
 
@@ -216,11 +242,35 @@
 - Αν χρησιμοποιείς `--skip-gh-release`, τότε η δημοσίευση εξαρτάται από το workflow tag trigger `v*.*.*`.
 - Έλεγξε ότι έγινε push και του tag (`git push origin vX.Y.Z`), όχι μόνο branch.
 
+### Γιατί εμφανίζει "App not installed as package appears to be invalid";
+- Συνήθως το APK είναι unsigned (ή αλλιώς αλλοιωμένο κατά το download).
+- Από εδώ και πέρα το pipeline αποτυγχάνει όταν λείπουν signing secrets και δεν ανεβάζει unsigned `apk-release.apk`.
+- Έλεγξε στο GitHub Release ότι κατεβάζεις το artifact `apk-release.apk` του τελευταίου επιτυχημένου release.
+
+### Πώς κρύβω ευαίσθητα στοιχεία ώστε να μη φαίνονται στον κώδικα;
+- Βάλε τα σε `Settings -> Secrets and variables -> Actions` στο GitHub repository.
+- Για signing χρησιμοποίησε τα `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`.
+- Για αυτοματοποιημένη αρχική ρύθμιση keystore+secrets χρησιμοποίησε `./scripts/setup-release-signing.sh --set-github-secrets`.
+- Το `scripts/check-no-secrets.sh` και το CI μπλοκάρουν release όταν εντοπίσουν committed secret files/keys.
+
+### Πού βρίσκω τα signing keys και μπορώ να τα βάλω στο build.gradle.kts;
+- Τα signing keys δεν υπάρχουν έτοιμα στο project, δημιουργούνται μία φορά με `keytool`.
+- Δεν τα βάζουμε ποτέ στο `app/build.gradle.kts` επειδή το repository είναι public.
+- Το project διαβάζει signing δεδομένα μόνο από environment variables και GitHub Secrets.
+
+### Υπάρχει μόνιμος έλεγχος ασφάλειας για αυτό το public repository;
+- Ναι, σε κάθε push/PR εκτελείται το workflow `Security Guard`.
+- Επιπλέον, πριν από κάθε release εκτελείται ξανά ο ίδιος έλεγχος και αν αποτύχει, το release μπλοκάρεται.
+- Για μέγιστη προστασία ενεργοποίησε στο GitHub branch protection με required status check το `Security Guard / repository-secrets-guard`.
+
 ### Πώς επηρεάζονται άλλα components;
 - `app/build.gradle.kts`: προστέθηκε conditional release signing από environment variables.
 - `scripts/bump-version.sh`: χειρίζεται `versionName/versionCode` bump.
-- `scripts/release-and-tag.sh`: χτίζει release artifacts, κάνει commit/tag/push, κάνει stage+commit όλες τις αλλαγές του working tree σε ένα release commit με σύντομο summary, παράγει user-friendly `RELEASE_NOTES.md` (previous tag → νέο tag) χωρίς διπλό τίτλο, και δημιουργεί/ενημερώνει direct GitHub Release με assets και περιγραφή αλλαγών.
-- `.github/workflows/android-release.yml`: δημιουργεί GitHub Release και release packages.
+- `scripts/release-and-tag.sh`: χτίζει release artifacts, απαιτεί υποχρεωτικά signing env vars, μπλοκάρει unsigned APK outputs, κάνει commit/tag/push, κάνει stage+commit όλες τις αλλαγές του working tree σε ένα release commit με σύντομο summary, παράγει user-friendly `RELEASE_NOTES.md` (previous tag → νέο tag) χωρίς διπλό τίτλο, και δημιουργεί/ενημερώνει direct GitHub Release με assets και περιγραφή αλλαγών.
+- `scripts/check-no-secrets.sh`: αποτρέπει commit/release όταν υπάρχουν tracked μυστικά ή υπογεγραμμένα κλειδιά μέσα στο repository.
+- `scripts/setup-release-signing.sh`: δημιουργεί release keystore εκτός repository, γράφει local env file signing και ενημερώνει προαιρετικά αυτόματα τα GitHub Actions secrets.
+- `.github/workflows/security-guard.yml`: τρέχει secrets guard σε κάθε push/PR.
+- `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, μπλοκάρει unsigned APK outputs και δημιουργεί GitHub Release packages.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
 - `SettingsActivity`, `layout_settings.xml`, `AppFontScale` και `BaseActivity`: διαχειρίζονται την αποθήκευση/εφαρμογή global font scaling για όλη την εφαρμογή.
 - `EightModesActivity`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels και αναπαραγωγή συχνοτήτων με αναφορά `Νη = 220Hz`.

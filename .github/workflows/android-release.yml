@@ -27,9 +27,30 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      - name: Prepare signing keystore (optional)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+      - name: Guard against committed secrets
+        run: ./scripts/check-no-secrets.sh
+
+      - name: Validate release signing secrets
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
+          set -euo pipefail
+          missing=()
+          [[ -z "${ANDROID_KEYSTORE_BASE64}" ]] && missing+=("ANDROID_KEYSTORE_BASE64")
+          [[ -z "${ANDROID_KEYSTORE_PASSWORD}" ]] && missing+=("ANDROID_KEYSTORE_PASSWORD")
+          [[ -z "${ANDROID_KEY_ALIAS}" ]] && missing+=("ANDROID_KEY_ALIAS")
+          [[ -z "${ANDROID_KEY_PASSWORD}" ]] && missing+=("ANDROID_KEY_PASSWORD")
+          if [[ "${#missing[@]}" -gt 0 ]]; then
+            echo "Missing required Android signing secrets: ${missing[*]}" >&2
+            exit 1
+          fi
+
+      - name: Prepare signing keystore
+        run: |
+          set -euo pipefail
           KEYSTORE_PATH="$RUNNER_TEMP/release.keystore"
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > "$KEYSTORE_PATH"
           echo "ANDROID_SIGNING_STORE_FILE=$KEYSTORE_PATH" >> "$GITHUB_ENV"
@@ -49,11 +70,15 @@ jobs:
           PACKAGE_DIR="$GITHUB_WORKSPACE/release-packages/$TAG"
           mkdir -p "$PACKAGE_DIR"
 
-          APK_PATH="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' | sort | tail -n1 || true)"
+          APK_PATH="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' ! -name '*-unsigned.apk' | sort | tail -n1 || true)"
+          UNSIGNED_APK_PATH="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*-unsigned.apk' | sort | tail -n1 || true)"
           AAB_PATH="$(find app/build/outputs/bundle/release -maxdepth 1 -type f -name '*.aab' | sort | tail -n1 || true)"
           MAPPING_PATH="$(find app/build/outputs/mapping/release -maxdepth 1 -type f -name 'mapping.txt' | sort | tail -n1 || true)"
 
           if [[ -z "$APK_PATH" || -z "$AAB_PATH" ]]; then
+            if [[ -n "$UNSIGNED_APK_PATH" ]]; then
+              echo "Only unsigned APK found: $UNSIGNED_APK_PATH" >&2
+            fi
             echo "Missing APK/AAB outputs" >&2
             exit 1
           fi

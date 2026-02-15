@@ -17,3 +17,11 @@ app/src/main/assets/local_fonts/
 app/src/main/assets/editor_symbols_local_v1.json
 build-artifacts/release
 build-artifacts/apk
+.env
+.env.*
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+key.properties

@@ -6,6 +6,11 @@
 - Προστέθηκε tap-and-hold αλληλεπίδραση στους φθόγγους της σελίδας `8 Ήχοι` με αναπαραγωγή συχνοτήτων βάσει μορίων (`Νη = 220Hz`, `f = 220 * 2^(m/72)`).
 - Ρυθμίστηκε αυτοματοποιημένο Android release pipeline με tag trigger (`vX.Y.Z`) σε GitHub Actions.
 - Προστέθηκε direct GitHub Release publish στο `scripts/release-and-tag.sh` με upload assets και σταθερό alias `apk-release.apk` για εύκολο mobile download/install.
+- Προστέθηκε signing guard σε release script και GitHub Actions ώστε να αποτυγχάνει το release όταν λείπουν keystore credentials ή όταν παράγεται μόνο unsigned APK.
+- Προστέθηκε dedicated secrets guard script (`scripts/check-no-secrets.sh`) και εκτέλεση του σε local release + GitHub Actions για αποτροπή committed secret files/keys.
+- Προστέθηκε ξεχωριστό workflow `Security Guard` που εκτελείται σε κάθε push/PR για συνεχή έλεγχο repository secrets σε public περιβάλλον.
+- Προστέθηκε project-specific αρχείο `.codex/AGENTS.md` με υποχρεωτικούς κανόνες security-check για κάθε μελλοντική εργασία στο repository.
+- Προστέθηκε script `scripts/setup-release-signing.sh` για ασφαλή αρχική δημιουργία keystore, local signing env setup και προαιρετική αυτόματη ενημέρωση GitHub Actions signing secrets.
 - Προστέθηκε αυτόματη δημιουργία user-friendly release notes στο `scripts/release-and-tag.sh` με σύνοψη και πλήρη λίστα αλλαγών από previous tag στο νέο release.
 - Προστέθηκε release packaging με artifacts `APK`, `AAB`, checksums και zip bundle ανά έκδοση.
 - Προστέθηκε local release automation με scripts για version bump, build, commit, tag και push.
