@@ -114,7 +114,8 @@ jobs:
 
       - name: Log fallback publish skip
         if: steps.release_guard.outputs.skip_publish == 'true'
-        run: echo "Fallback publish skipped: release already contains apk-release.apk."
+        run: |
+          echo "Fallback publish skipped: release already contains apk-release.apk."
 
       - name: Publish GitHub Release
         if: steps.release_guard.outputs.skip_publish != 'true'
