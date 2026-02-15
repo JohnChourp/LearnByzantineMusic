@@ -5,7 +5,7 @@
 Η λειτουργία `Συνθέτης` έχει καταργηθεί και έχει αντικατασταθεί από σελίδα `8 Ήχοι` με οπτική απόδοση κλιμάκων και διαστημάτων.
 Προστέθηκε σελίδα `Ρυθμίσεις` με discrete slider για μέγεθος γραμμάτων (`20/40/60/80/100`) που εφαρμόζει global font scaling σε όλες τις οθόνες.
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
-Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.14.0`, `protobuf-java` σε `3.25.5`, `jdom2` σε `2.0.6.1`, `netty-codec` σε `4.1.129.Final`, `netty-codec-http` σε `4.1.129.Final`, `netty-codec-http2` σε `4.1.129.Final`, `netty-handler` σε `4.1.129.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.26.0`, `bcpkix-jdk18on` σε `1.79`, `bcprov-jdk18on` σε `1.79` και `bcutil-jdk18on` σε `1.79`.
+Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.14.0`, `protobuf-java` σε `3.25.5`, `jdom2` σε `2.0.6.1`, `netty-codec` σε `4.1.129.Final`, `netty-codec-http` σε `4.1.129.Final`, `netty-codec-http2` σε `4.1.129.Final`, `netty-handler` σε `4.1.129.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.26.0`, `commons-lang3` σε `3.18.0`, `bcpkix-jdk18on` σε `1.79`, `bcprov-jdk18on` σε `1.79` και `bcutil-jdk18on` σε `1.79`.
 
 ## Business flow
 - Ο χρήστης ανοίγει την αρχική οθόνη και επιλέγει θεωρητική ενότητα.
@@ -129,6 +129,7 @@
 - `io.netty:netty-handler = 4.1.129.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
 - `org.bitbucket.b_c:jose4j = 0.9.6` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.apache.commons:commons-compress = 1.26.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `org.apache.commons:commons-lang3 = 3.18.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcpkix-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcprov-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcutil-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
@@ -273,6 +274,11 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Το `org.apache.commons:commons-compress` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.5.2`).
 - Η προηγούμενη resolved έκδοση ήταν `1.21` και το advisory ζητά patched έκδοση `>= 1.26.0`.
 - Το project κάνει forced resolve σε `org.apache.commons:commons-compress:1.26.0` στο build classpath.
+
+### Γιατί εμφανίστηκε Dependabot alert για `commons-lang3`;
+- Το `org.apache.commons:commons-lang3` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.5.2`).
+- Η προηγούμενη resolved έκδοση ήταν `3.14.0` και το advisory ζητά patched έκδοση `>= 3.18.0`.
+- Το project κάνει forced resolve σε `org.apache.commons:commons-lang3:3.18.0` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `bcpkix-jdk18on`;
 - Το `org.bouncycastle:bcpkix-jdk18on` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.5.2`).

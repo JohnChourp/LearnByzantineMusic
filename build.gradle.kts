@@ -19,6 +19,8 @@ buildscript {
         resolutionStrategy.force("org.bitbucket.b_c:jose4j:0.9.6")
         // Force patched commons-compress due AGP transitive dependency vulnerability.
         resolutionStrategy.force("org.apache.commons:commons-compress:1.26.0")
+        // Force patched commons-lang3 due AGP transitive dependency vulnerability.
+        resolutionStrategy.force("org.apache.commons:commons-lang3:3.18.0")
         // Force patched bouncycastle modules due AGP transitive dependency vulnerabilities.
         resolutionStrategy.force("org.bouncycastle:bcpkix-jdk18on:1.79")
         resolutionStrategy.force("org.bouncycastle:bcprov-jdk18on:1.79")
