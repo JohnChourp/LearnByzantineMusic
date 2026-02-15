@@ -9,6 +9,7 @@
 - Προστέθηκε signing guard σε release script και GitHub Actions ώστε να αποτυγχάνει το release όταν λείπουν keystore credentials ή όταν παράγεται μόνο unsigned APK.
 - Προστέθηκε dedicated secrets guard script (`scripts/check-no-secrets.sh`) και εκτέλεση του σε local release + GitHub Actions για αποτροπή committed secret files/keys.
 - Προστέθηκε ξεχωριστό workflow `Security Guard` που εκτελείται σε κάθε push/PR για συνεχή έλεγχο repository secrets σε public περιβάλλον.
+- Προστέθηκε αξιόπιστη ρύθμιση CodeQL για Java/Kotlin με manual build mode, setup JDK 17 και compile μέσω `:app:compileDebugKotlin`.
 - Προστέθηκε project-specific αρχείο `.codex/AGENTS.md` με υποχρεωτικούς κανόνες security-check για κάθε μελλοντική εργασία στο repository.
 - Προστέθηκε script `scripts/setup-release-signing.sh` για ασφαλή αρχική δημιουργία keystore, local signing env setup και προαιρετική αυτόματη ενημέρωση GitHub Actions signing secrets.
 - Απλοποιήθηκαν τα GitHub Release custom assets ώστε να ανεβαίνει μόνο το `apk-release.apk` (με τα source archives να παρέχονται αυτόματα από το GitHub).

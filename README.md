@@ -145,6 +145,7 @@
 - GitHub Actions:
 - `.github/workflows/android-release.yml` (trigger σε tags `v*.*.*`)
 - `.github/workflows/security-guard.yml` (trigger σε κάθε push/pull request)
+- `.github/workflows/codeql.yml` (CodeQL scan με manual Java/Kotlin build μέσω `:app:compileDebugKotlin` και JDK 17)
 
 - Υποχρεωτικό release signing για installable GitHub APK:
 - `ANDROID_KEYSTORE_BASE64`
@@ -251,6 +252,11 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Το `SHA256SUMS.txt` έχει secrets και πρέπει να αφαιρείται;
 - Όχι, ένα αρχείο SHA256 checksums περιέχει μόνο hashes αρχείων και όχι κωδικούς/keys.
 - Παρ' όλα αυτά, το release policy του project πλέον ανεβάζει μόνο `apk-release.apk` ως custom asset για απλούστερη δημόσια διανομή.
+
+### Γιατί αποτυγχάνει το `Analyze (java-kotlin)` στο CodeQL;
+- Συνήθης αιτία είναι αποτυχία του CodeQL `autobuild` σε Android projects (δεν ανιχνεύει σωστά Gradle build βήματα).
+- Η ροή του project έχει οριστεί σε manual build mode με JDK 17 και compile-only command `./gradlew --no-daemon :app:compileDebugKotlin`.
+- Αν ξανασπάσει, έλεγξε logs για JDK version mismatch ή σφάλμα Gradle dependency resolution.
 
 ### Πώς κρύβω ευαίσθητα στοιχεία ώστε να μη φαίνονται στον κώδικα;
 - Βάλε τα σε `Settings -> Secrets and variables -> Actions` στο GitHub repository.
