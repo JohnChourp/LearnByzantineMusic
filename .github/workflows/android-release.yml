@@ -77,13 +77,51 @@ jobs:
             exit 1
           fi
 
-          echo "apk_path=$APK_PATH" >> "$GITHUB_OUTPUT"
+          APK_ALIAS_PATH="$RUNNER_TEMP/apk-release.apk"
+          cp "$APK_PATH" "$APK_ALIAS_PATH"
+          echo "apk_alias_path=$APK_ALIAS_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Check existing custom APK asset
+        id: release_guard
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = context.ref.replace("refs/tags/", "");
+            let skipPublish = false;
+
+            try {
+              const { data: release } = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag,
+              });
+
+              skipPublish = (release.assets || []).some(
+                (asset) => asset.name === "apk-release.apk",
+              );
+            } catch (error) {
+              if (error.status !== 404) {
+                throw error;
+              }
+            }
+
+            core.setOutput("skip_publish", skipPublish ? "true" : "false");
+            core.info(
+              skipPublish
+                ? `Skipping fallback publish because apk-release.apk already exists for ${tag}.`
+                : `No existing apk-release.apk found for ${tag}; fallback publish will run.`,
+            );
+
+      - name: Log fallback publish skip
+        if: steps.release_guard.outputs.skip_publish == 'true'
+        run: echo "Fallback publish skipped: release already contains apk-release.apk."
 
       - name: Publish GitHub Release
+        if: steps.release_guard.outputs.skip_publish != 'true'
         uses: softprops/action-gh-release@v2
         with:
           name: LearnByzantineMusic ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
           generate_release_notes: true
           files: |
-            ${{ steps.package.outputs.apk_path }}
+            ${{ steps.package.outputs.apk_alias_path }}

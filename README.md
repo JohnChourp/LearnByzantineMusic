@@ -26,7 +26,8 @@
 - Το release script και το GitHub Action δημοσιεύουν μόνο signed APK· αν λείπουν signing credentials, το release μπλοκάρεται πριν το upload.
 - Πριν από release γίνεται αυτόματος έλεγχος ότι δεν υπάρχουν committed secrets/keystore αρχεία στο repository.
 - Σε κάθε push/pull request τρέχει αυτόματα ο έλεγχος `Security Guard` για ανίχνευση committed secrets.
-- Με push tag `vX.Y.Z`, το GitHub Actions workflow παραμένει ως επιπλέον fallback για release packaging.
+- Με push tag `vX.Y.Z`, το GitHub Actions workflow παραμένει ως επιπλέον fallback για release packaging και ανεβάζει μόνο alias `apk-release.apk`.
+- Αν στο ίδιο tag υπάρχει ήδη custom asset `apk-release.apk` από direct publish του script, το fallback workflow κάνει skip το publish για να μη δημιουργηθεί δεύτερο APK asset.
 
 Κύριες αμετάβλητες αρχές:
 - Η σελίδα `8 Ήχοι` είναι εκπαιδευτική προβολή με τοπικό interaction ακρόασης φθόγγων (χωρίς αποθήκευση κατάστασης).
@@ -186,6 +187,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Αναμενόμενο: νέο commit έκδοσης, νέο tag `vX.Y.Z`, push στο GitHub, direct publish GitHub Release και upload μόνο `apk-release.apk`.
 - Το commit του release δημιουργείται αυτόματα ως ένα ενιαίο commit που περιλαμβάνει όλες τις διαθέσιμες αλλαγές (tracked/untracked, εκτός ignored) με σύντομο summary στο commit message.
 - Το GitHub Release description περιλαμβάνει συνοπτική εικόνα (commits/files/contributors), περιοχές που επηρεάστηκαν και πλήρη λίστα αλλαγών από το προηγούμενο release, χωρίς διπλό τίτλο.
+- Το fallback workflow για το ίδιο tag εντοπίζει αν υπάρχει ήδη `apk-release.apk` και τότε παραλείπει το publish step (αναμενόμενη συμπεριφορά).
 
 ### Failure example
 ```json
@@ -243,6 +245,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Το script κάνει direct publish με `gh`; έλεγξε πρώτα ότι υπάρχει ενεργό `gh auth login`.
 - Αν χρησιμοποιείς `--skip-gh-release`, τότε η δημοσίευση εξαρτάται από το workflow tag trigger `v*.*.*`.
 - Έλεγξε ότι έγινε push και του tag (`git push origin vX.Y.Z`), όχι μόνο branch.
+- Αν έχει ήδη γίνει direct publish από το script, το fallback workflow μπορεί να εμφανίσει skip στο publish step επειδή υπάρχει ήδη `apk-release.apk` στο release του tag (αναμενόμενο, όχι σφάλμα).
 
 ### Γιατί εμφανίζει "App not installed as package appears to be invalid";
 - Συνήθως το APK είναι unsigned (ή αλλιώς αλλοιωμένο κατά το download).
@@ -281,7 +284,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - `scripts/check-no-secrets.sh`: αποτρέπει commit/release όταν υπάρχουν tracked μυστικά ή υπογεγραμμένα κλειδιά μέσα στο repository.
 - `scripts/setup-release-signing.sh`: δημιουργεί release keystore εκτός repository, γράφει local env file signing και ενημερώνει προαιρετικά αυτόματα τα GitHub Actions secrets.
 - `.github/workflows/security-guard.yml`: τρέχει secrets guard σε κάθε push/PR.
-- `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, μπλοκάρει unsigned APK outputs και δημοσιεύει μόνο το `apk-release.apk` ως custom asset.
+- `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, κάνει package signed APK σε σταθερό alias `apk-release.apk`, ελέγχει αν υπάρχει ήδη ίδιο custom asset στο release του tag και κάνει skip το fallback publish όταν υπάρχει ήδη.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
 - `SettingsActivity`, `layout_settings.xml`, `AppFontScale` και `BaseActivity`: διαχειρίζονται την αποθήκευση/εφαρμογή global font scaling για όλη την εφαρμογή.
 - `EightModesActivity`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels και αναπαραγωγή συχνοτήτων με αναφορά `Νη = 220Hz`.
