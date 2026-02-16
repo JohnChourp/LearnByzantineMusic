@@ -16,6 +16,12 @@ class EightModesActivity : BaseActivity() {
     private lateinit var modeSelector: Spinner
     private lateinit var selectedModeType: TextView
     private lateinit var selectedModeApichimaText: TextView
+    private lateinit var selectedModeApichimaAlternatives: TextView
+    private lateinit var selectedModeApichimaFormsHint: TextView
+    private lateinit var selectedModeApichimaPhthongs: TextView
+    private lateinit var selectedModeApichimaSyllables: TextView
+    private lateinit var selectedModeApichimaAlternativePhthongs: TextView
+    private lateinit var selectedModeApichimaAlternativeSyllables: TextView
     private lateinit var selectedModeApichimaSign: ImageView
     private lateinit var selectedModeApichimaSignName: TextView
     private lateinit var selectedModeDetails: TextView
@@ -32,6 +38,11 @@ class EightModesActivity : BaseActivity() {
                 nameRes = R.string.mode_first,
                 typeRes = R.string.mode_type_diatonic,
                 apichimaRes = R.string.mode_apichima_first,
+                apichimaAlternativeRes = null,
+                apichimaPhthongsRes = R.string.mode_apichima_phthongs_first,
+                apichimaSyllablesRes = R.string.mode_apichima_syllables_first,
+                apichimaAlternativePhthongsRes = null,
+                apichimaAlternativeSyllablesRes = null,
                 apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_pa,
                 apichimaSignNameRes = R.string.phthong_pa,
                 detailsRes = R.string.mode_details_first,
@@ -42,6 +53,11 @@ class EightModesActivity : BaseActivity() {
                 nameRes = R.string.mode_second,
                 typeRes = R.string.mode_type_hard_chromatic,
                 apichimaRes = R.string.mode_apichima_second,
+                apichimaAlternativeRes = null,
+                apichimaPhthongsRes = R.string.mode_apichima_phthongs_second,
+                apichimaSyllablesRes = R.string.mode_apichima_syllables_second,
+                apichimaAlternativePhthongsRes = null,
+                apichimaAlternativeSyllablesRes = null,
                 apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_di,
                 apichimaSignNameRes = R.string.phthong_di,
                 detailsRes = R.string.mode_details_second,
@@ -52,6 +68,11 @@ class EightModesActivity : BaseActivity() {
                 nameRes = R.string.mode_third,
                 typeRes = R.string.mode_type_diatonic,
                 apichimaRes = R.string.mode_apichima_third,
+                apichimaAlternativeRes = null,
+                apichimaPhthongsRes = R.string.mode_apichima_phthongs_third,
+                apichimaSyllablesRes = R.string.mode_apichima_syllables_third,
+                apichimaAlternativePhthongsRes = null,
+                apichimaAlternativeSyllablesRes = null,
                 apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_ga,
                 apichimaSignNameRes = R.string.phthong_ga,
                 detailsRes = R.string.mode_details_third,
@@ -62,6 +83,11 @@ class EightModesActivity : BaseActivity() {
                 nameRes = R.string.mode_fourth,
                 typeRes = R.string.mode_type_diatonic,
                 apichimaRes = R.string.mode_apichima_fourth,
+                apichimaAlternativeRes = null,
+                apichimaPhthongsRes = R.string.mode_apichima_phthongs_fourth,
+                apichimaSyllablesRes = R.string.mode_apichima_syllables_fourth,
+                apichimaAlternativePhthongsRes = null,
+                apichimaAlternativeSyllablesRes = null,
                 apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_di,
                 apichimaSignNameRes = R.string.phthong_di,
                 detailsRes = R.string.mode_details_fourth,
@@ -72,6 +98,11 @@ class EightModesActivity : BaseActivity() {
                 nameRes = R.string.mode_plagal_first,
                 typeRes = R.string.mode_type_diatonic,
                 apichimaRes = R.string.mode_apichima_plagal_first,
+                apichimaAlternativeRes = null,
+                apichimaPhthongsRes = R.string.mode_apichima_phthongs_plagal_first,
+                apichimaSyllablesRes = R.string.mode_apichima_syllables_plagal_first,
+                apichimaAlternativePhthongsRes = null,
+                apichimaAlternativeSyllablesRes = null,
                 apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_ke,
                 apichimaSignNameRes = R.string.phthong_ke,
                 detailsRes = R.string.mode_details_plagal_first,
@@ -82,6 +113,11 @@ class EightModesActivity : BaseActivity() {
                 nameRes = R.string.mode_plagal_second,
                 typeRes = R.string.mode_type_soft_chromatic,
                 apichimaRes = R.string.mode_apichima_plagal_second,
+                apichimaAlternativeRes = R.string.mode_apichima_alternative_plagal_second,
+                apichimaPhthongsRes = R.string.mode_apichima_phthongs_plagal_second,
+                apichimaSyllablesRes = R.string.mode_apichima_syllables_plagal_second,
+                apichimaAlternativePhthongsRes = R.string.mode_apichima_alternative_phthongs_plagal_second,
+                apichimaAlternativeSyllablesRes = R.string.mode_apichima_alternative_syllables_plagal_second,
                 apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_ni,
                 apichimaSignNameRes = R.string.phthong_ni,
                 detailsRes = R.string.mode_details_plagal_second,
@@ -92,6 +128,11 @@ class EightModesActivity : BaseActivity() {
                 nameRes = R.string.mode_varys,
                 typeRes = R.string.mode_type_enharmonic,
                 apichimaRes = R.string.mode_apichima_varys,
+                apichimaAlternativeRes = null,
+                apichimaPhthongsRes = R.string.mode_apichima_phthongs_varys,
+                apichimaSyllablesRes = R.string.mode_apichima_syllables_varys,
+                apichimaAlternativePhthongsRes = null,
+                apichimaAlternativeSyllablesRes = null,
                 apichimaSignRes = R.drawable.diatonic_filamentous_testimonial_zo,
                 apichimaSignNameRes = R.string.phthong_zo,
                 detailsRes = R.string.mode_details_varys,
@@ -102,6 +143,11 @@ class EightModesActivity : BaseActivity() {
                 nameRes = R.string.mode_plagal_fourth,
                 typeRes = R.string.mode_type_diatonic,
                 apichimaRes = R.string.mode_apichima_plagal_fourth,
+                apichimaAlternativeRes = null,
+                apichimaPhthongsRes = R.string.mode_apichima_phthongs_plagal_fourth,
+                apichimaSyllablesRes = R.string.mode_apichima_syllables_plagal_fourth,
+                apichimaAlternativePhthongsRes = null,
+                apichimaAlternativeSyllablesRes = null,
                 apichimaSignRes = R.drawable.diatonic_filamentous_testimonial_ni,
                 apichimaSignNameRes = R.string.phthong_ni,
                 detailsRes = R.string.mode_details_plagal_fourth,
@@ -118,6 +164,14 @@ class EightModesActivity : BaseActivity() {
         modeSelector = findViewById(R.id.mode_selector)
         selectedModeType = findViewById(R.id.selected_mode_type)
         selectedModeApichimaText = findViewById(R.id.selected_mode_apichima_text)
+        selectedModeApichimaAlternatives = findViewById(R.id.selected_mode_apichima_alternatives)
+        selectedModeApichimaFormsHint = findViewById(R.id.selected_mode_apichima_forms_hint)
+        selectedModeApichimaPhthongs = findViewById(R.id.selected_mode_apichima_phthongs)
+        selectedModeApichimaSyllables = findViewById(R.id.selected_mode_apichima_syllables)
+        selectedModeApichimaAlternativePhthongs =
+            findViewById(R.id.selected_mode_apichima_alternative_phthongs)
+        selectedModeApichimaAlternativeSyllables =
+            findViewById(R.id.selected_mode_apichima_alternative_syllables)
         selectedModeApichimaSign = findViewById(R.id.selected_mode_apichima_sign)
         selectedModeApichimaSignName = findViewById(R.id.selected_mode_apichima_sign_name)
         selectedModeDetails = findViewById(R.id.selected_mode_details)
@@ -188,6 +242,37 @@ class EightModesActivity : BaseActivity() {
         selectedModeType.text = getString(mode.typeRes)
         selectedModeApichimaText.text =
             getString(R.string.mode_apichima_label, getString(mode.apichimaRes))
+        val alternativeRes = mode.apichimaAlternativeRes
+        if (alternativeRes != null) {
+            selectedModeApichimaAlternatives.visibility = View.VISIBLE
+            selectedModeApichimaAlternatives.text =
+                getString(R.string.mode_apichima_alternatives_label, getString(alternativeRes))
+        } else {
+            selectedModeApichimaAlternatives.visibility = View.GONE
+        }
+        selectedModeApichimaPhthongs.text =
+            getString(R.string.mode_apichima_phthongs_label, getString(mode.apichimaPhthongsRes))
+        selectedModeApichimaSyllables.text =
+            getString(R.string.mode_apichima_syllables_label, getString(mode.apichimaSyllablesRes))
+
+        val alternativePhthongsRes = mode.apichimaAlternativePhthongsRes
+        val alternativeSyllablesRes = mode.apichimaAlternativeSyllablesRes
+        if (alternativeRes != null && alternativePhthongsRes != null && alternativeSyllablesRes != null) {
+            selectedModeApichimaAlternativePhthongs.visibility = View.VISIBLE
+            selectedModeApichimaAlternativeSyllables.visibility = View.VISIBLE
+            selectedModeApichimaAlternativePhthongs.text = getString(
+                R.string.mode_apichima_alternative_phthongs_label,
+                getString(alternativePhthongsRes)
+            )
+            selectedModeApichimaAlternativeSyllables.text = getString(
+                R.string.mode_apichima_alternative_syllables_label,
+                getString(alternativeSyllablesRes)
+            )
+        } else {
+            selectedModeApichimaAlternativePhthongs.visibility = View.GONE
+            selectedModeApichimaAlternativeSyllables.visibility = View.GONE
+        }
+        selectedModeApichimaFormsHint.text = getString(R.string.mode_apichima_forms_hint)
         selectedModeApichimaSign.setImageResource(mode.apichimaSignRes)
         selectedModeApichimaSignName.text =
             getString(R.string.mode_apichima_sign_name, getString(mode.apichimaSignNameRes))
@@ -246,6 +331,11 @@ class EightModesActivity : BaseActivity() {
         val nameRes: Int,
         val typeRes: Int,
         val apichimaRes: Int,
+        val apichimaAlternativeRes: Int?,
+        val apichimaPhthongsRes: Int,
+        val apichimaSyllablesRes: Int,
+        val apichimaAlternativePhthongsRes: Int?,
+        val apichimaAlternativeSyllablesRes: Int?,
         val apichimaSignRes: Int,
         val apichimaSignNameRes: Int,
         val detailsRes: Int,
