@@ -1,9 +1,13 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 import kotlin.math.pow
@@ -11,6 +15,10 @@ import kotlin.math.pow
 class EightModesActivity : BaseActivity() {
     private lateinit var modeSelector: Spinner
     private lateinit var selectedModeType: TextView
+    private lateinit var selectedModeApichimaText: TextView
+    private lateinit var selectedModeApichimaSign: ImageView
+    private lateinit var selectedModeApichimaSignName: TextView
+    private lateinit var selectedModeDetails: TextView
     private lateinit var ascendingDiagramView: ScaleDiagramView
     private lateinit var touchHintText: TextView
     private val tonePlayer: PhthongTonePlayer by lazy { PhthongTonePlayer() }
@@ -23,41 +31,81 @@ class EightModesActivity : BaseActivity() {
             ModeDefinition(
                 nameRes = R.string.mode_first,
                 typeRes = R.string.mode_type_diatonic,
+                apichimaRes = R.string.mode_apichima_first,
+                apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_pa,
+                apichimaSignNameRes = R.string.phthong_pa,
+                detailsRes = R.string.mode_details_first,
+                colorCategory = ModeColorCategory.DIATONIC,
                 ascendingIntervals = listOf(12, 10, 8, 12, 12, 10, 8)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_second,
                 typeRes = R.string.mode_type_hard_chromatic,
+                apichimaRes = R.string.mode_apichima_second,
+                apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_di,
+                apichimaSignNameRes = R.string.phthong_di,
+                detailsRes = R.string.mode_details_second,
+                colorCategory = ModeColorCategory.HARD_CHROMATIC,
                 ascendingIntervals = listOf(6, 20, 4, 12, 6, 20, 4)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_third,
                 typeRes = R.string.mode_type_diatonic,
+                apichimaRes = R.string.mode_apichima_third,
+                apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_ga,
+                apichimaSignNameRes = R.string.phthong_ga,
+                detailsRes = R.string.mode_details_third,
+                colorCategory = ModeColorCategory.DIATONIC,
                 ascendingIntervals = listOf(8, 12, 12, 10, 8, 12, 10)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_fourth,
                 typeRes = R.string.mode_type_diatonic,
+                apichimaRes = R.string.mode_apichima_fourth,
+                apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_di,
+                apichimaSignNameRes = R.string.phthong_di,
+                detailsRes = R.string.mode_details_fourth,
+                colorCategory = ModeColorCategory.DIATONIC,
                 ascendingIntervals = listOf(10, 8, 12, 12, 10, 8, 12)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_plagal_first,
                 typeRes = R.string.mode_type_diatonic,
+                apichimaRes = R.string.mode_apichima_plagal_first,
+                apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_ke,
+                apichimaSignNameRes = R.string.phthong_ke,
+                detailsRes = R.string.mode_details_plagal_first,
+                colorCategory = ModeColorCategory.DIATONIC,
                 ascendingIntervals = listOf(10, 8, 12, 12, 10, 8, 12)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_plagal_second,
                 typeRes = R.string.mode_type_soft_chromatic,
+                apichimaRes = R.string.mode_apichima_plagal_second,
+                apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_ni,
+                apichimaSignNameRes = R.string.phthong_ni,
+                detailsRes = R.string.mode_details_plagal_second,
+                colorCategory = ModeColorCategory.SOFT_CHROMATIC,
                 ascendingIntervals = listOf(8, 14, 8, 12, 8, 14, 8)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_varys,
                 typeRes = R.string.mode_type_enharmonic,
+                apichimaRes = R.string.mode_apichima_varys,
+                apichimaSignRes = R.drawable.diatonic_filamentous_testimonial_zo,
+                apichimaSignNameRes = R.string.phthong_zo,
+                detailsRes = R.string.mode_details_varys,
+                colorCategory = ModeColorCategory.ENHARMONIC,
                 ascendingIntervals = listOf(12, 12, 6, 12, 12, 6, 12)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_plagal_fourth,
                 typeRes = R.string.mode_type_diatonic,
+                apichimaRes = R.string.mode_apichima_plagal_fourth,
+                apichimaSignRes = R.drawable.diatonic_filamentous_testimonial_ni,
+                apichimaSignNameRes = R.string.phthong_ni,
+                detailsRes = R.string.mode_details_plagal_fourth,
+                colorCategory = ModeColorCategory.DIATONIC,
                 ascendingIntervals = listOf(12, 10, 8, 12, 12, 10, 8)
             )
         )
@@ -69,6 +117,10 @@ class EightModesActivity : BaseActivity() {
 
         modeSelector = findViewById(R.id.mode_selector)
         selectedModeType = findViewById(R.id.selected_mode_type)
+        selectedModeApichimaText = findViewById(R.id.selected_mode_apichima_text)
+        selectedModeApichimaSign = findViewById(R.id.selected_mode_apichima_sign)
+        selectedModeApichimaSignName = findViewById(R.id.selected_mode_apichima_sign_name)
+        selectedModeDetails = findViewById(R.id.selected_mode_details)
         ascendingDiagramView = findViewById(R.id.ascending_diagram_view)
         touchHintText = findViewById(R.id.touch_hint_text)
 
@@ -78,8 +130,26 @@ class EightModesActivity : BaseActivity() {
     }
 
     private fun setupSelector() {
-        val modeNames = modes.map { getString(it.nameRes) }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, modeNames).apply {
+        val adapter = object :
+            ArrayAdapter<ModeDefinition>(this, android.R.layout.simple_spinner_item, modes) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                return bindAndColorModeText(view, position)
+            }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                return bindAndColorModeText(view, position)
+            }
+
+            private fun bindAndColorModeText(view: View, position: Int): View {
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                val mode = getItem(position)
+                textView.text = mode?.let { getString(it.nameRes) }.orEmpty()
+                textView.setTextColor(getModeSelectorColor(mode?.colorCategory ?: ModeColorCategory.OTHER))
+                return view
+            }
+        }.apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
         modeSelector.adapter = adapter
@@ -102,9 +172,26 @@ class EightModesActivity : BaseActivity() {
         }
     }
 
+    private fun getModeSelectorColor(category: ModeColorCategory): Int {
+        val colorRes = when (category) {
+            ModeColorCategory.DIATONIC -> R.color.black
+            ModeColorCategory.HARD_CHROMATIC -> R.color.mode_hard_chromatic_blue
+            ModeColorCategory.SOFT_CHROMATIC -> R.color.mode_soft_chromatic_purple
+            ModeColorCategory.ENHARMONIC -> R.color.mode_enharmonic_orange
+            ModeColorCategory.OTHER -> R.color.black
+        }
+        return ContextCompat.getColor(this, colorRes)
+    }
+
     private fun renderMode(position: Int) {
         val mode = modes.getOrElse(position) { modes.first() }
         selectedModeType.text = getString(mode.typeRes)
+        selectedModeApichimaText.text =
+            getString(R.string.mode_apichima_label, getString(mode.apichimaRes))
+        selectedModeApichimaSign.setImageResource(mode.apichimaSignRes)
+        selectedModeApichimaSignName.text =
+            getString(R.string.mode_apichima_sign_name, getString(mode.apichimaSignNameRes))
+        selectedModeDetails.text = getString(mode.detailsRes)
         frequenciesTopToBottom = calculateFrequenciesTopToBottom(mode.ascendingIntervals)
         tonePlayer.stop()
         ascendingDiagramView.clearTouchState()
@@ -158,8 +245,21 @@ class EightModesActivity : BaseActivity() {
     private data class ModeDefinition(
         val nameRes: Int,
         val typeRes: Int,
+        val apichimaRes: Int,
+        val apichimaSignRes: Int,
+        val apichimaSignNameRes: Int,
+        val detailsRes: Int,
+        val colorCategory: ModeColorCategory,
         val ascendingIntervals: List<Int>
     )
+
+    private enum class ModeColorCategory {
+        DIATONIC,
+        HARD_CHROMATIC,
+        SOFT_CHROMATIC,
+        ENHARMONIC,
+        OTHER
+    }
 
     private companion object {
         const val BASE_NI_FREQUENCY_HZ = 220.0

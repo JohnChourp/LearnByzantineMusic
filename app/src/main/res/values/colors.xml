@@ -5,6 +5,9 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+    <color name="mode_hard_chromatic_blue">#FF1565C0</color>
+    <color name="mode_soft_chromatic_purple">#FF6A1B9A</color>
+    <color name="mode_enharmonic_orange">#FFEF6C00</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
