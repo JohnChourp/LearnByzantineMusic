@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/byz_scan_page_title"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/byz_scan_mode_label"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/byz_mode_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/byz_scan_base_label"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/byz_base_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/byz_take_photo_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/byz_scan_take_photo" />
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <Button
+                android:id="@+id/byz_gallery_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/byz_scan_pick_gallery" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/byz_analysis_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/byz_scan_ready_to_analyze"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/byz_scan_source_title"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/byz_source_image"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="6dp"
+            android:adjustViewBounds="true"
+            android:background="#FFF8E1"
+            android:contentDescription="@string/byz_scan_source_title"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/byz_scan_rotation_title"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/byz_rotation_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/byz_scan_rotation_template"
+            android:textSize="13sp" />
+
+        <SeekBar
+            android:id="@+id/byz_rotation_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="180"
+            android:progress="90" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/byz_rotate_left_90_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/byz_scan_rotate_left_90" />
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <Button
+                android:id="@+id/byz_rotate_right_90_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/byz_scan_rotate_right_90" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/byz_scan_crop_title"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/byz_crop_left_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/byz_scan_crop_left_template"
+            android:textSize="13sp" />
+
+        <SeekBar
+            android:id="@+id/byz_crop_left_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="0" />
+
+        <TextView
+            android:id="@+id/byz_crop_right_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/byz_scan_crop_right_template"
+            android:textSize="13sp" />
+
+        <SeekBar
+            android:id="@+id/byz_crop_right_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="100" />
+
+        <TextView
+            android:id="@+id/byz_crop_top_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/byz_scan_crop_top_template"
+            android:textSize="13sp" />
+
+        <SeekBar
+            android:id="@+id/byz_crop_top_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="0" />
+
+        <TextView
+            android:id="@+id/byz_crop_bottom_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/byz_scan_crop_bottom_template"
+            android:textSize="13sp" />
+
+        <SeekBar
+            android:id="@+id/byz_crop_bottom_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="100" />
+
+        <Button
+            android:id="@+id/byz_reset_adjustments_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/byz_scan_reset_adjustments" />
+
+        <Button
+            android:id="@+id/byz_analyze_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/byz_scan_analyze" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/byz_scan_cropped_title"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/byz_cropped_image"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="6dp"
+            android:adjustViewBounds="true"
+            android:background="#E3F2FD"
+            android:contentDescription="@string/byz_scan_cropped_title"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/byz_scan_symbols_title"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/byz_symbols_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/byz_note_path_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/byz_scan_note_path_placeholder"
+            android:textSize="15sp" />
+
+        <com.johnchourp.learnbyzantinemusic.scan.MelodyPathView
+            android:id="@+id/byz_melody_path_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" />
+
+    </LinearLayout>
+</ScrollView>

@@ -11,6 +11,14 @@
 Όπου υπάρχει εναλλακτικό απήχημα, εμφανίζονται και οι δικοί του φθόγγοι καθώς και η αντιστοίχιση συλλαβών.
 Στη σελίδα `8 Ήχοι` εμφανίζεται πλέον και σταθερή ένδειξη ότι κάθε απήχημα εκτελείται σε δύο μορφές: `σύντομο` και `αργό`.
 Προστέθηκε σελίδα `Ρυθμίσεις` με discrete slider για μέγεθος γραμμάτων (`20/40/60/80/100`) που εφαρμόζει global font scaling σε όλες τις οθόνες.
+Η σελίδα `Σάρωση Βυζαντινού Κειμένου` έχει τεθεί προσωρινά ανενεργή και δεν είναι διαθέσιμη από την αρχική πλοήγηση.
+Προστέθηκε σελίδα `Ημερολόγιο` που εμφανίζει τον `ήχο εβδομάδας` ανά επιλεγμένη ημερομηνία.
+Ο υπολογισμός ήχου γίνεται από εκκλησιαστικό κύκλο: Ορθόδοξο Πάσχα -> Πεντηκοστή (`+49`) -> αρχή `Α’ Ήχου` στη 2η Κυριακή μετά την Πεντηκοστή.
+Η νέα ροή αποκόπτει το πρώτο μουσικό block/γραμμή, εμφανίζει το cropped αποτέλεσμα και προβάλλει confidence ανά σύμβολο.
+Η ανάλυση παράγει πορεία φθόγγων (`Νη/Πα/Βου/Γα/Δι/Κε/Ζω`) με βάση τον επιλεγμένο ήχο και τη βάση εκκίνησης.
+Προστέθηκε pipeline δημιουργίας template dataset από `MK/fonts` + `KeyBoard.ini` στο `app/src/main/assets/mk_symbol_templates_v1`.
+Στο Core MVP v2 ο scanner engine χρησιμοποιεί primary OCR templates από core drawables και semantic parser `base+modifier` (π.χ. `πεταστή`, `απόστροφος`, `κλάσμα`, `γοργό`, `αντικένωμα+απλή`).
+Ο επιλεγμένος `Ήχος` επηρεάζει πλέον πραγματικά την καμπύλη πορείας μέσω mode profiles (`byzantine_mode_rules_v1.json`), ενώ η διάρκεια ανά event αποδίδεται με κανόνες χρόνου.
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
 Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.14.0`, `protobuf-java` σε `3.25.5`, `jdom2` σε `2.0.6.1`, `netty-codec` σε `4.1.129.Final`, `netty-codec-http` σε `4.1.129.Final`, `netty-codec-http2` σε `4.1.129.Final`, `netty-handler` σε `4.1.129.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.26.0`, `commons-lang3` σε `3.18.0`, `bcpkix-jdk18on` σε `1.79`, `bcprov-jdk18on` σε `1.79` και `bcutil-jdk18on` σε `1.79`.
 
@@ -22,6 +30,20 @@
 - Στη σελίδα `Ρυθμίσεις` ο χρήστης αλλάζει το μέγεθος γραμμάτων με slider που κουμπώνει μόνο στις τιμές `20/40/60/80/100` (προεπιλογή `60`).
 - Η αλλαγή αποθηκεύεται άμεσα σε local preferences (`app_font_step`) και εφαρμόζεται global σε όλες τις activities.
 - Πατώντας `8 Ήχοι`, ανοίγει η οθόνη επιλογής ήχου.
+- Πατώντας `Ημερολόγιο`, ανοίγει νέα οθόνη μηνιαίου ημερολογίου.
+- Στη σελίδα `Ημερολόγιο`, η τρέχουσα ημέρα της συσκευής επιλέγεται αυτόματα κατά την είσοδο.
+- Πατώντας οποιαδήποτε ημέρα, εμφανίζεται ο `ήχος εβδομάδας` για την εβδομάδα της συγκεκριμένης ημερομηνίας.
+- Ο `ήχος εβδομάδας` αλλάζει στο app την Κυριακή `00:00` τοπικής ώρας.
+- Η `Σάρωση Βυζαντινού Κειμένου` παραμένει προσωρινά ανενεργή ακόμα και με άμεσο intent άνοιγμα.
+- Πριν το `Ανάλυση`, ο χρήστης μπορεί να κάνει περικοπή της φωτογραφίας (αριστερά/δεξιά/πάνω/κάτω) για να αφαιρέσει περιττές πληροφορίες.
+- Η περικοπή ενημερώνεται live όσο μετακινούνται οι γραμμές (sliders), ώστε να φαίνεται άμεσα τι μένει στο τελικό κάδρο.
+- Προστέθηκε και περιστροφή εικόνας (οριζόντια/κάθετα/στραβά) με slider γωνίας και πλήκτρα `-90°` / `+90°`.
+- Η λήψη φωτογραφίας γίνεται πλέον με in-app κάμερα (portrait lock), ώστε να μην εξαρτάται από auto-rotate εξωτερικής εφαρμογής κάμερας.
+- Με `Ανάλυση`, το app κάνει local adaptive preprocessing (threshold+morphology+deskew), αποκόπτει το πρώτο μουσικό block και αναγνωρίζει σύμβολα με parser `base+modifier`.
+- Κάτω από κάθε αναγνωρισμένο σύμβολο εμφανίζεται αυτόματα ο αντίστοιχος φθόγγος.
+- Για κάθε event εμφανίζονται και διάρκεια (`χρόνος`) και confidence.
+- Τα άγνωστα σύμβολα επισημαίνονται ως `UNKNOWN` και η ανάλυση συνεχίζει χωρίς διακοπή.
+- Η πορεία μελωδίας εμφανίζεται και ως ακολουθία κειμένου και ως mode-aware γραφική τροχιά σε ξεχωριστό διάγραμμα.
 - Προεπιλεγμένος είναι ο `Α’ Ήχος`.
 - Με αλλαγή ήχου από το selector, ανανεώνονται γένος, αναλυτικά θεωρητικά στοιχεία του ήχου, φθόγγοι ανόδου, διαστήματα (μόρια) και το διάγραμμα «σκάλα».
 - Με αλλαγή ήχου από το selector, ανανεώνονται και το απήχημα του ήχου και το αντίστοιχο φθογγόσημο βάσης.
@@ -79,6 +101,23 @@
 }
 ```
 
+### Input (επιλογή ημερομηνίας στο ημερολόγιο)
+```json
+{
+  "selected_date": "2026-02-08"
+}
+```
+
+### Output (ήχος εβδομάδας ημερολογίου)
+```json
+{
+  "week_start": "2026-02-08",
+  "week_end": "2026-02-14",
+  "tone_index": 4,
+  "tone_name": "Πλάγιος του Α’"
+}
+```
+
 ### Input (touch φθόγγου στο διάγραμμα)
 ```json
 {
@@ -125,6 +164,31 @@
 }
 ```
 
+### Input (camera scan analysis)
+```json
+{
+  "mode": "Πλάγιος του Β’",
+  "base_phthong": "Νη",
+  "image_source": "camera_or_gallery",
+  "analysis_scope": "first_music_block"
+}
+```
+
+### Output (camera scan analysis)
+```json
+{
+  "crop_rect": {"left": 42, "top": 130, "right": 1170, "bottom": 260},
+  "events_count": 8,
+  "unknown_count": 2,
+  "low_confidence_count": 1,
+  "events": [
+    {"name": "Πεταστή", "token": "a4", "modifiers": [], "confidence": 0.91, "note": "Βου", "duration_beats": 1.0},
+    {"name": "Απόστροφος", "token": "b1", "modifiers": ["gorgo"], "confidence": 0.72, "note": "Νη", "duration_beats": 0.5}
+  ],
+  "note_path": ["Βου", "Πα", "Πα", "Βου", "Γα", "Βου", "Πα", "Νη"]
+}
+```
+
 ### Output (release automation)
 ```json
 {
@@ -162,14 +226,21 @@
 
 - Κύρια components:
 - `MainActivity`
+- `WeeklyModeCalendarActivity`
 - `SettingsActivity`
 - `EightModesActivity`
 - `BaseActivity`
 - `AppFontScale`
+- `LiturgicalToneCycle`
+- `OrthodoxPaschaCalculator`
 - `layout_eight_modes.xml`
+- `layout_weekly_mode_calendar.xml`
 - `layout_settings.xml`
 - `ScaleDiagramView`
 - `PhthongTonePlayer`
+- `ByzantineScanActivity`
+- `ByzantineMelodyAnalyzer`
+- `MelodyPathView`
 
 - Ρυθμίσεις εφαρμογής:
 - SharedPreferences file: `learn_byzantine_music_settings`
@@ -180,6 +251,7 @@
 - Release automation scripts:
 - `scripts/bump-version.sh`
 - `scripts/release-and-tag.sh`
+- `scripts/generate-mk-symbol-dataset.py`
 - `scripts/check-no-secrets.sh`
 - `scripts/setup-release-signing.sh`
 - `.codex/AGENTS.md` (project-specific Codex safety instructions)
@@ -218,6 +290,7 @@
 - Πατά `Ρυθμίσεις`, μετακινεί το slider στο `80` και η εφαρμογή εμφανίζει άμεσα μεγαλύτερα γράμματα.
 - Έπειτα ανοίγει `8 Ήχοι`, επιλέγει `Πλάγιος του Β’` και βλέπει άμεσα ενημερωμένη κλίμακα/διαστήματα με σωστή οπτική αναλογία.
 - Κρατά πατημένο τον φθόγγο `Νη` και ακούει συνεχή τόνο, ο οποίος σταματά μόλις αφήσει το δάχτυλο.
+- Τέλος ανοίγει `Σάρωση Βυζαντινού Κειμένου`, τραβά φωτογραφία, και βλέπει cropped block + πορεία φθόγγων ανά σύμβολο.
 
 ### Happy path (release)
 ```bash
@@ -252,6 +325,15 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 {
   "error": "tracked_secret_detected",
   "message": "Βρέθηκε committed secret/keystore αρχείο. Μεταφορά σε GitHub Secrets και αφαίρεση από git history/index."
+}
+```
+
+### Failure example (camera permission denied)
+```json
+{
+  "error": "camera_permission_denied",
+  "fallback": "gallery_available",
+  "message": "Η κάμερα απορρίφθηκε. Χρησιμοποίησε gallery ή άνοιξε άδεια από ρυθμίσεις."
 }
 ```
 
@@ -389,6 +471,12 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
 - `SettingsActivity`, `layout_settings.xml`, `AppFontScale` και `BaseActivity`: διαχειρίζονται την αποθήκευση/εφαρμογή global font scaling για όλη την εφαρμογή.
 - `EightModesActivity`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels και αναπαραγωγή συχνοτήτων με αναφορά `Νη = 220Hz`.
+- `ByzantineScanActivity`: υλοποιεί camera/gallery ροή, επιλογή ήχου/βάσης και προβολή αποτελεσμάτων αναγνώρισης.
+- `ByzantineMelodyAnalyzer` + `BinaryImageOps`: υλοποιούν adaptive preprocessing, αποκοπή πρώτης γραμμής, segmentation και recognition σε events `base+modifier`.
+- `ByzantineRhythmMapper`: εφαρμόζει κανόνες διάρκειας (`κλάσμα`, `αντικένωμα+απλή`, `γοργό` με redistribution χρόνου).
+- `byzantine_core_symbol_rules_v2.json`, `byzantine_mode_rules_v1.json`, `byzantine_display_names_v1.json`: ορίζουν core symbol rules, mode-aware trajectory profiles και ονόματα εμφάνισης.
+- `scripts/generate-mk-symbol-dataset.py`: δημιουργεί templates PNG και catalog JSON από `MK/fonts` + `KeyBoard.ini`.
+- `app/src/main/assets/byzantine_interval_mapping_v1.json`: διατηρεί το παραμετροποιήσιμο mapping `token -> κίνηση φθόγγου`.
 
 ### Παραδείγματα
 **Happy path**
@@ -407,3 +495,28 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
   "message": "Δεν υπάρχει ενεργό gh auth session. Τρέξε gh auth login ή χρησιμοποίησε --skip-gh-release."
 }
 ```
+
+### Γιατί η ανάλυση δεν αναγνωρίζει πάντα όλα τα σύμβολα;
+- Το MVP αναλύει μόνο το πρώτο μουσικό block/γραμμή.
+- Η αναγνώριση βασίζεται σε core template matching + semantic rules και επηρεάζεται από φωτισμό, θόρυβο και κλίση.
+- Τα `mk_symbol_templates_v1` παραμένουν fallback/debug μέχρι να ολοκληρωθεί πλήρες MK token→glyph fix.
+- Για καλύτερα αποτελέσματα: καθαρή φωτογραφία, σταθερό χέρι και κοντινό κάδρο στο μουσικό απόσπασμα.
+- Χρησιμοποίησε πρώτα τη live περικοπή και την περιστροφή για να ευθυγραμμίσεις τη μουσική γραμμή πριν πατήσεις `Ανάλυση`.
+
+### Γιατί κρασάρει όταν πατάω Ανάλυση;
+- Προηγούμενη αιτία ήταν ανάλυση `HARDWARE` bitmap χωρίς επιτρεπτή πρόσβαση pixels.
+- Η ροή πλέον μετατρέπει την εικόνα σε software bitmap και προστατεύει την ανάλυση με ασφαλές error handling.
+- Αν αποτύχει η ανάλυση, εμφανίζεται μήνυμα αποτυχίας χωρίς να κλείνει η εφαρμογή.
+
+### Ενεργοποιείται auto-rotate όταν ανοίγω κάμερα;
+- Όχι. Η εφαρμογή είναι κλειδωμένη σε portrait orientation.
+- Η λήψη γίνεται από in-app camera activity (όχι εξωτερική camera app), επίσης κλειδωμένη σε portrait.
+
+### Γιατί ο ήχος στο Ημερολόγιο δεν ξεκινά από 1 Ιανουαρίου;
+- Ο υπολογισμός δεν βασίζεται σε σταθερή πολιτική ημερομηνία.
+- Η αρχή κύκλου υπολογίζεται ανά έτος από Ορθόδοξο Πάσχα και Πεντηκοστή.
+- Το app ξεκινά τον `Α’ Ήχο` στη 2η Κυριακή μετά την Πεντηκοστή και μετά κάνει κυκλική εναλλαγή ανά εβδομάδα (8 ήχοι).
+
+### Γιατί η σελίδα Σάρωσης δεν ανοίγει;
+- Η σελίδα `Σάρωση Βυζαντινού Κειμένου` είναι προσωρινά απενεργοποιημένη.
+- Το κουμπί αφαιρέθηκε από την αρχική και η activity επιστρέφει άμεσα με μήνυμα αν επιχειρηθεί άμεσο άνοιγμα.

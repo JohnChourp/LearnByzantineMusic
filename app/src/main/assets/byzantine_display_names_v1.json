@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "symbolNames": {
+    "petasti": "Πεταστή",
+    "apostrophos": "Απόστροφος",
+    "oligon": "Ολίγον",
+    "ison": "Ίσον",
+    "slight_apostrophos": "Ελαφρά Απόστροφος",
+    "fraction": "Κλάσμα",
+    "gorgo": "Γοργό",
+    "antikeno": "Αντικένωμα",
+    "apli": "Απλή",
+    "unknown": "Unknown"
+  }
+}

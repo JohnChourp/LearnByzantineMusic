@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,9 +15,26 @@
         android:theme="@style/Theme.LearnByzantineMusic"
         tools:targetApi="31">
         <activity
+            android:name=".scan.ByzantineScanActivity"
+            android:exported="false"
+            android:label="@string/title_activity_byzantine_scan"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
+            android:name=".scan.InAppCameraActivity"
+            android:exported="false"
+            android:label="@string/title_activity_byzantine_camera"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
             android:name=".modes.EightModesActivity"
             android:exported="false"
             android:label="@string/title_activity_eight_modes"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
+            android:name=".calendar.WeeklyModeCalendarActivity"
+            android:exported="false"
+            android:label="@string/title_activity_weekly_mode_calendar"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
             android:name=".summary_theory.Testimonies"
@@ -72,6 +91,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/byzantine_scan_file_paths" />
+        </provider>
     </application>
 
 </manifest>

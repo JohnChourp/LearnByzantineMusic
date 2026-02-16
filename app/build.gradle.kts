@@ -20,8 +20,8 @@ android {
         applicationId = "com.johnchourp.learnbyzantinemusic"
         minSdk = 24
         targetSdk = 34
-        versionCode = 17
-        versionName = "1.0.17"
+        versionCode = 19
+        versionName = "1.0.19"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -50,6 +50,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -72,6 +73,7 @@ android {
 
 dependencies {
 
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -84,6 +86,10 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

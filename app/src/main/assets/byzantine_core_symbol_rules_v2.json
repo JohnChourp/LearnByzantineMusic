@@ -1,0 +1,76 @@
+{
+  "version": 2,
+  "symbols": [
+    {
+      "id": "petasti",
+      "role": "base",
+      "templateDrawable": "flyer",
+      "baseToken": "a4",
+      "deltaSteps": 2,
+      "defaultDurationBeats": 1.0
+    },
+    {
+      "id": "apostrophos",
+      "role": "base",
+      "templateDrawable": "apostrophe",
+      "baseToken": "b1",
+      "deltaSteps": -1,
+      "defaultDurationBeats": 1.0
+    },
+    {
+      "id": "oligon",
+      "role": "base",
+      "templateDrawable": "oligon",
+      "baseToken": "a2",
+      "deltaSteps": 1,
+      "defaultDurationBeats": 1.0
+    },
+    {
+      "id": "ison",
+      "role": "base",
+      "templateDrawable": "ison",
+      "baseToken": "a1",
+      "deltaSteps": 0,
+      "defaultDurationBeats": 1.0
+    },
+    {
+      "id": "slight_apostrophos",
+      "role": "base",
+      "templateDrawable": "slight_apostrophe",
+      "baseToken": "b2",
+      "deltaSteps": -1,
+      "defaultDurationBeats": 1.0
+    },
+    {
+      "id": "fraction",
+      "role": "modifier",
+      "templateDrawable": "fraction",
+      "baseToken": "xr1",
+      "deltaSteps": 0,
+      "durationDeltaBeats": 1.0
+    },
+    {
+      "id": "gorgo",
+      "role": "modifier",
+      "templateDrawable": "gorgo",
+      "baseToken": "g1",
+      "deltaSteps": 0,
+      "setDurationBeats": 0.5,
+      "redistributeFromPreviousBeats": 0.5
+    },
+    {
+      "id": "antikeno",
+      "role": "modifier",
+      "templateDrawable": "vaccum",
+      "baseToken": "e1",
+      "deltaSteps": 0
+    },
+    {
+      "id": "apli",
+      "role": "modifier",
+      "templateDrawable": "vaccum_simple",
+      "baseToken": "c1",
+      "deltaSteps": 0
+    }
+  ]
+}

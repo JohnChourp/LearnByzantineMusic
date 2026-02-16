@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import com.johnchourp.learnbyzantinemusic.calendar.WeeklyModeCalendarActivity
 import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
 
 class MainActivity : BaseActivity() {
@@ -23,6 +24,7 @@ class MainActivity : BaseActivity() {
 
         val testimoniesBtn = findViewById<Button>(R.id.testimonies_btn)
         val eightModesBtn = findViewById<Button>(R.id.eight_modes_btn)
+        val calendarBtn = findViewById<Button>(R.id.calendar_btn)
         val settingsBtn = findViewById<Button>(R.id.settings_btn)
         val poweredByTextView = findViewById<TextView>(R.id.powered_by_text_view)
 
@@ -41,6 +43,7 @@ class MainActivity : BaseActivity() {
 
         testimoniesBtn.setOnClickListener { openTestimonies() }
         eightModesBtn.setOnClickListener { openEightModes() }
+        calendarBtn.setOnClickListener { openWeeklyModeCalendar() }
         settingsBtn.setOnClickListener { openSettings() }
     }
 
@@ -89,6 +92,11 @@ class MainActivity : BaseActivity() {
 
     private fun openEightModes() {
         val intent = Intent(this, EightModesActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openWeeklyModeCalendar() {
+        val intent = Intent(this, WeeklyModeCalendarActivity::class.java)
         startActivity(intent)
     }
 

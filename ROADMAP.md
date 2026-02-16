@@ -42,11 +42,34 @@
 - Βελτιώθηκε το release script ώστε να κάνει ενιαίο release commit με όλες τις αλλαγές του working tree και σύντομο auto-summary στο commit message.
 - Βελτιώθηκε η παραγωγή release notes ώστε να μη διπλασιάζεται ο τίτλος του GitHub Release.
 - Προστέθηκε anti-duplicate fallback guard στο tag workflow ώστε να γίνεται skip publish όταν υπάρχει ήδη custom asset `apk-release.apk` στο release του ίδιου tag.
+- Προστέθηκε νέα σελίδα `Σάρωση Βυζαντινού Κειμένου` με camera/gallery εισαγωγή εικόνας και local ανάλυση.
+- Προστέθηκε on-device analyzer για πρώτο μουσικό block με preprocessing, segmentation και template matching από τοπικά assets.
+- Προστέθηκε δυναμική χαρτογράφηση συμβόλων σε πορεία φθόγγων με επιλογή βάσης και οπτική τροχιά μελωδίας.
+- Προστέθηκε script `scripts/generate-mk-symbol-dataset.py` που παράγει templates PNG και catalog JSON από `MK/fonts` + `KeyBoard.ini`.
+- Προστέθηκαν assets `byzantine_symbols_catalog_v1.json`, `byzantine_interval_mapping_v1.json` και `mk_symbol_templates_v1/*` για τον scanner engine.
+- Προστέθηκαν unit tests για parsing KeyBoard mapping, melody traversal και έλεγχο βασικού interval mapping config.
+- Διορθώθηκε crash στη σελίδα scanner κατά το `Ανάλυση` με ασφαλή μετατροπή hardware bitmap σε software bitmap και προστατευμένο error handling.
+- Προστέθηκε δυνατότητα περικοπής φωτογραφίας πριν την ανάλυση (left/right/top/bottom controls με apply/reset).
+- Επεκτάθηκε η περικοπή σε live preview: οι αλλαγές αριστερά/δεξιά/πάνω/κάτω εμφανίζονται άμεσα στο εναπομείναν κάδρο.
+- Προστέθηκε δυνατότητα περιστροφής εικόνας πριν την ανάλυση (γωνία με slider + κουμπιά `-90°` / `+90°`) για σωστό alignment.
+- Αντικαταστάθηκε η λήψη από εξωτερική camera app με in-app CameraX ροή σε portrait lock για αποφυγή auto-rotate ασυνέπειας.
+- Κλειδώθηκε orientation σε portrait στις activities του app και ειδικά στις ροές scanner/camera.
+- Προστέθηκε Core MVP v2 στον scanner engine με primary recognition από core drawables, semantic parser `base+modifier` και event-based απόδοση (`όνομα + token + νότα + χρόνος + confidence`).
+- Προστέθηκε mode-aware trajectory με εξωτερικό config `byzantine_mode_rules_v1.json` ώστε ο επιλεγμένος ήχος να επηρεάζει την καμπύλη πορείας.
+- Προστέθηκαν νέοι κανόνες διάρκειας μέσω `ByzantineRhythmMapper` για `κλάσμα`, `αντικένωμα+απλή` και `γοργό` (με redistribution από προηγούμενο event).
+- Προστέθηκαν assets `byzantine_core_symbol_rules_v2.json`, `byzantine_mode_rules_v1.json`, `byzantine_display_names_v1.json` και regression unit tests για το παράδειγμα Α’ Ήχου/βάση Νη.
+- Απενεργοποιήθηκε προσωρινά η πρόσβαση στη σελίδα `Σάρωση Βυζαντινού Κειμένου` (αφαίρεση entry από αρχική και runtime guard στην activity).
+- Προστέθηκε νέα σελίδα `Ημερολόγιο` με μηνιαίο grid και αυτόματη επιλογή της τρέχουσας ημέρας συσκευής.
+- Προστέθηκε resolver εκκλησιαστικού κύκλου ήχων (`OrthodoxPaschaCalculator` + `LiturgicalToneCycle`) με αφετηρία Α’ Ήχου στη 2η Κυριακή μετά την Πεντηκοστή.
+- Προστέθηκαν unit tests για υπολογισμό Ορθόδοξου Πάσχα και για τη λογική αλλαγής ήχου ανά εβδομάδα.
 
 ## In Progress
-- [ ] No in-progress items identified in the current codebase.
+- [ ] Διόρθωση πλήρους MK token→glyph generation ώστε τα `mk_symbol_templates_v1` να γίνουν ξανά primary αντί fallback/debug.
+- [ ] Συμπλήρωση γνωστών fixtures ημερομηνίας/ήχου στο `LiturgicalToneCycleKnownFixturesTest` από επιλεγμένη πηγή αναφοράς.
 
 ## Next
 - [ ] Προσθήκη αυτόματου smoke test (launch sanity) πριν το publish του release.
 - [ ] Προσθήκη προστασίας ώστε το release script να μπλοκάρει όταν ο remote branch δεν είναι up-to-date.
 - [ ] Προσθήκη επιλογής για prerelease tags (π.χ. `v1.1.0-rc.1`) όταν απαιτούνται δοκιμαστικές διανομές.
+- [ ] Βελτίωση mapping `token -> delta` με μουσικολογική βαθμονόμηση για περισσότερα φθογγόσημα.
+- [ ] Επέκταση scanner από πρώτη γραμμή σε πολλαπλές γραμμές/blocks στην ίδια εικόνα.
