@@ -269,6 +269,17 @@
     <string name="settings_font_size_label">Μέγεθος γραμμάτων</string>
     <string name="settings_font_size_value">%1$d%%</string>
     <string name="settings_font_size_hint">Σύρε την κουκκίδα αριστερά ή δεξιά. Η τιμή αλλάζει μόνο στα σημεία 20, 40, 60, 80 και 100.</string>
+    <string name="settings_language_label">Γλώσσα εφαρμογής</string>
+    <string name="settings_language_hint">Επίλεξε τη γλώσσα που θέλεις να χρησιμοποιείται σε όλη την εφαρμογή.</string>
+    <string name="settings_language_current_value">Τρέχουσα γλώσσα: %1$s</string>
+    <string name="settings_language_option_greek">Ελληνικά</string>
+    <string name="settings_language_option_english">English</string>
+    <string name="language_first_launch_title">Επιλογή γλώσσας</string>
+    <string name="language_first_launch_message">Διάλεξε γλώσσα για την εφαρμογή.</string>
+    <string name="language_change_confirm_title">Επιβεβαίωση γλώσσας</string>
+    <string name="language_change_confirm_message">Θέλεις να χρησιμοποιείται η γλώσσα %1$s στην εφαρμογή;</string>
+    <string name="language_change_confirm_accept">Ναι</string>
+    <string name="language_change_confirm_cancel">Όχι</string>
     <string name="title_activity_weekly_mode_calendar">Ημερολόγιο Ήχου Εβδομάδας</string>
     <string name="weekly_mode_calendar_open">Ημερολόγιο</string>
     <string name="weekly_mode_calendar_page_title">Ημερολόγιο Ήχου Εβδομάδας</string>

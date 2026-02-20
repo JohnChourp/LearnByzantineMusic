@@ -38,6 +38,7 @@
 - Προστέθηκε footer στην αρχική σελίδα με μορφή `poweredby JohnChourp v.<version>` που τραβάει την τιμή από το τρέχον release version του app.
 - Προστέθηκε νέα σελίδα `Ρυθμίσεις` με discrete slider (`20/40/60/80/100`) και άμεση αποθήκευση προτίμησης μεγέθους γραμμάτων.
 - Εφαρμόστηκε global font scaling σε όλες τις activities μέσω `BaseActivity` + `AppFontScale` με μόνιμη αποθήκευση key `app_font_step`.
+- Προστέθηκε global επιλογή γλώσσας (`Ελληνικά`/`English`) με first-launch wizard, επιβεβαίωση αλλαγής και μόνιμη αποθήκευση (`app_language_code`, `app_language_onboarding_completed`).
 - Το `poweredby` στην αρχική σελίδα μεταφέρθηκε σε σταθερό footer στο κάτω μέρος του screen.
 - Βελτιώθηκε το release script ώστε να κάνει ενιαίο release commit με όλες τις αλλαγές του working tree και σύντομο auto-summary στο commit message.
 - Βελτιώθηκε η παραγωγή release notes ώστε να μη διπλασιάζεται ο τίτλος του GitHub Release.

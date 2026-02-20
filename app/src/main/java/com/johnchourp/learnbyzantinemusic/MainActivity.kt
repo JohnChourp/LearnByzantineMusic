@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -11,7 +12,7 @@ import com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity
 class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_main_activity) // Set the layout resource ID
+        setContentView(R.layout.layout_main_activity)
         val phthongsNamesBtn = findViewById<Button>(R.id.phthongs_names_btn)
         val duotrioquatroBtn = findViewById<Button>(R.id.duotrioquatro_btn)
         val climbingCompositionsBtn = findViewById<Button>(R.id.climbing_compositions_btn)
@@ -21,7 +22,6 @@ class MainActivity : BaseActivity() {
 
         val qualityBtn = findViewById<Button>(R.id.quality_btn)
         val timeBtn = findViewById<Button>(R.id.time_btn)
-
 
         val testimoniesBtn = findViewById<Button>(R.id.testimonies_btn)
         val eightModesBtn = findViewById<Button>(R.id.eight_modes_btn)
@@ -48,6 +48,79 @@ class MainActivity : BaseActivity() {
         calendarBtn.setOnClickListener { openWeeklyModeCalendar() }
         recordingsBtn.setOnClickListener { openRecordings() }
         settingsBtn.setOnClickListener { openSettings() }
+
+        maybeShowLanguageOnboarding()
+    }
+
+    private fun maybeShowLanguageOnboarding() {
+        if (AppLanguage.isLanguageOnboardingCompleted(this)) {
+            return
+        }
+
+        showLanguageSelectionDialog()
+    }
+
+    private fun showLanguageSelectionDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.language_first_launch_title))
+            .setMessage(getString(R.string.language_first_launch_message))
+            .setCancelable(false)
+            .setPositiveButton(AppLanguage.getNativeLanguageName(AppLanguage.languageGreek)) { _, _ ->
+                showLanguageConfirmationDialog(AppLanguage.languageGreek, isOnboardingFlow = true)
+            }
+            .setNegativeButton(AppLanguage.getNativeLanguageName(AppLanguage.languageEnglish)) { _, _ ->
+                showLanguageConfirmationDialog(AppLanguage.languageEnglish, isOnboardingFlow = true)
+            }
+            .show()
+    }
+
+    private fun showLanguageConfirmationDialog(targetLanguageCode: String, isOnboardingFlow: Boolean) {
+        val languageName = AppLanguage.getNativeLanguageName(targetLanguageCode)
+        val title = AppLanguage.getLocalizedString(
+            context = this,
+            languageCode = targetLanguageCode,
+            stringRes = R.string.language_change_confirm_title,
+        )
+        val message = AppLanguage.getLocalizedString(
+            this,
+            targetLanguageCode,
+            R.string.language_change_confirm_message,
+            languageName,
+        )
+        val acceptLabel = AppLanguage.getLocalizedString(
+            context = this,
+            languageCode = targetLanguageCode,
+            stringRes = R.string.language_change_confirm_accept,
+        )
+        val cancelLabel = AppLanguage.getLocalizedString(
+            context = this,
+            languageCode = targetLanguageCode,
+            stringRes = R.string.language_change_confirm_cancel,
+        )
+
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setCancelable(!isOnboardingFlow)
+            .setPositiveButton(acceptLabel) { _, _ ->
+                AppLanguage.saveLanguageCode(this, targetLanguageCode)
+                AppLanguage.setLanguageOnboardingCompleted(this, true)
+                restartToMainActivity()
+            }
+            .setNegativeButton(cancelLabel) { _, _ ->
+                if (isOnboardingFlow) {
+                    showLanguageSelectionDialog()
+                }
+            }
+            .show()
+    }
+
+    private fun restartToMainActivity() {
+        val restartIntent = Intent(this, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+        startActivity(restartIntent)
+        finish()
     }
 
     private fun openPhthongsNames() {
