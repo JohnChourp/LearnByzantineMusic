@@ -11,6 +11,9 @@
 Όπου υπάρχει εναλλακτικό απήχημα, εμφανίζονται και οι δικοί του φθόγγοι καθώς και η αντιστοίχιση συλλαβών.
 Στη σελίδα `8 Ήχοι` εμφανίζεται πλέον και σταθερή ένδειξη ότι κάθε απήχημα εκτελείται σε δύο μορφές: `σύντομο` και `αργό`.
 Προστέθηκε σελίδα `Ρυθμίσεις` με discrete slider για μέγεθος γραμμάτων (`20/40/60/80/100`) που εφαρμόζει global font scaling σε όλες τις οθόνες.
+Προστέθηκε σελίδα `Ηχογραφήσεις` με μεγάλη εγγραφή μικροφώνου, παύση/συνέχεια, σταμάτημα και λίστα αρχείων από επιλεγμένο φάκελο.
+Η σελίδα `Ηχογραφήσεις` ζητά υποχρεωτικά επιλογή φακέλου μέσω SAF στην πρώτη είσοδο και αποθηκεύει μόνιμη πρόσβαση.
+Οι ηχογραφήσεις μπορούν να αποθηκευτούν σε `.flac/.mp3/.wav/.aac/.m4a/.opus` με default το `.flac` και περιγραφή για κάθε format μέσα στο UI.
 Η σελίδα `Σάρωση Βυζαντινού Κειμένου` έχει τεθεί προσωρινά ανενεργή και δεν είναι διαθέσιμη από την αρχική πλοήγηση.
 Προστέθηκε σελίδα `Ημερολόγιο` που εμφανίζει τον `ήχο εβδομάδας` ανά επιλεγμένη ημερομηνία.
 Ο υπολογισμός ήχου γίνεται από εκκλησιαστικό κύκλο: Ορθόδοξο Πάσχα -> Πεντηκοστή (`+49`) -> αρχή `Α’ Ήχου` στη 2η Κυριακή μετά την Πεντηκοστή.
@@ -29,6 +32,14 @@
 - Από την αρχική οθόνη ο χρήστης μπορεί να ανοίξει τη σελίδα `Ρυθμίσεις`.
 - Στη σελίδα `Ρυθμίσεις` ο χρήστης αλλάζει το μέγεθος γραμμάτων με slider που κουμπώνει μόνο στις τιμές `20/40/60/80/100` (προεπιλογή `60`).
 - Η αλλαγή αποθηκεύεται άμεσα σε local preferences (`app_font_step`) και εφαρμόζεται global σε όλες τις activities.
+- Πατώντας `Ηχογραφήσεις`, ανοίγει νέα σελίδα ηχογράφησης με αριστερά λίστα αρχείων και δεξιά controls εγγραφής.
+- Στην πρώτη είσοδο της σελίδας `Ηχογραφήσεις`, αν δεν υπάρχει αποθηκευμένη πρόσβαση φακέλου, ανοίγει picker φακέλου (`OpenDocumentTree`) και απαιτείται παραχώρηση άδειας.
+- Με `Έναρξη ηχογράφησης` το μεγάλο κόκκινο κουμπί κρύβεται και εμφανίζονται `Παύση/Συνέχεια` + `Σταμάτημα`.
+- Με `Σταμάτημα` το app αποθηκεύει την εγγραφή στο επιλεγμένο format (`FLAC` default), ενημερώνει τη λίστα αρχείων και κρατά μόνο αρχεία του επιλεγμένου φακέλου.
+- Με `Παραχώρηση/Αλλαγή φακέλου` εμφανίζεται πρώτα επιβεβαίωση (`Συνέχεια`/`Ακύρωση`) ώστε να μη χαθεί ο τρέχων φάκελος από κατά λάθος πάτημα.
+- Με `Άνοιγμα φακέλου` γίνεται προσπάθεια ανοίγματος ακριβώς του επιλεγμένου SAF φακέλου (και fallback σε picker με preselected αρχικό φάκελο).
+- Με tap σε στοιχείο της λίστας ηχογραφήσεων ανοίγει εξωτερική εφαρμογή αναπαραγωγής με Android intent disambiguation (picker όταν υπάρχουν πολλαπλές εφαρμογές, αλλιώς αυτόματο άνοιγμα προεπιλεγμένης).
+- Κάθε στοιχείο ηχογράφησης έχει διακριτικά κουμπιά `Μετονομασία` και κόκκινο `Διαγραφή` με επιβεβαίωση πριν την ενέργεια.
 - Πατώντας `8 Ήχοι`, ανοίγει η οθόνη επιλογής ήχου.
 - Πατώντας `Ημερολόγιο`, ανοίγει νέα οθόνη μηνιαίου ημερολογίου.
 - Στη σελίδα `Ημερολόγιο`, η τρέχουσα ημέρα της συσκευής επιλέγεται αυτόματα κατά την είσοδο.
@@ -115,6 +126,25 @@
   "week_end": "2026-02-14",
   "tone_index": 4,
   "tone_name": "Πλάγιος του Α’"
+}
+```
+
+### Input (ηχογράφηση από μικρόφωνο)
+```json
+{
+  "folder_uri": "content://com.android.externalstorage.documents/tree/primary%3AMusic%2FByzantineRecordings",
+  "format": "flac",
+  "action": "start_pause_resume_stop"
+}
+```
+
+### Output (αποθήκευση ηχογράφησης)
+```json
+{
+  "saved_file_name": "recording_20260220_104500.flac",
+  "folder": "ByzantineRecordings",
+  "format": "flac",
+  "status": "saved"
 }
 ```
 
@@ -223,6 +253,7 @@
 - `org.bouncycastle:bcpkix-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcprov-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcutil-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `com.arthenica:ffmpeg-kit-full-gpl = 6.0-2` (για transcode ηχογραφήσεων σε `flac/mp3/aac/m4a/opus`)
 
 - Κύρια components:
 - `MainActivity`
@@ -241,12 +272,19 @@
 - `ByzantineScanActivity`
 - `ByzantineMelodyAnalyzer`
 - `MelodyPathView`
+- `RecordingsActivity`
+- `RecordingFormatOption`
+- `RecordingsPrefs`
+- `AudioTranscoder`
 
 - Ρυθμίσεις εφαρμογής:
 - SharedPreferences file: `learn_byzantine_music_settings`
 - Key: `app_font_step`
 - Allowed values: `20 | 40 | 60 | 80 | 100`
 - Default value: `60`
+- SharedPreferences file: `learn_byzantine_music_recordings`
+- Keys: `recordings_folder_tree_uri`, `recordings_output_format`
+- Default format: `FLAC`
 
 - Release automation scripts:
 - `scripts/bump-version.sh`
@@ -410,6 +448,31 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Δεν υπάρχει dispatch/routes ροή στην εφαρμογή.
 - Η λογική είναι αποκλειστικά τοπική προβολή περιεχομένου.
 
+### Γιατί δεν μπορώ να ξεκινήσω ηχογράφηση;
+- Συνήθης αιτία είναι ότι δεν έχει δοθεί ακόμα πρόσβαση σε φάκελο μέσω SAF (`OpenDocumentTree`).
+- Βεβαιώσου ότι έχει δοθεί και άδεια μικροφώνου (`RECORD_AUDIO`) στο app.
+- Αν ακυρώθηκε ο picker φακέλου, πάτησε `Παραχώρηση/Αλλαγή φακέλου` και επέλεξε ξανά φάκελο.
+
+### Δεν αποθηκεύεται στο format που διάλεξα. Τι να ελέγξω;
+- Έλεγξε ότι στο selector της σελίδας `Ηχογραφήσεις` έχει επιλεγεί το σωστό format πριν την έναρξη.
+- Για μη-WAV formats η μετατροπή γίνεται μέσω FFmpeg και απαιτεί επιτυχή transcode στο τέλος της εγγραφής.
+- Αν αποτύχει transcode, εμφανίζεται μήνυμα σφάλματος και δεν δημιουργείται τελικό αρχείο στον φάκελο.
+
+### Δεν ανοίγει ο φάκελος σε file explorer. Τι να ελέγξω;
+- Χρειάζεται διαθέσιμη εφαρμογή που να υποστηρίζει `ACTION_VIEW` για directory URI.
+- Αν δεν υπάρχει συμβατή εφαρμογή, το app εμφανίζει μήνυμα και η εγγραφή συνεχίζει να λειτουργεί κανονικά.
+- Εγκατάστησε/ενεργοποίησε file manager app και ξαναδοκίμασε το `Άνοιγμα φακέλου`.
+
+### Πάτησα κατά λάθος «Παραχώρηση/Αλλαγή φακέλου». Χάνεται ο τρέχων φάκελος;
+- Όχι. Πλέον εμφανίζεται πρώτα επιβεβαίωση με `Συνέχεια`/`Ακύρωση`.
+- Αν πατήσεις `Ακύρωση` ή κλείσεις τον picker χωρίς επιλογή, ο προηγούμενος φάκελος παραμένει ενεργός.
+- Η λίστα ηχογραφήσεων συνεχίζει να δείχνει τα αρχεία του ίδιου φακέλου.
+
+### Πώς ανοίγω μία ηχογράφηση από τη λίστα;
+- Πάτησε το αρχείο στην αριστερή λίστα.
+- Αν υπάρχουν πολλές εφαρμογές αναπαραγωγής, το Android εμφανίζει επιλογή εφαρμογής.
+- Αν υπάρχει προεπιλεγμένη/μοναδική εφαρμογή, το αρχείο ανοίγει απευθείας.
+
 ### Δεν ακούγεται ο τόνος στους φθόγγους. Τι να ελέγξω;
 - Επιβεβαίωσε ότι γίνεται press-and-hold πάνω στο ίδιο το label του φθόγγου (όχι στο κενό του διαγράμματος).
 - Έλεγξε ένταση media του device και ότι δεν είναι σε muted/silent mode.
@@ -469,6 +532,10 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - `.github/workflows/security-guard.yml`: τρέχει secrets guard σε κάθε push/PR.
 - `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, κάνει package signed APK σε σταθερό alias `apk-release.apk`, ελέγχει αν υπάρχει ήδη ίδιο custom asset στο release του tag και κάνει skip το fallback publish όταν υπάρχει ήδη.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
+- `RecordingsActivity`, `layout_recordings.xml` και `list_item_recording.xml`: σελίδα ηχογραφήσεων με SAF folder access, controls εγγραφής (`start/pause/stop`), λίστα αρχείων από τον επιλεγμένο φάκελο, inline μετονομασία και διαγραφή με επιβεβαίωση.
+- `RecordingFormatOption`, `RecordingsPrefs`, `AudioTranscoder`: νέα helper modules για formats, persist settings φακέλου/μορφής και transcode μέσω FFmpeg.
+- `AndroidManifest.xml`: προστέθηκε activity `RecordingsActivity` και permission `RECORD_AUDIO`.
+- `strings.xml`: προστέθηκαν labels/status/errors και περιγραφές για όλα τα διαθέσιμα formats ηχογράφησης.
 - `SettingsActivity`, `layout_settings.xml`, `AppFontScale` και `BaseActivity`: διαχειρίζονται την αποθήκευση/εφαρμογή global font scaling για όλη την εφαρμογή.
 - `EightModesActivity`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels και αναπαραγωγή συχνοτήτων με αναφορά `Νη = 220Hz`.
 - `ByzantineScanActivity`: υλοποιεί camera/gallery ροή, επιλογή ήχου/βάσης και προβολή αποτελεσμάτων αναγνώρισης.
@@ -488,11 +555,30 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 }
 ```
 
+**Happy path (recordings)**
+```json
+{
+  "folder_selected": true,
+  "recording_state": "stopped",
+  "saved_file": "recording_20260220_104500.flac",
+  "visible_in_list": true
+}
+```
+
 **Failure example**
 ```json
 {
   "error": "gh_auth_missing",
   "message": "Δεν υπάρχει ενεργό gh auth session. Τρέξε gh auth login ή χρησιμοποίησε --skip-gh-release."
+}
+```
+
+**Failure example (recordings)**
+```json
+{
+  "error": "recording_transcode_failed",
+  "message": "Αποτυχία αποθήκευσης ηχογράφησης.",
+  "action": "έλεγχος format επιλογής και retry εγγραφής"
 }
 ```
 

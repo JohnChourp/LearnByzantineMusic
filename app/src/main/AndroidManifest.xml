@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -35,6 +36,11 @@
             android:name=".calendar.WeeklyModeCalendarActivity"
             android:exported="false"
             android:label="@string/title_activity_weekly_mode_calendar"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
+            android:name=".recordings.RecordingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_recordings"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
             android:name=".summary_theory.Testimonies"
