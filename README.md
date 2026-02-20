@@ -45,6 +45,7 @@
 - Με `Παραχώρηση/Αλλαγή φακέλου` εμφανίζεται πρώτα επιβεβαίωση (`Συνέχεια`/`Ακύρωση`) ώστε να μη χαθεί ο τρέχων φάκελος από κατά λάθος πάτημα.
 - Με `Άνοιγμα φακέλου` γίνεται προσπάθεια ανοίγματος ακριβώς του επιλεγμένου SAF φακέλου (και fallback σε picker με preselected αρχικό φάκελο).
 - Με tap σε στοιχείο ηχογράφησης (τόσο στη recent λίστα όσο και στη `Διαχείριση ηχογραφήσεων`) γίνεται ασφαλές προσωρινό cache copy και ανοίγει chooser Android (`Άνοιγμα ηχογράφησης με...`) για επιλογή εφαρμογής αναπαραγωγής με μεγαλύτερη συμβατότητα.
+- Το tap σε κάθε row ηχογράφησης έχει πλέον εμφανές pressed effect (ripple) και status `Άνοιγμα ηχογράφησης: ...` ώστε να είναι ξεκάθαρο ότι καταγράφηκε το πάτημα.
 - Η recent λίστα φορτώνει αρχικά 10 εγγραφές και με scroll στο τέλος φορτώνει τις επόμενες 10 παλαιότερες.
 - Και στις δύο λίστες (`recent` + `διαχείριση`) εμφανίζονται μόνο αρχεία ήχου με κατάληξη `.flac/.mp3/.wav/.aac/.m4a/.opus`.
 - Κάθε στοιχείο ηχογράφησης έχει διακριτικά κουμπιά `Μετονομασία` και κόκκινο `Διαγραφή` με επιβεβαίωση πριν την ενέργεια.
@@ -579,7 +580,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - `RecordingsManagerActivity`, `layout_recordings_manager.xml` και `list_item_manager_entry.xml`: ξεχωριστό διαχειριστικό φακέλων/ηχογραφήσεων με breadcrumb πλοήγηση, δημιουργία φακέλου, drag/drop μετακίνηση με επιβεβαίωση path και inline rename/delete.
 - `RecordingFormatOption`, `RecordingsPrefs`, `AudioTranscoder`: νέα helper modules για formats, persist settings φακέλου/μορφής και transcode μέσω FFmpeg.
 - `RecordingDocumentOps` και `RecordingModels`: κοινά μοντέλα + ασφαλής λογική rename fallback (direct rename και fallback copy/delete για αρχεία).
-- `RecordingExternalOpener` και `byzantine_scan_file_paths.xml`: ασφαλές άνοιγμα ηχογράφησης με cache copy + `FileProvider`, grant read permissions και MIME fallbacks (`resolved -> audio/* -> */*`).
+- `RecordingExternalOpener` και `byzantine_scan_file_paths.xml`: ασφαλές άνοιγμα ηχογράφησης με audio-only MIME fallbacks (`resolved -> audio/*`) και dual URI strategy (δοκιμή original SAF URI και cache `FileProvider` URI) για μεγαλύτερη συμβατότητα σε Android 15 συσκευές.
 - `AndroidManifest.xml`: προστέθηκαν activities `RecordingsActivity`, `RecordingsManagerActivity` και permission `RECORD_AUDIO`.
 - `strings.xml`: προστέθηκαν labels/status/errors και περιγραφές για όλα τα διαθέσιμα formats ηχογράφησης.
 - `SettingsActivity`, `layout_settings.xml`, `AppFontScale` και `BaseActivity`: διαχειρίζονται την αποθήκευση/εφαρμογή global font scaling για όλη την εφαρμογή.

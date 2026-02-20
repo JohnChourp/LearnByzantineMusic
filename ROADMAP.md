@@ -66,7 +66,9 @@
 - Προστέθηκε νέα σελίδα `Ηχογραφήσεις` με επιλογή φακέλου μέσω SAF, μεγάλη εγγραφή μικροφώνου, controls `Παύση/Συνέχεια` + `Σταμάτημα` και δυναμική λίστα αρχείων από τον επιλεγμένο φάκελο.
 - Προστέθηκε αποθήκευση ηχογραφήσεων σε πολλαπλά formats (`flac/mp3/wav/aac/m4a/opus`) με προεπιλογή `FLAC` και transcode μέσω FFmpeg για τα μη-WAV formats.
 - Προστέθηκε ασφαλές flow αλλαγής φακέλου ηχογραφήσεων με επιβεβαίωση (`Συνέχεια/Ακύρωση`) και διατήρηση του τρέχοντος φακέλου όταν ο χρήστης ακυρώνει.
-- Προστέθηκε άνοιγμα ηχογράφησης από τις λίστες με cache-copy + `FileProvider`, explicit grant read permissions και MIME fallback chain (`resolved -> audio/* -> */*`) ώστε ο chooser εξωτερικού player να είναι πιο αξιόπιστος.
+- Προστέθηκε άνοιγμα ηχογράφησης από τις λίστες με cache-copy + `FileProvider`, explicit grant read permissions και audio-only MIME fallback chain (`resolved -> audio/*`) ώστε ο chooser εξωτερικού player να περιορίζεται σε συμβατές εφαρμογές αναπαραγωγής.
+- Προστέθηκε deterministic row-click handling στις λίστες ηχογραφήσεων (recent + διαχείριση) με οπτικό pressed feedback (ripple) και άμεσο status `Άνοιγμα ηχογράφησης...` στο tap.
+- Ενισχύθηκε το άνοιγμα σε εξωτερικό player με dual URI strategy (πρώτα original URI, μετά cache `FileProvider` URI) και χωρίς strict pre-filter αποκλεισμού apps από local query, ώστε να λειτουργεί πιο αξιόπιστα σε Android 15/Motorola.
 - Προστέθηκαν inline ενέργειες `μετονομασία` και κόκκινο `διαγραφή` ανά ηχογράφηση με επιβεβαίωση, καθώς και στοχευμένο άνοιγμα του επιλεγμένου SAF φακέλου αντί γενικού `Downloads`.
 - Επανασχεδιάστηκε η σελίδα `Ηχογραφήσεις` ώστε να εμφανίζει recent feed από όλο το SAF tree (όλοι οι φάκελοι/υποφάκελοι) με pagination τύπου infinite scroll (`10` εγγραφές ανά φόρτωση).
 - Προστέθηκε ξεχωριστή σελίδα `Διαχείριση ηχογραφήσεων` με breadcrumb πλοήγηση φακέλων, δημιουργία νέου φακέλου και προβολή μόνο φακέλων + allowed audio extensions.

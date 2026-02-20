@@ -420,6 +420,7 @@
     <string name="recordings_status_recording">Γίνεται ηχογράφηση...</string>
     <string name="recordings_status_paused">Η ηχογράφηση είναι σε παύση.</string>
     <string name="recordings_status_saving">Αποθήκευση ηχογράφησης...</string>
+    <string name="recordings_status_opening_template">Άνοιγμα ηχογράφησης: %1$s</string>
     <string name="recordings_status_saved_template">Ηχογράφηση αποθηκεύτηκε: %1$s</string>
     <string name="recordings_saved_ok">Η ηχογράφηση αποθηκεύτηκε επιτυχώς.</string>
     <string name="recordings_error_start">Αποτυχία εκκίνησης ηχογράφησης.</string>

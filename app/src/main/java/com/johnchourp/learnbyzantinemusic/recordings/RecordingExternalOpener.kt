@@ -3,7 +3,6 @@ package com.johnchourp.learnbyzantinemusic.recordings
 import android.app.Activity
 import android.content.ClipData
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
@@ -22,32 +21,28 @@ class RecordingExternalOpener(
         chooserTitle: String,
         onFailure: (Throwable?) -> Unit
     ): Boolean {
-        val cachedFile = runCatching {
+        val cachedUri = runCatching {
             withContext(Dispatchers.IO) {
-                copyToOpenCache(sourceUri, fileName)
+                val cachedFile = copyToOpenCache(sourceUri, fileName)
+                FileProvider.getUriForFile(
+                    activity,
+                    "${activity.packageName}.fileprovider",
+                    cachedFile
+                )
             }
-        }.getOrElse {
-            onFailure(it)
-            return false
-        }
+        }.getOrNull()
 
-        val sharedUri = FileProvider.getUriForFile(
-            activity,
-            "${activity.packageName}.fileprovider",
-            cachedFile
-        )
-        val mimeCandidates = linkedSetOf<String>().apply {
-            val resolvedMimeType = resolveMimeType(fileName, mimeType)
-            if (!resolvedMimeType.isNullOrBlank()) {
-                add(resolvedMimeType)
-            }
-            add("audio/*")
-            add("*/*")
-        }
+        val mimeCandidates = buildMimeCandidates(fileName, mimeType)
+        val targetUris = listOfNotNull(
+            sourceUri,
+            cachedUri
+        ).distinct()
 
-        mimeCandidates.forEach { candidateMime ->
-            if (tryOpenChooser(sharedUri, candidateMime, chooserTitle)) {
-                return true
+        targetUris.forEach { targetUri ->
+            mimeCandidates.forEach { candidateMime ->
+                if (tryOpenChooser(targetUri, candidateMime, chooserTitle)) {
+                    return true
+                }
             }
         }
 
@@ -55,33 +50,43 @@ class RecordingExternalOpener(
         return false
     }
 
-    private fun tryOpenChooser(sharedUri: Uri, mimeType: String, chooserTitle: String): Boolean {
+    private fun buildMimeCandidates(fileName: String, mimeType: String?): List<String> {
+        return linkedSetOf<String>().apply {
+            val resolvedMimeType = resolveMimeType(fileName, mimeType)
+            if (!resolvedMimeType.isNullOrBlank()) {
+                add(resolvedMimeType)
+            }
+            add("audio/*")
+        }.toList()
+    }
+
+    private fun tryOpenChooser(targetUri: Uri, mimeType: String, chooserTitle: String): Boolean {
         val viewIntent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(sharedUri, mimeType)
+            setDataAndType(targetUri, mimeType)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            clipData = ClipData.newRawUri("recording", sharedUri)
+            addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
+            clipData = ClipData.newRawUri("recording", targetUri)
         }
 
-        val resolveInfoList = activity.packageManager.queryIntentActivities(
-            viewIntent,
-            PackageManager.MATCH_DEFAULT_ONLY
-        )
-        if (resolveInfoList.isEmpty()) {
-            return false
-        }
+        val resolveInfoList = runCatching {
+            activity.packageManager.queryIntentActivities(viewIntent, 0)
+        }.getOrDefault(emptyList())
 
         resolveInfoList.forEach { resolveInfo ->
-            activity.grantUriPermission(
-                resolveInfo.activityInfo.packageName,
-                sharedUri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
+            runCatching {
+                activity.grantUriPermission(
+                    resolveInfo.activityInfo.packageName,
+                    targetUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
         }
 
         return runCatching {
             val chooserIntent = Intent.createChooser(viewIntent, chooserTitle).apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                clipData = ClipData.newRawUri("recording", sharedUri)
+                addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
+                clipData = ClipData.newRawUri("recording", targetUri)
             }
             activity.startActivity(chooserIntent)
         }.isSuccess

@@ -187,10 +187,6 @@ class RecordingsActivity : BaseActivity() {
         recordingsAdapter = RecordingListAdapter()
         recordingsListView.adapter = recordingsAdapter
         recordingsListView.emptyView = recordingsEmptyTextView
-        recordingsListView.setOnItemClickListener { _, _, position, _ ->
-            val item = visibleRecentItems.getOrNull(position) ?: return@setOnItemClickListener
-            openRecordingInExternalPlayer(item)
-        }
         recordingsListView.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) = Unit
 
@@ -544,6 +540,7 @@ class RecordingsActivity : BaseActivity() {
     }
 
     private fun openRecordingInExternalPlayer(item: RecentRecordingItem) {
+        showStatus(getString(R.string.recordings_status_opening_template, item.name))
         val resolvedMimeType = resolvePlaybackMimeType(item)
         lifecycleScope.launch {
             recordingExternalOpener.openRecordingWithChooser(
@@ -872,6 +869,7 @@ class RecordingsActivity : BaseActivity() {
     }
 
     private data class RecordingRowViewHolder(
+        val rootView: View,
         val nameTextView: TextView,
         val pathTextView: TextView,
         val renameButton: ImageButton,
@@ -894,6 +892,7 @@ class RecordingsActivity : BaseActivity() {
             if (convertView == null) {
                 rowView = layoutInflater.inflate(R.layout.list_item_recording, parent, false)
                 holder = RecordingRowViewHolder(
+                    rootView = rowView.findViewById(R.id.recording_item_container),
                     nameTextView = rowView.findViewById(R.id.recording_item_name_text_view),
                     pathTextView = rowView.findViewById(R.id.recording_item_path_text_view),
                     renameButton = rowView.findViewById(R.id.recording_item_rename_button),
@@ -908,6 +907,9 @@ class RecordingsActivity : BaseActivity() {
             val item = visibleRecentItems[position]
             holder.nameTextView.text = item.name
             holder.pathTextView.text = item.parentRelativePath
+            holder.rootView.setOnClickListener {
+                openRecordingInExternalPlayer(item)
+            }
             holder.renameButton.setOnClickListener { showRenameRecordingDialog(item) }
             holder.deleteButton.setOnClickListener { showDeleteRecordingDialog(item) }
             return rowView

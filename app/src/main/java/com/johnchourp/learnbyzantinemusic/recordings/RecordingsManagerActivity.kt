@@ -85,14 +85,6 @@ class RecordingsManagerActivity : BaseActivity() {
         entriesAdapter = ManagerEntriesAdapter()
         listView.adapter = entriesAdapter
         listView.emptyView = emptyTextView
-        listView.setOnItemClickListener { _, _, position, _ ->
-            val entry = entries.getOrNull(position) ?: return@setOnItemClickListener
-            if (entry.type == ManagerEntryType.FOLDER) {
-                enterFolder(entry)
-            } else {
-                openRecordingInExternalPlayer(entry)
-            }
-        }
     }
 
     private fun setupActions() {
@@ -503,6 +495,7 @@ class RecordingsManagerActivity : BaseActivity() {
     }
 
     private fun openRecordingInExternalPlayer(entry: ManagerEntry) {
+        showStatus(getString(R.string.recordings_status_opening_template, entry.name))
         val mimeType = if (!entry.mimeType.isNullOrBlank() && entry.mimeType != "application/octet-stream") {
             entry.mimeType
         } else {
@@ -585,6 +578,13 @@ class RecordingsManagerActivity : BaseActivity() {
 
             holder.nameTextView.text = entry.name
             holder.subtitleTextView.text = subtitle
+            holder.rootView.setOnClickListener {
+                if (entry.type == ManagerEntryType.FOLDER) {
+                    enterFolder(entry)
+                } else {
+                    openRecordingInExternalPlayer(entry)
+                }
+            }
             holder.renameButton.setOnClickListener { showRenameEntryDialog(entry) }
             holder.deleteButton.setOnClickListener { showDeleteEntryDialog(entry) }
             holder.dragButton.setOnTouchListener { dragView, motionEvent ->

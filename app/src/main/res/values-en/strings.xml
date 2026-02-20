@@ -429,6 +429,7 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="recordings_status_recording">Recording in progress...</string>
     <string name="recordings_status_paused">Recording is paused.</string>
     <string name="recordings_status_saving">Save recording...</string>
+    <string name="recordings_status_opening_template">Opening recording: %1$s</string>
     <string name="recordings_status_saved_template">Recording saved: %1$s</string>
     <string name="recordings_saved_ok">Recording saved successfully.</string>
     <string name="recordings_error_start">Failed to start recording.</string>
