@@ -24,8 +24,13 @@ enum class RecordingFormatOption(
         }
 
         fun supportsFileName(fileName: String?): Boolean {
-            val extension = fileName?.substringAfterLast('.', "")?.lowercase() ?: return false
+            val extension = fileName?.substringAfterLast('.', "")?.trim()?.lowercase() ?: return false
             return entries.any { it.extension == extension }
+        }
+
+        fun resolveMimeTypeByFileName(fileName: String?): String? {
+            val extension = fileName?.substringAfterLast('.', "")?.trim()?.lowercase() ?: return null
+            return entries.firstOrNull { it.extension == extension }?.mimeType
         }
     }
 }

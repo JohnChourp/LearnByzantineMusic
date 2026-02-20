@@ -3,4 +3,7 @@
     <cache-path
         name="byz_scan_images"
         path="byz_scan_images/" />
+    <cache-path
+        name="byz_recordings_open"
+        path="byz_recordings_open/" />
 </paths>

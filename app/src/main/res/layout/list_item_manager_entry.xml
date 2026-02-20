@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/manager_item_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
@@ -17,7 +18,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/recording_item_name_text_view"
+            android:id="@+id/manager_item_name_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -26,7 +27,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/recording_item_path_text_view"
+            android:id="@+id/manager_item_subtitle_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
@@ -36,7 +37,7 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/recording_item_rename_button"
+        android:id="@+id/manager_item_rename_button"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginStart="6dp"
@@ -47,7 +48,7 @@
         android:tint="#607D8B" />
 
     <ImageButton
-        android:id="@+id/recording_item_delete_button"
+        android:id="@+id/manager_item_delete_button"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginStart="2dp"
@@ -56,4 +57,15 @@
         android:padding="8dp"
         android:src="@android:drawable/ic_menu_delete"
         android:tint="#C62828" />
+
+    <ImageButton
+        android:id="@+id/manager_item_drag_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="2dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/recordings_manage_drag_content_description"
+        android:padding="8dp"
+        android:src="@android:drawable/ic_menu_sort_by_size"
+        android:tint="#455A64" />
 </LinearLayout>
