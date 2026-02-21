@@ -10,25 +10,22 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.AbsListView
-import android.widget.ArrayAdapter
-import android.widget.BaseAdapter
-import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ListView
-import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.activity.compose.setContent
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.recordings.index.RecordingsRepository
+import com.johnchourp.learnbyzantinemusic.recordings.ui.RecordingsScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,33 +37,23 @@ import java.util.Date
 import java.util.Locale
 
 class RecordingsActivity : BaseActivity() {
-    private lateinit var folderTextView: TextView
-    private lateinit var recordingsListView: ListView
-    private lateinit var recordingsEmptyTextView: TextView
-    private lateinit var statusTextView: TextView
-    private lateinit var startRecordingButton: Button
-    private lateinit var pauseResumeButton: Button
-    private lateinit var stopRecordingButton: Button
-    private lateinit var formatSpinner: Spinner
-    private lateinit var formatDescriptionTextView: TextView
-    private lateinit var changeFolderButton: Button
-    private lateinit var openFolderButton: Button
-    private lateinit var manageRecordingsButton: Button
-
     private lateinit var recordingsPrefs: RecordingsPrefs
-    private lateinit var recordingsAdapter: BaseAdapter
+    private val recordingsRepository by lazy { RecordingsRepository.getInstance(applicationContext) }
     private val recordingExternalOpener by lazy { RecordingExternalOpener(this) }
 
-    private val allRecentItems = mutableListOf<RecentRecordingItem>()
-    private val visibleRecentItems = mutableListOf<RecentRecordingItem>()
-    private val ioLock = Any()
+    private val viewModel: RecordingsViewModel by viewModels {
+        RecordingsViewModelFactory(
+            repository = recordingsRepository,
+            prefs = RecordingsPrefs(this)
+        )
+    }
 
     private var selectedFolderUri: Uri? = null
-    private var selectedFormat: RecordingFormatOption = RecordingFormatOption.FLAC
-    private var recordingState: RecordingState = RecordingState.IDLE
-    private var nextRecentIndex = 0
-    private var isRefreshingRecent = false
+    private var hasAttemptedInitialFolderRequest = false
+    private var folderPickMode: FolderPickMode = FolderPickMode.INITIAL_REQUIRED
+    private var pendingFolderBeforeChange: Uri? = null
 
+    private val ioLock = Any()
     private var audioRecord: AudioRecord? = null
     private var recordingThread: Thread? = null
     private var tempWavFile: File? = null
@@ -79,18 +66,14 @@ class RecordingsActivity : BaseActivity() {
     @Volatile
     private var isPaused = false
 
-    private var hasAttemptedInitialFolderRequest = false
-    private var folderPickMode: FolderPickMode = FolderPickMode.INITIAL_REQUIRED
-    private var pendingFolderBeforeChange: Uri? = null
-
     private val requestAudioPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
                 startRecordingSession()
             } else {
-                showStatus(getString(R.string.recordings_microphone_permission_required))
+                setStatus(getString(R.string.recordings_microphone_permission_required))
                 Toast.makeText(this, R.string.recordings_microphone_permission_required, Toast.LENGTH_SHORT).show()
-                setRecordingState(RecordingState.ERROR)
+                viewModel.setRecordingState(RecordingStateUi.ERROR)
             }
         }
 
@@ -99,16 +82,17 @@ class RecordingsActivity : BaseActivity() {
             if (uri == null) {
                 when (folderPickMode) {
                     FolderPickMode.INITIAL_REQUIRED -> {
-                        showStatus(getString(R.string.recordings_folder_required))
+                        setStatus(getString(R.string.recordings_folder_required))
                         Toast.makeText(this, R.string.recordings_folder_required, Toast.LENGTH_SHORT).show()
-                        updateFolderState(null)
-                        refreshRecentRecordings()
+                        viewModel.clearRootFolder(getString(R.string.recordings_folder_required))
                     }
 
                     FolderPickMode.CHANGE_REQUEST -> {
-                        updateFolderState(pendingFolderBeforeChange)
-                        refreshRecentRecordings()
-                        showStatus(getString(R.string.recordings_folder_change_canceled))
+                        val fallback = pendingFolderBeforeChange
+                        if (fallback != null) {
+                            applySelectedFolder(fallback)
+                        }
+                        setStatus(getString(R.string.recordings_folder_change_canceled))
                     }
                 }
                 pendingFolderBeforeChange = null
@@ -121,60 +105,58 @@ class RecordingsActivity : BaseActivity() {
             }.isSuccess
 
             if (!permissionTaken) {
-                showStatus(getString(R.string.recordings_folder_permission_error))
+                setStatus(getString(R.string.recordings_folder_permission_error))
                 Toast.makeText(this, R.string.recordings_folder_permission_error, Toast.LENGTH_SHORT).show()
-                if (folderPickMode == FolderPickMode.CHANGE_REQUEST) {
-                    updateFolderState(pendingFolderBeforeChange)
-                    refreshRecentRecordings()
-                } else {
-                    updateFolderState(null)
-                    refreshRecentRecordings()
+                val fallback = pendingFolderBeforeChange
+                if (fallback != null) {
+                    applySelectedFolder(fallback)
                 }
                 pendingFolderBeforeChange = null
                 return@registerForActivityResult
             }
 
             recordingsPrefs.setFolderUri(uri)
-            updateFolderState(uri)
-            refreshRecentRecordings()
-            showStatus(getString(R.string.recordings_folder_selected))
-            pendingFolderBeforeChange = null
-            if (recordingState == RecordingState.ERROR) {
-                setRecordingState(RecordingState.IDLE)
+            applySelectedFolder(uri)
+            setStatus(getString(R.string.recordings_folder_selected))
+            if (viewModel.uiState.value.recordingState == RecordingStateUi.ERROR) {
+                viewModel.setRecordingState(RecordingStateUi.IDLE)
             }
+            pendingFolderBeforeChange = null
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_recordings)
-
         recordingsPrefs = RecordingsPrefs(this)
 
-        folderTextView = findViewById(R.id.recordings_folder_text_view)
-        recordingsListView = findViewById(R.id.recordings_list_view)
-        recordingsEmptyTextView = findViewById(R.id.recordings_empty_text_view)
-        statusTextView = findViewById(R.id.recordings_status_text_view)
-        startRecordingButton = findViewById(R.id.recordings_start_button)
-        pauseResumeButton = findViewById(R.id.recordings_pause_resume_button)
-        stopRecordingButton = findViewById(R.id.recordings_stop_button)
-        formatSpinner = findViewById(R.id.recordings_format_spinner)
-        formatDescriptionTextView = findViewById(R.id.recordings_format_description_text_view)
-        changeFolderButton = findViewById(R.id.recordings_change_folder_button)
-        openFolderButton = findViewById(R.id.recordings_open_folder_button)
-        manageRecordingsButton = findViewById(R.id.recordings_manage_button)
-
-        setupRecordingsList()
-        setupFormatSelector()
-        setupActions()
         restoreSavedFolder()
-        setRecordingState(RecordingState.IDLE)
+        viewModel.setRecordingState(RecordingStateUi.IDLE)
+
+        setContent {
+            MaterialTheme {
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                val recentItems = viewModel.recentItemsFlow.collectAsLazyPagingItems()
+
+                RecordingsScreen(
+                    uiState = uiState,
+                    recentItems = recentItems,
+                    onChangeFolder = { showChangeFolderConfirmationDialog() },
+                    onOpenFolder = { openFolderInExternalExplorer() },
+                    onOpenManager = { openManagerPage() },
+                    onStartRecording = { ensureMicrophonePermissionThenStart() },
+                    onPauseResume = { togglePauseResume() },
+                    onStopRecording = { stopAndPersistRecording() },
+                    onFormatChanged = { viewModel.setSelectedFormat(it) },
+                    onOpenRecording = { openRecordingInExternalPlayer(it) },
+                    onRenameRecording = { showRenameRecordingDialog(it) },
+                    onDeleteRecording = { showDeleteRecordingDialog(it) }
+                )
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        if (::recordingsAdapter.isInitialized && currentFolderDocument() != null) {
-            refreshRecentRecordings()
-        }
+        viewModel.requestReindex(force = false)
     }
 
     override fun onDestroy() {
@@ -183,102 +165,31 @@ class RecordingsActivity : BaseActivity() {
         cleanupTempFiles()
     }
 
-    private fun setupRecordingsList() {
-        recordingsAdapter = RecordingListAdapter()
-        recordingsListView.adapter = recordingsAdapter
-        recordingsListView.emptyView = recordingsEmptyTextView
-        recordingsListView.setOnScrollListener(object : AbsListView.OnScrollListener {
-            override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) = Unit
-
-            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
-                if (totalItemCount == 0 || isRefreshingRecent) {
-                    return
-                }
-                val reachedTail = firstVisibleItem + visibleItemCount >= totalItemCount - 1
-                if (reachedTail) {
-                    loadNextRecentPage()
-                }
-            }
-        })
-    }
-
-    private fun setupFormatSelector() {
-        selectedFormat = recordingsPrefs.getSelectedFormat()
-        val labels = RecordingFormatOption.entries.map { formatOption -> getString(formatOption.labelResId) }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, labels)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        formatSpinner.adapter = adapter
-
-        val selectedIndex = RecordingFormatOption.entries.indexOf(selectedFormat).coerceAtLeast(0)
-        formatSpinner.setSelection(selectedIndex, false)
-        updateFormatDescription(selectedFormat)
-
-        formatSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: android.widget.AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                selectedFormat = RecordingFormatOption.entries.getOrNull(position) ?: RecordingFormatOption.FLAC
-                recordingsPrefs.setSelectedFormat(selectedFormat)
-                updateFormatDescription(selectedFormat)
-            }
-
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) = Unit
-        }
-    }
-
-    private fun setupActions() {
-        changeFolderButton.setOnClickListener {
-            showChangeFolderConfirmationDialog()
-        }
-
-        openFolderButton.setOnClickListener {
-            openFolderInExternalExplorer()
-        }
-
-        manageRecordingsButton.setOnClickListener {
-            openManagerPage()
-        }
-
-        startRecordingButton.setOnClickListener {
-            ensureMicrophonePermissionThenStart()
-        }
-
-        pauseResumeButton.setOnClickListener {
-            togglePauseResume()
-        }
-
-        stopRecordingButton.setOnClickListener {
-            stopAndPersistRecording()
-        }
-    }
-
     private fun restoreSavedFolder() {
         val storedUri = recordingsPrefs.getFolderUri()
         if (storedUri != null && recordingsPrefs.hasPersistedReadWriteAccess(contentResolver, storedUri)) {
-            updateFolderState(storedUri)
-            refreshRecentRecordings()
-            showStatus(getString(R.string.recordings_ready))
+            applySelectedFolder(storedUri)
+            setStatus(getString(R.string.recordings_ready))
             return
         }
 
-        updateFolderState(null)
-        showStatus(getString(R.string.recordings_select_folder_first))
+        setStatus(getString(R.string.recordings_select_folder_first))
+        viewModel.clearRootFolder(getString(R.string.recordings_select_folder_first))
         if (!hasAttemptedInitialFolderRequest) {
             hasAttemptedInitialFolderRequest = true
             launchFolderPicker(FolderPickMode.INITIAL_REQUIRED, storedUri)
         }
     }
 
+    private fun applySelectedFolder(folderUri: Uri) {
+        selectedFolderUri = folderUri
+        val folderName = currentFolderDocument()?.name ?: getString(R.string.recordings_manage_root_label)
+        viewModel.setRootFolder(folderUri, folderName)
+    }
+
     private fun launchFolderPicker(mode: FolderPickMode, initialUri: Uri?) {
         folderPickMode = mode
-        pendingFolderBeforeChange = if (mode == FolderPickMode.CHANGE_REQUEST) {
-            selectedFolderUri
-        } else {
-            null
-        }
+        pendingFolderBeforeChange = if (mode == FolderPickMode.CHANGE_REQUEST) selectedFolderUri else null
         pickFolderLauncher.launch(initialUri)
     }
 
@@ -295,20 +206,6 @@ class RecordingsActivity : BaseActivity() {
             .show()
     }
 
-    private fun updateFolderState(folderUri: Uri?) {
-        selectedFolderUri = folderUri
-        val folderName = currentFolderDocument()?.name
-        folderTextView.text = if (folderUri == null || folderName.isNullOrBlank()) {
-            getString(R.string.recordings_folder_not_selected)
-        } else {
-            getString(R.string.recordings_folder_selected_template, folderName)
-        }
-        val hasFolder = currentFolderDocument() != null
-        startRecordingButton.isEnabled = hasFolder
-        openFolderButton.isEnabled = hasFolder
-        manageRecordingsButton.isEnabled = hasFolder
-    }
-
     private fun currentFolderDocument(): DocumentFile? {
         val uri = selectedFolderUri ?: return null
         val folder = DocumentFile.fromTreeUri(this, uri) ?: return null
@@ -319,92 +216,10 @@ class RecordingsActivity : BaseActivity() {
         }
     }
 
-    private fun refreshRecentRecordings() {
-        val rootFolder = currentFolderDocument()
-        if (rootFolder == null) {
-            allRecentItems.clear()
-            visibleRecentItems.clear()
-            nextRecentIndex = 0
-            recordingsAdapter.notifyDataSetChanged()
-            return
-        }
-        if (isRefreshingRecent) {
-            return
-        }
-
-        isRefreshingRecent = true
-        lifecycleScope.launch {
-            val recentItems = withContext(Dispatchers.IO) {
-                collectRecentRecordings(rootFolder)
-            }
-            allRecentItems.clear()
-            allRecentItems.addAll(recentItems)
-            visibleRecentItems.clear()
-            nextRecentIndex = 0
-            loadNextRecentPage()
-            isRefreshingRecent = false
-        }
-    }
-
-    private fun collectRecentRecordings(rootFolder: DocumentFile): List<RecentRecordingItem> {
-        val collected = mutableListOf<RecentRecordingItem>()
-
-        fun collectRecursively(folder: DocumentFile, relativeFolderPath: String) {
-            val files = runCatching { folder.listFiles().toList() }.getOrElse { emptyList() }
-            for (document in files) {
-                val name = document.name ?: continue
-                if (document.isDirectory) {
-                    val childFolderPath = if (relativeFolderPath.isBlank()) name else "$relativeFolderPath/$name"
-                    collectRecursively(document, childFolderPath)
-                    continue
-                }
-                if (!document.isFile || !RecordingFormatOption.supportsFileName(name)) {
-                    continue
-                }
-
-                val relativePath = if (relativeFolderPath.isBlank()) {
-                    name
-                } else {
-                    "$relativeFolderPath/$name"
-                }
-                val parentPath = if (relativeFolderPath.isBlank()) "/" else "/$relativeFolderPath"
-                val sortTimestamp = RecordingDocumentOps.resolveCreationLikeTimestamp(name) ?: document.lastModified()
-                collected.add(
-                    RecentRecordingItem(
-                        name = name,
-                        uri = document.uri,
-                        mimeType = document.type,
-                        relativePath = relativePath,
-                        parentRelativePath = parentPath,
-                        parentUri = folder.uri,
-                        sortTimestamp = sortTimestamp
-                    )
-                )
-            }
-        }
-
-        collectRecursively(rootFolder, "")
-
-        return collected.sortedWith(
-            compareByDescending<RecentRecordingItem> { it.sortTimestamp }
-                .thenBy { it.relativePath }
-        )
-    }
-
-    private fun loadNextRecentPage() {
-        if (nextRecentIndex >= allRecentItems.size) {
-            return
-        }
-        val endIndex = (nextRecentIndex + RECENT_PAGE_SIZE).coerceAtMost(allRecentItems.size)
-        visibleRecentItems.addAll(allRecentItems.subList(nextRecentIndex, endIndex))
-        nextRecentIndex = endIndex
-        recordingsAdapter.notifyDataSetChanged()
-    }
-
     private fun openFolderInExternalExplorer() {
         val uri = selectedFolderUri
         if (uri == null) {
-            showStatus(getString(R.string.recordings_select_folder_first))
+            setStatus(getString(R.string.recordings_select_folder_first))
             Toast.makeText(this, R.string.recordings_select_folder_first, Toast.LENGTH_SHORT).show()
             return
         }
@@ -439,7 +254,7 @@ class RecordingsActivity : BaseActivity() {
             runCatching {
                 startActivity(fallbackIntent)
             }.onFailure {
-                showStatus(getString(R.string.recordings_open_folder_no_app))
+                setStatus(getString(R.string.recordings_open_folder_no_app))
                 Toast.makeText(this, R.string.recordings_open_folder_no_app, Toast.LENGTH_SHORT).show()
             }
         }
@@ -447,30 +262,34 @@ class RecordingsActivity : BaseActivity() {
 
     private fun openManagerPage() {
         if (currentFolderDocument() == null) {
-            showStatus(getString(R.string.recordings_select_folder_first))
+            setStatus(getString(R.string.recordings_select_folder_first))
             Toast.makeText(this, R.string.recordings_select_folder_first, Toast.LENGTH_SHORT).show()
             return
         }
         startActivity(Intent(this, RecordingsManagerActivity::class.java))
     }
 
-    private fun showDeleteRecordingDialog(item: RecentRecordingItem) {
+    private fun showDeleteRecordingDialog(item: RecordingListItem) {
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.recordings_delete_confirm_title))
             .setMessage(getString(R.string.recordings_delete_confirm_message, item.name))
             .setPositiveButton(getString(R.string.recordings_delete_confirm_button)) { _, _ ->
-                val deleted = runCatching {
-                    val document = DocumentFile.fromSingleUri(this, item.uri)
-                    document != null && document.exists() && document.delete()
-                }.getOrDefault(false)
+                viewModel.deleteItem(item) { result ->
+                    when (result) {
+                        DeleteOutcome.SUCCESS -> {
+                            setStatus(getString(R.string.recordings_status_deleted_template, item.name))
+                            Toast.makeText(this, R.string.recordings_deleted_ok, Toast.LENGTH_SHORT).show()
+                        }
 
-                if (deleted) {
-                    showStatus(getString(R.string.recordings_status_deleted_template, item.name))
-                    Toast.makeText(this, R.string.recordings_deleted_ok, Toast.LENGTH_SHORT).show()
-                    refreshRecentRecordings()
-                } else {
-                    showStatus(getString(R.string.recordings_error_delete))
-                    Toast.makeText(this, R.string.recordings_error_delete, Toast.LENGTH_SHORT).show()
+                        DeleteOutcome.REMOVED -> {
+                            handleRemovedRecording(item)
+                        }
+
+                        DeleteOutcome.FAILED -> {
+                            setStatus(getString(R.string.recordings_error_delete))
+                            Toast.makeText(this, R.string.recordings_error_delete, Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
             .setNegativeButton(getString(R.string.recordings_delete_cancel_button)) { dialog, _ ->
@@ -479,7 +298,7 @@ class RecordingsActivity : BaseActivity() {
             .show()
     }
 
-    private fun showRenameRecordingDialog(item: RecentRecordingItem) {
+    private fun showRenameRecordingDialog(item: RecordingListItem) {
         val parsedName = RecordingDocumentOps.parseFileName(item.name)
         val inputField = EditText(this).apply {
             setSingleLine(true)
@@ -495,7 +314,7 @@ class RecordingsActivity : BaseActivity() {
             .setPositiveButton(getString(R.string.recordings_rename_confirm_button)) { _, _ ->
                 val sanitizedBaseName = RecordingDocumentOps.sanitizeName(inputField.text?.toString().orEmpty())
                 if (sanitizedBaseName.isBlank()) {
-                    showStatus(getString(R.string.recordings_rename_invalid_name))
+                    setStatus(getString(R.string.recordings_rename_invalid_name))
                     Toast.makeText(this, R.string.recordings_rename_invalid_name, Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
@@ -508,28 +327,26 @@ class RecordingsActivity : BaseActivity() {
                     return@setPositiveButton
                 }
 
-                when (
-                    RecordingDocumentOps.renameFileWithFallback(
-                        context = this,
-                        sourceUri = item.uri,
-                        parentFolderUri = item.parentUri,
-                        targetName = targetName
-                    )
-                ) {
-                    RenameOutcome.SUCCESS -> {
-                        showStatus(getString(R.string.recordings_status_renamed_template, targetName))
-                        Toast.makeText(this, R.string.recordings_renamed_ok, Toast.LENGTH_SHORT).show()
-                        refreshRecentRecordings()
-                    }
+                viewModel.renameItem(item, targetName) { result ->
+                    when (result) {
+                        RenameOutcome.SUCCESS -> {
+                            setStatus(getString(R.string.recordings_status_renamed_template, targetName))
+                            Toast.makeText(this, R.string.recordings_renamed_ok, Toast.LENGTH_SHORT).show()
+                        }
 
-                    RenameOutcome.NAME_EXISTS -> {
-                        showStatus(getString(R.string.recordings_error_rename_name_exists))
-                        Toast.makeText(this, R.string.recordings_error_rename_name_exists, Toast.LENGTH_SHORT).show()
-                    }
+                        RenameOutcome.NAME_EXISTS -> {
+                            setStatus(getString(R.string.recordings_error_rename_name_exists))
+                            Toast.makeText(this, R.string.recordings_error_rename_name_exists, Toast.LENGTH_SHORT).show()
+                        }
 
-                    RenameOutcome.FAILED -> {
-                        showStatus(getString(R.string.recordings_error_rename))
-                        Toast.makeText(this, R.string.recordings_error_rename, Toast.LENGTH_SHORT).show()
+                        RenameOutcome.REMOVED -> {
+                            handleRemovedRecording(item)
+                        }
+
+                        RenameOutcome.FAILED -> {
+                            setStatus(getString(R.string.recordings_error_rename))
+                            Toast.makeText(this, R.string.recordings_error_rename, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -539,28 +356,41 @@ class RecordingsActivity : BaseActivity() {
             .show()
     }
 
-    private fun openRecordingInExternalPlayer(item: RecentRecordingItem) {
-        showStatus(getString(R.string.recordings_status_opening_template, item.name))
-        val resolvedMimeType = resolvePlaybackMimeType(item)
+    private fun openRecordingInExternalPlayer(item: RecordingListItem) {
         lifecycleScope.launch {
+            val exists = recordingsRepository.checkRecordingExists(item.uri)
+            if (!exists) {
+                handleRemovedRecording(item)
+                return@launch
+            }
+
+            setStatus(getString(R.string.recordings_status_opening_template, item.name))
+            val resolvedMimeType = resolvePlaybackMimeType(item)
             recordingExternalOpener.openRecordingWithChooser(
                 sourceUri = item.uri,
                 fileName = item.name,
                 mimeType = resolvedMimeType,
                 chooserTitle = getString(R.string.recordings_open_recording_with),
                 onFailure = {
-                    showStatus(getString(R.string.recordings_open_recording_no_app))
-                    Toast.makeText(
-                        this@RecordingsActivity,
-                        R.string.recordings_open_recording_no_app,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    lifecycleScope.launch {
+                        val stillExists = recordingsRepository.checkRecordingExists(item.uri)
+                        if (!stillExists) {
+                            handleRemovedRecording(item)
+                        } else {
+                            setStatus(getString(R.string.recordings_open_recording_no_app))
+                            Toast.makeText(
+                                this@RecordingsActivity,
+                                R.string.recordings_open_recording_no_app,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 }
             )
         }
     }
 
-    private fun resolvePlaybackMimeType(item: RecentRecordingItem): String {
+    private fun resolvePlaybackMimeType(item: RecordingListItem): String {
         val directType = item.mimeType
         if (!directType.isNullOrBlank() && directType != "application/octet-stream") {
             return directType
@@ -571,7 +401,7 @@ class RecordingsActivity : BaseActivity() {
 
     private fun ensureMicrophonePermissionThenStart() {
         if (currentFolderDocument() == null) {
-            showStatus(getString(R.string.recordings_select_folder_first))
+            setStatus(getString(R.string.recordings_select_folder_first))
             Toast.makeText(this, R.string.recordings_select_folder_first, Toast.LENGTH_SHORT).show()
             launchFolderPicker(FolderPickMode.INITIAL_REQUIRED, selectedFolderUri)
             return
@@ -589,14 +419,15 @@ class RecordingsActivity : BaseActivity() {
     }
 
     private fun startRecordingSession() {
-        if (recordingState == RecordingState.RECORDING || recordingState == RecordingState.PAUSED || recordingState == RecordingState.SAVING) {
+        val recordingState = viewModel.uiState.value.recordingState
+        if (recordingState == RecordingStateUi.RECORDING || recordingState == RecordingStateUi.PAUSED || recordingState == RecordingStateUi.SAVING) {
             return
         }
 
         val minBuffer = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_ENCODING)
         if (minBuffer <= 0) {
-            showStatus(getString(R.string.recordings_error_start))
-            setRecordingState(RecordingState.ERROR)
+            setStatus(getString(R.string.recordings_error_start))
+            viewModel.setRecordingState(RecordingStateUi.ERROR)
             return
         }
 
@@ -632,13 +463,13 @@ class RecordingsActivity : BaseActivity() {
                 runCaptureLoop(bufferSize)
             }.apply { start() }
 
-            setRecordingState(RecordingState.RECORDING)
-            showStatus(getString(R.string.recordings_status_recording))
+            viewModel.setRecordingState(RecordingStateUi.RECORDING)
+            setStatus(getString(R.string.recordings_status_recording))
         } catch (_: Throwable) {
             stopCaptureInfrastructure()
             cleanupTempFiles()
-            showStatus(getString(R.string.recordings_error_start))
-            setRecordingState(RecordingState.ERROR)
+            setStatus(getString(R.string.recordings_error_start))
+            viewModel.setRecordingState(RecordingStateUi.ERROR)
         }
     }
 
@@ -663,17 +494,17 @@ class RecordingsActivity : BaseActivity() {
     }
 
     private fun togglePauseResume() {
-        when (recordingState) {
-            RecordingState.RECORDING -> {
+        when (viewModel.uiState.value.recordingState) {
+            RecordingStateUi.RECORDING -> {
                 isPaused = true
-                setRecordingState(RecordingState.PAUSED)
-                showStatus(getString(R.string.recordings_status_paused))
+                viewModel.setRecordingState(RecordingStateUi.PAUSED)
+                setStatus(getString(R.string.recordings_status_paused))
             }
 
-            RecordingState.PAUSED -> {
+            RecordingStateUi.PAUSED -> {
                 isPaused = false
-                setRecordingState(RecordingState.RECORDING)
-                showStatus(getString(R.string.recordings_status_recording))
+                viewModel.setRecordingState(RecordingStateUi.RECORDING)
+                setStatus(getString(R.string.recordings_status_recording))
             }
 
             else -> Unit
@@ -681,29 +512,36 @@ class RecordingsActivity : BaseActivity() {
     }
 
     private fun stopAndPersistRecording() {
-        if (recordingState != RecordingState.RECORDING && recordingState != RecordingState.PAUSED) {
+        if (viewModel.uiState.value.recordingState != RecordingStateUi.RECORDING && viewModel.uiState.value.recordingState != RecordingStateUi.PAUSED) {
             return
         }
 
-        setRecordingState(RecordingState.SAVING)
-        showStatus(getString(R.string.recordings_status_saving))
+        viewModel.setRecordingState(RecordingStateUi.SAVING)
+        setStatus(getString(R.string.recordings_status_saving))
 
         lifecycleScope.launch {
             val saveResult = withContext(Dispatchers.IO) { persistRecording() }
-            saveResult.onSuccess { savedName ->
-                showStatus(getString(R.string.recordings_status_saved_template, savedName))
+            saveResult.onSuccess { savedItem ->
+                val rootUri = selectedFolderUri
+                if (rootUri != null) {
+                    lifecycleScope.launch {
+                        recordingsRepository.registerOwnedRecording(rootUri, savedItem)
+                    }
+                }
+
+                setStatus(getString(R.string.recordings_status_saved_template, savedItem.name))
                 Toast.makeText(this@RecordingsActivity, R.string.recordings_saved_ok, Toast.LENGTH_SHORT).show()
-                refreshRecentRecordings()
-                setRecordingState(RecordingState.IDLE)
+                viewModel.setRecordingState(RecordingStateUi.IDLE)
+                viewModel.requestReindex(force = true)
             }.onFailure {
-                showStatus(getString(R.string.recordings_error_save))
+                setStatus(getString(R.string.recordings_error_save))
                 Toast.makeText(this@RecordingsActivity, R.string.recordings_error_save, Toast.LENGTH_SHORT).show()
-                setRecordingState(RecordingState.ERROR)
+                viewModel.setRecordingState(RecordingStateUi.ERROR)
             }
         }
     }
 
-    private fun persistRecording(): Result<String> {
+    private fun persistRecording(): Result<RecordingListItem> {
         return runCatching {
             stopCaptureInfrastructure()
 
@@ -711,6 +549,7 @@ class RecordingsActivity : BaseActivity() {
             writeWavHeader(wavSource, pcmBytesWritten)
 
             val folder = currentFolderDocument() ?: error("folder_not_available")
+            val selectedFormat = viewModel.uiState.value.selectedFormat
             val targetFileName = generateTargetFileName(selectedFormat)
             val targetDocument = folder.createFile(selectedFormat.mimeType, targetFileName)
                 ?: error("create_target_failed")
@@ -744,7 +583,23 @@ class RecordingsActivity : BaseActivity() {
                 cleanupTempFiles()
             }
 
-            targetDocument.name ?: targetFileName
+            val resolvedName = targetDocument.name ?: targetFileName
+            val updatedTimestamp = runCatching { targetDocument.lastModified() }
+                .getOrDefault(System.currentTimeMillis())
+                .takeIf { it > 0L }
+                ?: System.currentTimeMillis()
+            val createdTimestamp = RecordingDocumentOps.resolveCreationLikeTimestamp(resolvedName) ?: updatedTimestamp
+
+            RecordingListItem(
+                name = resolvedName,
+                uri = targetDocument.uri,
+                mimeType = targetDocument.type ?: selectedFormat.mimeType,
+                relativePath = resolvedName,
+                parentRelativePath = "/",
+                parentUri = folder.uri,
+                createdTimestamp = createdTimestamp,
+                updatedTimestamp = updatedTimestamp
+            )
         }
     }
 
@@ -808,59 +663,17 @@ class RecordingsActivity : BaseActivity() {
         return "recording_$timestamp.${format.extension}"
     }
 
-    private fun updateFormatDescription(format: RecordingFormatOption) {
-        formatDescriptionTextView.text = getString(format.descriptionResId)
-    }
-
-    private fun setRecordingState(newState: RecordingState) {
-        recordingState = newState
-        when (newState) {
-            RecordingState.IDLE, RecordingState.ERROR -> {
-                startRecordingButton.visibility = View.VISIBLE
-                startRecordingButton.isEnabled = currentFolderDocument() != null
-                pauseResumeButton.visibility = View.GONE
-                stopRecordingButton.visibility = View.GONE
-                pauseResumeButton.text = getString(R.string.recordings_pause)
-            }
-
-            RecordingState.RECORDING -> {
-                startRecordingButton.visibility = View.GONE
-                pauseResumeButton.visibility = View.VISIBLE
-                stopRecordingButton.visibility = View.VISIBLE
-                pauseResumeButton.isEnabled = true
-                stopRecordingButton.isEnabled = true
-                pauseResumeButton.text = getString(R.string.recordings_pause)
-            }
-
-            RecordingState.PAUSED -> {
-                startRecordingButton.visibility = View.GONE
-                pauseResumeButton.visibility = View.VISIBLE
-                stopRecordingButton.visibility = View.VISIBLE
-                pauseResumeButton.isEnabled = true
-                stopRecordingButton.isEnabled = true
-                pauseResumeButton.text = getString(R.string.recordings_resume)
-            }
-
-            RecordingState.SAVING -> {
-                startRecordingButton.visibility = View.GONE
-                pauseResumeButton.visibility = View.VISIBLE
-                stopRecordingButton.visibility = View.VISIBLE
-                pauseResumeButton.isEnabled = false
-                stopRecordingButton.isEnabled = false
-            }
+    private fun handleRemovedRecording(item: RecordingListItem) {
+        setStatus(getString(R.string.recordings_error_removed))
+        Toast.makeText(this, R.string.recordings_error_removed, Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            recordingsRepository.removeOwnedRecording(item.uri)
+            viewModel.requestReindex(force = true)
         }
     }
 
-    private fun showStatus(message: String) {
-        statusTextView.text = message
-    }
-
-    private enum class RecordingState {
-        IDLE,
-        RECORDING,
-        PAUSED,
-        SAVING,
-        ERROR
+    private fun setStatus(message: String) {
+        viewModel.setStatusMessage(message)
     }
 
     private enum class FolderPickMode {
@@ -868,59 +681,10 @@ class RecordingsActivity : BaseActivity() {
         CHANGE_REQUEST
     }
 
-    private data class RecordingRowViewHolder(
-        val rootView: View,
-        val nameTextView: TextView,
-        val pathTextView: TextView,
-        val renameButton: ImageButton,
-        val deleteButton: ImageButton
-    )
-
-    private inner class RecordingListAdapter : BaseAdapter() {
-        private val layoutInflater = LayoutInflater.from(this@RecordingsActivity)
-
-        override fun getCount(): Int = visibleRecentItems.size
-
-        override fun getItem(position: Int): Any = visibleRecentItems[position]
-
-        override fun getItemId(position: Int): Long = position.toLong()
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val rowView: View
-            val holder: RecordingRowViewHolder
-
-            if (convertView == null) {
-                rowView = layoutInflater.inflate(R.layout.list_item_recording, parent, false)
-                holder = RecordingRowViewHolder(
-                    rootView = rowView.findViewById(R.id.recording_item_container),
-                    nameTextView = rowView.findViewById(R.id.recording_item_name_text_view),
-                    pathTextView = rowView.findViewById(R.id.recording_item_path_text_view),
-                    renameButton = rowView.findViewById(R.id.recording_item_rename_button),
-                    deleteButton = rowView.findViewById(R.id.recording_item_delete_button)
-                )
-                rowView.tag = holder
-            } else {
-                rowView = convertView
-                holder = rowView.tag as RecordingRowViewHolder
-            }
-
-            val item = visibleRecentItems[position]
-            holder.nameTextView.text = item.name
-            holder.pathTextView.text = item.parentRelativePath
-            holder.rootView.setOnClickListener {
-                openRecordingInExternalPlayer(item)
-            }
-            holder.renameButton.setOnClickListener { showRenameRecordingDialog(item) }
-            holder.deleteButton.setOnClickListener { showDeleteRecordingDialog(item) }
-            return rowView
-        }
-    }
-
     companion object {
         private const val SAMPLE_RATE = 44_100
         private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
         private const val AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT
         private const val WAV_HEADER_SIZE = 44
-        private const val RECENT_PAGE_SIZE = 10
     }
 }

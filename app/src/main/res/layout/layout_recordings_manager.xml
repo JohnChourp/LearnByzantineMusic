@@ -57,6 +57,21 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/recordings_manager_sort_label_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/recordings_sort_label"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/recordings_manager_sort_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" />
+
+    <TextView
         android:id="@+id/recordings_manager_drop_zone_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

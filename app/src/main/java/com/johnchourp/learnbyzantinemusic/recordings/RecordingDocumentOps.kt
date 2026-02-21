@@ -46,7 +46,12 @@ object RecordingDocumentOps {
         parentFolderUri: Uri,
         targetName: String
     ): RenameOutcome {
-        val parentFolder = DocumentFile.fromTreeUri(context, parentFolderUri) ?: return RenameOutcome.FAILED
+        val parentFolder = DocumentFile.fromTreeUri(context, parentFolderUri)
+            ?: DocumentFile.fromSingleUri(context, parentFolderUri)
+            ?: return RenameOutcome.FAILED
+        if (!parentFolder.exists() || !parentFolder.isDirectory) {
+            return RenameOutcome.FAILED
+        }
         val conflict = parentFolder.findFile(targetName)
         if (conflict != null) {
             return RenameOutcome.NAME_EXISTS
@@ -54,7 +59,7 @@ object RecordingDocumentOps {
 
         val sourceDocument = DocumentFile.fromSingleUri(context, sourceUri) ?: return RenameOutcome.FAILED
         if (!sourceDocument.exists() || !sourceDocument.isFile) {
-            return RenameOutcome.FAILED
+            return RenameOutcome.REMOVED
         }
 
         val directRenameSuccess = runCatching { sourceDocument.renameTo(targetName) }.getOrDefault(false)
