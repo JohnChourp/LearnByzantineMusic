@@ -194,6 +194,17 @@ fun RecordingsScreen(
         )
 
         Spacer(modifier = Modifier.height(6.dp))
+        val hasSelectedFolder = !uiState.folderName.isNullOrBlank()
+        val refreshState = recentItems.loadState.refresh
+        val appendState = recentItems.loadState.append
+        val showListLoading =
+            hasSelectedFolder &&
+                recentItems.itemCount > 0 &&
+                (refreshState is LoadState.Loading || appendState is LoadState.Loading)
+        val showEmptyState =
+            hasSelectedFolder &&
+                recentItems.itemCount == 0 &&
+                refreshState !is LoadState.Error
 
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(
@@ -209,7 +220,7 @@ fun RecordingsScreen(
                 )
             }
 
-            if (recentItems.loadState.append is LoadState.Loading || recentItems.loadState.refresh is LoadState.Loading) {
+            if (showListLoading) {
                 item(key = "loading") {
                     Row(
                         modifier = Modifier
@@ -222,7 +233,7 @@ fun RecordingsScreen(
                 }
             }
 
-            if (recentItems.itemCount == 0 && recentItems.loadState.refresh is LoadState.NotLoading) {
+            if (showEmptyState) {
                 item(key = "empty") {
                     Text(
                         modifier = Modifier.padding(vertical = 16.dp),

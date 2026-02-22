@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
@@ -24,7 +23,6 @@ class RecordingsViewModel(
 ) : ViewModel() {
 
     private val rootUriFlow = MutableStateFlow<Uri?>(null)
-    private val indexVersionFlow = MutableStateFlow(0)
 
     private val _uiState = MutableStateFlow(
         RecordingsUiState(
@@ -34,18 +32,10 @@ class RecordingsViewModel(
     val uiState: StateFlow<RecordingsUiState> = _uiState.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val recentItemsFlow: Flow<PagingData<RecordingListItem>> = combine(
-        rootUriFlow,
-        indexVersionFlow
-    ) { rootUri, _ ->
-        rootUri
-    }.flatMapLatest { rootUri ->
+    val recentItemsFlow: Flow<PagingData<RecordingListItem>> = rootUriFlow.flatMapLatest { rootUri ->
         val safeRootUri = rootUri ?: return@flatMapLatest flowOf(PagingData.empty())
         repository.observeOwnRecent(rootUri = safeRootUri, limit = RECENT_LIMIT)
     }.cachedIn(viewModelScope)
-
-    private var isReindexing = false
-    private var lastReindexTriggerAt: Long = 0L
 
     fun setRootFolder(rootUri: Uri, folderName: String) {
         rootUriFlow.value = rootUri
@@ -56,7 +46,6 @@ class RecordingsViewModel(
                 isIndexing = false
             )
         }
-        requestReindex(force = true)
     }
 
     fun clearRootFolder(statusMessage: String) {
@@ -83,44 +72,10 @@ class RecordingsViewModel(
         _uiState.update { state -> state.copy(recordingState = value) }
     }
 
-    fun requestReindex(force: Boolean = false) {
-        val rootUri = rootUriFlow.value ?: return
-        val now = System.currentTimeMillis()
-        if (!force && (now - lastReindexTriggerAt) < REINDEX_THROTTLE_MS) {
-            return
-        }
-        if (isReindexing) {
-            return
-        }
-
-        lastReindexTriggerAt = now
-        repository.enqueueReindex(rootUri)
-
-        viewModelScope.launch {
-            isReindexing = true
-            _uiState.update { state ->
-                state.copy(
-                    isIndexing = true,
-                    statusMessage = ""
-                )
-            }
-            val result = repository.reindex(rootUri)
-            indexVersionFlow.update { it + 1 }
-            _uiState.update { state -> state.copy(isIndexing = false) }
-            if (!result.completed) {
-                _uiState.update { state -> state.copy(recordingState = RecordingStateUi.ERROR) }
-            }
-            isReindexing = false
-        }
-    }
-
     fun renameItem(item: RecordingListItem, targetName: String, onCompleted: (RenameOutcome) -> Unit) {
         viewModelScope.launch {
             val result = repository.renameEntry(item, targetName)
             onCompleted(result)
-            if (result == RenameOutcome.SUCCESS || result == RenameOutcome.REMOVED) {
-                requestReindex(force = true)
-            }
         }
     }
 
@@ -128,14 +83,10 @@ class RecordingsViewModel(
         viewModelScope.launch {
             val result = repository.deleteEntry(item)
             onCompleted(result)
-            if (result == DeleteOutcome.SUCCESS || result == DeleteOutcome.REMOVED) {
-                requestReindex(force = true)
-            }
         }
     }
 
     companion object {
-        private const val REINDEX_THROTTLE_MS = 4_000L
         private const val RECENT_LIMIT = 10
     }
 }

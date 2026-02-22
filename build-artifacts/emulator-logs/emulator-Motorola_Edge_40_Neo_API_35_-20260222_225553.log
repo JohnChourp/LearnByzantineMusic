@@ -1,0 +1,102 @@
+INFO         | Android emulator version 36.4.9.0 (build_id 14788078) (CL:N/A)
+INFO         | Graphics backend: gfxstream
+INFO         | Found systemPath /Users/john/Library/Android/sdk/system-images/android-35/google_apis_playstore/arm64-v8a/
+INFO         | Guest GLES Driver: Auto (ext controls)
+INFO         | emuglConfig_init: vulkan_mode_selected:lavapipe gles_mode_selected:host
+INFO         | Checking system compatibility:
+INFO         |   Checking: hasSufficientDiskSpace
+INFO         |      Ok: Disk space requirements to run avd: `Motorola_Edge_40_Neo_API_35` are met
+INFO         |   Checking: hasSufficientHwGpu
+INFO         |      Ok: Hardware GPU compatibility checks are not required
+INFO         |   Checking: hasSufficientSystem
+INFO         |      Ok: System requirements to run avd: `Motorola_Edge_40_Neo_API_35` are met
+INFO         | Storing crashdata in: /tmp/android-john/emu-crash-36.4.9.db, detection is enabled for process: 12875
+INFO         | Initializing gfxstream backend
+INFO         | android_startOpenglesRenderer: gpu info
+INFO         | 
+INFO         | initIcdPaths: ICD set to 'lavapipe', using Lavapipe ICD
+INFO         | Setting ICD filenames for the loader = /Users/john/Library/Android/sdk/emulator/lib64/vulkan/lvp_icd.json
+INFO         | SharedLibrary::open for [/Users/john/Library/Android/sdk/emulator/qemu/darwin-aarch64/lib64/vulkan/libvulkan.dylib]
+INFO         | Added library: /Users/john/Library/Android/sdk/emulator/qemu/darwin-aarch64/lib64/vulkan/libvulkan.dylib
+INFO         | Enabling Vulkan portability.
+INFO         | Selecting Vulkan device: llvmpipe (LLVM 21.1.4, 128 bits), Version: 1.4.330
+INFO         | Initializing VkEmulation features:
+INFO         |     glInteropSupported: false
+INFO         |     useDeferredCommands: true
+INFO         |     createResourceWithRequirements: true
+INFO         |     useVulkanComposition: false
+INFO         |     useVulkanNativeSwapchain: false
+INFO         |     enable guestRenderDoc: false
+INFO         |     ASTC LDR emulation mode: Gpu
+INFO         |     enable ETC2 emulation: true
+INFO         |     enable Ycbcr emulation: false
+INFO         |     guestVulkanOnly: false
+INFO         |     useDedicatedAllocations: false
+INFO         | Graphics Adapter Vendor Google (Apple)
+INFO         | Graphics Adapter Android Emulator OpenGL ES Translator (Apple M4 Pro)
+INFO         | Graphics API Version OpenGL ES 3.0 (4.1 Metal - 90.5)
+INFO         | Graphics API Extensions GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth_texture GL_OES_texture_npot GL_OES_rgb8_rgba8 GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_texture_format_BGRA8888 GL_APPLE_texture_format_BGRA8888 
+INFO         | Graphics Device Extensions N/A
+INFO         | Disabling sparse binding feature support
+INFO         | Sending adb public key [QAAAAL0Wit5r6x2e7YloYbOwIgFwZCGRZVDgOlR2rVUYXsyYB+sWANEFMCPxR3j7GLfRk1LcfuLiIFHZV1h0l5S5aonwsAmFmHNKPKan01bMefkiTXNuOcXWvbO5c65YeYxyp0Yym7Yv/qjpCN+fY5hh5PaoVH89813vLnoDwO0VaOROUvEl5M9nVpiYHXejOl01OKuXSyvwYyg42tIgQMZodD+PlaBolDbuvSrvoF3YFAF7N5hSUtir/LvsT6bO7BakLMPzVZE3uKsn5k0jSOFySpltyI5Ind/N+4Ao4YzbBy0B7FSlE4NBU0hbW0M9s5paF0EeIJWFlVvBvk7q8ECNs3cdS+2mG4hP0ZwZKtqPpgK701c5kZ3kwCucrZypWeQmib65Y3Q2CsOQ9HHsMbvi3YjuQ1Hzt17xU1m8AuqJgmyMBxcSzINLs4jFcJTU+BQnjLNK5QNze6550trscnaHu0f+2XqC8490NBT7sknne2qBMqb+5we8BICgZs5FTUqtrKkp5M1txLYtO2qm7+HZFuVC4Ol338d/4I3T7U2qlwzhpcxoDNSoSBSTKu95tyClQqIXf/F5/s/ysOnrbf4irZZ3kELCp9GkAHsOtYhfxgnifgB+VRsO26FXEpBDroPcTkItv2TL8BeoT+cjT3UkF8ycAc3aisnh1KkDv/msSa+LKj1ucwEAAQA= john@unknown]
+INFO         | Userspace boot properties:
+INFO         |   androidboot.boot_devices=a003600.virtio_mmio
+INFO         |   androidboot.dalvik.vm.heapsize=576m
+INFO         |   androidboot.debug.hwui.renderer=skiagl
+INFO         |   androidboot.debug.sf.nobootanimation=1
+INFO         |   androidboot.hardware=ranchu
+INFO         |   androidboot.hardware.gltransport=pipe
+INFO         |   androidboot.hardware.vulkan=ranchu
+INFO         |   androidboot.logcat=*:V
+INFO         |   androidboot.opengles.version=196608
+INFO         |   androidboot.qemu=1
+INFO         |   androidboot.qemu.adb.pubkey=QAAAAL0Wit5r6x2e7YloYbOwIgFwZCGRZVDgOlR2rVUYXsyYB+sWANEFMCPxR3j7GLfRk1LcfuLiIFHZV1h0l5S5aonwsAmFmHNKPKan01bMefkiTXNuOcXWvbO5c65YeYxyp0Yym7Yv/qjpCN+fY5hh5PaoVH89813vLnoDwO0VaOROUvEl5M9nVpiYHXejOl01OKuXSyvwYyg42tIgQMZodD+PlaBolDbuvSrvoF3YFAF7N5hSUtir/LvsT6bO7BakLMPzVZE3uKsn5k0jSOFySpltyI5Ind/N+4Ao4YzbBy0B7FSlE4NBU0hbW0M9s5paF0EeIJWFlVvBvk7q8ECNs3cdS+2mG4hP0ZwZKtqPpgK701c5kZ3kwCucrZypWeQmib65Y3Q2CsOQ9HHsMbvi3YjuQ1Hzt17xU1m8AuqJgmyMBxcSzINLs4jFcJTU+BQnjLNK5QNze6550trscnaHu0f+2XqC8490NBT7sknne2qBMqb+5we8BICgZs5FTUqtrKkp5M1txLYtO2qm7+HZFuVC4Ol338d/4I3T7U2qlwzhpcxoDNSoSBSTKu95tyClQqIXf/F5/s/ysOnrbf4irZZ3kELCp9GkAHsOtYhfxgnifgB+VRsO26FXEpBDroPcTkItv2TL8BeoT+cjT3UkF8ycAc3aisnh1KkDv/msSa+LKj1ucwEAAQA= john@unknown
+INFO         |   androidboot.qemu.avd_name=Motorola_Edge_40_Neo_API_35
+INFO         |   androidboot.qemu.camera_hq_edge_processing=0
+INFO         |   androidboot.qemu.camera_protocol_ver=1
+INFO         |   androidboot.qemu.cpuvulkan.version=4202496
+INFO         |   androidboot.qemu.gltransport.drawFlushInterval=800
+INFO         |   androidboot.qemu.gltransport.name=pipe
+INFO         |   androidboot.qemu.hwcodec.avcdec=2
+INFO         |   androidboot.qemu.hwcodec.hevcdec=2
+INFO         |   androidboot.qemu.hwcodec.vpxdec=2
+INFO         |   androidboot.qemu.settings.system.screen_off_timeout=2147483647
+INFO         |   androidboot.qemu.skin=1080x2400
+INFO         |   androidboot.qemu.virtiowifi=1
+INFO         |   androidboot.qemu.vsync=60
+INFO         |   androidboot.serialno=EMULATOR36X4X9X0
+INFO         |   androidboot.vbmeta.digest=017677f8986b0ac374dfb8d37fd142d50a77bda4a20142da493c5a4c3b962b87
+INFO         |   androidboot.vbmeta.hash_alg=sha256
+INFO         |   androidboot.vbmeta.size=6720
+INFO         |   androidboot.veritymode=enforcing
+INFO         | Monitoring duration of emulator setup.
+WARNING      | The emulator now requires a signed jwt token for gRPC access! Use the -grpc flag if you really want an open unprotected grpc port
+INFO         | Using security allow list from: /Users/john/Library/Android/sdk/emulator/lib/emulator_access.json
+WARNING      | *** Basic token auth should only be used by android-studio ***
+INFO         | The active JSON Web Key Sets can be found here: /Users/john/Library/Caches/TemporaryItems/avd/running/12875/jwks/cccc89d2-893f-4dbc-916e-7fef72298f0f/active.jwk
+INFO         | Scanning /Users/john/Library/Caches/TemporaryItems/avd/running/12875/jwks/cccc89d2-893f-4dbc-916e-7fef72298f0f for jwk keys.
+INFO         | Started GRPC server at 127.0.0.1:8554, security: Local, auth: +token
+INFO         | Advertising in: /Users/john/Library/Caches/TemporaryItems/avd/running/pid_12875.ini
+INFO         | Setting display: 0 configuration to: 1080x2400, dpi: 402x402 
+INFO         | setDisplayActiveConfig 0
+INFO         | Checking system compatibility:
+INFO         |   Checking: hasSufficientDiskSpace
+INFO         |      Ok: Disk space requirements to run avd: `Motorola_Edge_40_Neo_API_35` are met
+INFO         |   Checking: hasSufficientHwGpu
+INFO         |      Ok: Hardware GPU compatibility checks are not required
+INFO         |   Checking: hasSufficientSystem
+INFO         |      Ok: System requirements to run avd: `Motorola_Edge_40_Neo_API_35` are met
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_rgbcSensorValueWidget_valueChanged() (:0, )
+INFO         | Warning: QMetaObject::connectSlotsByName: No matching signal for on_posture_valueChanged(int) (:0, )
+USER_INFO    | Emulator is performing a full startup. This may take upto two minutes, or more.
+INFO         | GPU Vendor=[Google (Apple)]
+INFO         | GPU Renderer=[Android Emulator OpenGL ES Translator (Apple M4 Pro)]
+INFO         | GPU Version=[OpenGL ES 3.0 (4.1 Metal - 90.5)]
+INFO         | Warning: QObject::connect: Cannot queue arguments of type 'std::vector<android::emulation::control::SnapshotInfo>'
+(Make sure 'std::vector<android::emulation::control::SnapshotInfo>' is registered using qRegisterMetaType().) (:0, )
+INFO         | AVD supportsNativeGLES=1, supportsGuestAngle=1
+INFO         | Created extended window in 208.85ms
+INFO         | Activated packet streamer for bluetooth emulation
+INFO         | Boot completed in 9483 ms
+INFO         | Increasing screen off timeout, logcat buffer size to 2M.
+INFO         | Warning: skipping QEventPoint(id=1 ts=0 pos=0,0 scn=431.467,202.733 gbl=431.467,202.733 Released ellipse=(1x1 ∡ 0) vel=0,0 press=-431.467,-202.733 last=-431.467,-202.733 Δ 431.467,202.733) : no target window (:0, )

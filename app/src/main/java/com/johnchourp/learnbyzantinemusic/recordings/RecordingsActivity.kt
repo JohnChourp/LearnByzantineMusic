@@ -154,11 +154,6 @@ class RecordingsActivity : BaseActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.requestReindex(force = false)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         stopCaptureInfrastructure()
@@ -532,7 +527,6 @@ class RecordingsActivity : BaseActivity() {
                 setStatus(getString(R.string.recordings_status_saved_template, savedItem.name))
                 Toast.makeText(this@RecordingsActivity, R.string.recordings_saved_ok, Toast.LENGTH_SHORT).show()
                 viewModel.setRecordingState(RecordingStateUi.IDLE)
-                viewModel.requestReindex(force = true)
             }.onFailure {
                 setStatus(getString(R.string.recordings_error_save))
                 Toast.makeText(this@RecordingsActivity, R.string.recordings_error_save, Toast.LENGTH_SHORT).show()
@@ -668,7 +662,6 @@ class RecordingsActivity : BaseActivity() {
         Toast.makeText(this, R.string.recordings_error_removed, Toast.LENGTH_SHORT).show()
         lifecycleScope.launch {
             recordingsRepository.removeOwnedRecording(item.uri)
-            viewModel.requestReindex(force = true)
         }
     }
 
