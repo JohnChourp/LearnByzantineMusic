@@ -11,6 +11,13 @@ assert SPEC and SPEC.loader
 sys.modules[SPEC.name] = MODULE
 SPEC.loader.exec_module(MODULE)
 
+SEED_SCRIPT_PATH = Path(__file__).resolve().parents[1] / "seed_protected_days.py"
+SEED_SPEC = importlib.util.spec_from_file_location("seed_protected_days", SEED_SCRIPT_PATH)
+SEED_MODULE = importlib.util.module_from_spec(SEED_SPEC)
+assert SEED_SPEC and SEED_SPEC.loader
+sys.modules[SEED_SPEC.name] = SEED_MODULE
+SEED_SPEC.loader.exec_module(SEED_MODULE)
+
 
 class FillCalendarMonthTest(unittest.TestCase):
     def test_parse_target_arg_valid_formats(self):
@@ -90,15 +97,26 @@ class FillCalendarMonthTest(unittest.TestCase):
         self.assertEqual([], day_readings["gospel"])
         self.assertEqual(0, sum(counters.values()))
 
+    def test_build_protected_days_for_year_includes_movable_holidays(self):
+        protected_2025 = MODULE.build_protected_days_for_year(2025)
+        protected_2026 = MODULE.build_protected_days_for_year(2026)
+
+        self.assertEqual("Δευτέρα του Πάσχα", protected_2025["2025-04-21"][0].title)
+        self.assertEqual("Δευτέρα του Πάσχα", protected_2026["2026-04-13"][0].title)
+        self.assertIn(
+            "Ευαγγελισμός της Θεοτόκου",
+            [entry.title for entry in protected_2026["2026-03-25"]],
+        )
+
     def test_overwrite_month_touches_only_target_month(self):
         dataset = {
             "version": "1",
             "country_scope": "GR",
             "language": "el",
             "days": {
-                "2025-01-01": [
+                "2025-01-02": [
                     {
-                        "title": "old jan",
+                        "title": "old jan 2",
                         "type": "normal_day",
                         "is_official_non_working": False,
                         "is_half_day": False,
@@ -118,7 +136,7 @@ class FillCalendarMonthTest(unittest.TestCase):
                 ],
             },
             "readings": {
-                "2025-01-01": {"apostle": [], "gospel": []},
+                "2025-01-02": {"apostle": [], "gospel": []},
                 "2025-02-01": {
                     "apostle": [
                         {
@@ -132,25 +150,12 @@ class FillCalendarMonthTest(unittest.TestCase):
                 },
             },
         }
-
-        fake_days = {
-            "2025-01-01": [
-                {
-                    "title": "new jan",
-                    "type": "normal_day",
-                    "is_official_non_working": False,
-                    "is_half_day": False,
-                    "description": "new",
-                    "priority": 1000,
-                }
-            ]
-        }
         fake_month = MODULE.ParsedMonthReadings(
             readings_by_date={
-                "2025-01-01": {
+                "2025-01-02": {
                     "apostle": [
                         {
-                            "id": "2025-01-01-apostle-1",
+                            "id": "2025-01-02-apostle-1",
                             "reference": "ΠΡΟΣ ΡΩΜΑΙΟΥΣ Α´ 1 - 2",
                             "text_ancient": "Ancient",
                             "text_modern": "Modern",
@@ -166,15 +171,69 @@ class FillCalendarMonthTest(unittest.TestCase):
             days_with_feast_extra_readings=0,
         )
 
-        with patch.object(MODULE, "build_month_entries", return_value=fake_days), patch.object(
-            MODULE, "build_month_readings", return_value=fake_month
-        ):
+        with patch.object(MODULE, "build_month_readings", return_value=fake_month):
             updated, parsed = MODULE.overwrite_month(dataset, 2025, 1)
 
         self.assertEqual("keep feb", updated["days"]["2025-02-01"][0]["title"])
-        self.assertEqual("new jan", updated["days"]["2025-01-01"][0]["title"])
+        self.assertEqual("Δεν υπάρχει καταχωρημένη εορτή", updated["days"]["2025-01-02"][0]["title"])
         self.assertEqual("feb-1", updated["readings"]["2025-02-01"]["apostle"][0]["id"])
         self.assertEqual(1, parsed.provider_counters["provider-1"])
+
+    def test_overwrite_month_keeps_existing_protected_day_without_overwrite(self):
+        dataset = {
+            "version": "1",
+            "country_scope": "GR",
+            "language": "el",
+            "days": {
+                "2025-03-25": [
+                    {
+                        "title": "LOCKED CUSTOM",
+                        "type": "religious_observance",
+                        "is_official_non_working": False,
+                        "is_half_day": False,
+                        "description": "custom",
+                        "priority": 99,
+                    }
+                ]
+            },
+            "readings": {},
+        }
+        fake_month = MODULE.ParsedMonthReadings(
+            readings_by_date={},
+            provider_counters={"provider-1": 0, "provider-2": 0, "provider-3": 0, "generated": 0},
+            days_parsed=0,
+            apostle_count=0,
+            gospel_count=0,
+            days_with_feast_extra_readings=0,
+        )
+
+        with patch.object(MODULE, "build_month_readings", return_value=fake_month):
+            updated, _ = MODULE.overwrite_month(dataset, 2025, 3)
+
+        self.assertEqual("LOCKED CUSTOM", updated["days"]["2025-03-25"][0]["title"])
+
+    def test_overwrite_month_inserts_missing_protected_day(self):
+        dataset = {
+            "version": "1",
+            "country_scope": "GR",
+            "language": "el",
+            "days": {},
+            "readings": {},
+        }
+        fake_month = MODULE.ParsedMonthReadings(
+            readings_by_date={},
+            provider_counters={"provider-1": 0, "provider-2": 0, "provider-3": 0, "generated": 0},
+            days_parsed=0,
+            apostle_count=0,
+            gospel_count=0,
+            days_with_feast_extra_readings=0,
+        )
+
+        with patch.object(MODULE, "build_month_readings", return_value=fake_month):
+            updated, _ = MODULE.overwrite_month(dataset, 2026, 4)
+
+        public_titles = [entry["title"] for entry in updated["days"]["2026-04-13"] if entry["type"] == "public_holiday"]
+        self.assertIn("Δευτέρα του Πάσχα", public_titles)
 
     def test_validate_dataset_rejects_forbidden_source_fields(self):
         dataset = {
@@ -245,6 +304,33 @@ class FillCalendarMonthTest(unittest.TestCase):
         with patch.object(MODULE, "fetch_readings_year_page", return_value=year_html):
             with self.assertRaises(ValueError):
                 MODULE.build_month_readings(2025, 1)
+
+    def test_seed_protected_days_insert_only_without_overwrite(self):
+        dataset = {
+            "version": "1",
+            "country_scope": "GR",
+            "language": "el",
+            "days": {
+                "2025-01-01": [
+                    {
+                        "title": "LOCKED EXISTING",
+                        "type": "religious_observance",
+                        "is_official_non_working": False,
+                        "is_half_day": False,
+                        "description": "custom",
+                        "priority": 999,
+                    }
+                ]
+            },
+            "readings": {},
+        }
+
+        updated, inserted = SEED_MODULE.seed_protected_days(dataset, 2025, 2026)
+
+        self.assertEqual("LOCKED EXISTING", updated["days"]["2025-01-01"][0]["title"])
+        self.assertGreater(inserted, 0)
+        self.assertIn("2026-04-13", updated["days"])
+        self.assertIn("Δευτέρα του Πάσχα", [entry["title"] for entry in updated["days"]["2026-04-13"]])
 
 
 if __name__ == "__main__":

@@ -26,7 +26,9 @@
 Προστέθηκε πιλοτικό `εορτολόγιο ημέρας` (Ιανουάριος 2025) με local dataset (`calendar_celebrations_v1.json`), dot ένδειξη ειδικής ημέρας στο grid και αναλυτικό panel κάτω από τον ήχο εβδομάδας.
 Στο `Ημερολόγιο` εμφανίζονται πλέον μόνο παραπομπές αναγνωσμάτων (Απόστολος/Ευαγγέλιο), και με tap σε παραπομπή ανοίγει νέα σελίδα πλήρους κειμένου με εναλλαγή `Αρχαία / Νεοελληνικά`.
 Το dataset ημερολογίου επεκτάθηκε με section `readings` (`reference`, `text_ancient`, `text_modern`) χωρίς πεδία source/domain/url.
-Προστέθηκε script `scripts/fill_calendar_month.py` για monthly overwrite (`YYYY-MM` ή `DD-MM-YYYY`) με internet retrieval pipeline (year page -> day ids -> full readings page parse).
+Προστέθηκε script `scripts/fill_calendar_month.py` για monthly update (`YYYY-MM` ή `DD-MM-YYYY`) με internet retrieval pipeline (year page -> day ids -> full readings page parse).
+Οι protected ημερομηνίες (αμετακίνητες γιορτές + επίσημες αργίες) στο `days` πλέον δεν γίνονται overwrite όταν υπάρχουν ήδη και συμπληρώνονται μόνο αν λείπουν.
+Προστέθηκε script `scripts/seed_protected_days.py` για deterministic seed protected ημερών χωρίς internet retrieval (π.χ. `2025-2026`).
 Για τον `Ιανουάριο 2025` τα `text_ancient/text_modern` των αναγνωσμάτων αντικαταστάθηκαν από πραγματικά πλήρη κείμενα (με υποστήριξη πολλαπλών αναγνωσμάτων ανά ημέρα όπου υπάρχουν).
 Το skill/script εφαρμόζει πολιτική `provider-1 (Κολιτσάρα) -> provider-2 (Τρεμπέλα) -> provider-3 (license-gated) -> generated fallback` και δεν αποθηκεύει/εμφανίζει πληροφορία πηγής στο app.
 Ο υπολογισμός ήχου γίνεται από εκκλησιαστικό κύκλο: Ορθόδοξο Πάσχα -> Πεντηκοστή (`+49`) -> αρχή `Α’ Ήχου` στη 2η Κυριακή μετά την Πεντηκοστή.
@@ -711,12 +713,20 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Παράδειγμα:
   - `./scripts/fill_calendar_month.py 2025-01`
   - `./scripts/fill_calendar_month.py 01-01-2025`
-- Το script κάνει overwrite μόνο του μήνα που δήλωσες και κρατά ανέπαφους τους άλλους μήνες.
+- Το script ενημερώνει μόνο τον μήνα που δήλωσες και κρατά ανέπαφους τους άλλους μήνες.
+- Για protected ημερομηνίες (`days`) ισχύει no-overwrite: αν υπάρχουν ήδη μένουν ως έχουν, αν λείπουν προστίθενται αυτόματα.
 - Το dataset γράφεται στο:
   - `app/src/main/assets/calendar_celebrations_v1.json`
-- Για κάθε ημερήσιο ανάγνωσμα, τα `Νεοελληνικά` γεμίζουν πρώτα από multi-source αναζήτηση (`Κολιτσάρα`, έπειτα `Τρεμπέλα`, έπειτα επιτρεπτός provider-3 αν υπάρχει).
+- Για κάθε ημερήσιο ανάγνωσμα, τα `Νεοελληνικά` γεμίζουν με πολιτική provider (`Κολιτσάρα` -> `Τρεμπέλα` -> επιτρεπτός provider-3 -> generated fallback).
 - Μόνο αν αποτύχουν όλες οι επιτρεπτές επιλογές εφαρμόζεται generated απλοποίηση.
 - Καμία πληροφορία πηγής (`source/domain/url`) δεν αποθηκεύεται ή εμφανίζεται στην εφαρμογή.
+
+### Πώς κάνω bootstrap τις protected ημερομηνίες για πολλά έτη;
+- Χρησιμοποίησε:
+  - `./scripts/seed_protected_days.py START_YEAR END_YEAR`
+- Παράδειγμα:
+  - `./scripts/seed_protected_days.py 2025 2026`
+- Το script δεν κάνει overwrite σε υπάρχουσες protected εγγραφές και κάνει insert μόνο όπου λείπουν.
 
 ### Γιατί η σελίδα Σάρωσης δεν ανοίγει;
 - Η σελίδα `Σάρωση Βυζαντινού Κειμένου` είναι προσωρινά απενεργοποιημένη.

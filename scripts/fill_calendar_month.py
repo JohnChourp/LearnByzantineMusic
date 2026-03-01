@@ -111,6 +111,105 @@ def orthodox_easter_gregorian(year: int) -> date:
     return julian_easter + timedelta(days=13)
 
 
+PUBLIC_HOLIDAY_FIXED_BY_MONTH_DAY: Dict[Tuple[int, int], str] = {
+    (1, 1): "Πρωτοχρονιά",
+    (1, 6): "Θεοφάνεια",
+    (3, 25): "Ευαγγελισμός της Θεοτόκου και Εθνική Εορτή",
+    (5, 1): "Πρωτομαγιά",
+    (8, 15): "Κοίμηση της Θεοτόκου",
+    (10, 28): "Επέτειος 28ης Οκτωβρίου",
+    (12, 25): "Χριστούγεννα",
+    (12, 26): "Σύναξη Υπεραγίας Θεοτόκου",
+}
+
+RELIGIOUS_FIXED_OBSERVANCES_BY_MONTH_DAY: Dict[Tuple[int, int], Tuple[str, str]] = {
+    (1, 1): (
+        "Περιτομή του Κυρίου και Άγιος Βασίλειος",
+        "Μεγάλη δεσποτική και αγιολογική εορτή της ημέρας.",
+    ),
+    (1, 5): (
+        "Παραμονή Θεοφανείων",
+        "Εκκλησιαστική παραμονή της εορτής των Θεοφανείων.",
+    ),
+    (1, 6): (
+        "Βάπτιση του Κυρίου",
+        "Μεγάλη δεσποτική εορτή της Ορθόδοξης Εκκλησίας.",
+    ),
+    (1, 7): (
+        "Σύναξη Αγίου Ιωάννη του Προδρόμου",
+        "Εκκλησιαστική εορτή την επόμενη ημέρα των Θεοφανείων.",
+    ),
+    (1, 17): (
+        "Άγιος Αντώνιος ο Μέγας",
+        "Σημαντική αγιολογική εορτή στην Ορθόδοξη παράδοση.",
+    ),
+    (1, 18): (
+        "Άγιοι Αθανάσιος και Κύριλλος",
+        "Εορτή μεγάλων Ιεραρχών της Εκκλησίας.",
+    ),
+    (1, 25): (
+        "Άγιος Γρηγόριος ο Θεολόγος",
+        "Εορτή του Αγίου Γρηγορίου του Ναζιανζηνού.",
+    ),
+    (1, 27): (
+        "Ανακομιδή Λειψάνων Αγίου Ιωάννη Χρυσοστόμου",
+        "Εκκλησιαστική μνήμη του Αγίου Ιωάννη Χρυσοστόμου.",
+    ),
+    (1, 30): (
+        "Τρεις Ιεράρχες",
+        "Εορτή των Τριών Ιεραρχών (Βασίλειος, Γρηγόριος, Χρυσόστομος).",
+    ),
+    (2, 2): (
+        "Υπαπαντή του Κυρίου",
+        "Μεγάλη δεσποτική εορτή της Ορθόδοξης Εκκλησίας.",
+    ),
+    (3, 25): (
+        "Ευαγγελισμός της Θεοτόκου",
+        "Μεγάλη θεομητορική εορτή της Ορθόδοξης Εκκλησίας.",
+    ),
+    (6, 29): (
+        "Άγιοι Απόστολοι Πέτρος και Παύλος",
+        "Μεγάλη αγιολογική εορτή των πρωτοκορυφαίων Αποστόλων.",
+    ),
+    (8, 6): (
+        "Μεταμόρφωση του Σωτήρος",
+        "Μεγάλη δεσποτική εορτή της Μεταμορφώσεως.",
+    ),
+    (8, 15): (
+        "Κοίμηση της Θεοτόκου",
+        "Μεγάλη θεομητορική εορτή της Κοιμήσεως.",
+    ),
+    (9, 8): (
+        "Γενέσιον της Θεοτόκου",
+        "Μεγάλη θεομητορική εορτή της Γεννήσεως της Θεοτόκου.",
+    ),
+    (9, 14): (
+        "Ύψωση του Τιμίου Σταυρού",
+        "Μεγάλη δεσποτική εορτή της Υψώσεως του Τιμίου Σταυρού.",
+    ),
+    (11, 8): (
+        "Σύναξη Παμμεγίστων Ταξιαρχών",
+        "Εορτή των Παμμεγίστων Ταξιαρχών Μιχαήλ και Γαβριήλ.",
+    ),
+    (11, 21): (
+        "Εισόδια της Θεοτόκου",
+        "Μεγάλη θεομητορική εορτή των Εισοδίων.",
+    ),
+    (12, 6): (
+        "Άγιος Νικόλαος",
+        "Μεγάλη αγιολογική εορτή του Αγίου Νικολάου.",
+    ),
+    (12, 25): (
+        "Γέννηση του Χριστού",
+        "Μεγάλη δεσποτική εορτή των Χριστουγέννων.",
+    ),
+    (12, 26): (
+        "Σύναξη Υπεραγίας Θεοτόκου",
+        "Εορτή της Συνάξεως της Υπεραγίας Θεοτόκου.",
+    ),
+}
+
+
 def build_public_holidays_for_year(year: int) -> Dict[date, List[CelebrationEntry]]:
     easter = orthodox_easter_gregorian(year)
     clean_monday = easter - timedelta(days=48)
@@ -119,14 +218,8 @@ def build_public_holidays_for_year(year: int) -> Dict[date, List[CelebrationEntr
     holy_spirit_monday = easter + timedelta(days=50)
 
     fixed = {
-        date(year, 1, 1): "Πρωτοχρονιά",
-        date(year, 1, 6): "Θεοφάνεια",
-        date(year, 3, 25): "Ευαγγελισμός της Θεοτόκου και Εθνική Εορτή",
-        date(year, 5, 1): "Πρωτομαγιά",
-        date(year, 8, 15): "Κοίμηση της Θεοτόκου",
-        date(year, 10, 28): "Επέτειος 28ης Οκτωβρίου",
-        date(year, 12, 25): "Χριστούγεννα",
-        date(year, 12, 26): "Σύναξη Υπεραγίας Θεοτόκου",
+        date(year, month, day): title
+        for (month, day), title in PUBLIC_HOLIDAY_FIXED_BY_MONTH_DAY.items()
     }
     movable = {
         clean_monday: "Καθαρά Δευτέρα",
@@ -152,42 +245,8 @@ def build_public_holidays_for_year(year: int) -> Dict[date, List[CelebrationEntr
 
 def build_basic_religious_for_year(year: int) -> Dict[date, List[CelebrationEntry]]:
     observances = {
-        date(year, 1, 1): (
-            "Περιτομή του Κυρίου και Άγιος Βασίλειος",
-            "Μεγάλη δεσποτική και αγιολογική εορτή της ημέρας.",
-        ),
-        date(year, 1, 5): (
-            "Παραμονή Θεοφανείων",
-            "Εκκλησιαστική παραμονή της εορτής των Θεοφανείων.",
-        ),
-        date(year, 1, 6): (
-            "Βάπτιση του Κυρίου",
-            "Μεγάλη δεσποτική εορτή της Ορθόδοξης Εκκλησίας.",
-        ),
-        date(year, 1, 7): (
-            "Σύναξη Αγίου Ιωάννη του Προδρόμου",
-            "Εκκλησιαστική εορτή την επόμενη ημέρα των Θεοφανείων.",
-        ),
-        date(year, 1, 17): (
-            "Άγιος Αντώνιος ο Μέγας",
-            "Σημαντική αγιολογική εορτή στην Ορθόδοξη παράδοση.",
-        ),
-        date(year, 1, 18): (
-            "Άγιοι Αθανάσιος και Κύριλλος",
-            "Εορτή μεγάλων Ιεραρχών της Εκκλησίας.",
-        ),
-        date(year, 1, 25): (
-            "Άγιος Γρηγόριος ο Θεολόγος",
-            "Εορτή του Αγίου Γρηγορίου του Ναζιανζηνού.",
-        ),
-        date(year, 1, 27): (
-            "Ανακομιδή Λειψάνων Αγίου Ιωάννη Χρυσοστόμου",
-            "Εκκλησιαστική μνήμη του Αγίου Ιωάννη Χρυσοστόμου.",
-        ),
-        date(year, 1, 30): (
-            "Τρεις Ιεράρχες",
-            "Εορτή των Τριών Ιεραρχών (Βασίλειος, Γρηγόριος, Χρυσόστομος).",
-        ),
+        date(year, month, day): (title, description)
+        for (month, day), (title, description) in RELIGIOUS_FIXED_OBSERVANCES_BY_MONTH_DAY.items()
     }
     result: Dict[date, List[CelebrationEntry]] = {}
     for observance_date, (title, description) in observances.items():
@@ -204,6 +263,21 @@ def build_basic_religious_for_year(year: int) -> Dict[date, List[CelebrationEntr
     return result
 
 
+def build_protected_days_for_year(year: int) -> Dict[str, List[CelebrationEntry]]:
+    result: Dict[str, List[CelebrationEntry]] = {}
+    public_holidays = build_public_holidays_for_year(year)
+    religious = build_basic_religious_for_year(year)
+
+    all_protected_dates = sorted(set(public_holidays.keys()) | set(religious.keys()))
+    for protected_day in all_protected_dates:
+        entries: List[CelebrationEntry] = []
+        entries.extend(public_holidays.get(protected_day, []))
+        entries.extend(religious.get(protected_day, []))
+        result[protected_day.isoformat()] = sorted(entries, key=lambda item: item.priority)
+
+    return result
+
+
 def normal_day_entry() -> CelebrationEntry:
     return CelebrationEntry(
         title="Δεν υπάρχει καταχωρημένη εορτή",
@@ -216,16 +290,12 @@ def normal_day_entry() -> CelebrationEntry:
 
 
 def build_month_entries(year: int, month: int) -> Dict[str, List[dict]]:
-    public_holidays = build_public_holidays_for_year(year)
-    religious = build_basic_religious_for_year(year)
+    protected_days = build_protected_days_for_year(year)
     result: Dict[str, List[dict]] = {}
 
     for day in month_days(year, month):
-        entries: List[CelebrationEntry] = []
-        entries.extend(public_holidays.get(day, []))
-        entries.extend(religious.get(day, []))
-        if not entries:
-            entries = [normal_day_entry()]
+        day_iso = day.isoformat()
+        entries = protected_days.get(day_iso, [normal_day_entry()])
         result[day.isoformat()] = [asdict(entry) for entry in sorted(entries, key=lambda item: item.priority)]
 
     return result
@@ -646,15 +716,22 @@ def overwrite_month(dataset: dict, year: int, month: int) -> Tuple[dict, ParsedM
     days = dict(dataset.get("days", {}))
     readings = dict(dataset.get("readings", {}))
     month_prefix = f"{year:04d}-{month:02d}-"
+    protected_days = build_protected_days_for_year(year)
+    month_entries = build_month_entries(year, month)
+    expected_days = [day.isoformat() for day in month_days(year, month)]
 
-    for key in list(days.keys()):
-        if key.startswith(month_prefix):
-            del days[key]
+    for day_iso in expected_days:
+        if day_iso in protected_days:
+            if day_iso in days:
+                continue
+            days[day_iso] = [asdict(entry) for entry in protected_days[day_iso]]
+            continue
+        days[day_iso] = month_entries[day_iso]
+
     for key in list(readings.keys()):
         if key.startswith(month_prefix):
             del readings[key]
 
-    days.update(build_month_entries(year, month))
     parsed_month = build_month_readings(year, month)
     readings.update(parsed_month.readings_by_date)
 

@@ -68,7 +68,8 @@
 - Προστέθηκε πιλοτικό εορτολόγιο για `Ιανουάριο 2025` στη σελίδα `Ημερολόγιο` με dot indicator σε ειδικές ημέρες, αναλυτικό panel ανά επιλεγμένη ημερομηνία και offline dataset `calendar_celebrations_v1.json`.
 - Προστέθηκε ροή αναγνωσμάτων ημερολογίου με παραπομπές στο grid/panel και νέα σελίδα πλήρους κειμένου (`ReadingTextActivity`) με toggle `Αρχαία/Νεοελληνικά`.
 - Το dataset `calendar_celebrations_v1.json` επεκτάθηκε με section `readings` ανά ημέρα (`reference`, `text_ancient`, `text_modern`) χωρίς αποθήκευση πηγών/URLs.
-- Προστέθηκε script `scripts/fill_calendar_month.py` και local skill `learn-byzantine-calendar-fill` για deterministic monthly overwrite (`YYYY-MM` ή `DD-MM-YYYY`) με internet retrieval pipeline (year page -> day ids -> full day parsing), multi-source policy για Νεοελληνικά και confidential dataset (χωρίς source/url/domain fields).
+- Προστέθηκε script `scripts/fill_calendar_month.py` και local skill `learn-byzantine-calendar-fill` για deterministic monthly update (`YYYY-MM` ή `DD-MM-YYYY`) με internet retrieval pipeline, no-overwrite προστασία για `days` σε αμετακίνητες γιορτές/επίσημες αργίες και confidential dataset (χωρίς source/url/domain fields).
+- Προστέθηκε script `scripts/seed_protected_days.py` για deterministic bootstrap protected ημερομηνιών και έγινε seed κάλυψης ετών `2025-2026` χωρίς overwrite σε υπάρχουσες εγγραφές.
 - Συμπληρώθηκαν για τον `Ιανουάριο 2025` πλήρη κείμενα αναγνωσμάτων (`text_ancient` + `text_modern`) με υποστήριξη πολλαπλών αναγνωσμάτων ανά ημέρα (καθημερινό + εορτής όπου υπάρχουν).
 - Προστέθηκε resolver εκκλησιαστικού κύκλου ήχων (`OrthodoxPaschaCalculator` + `LiturgicalToneCycle`) με αφετηρία Α’ Ήχου στη 2η Κυριακή μετά την Πεντηκοστή.
 - Προστέθηκαν unit tests για υπολογισμό Ορθόδοξου Πάσχα και για τη λογική αλλαγής ήχου ανά εβδομάδα.
