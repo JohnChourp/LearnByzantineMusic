@@ -212,6 +212,40 @@ class FillCalendarMonthTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             MODULE.validate_dataset(dataset, 2025, 1)
 
+    def test_build_month_readings_allows_trailing_missing_day_mapping(self):
+        year_html = """
+        <div class="w3-fifth w3-container">&nbsp;01/01/2025&nbsp;-&nbsp;</div>
+        <div class="w3-fourfifth w3-container"><a href="16077/readingsday.aspx">x</a></div>
+        <div class="w3-fifth w3-container">&nbsp;02/01/2025&nbsp;-&nbsp;</div>
+        <div class="w3-fourfifth w3-container"><a href="16078/readingsday.aspx">y</a></div>
+        """
+
+        with patch.object(MODULE, "fetch_readings_year_page", return_value=year_html), patch.object(
+            MODULE, "fetch_readings_day_page", return_value="<html></html>"
+        ), patch.object(
+            MODULE,
+            "parse_day_readings",
+            return_value=({"apostle": [], "gospel": []}, {"provider-1": 0, "provider-2": 0, "provider-3": 0, "generated": 0}, False),
+        ):
+            parsed = MODULE.build_month_readings(2025, 1)
+
+        self.assertEqual(31, len(parsed.readings_by_date))
+        self.assertEqual(2, parsed.days_parsed)
+        self.assertEqual({"apostle": [], "gospel": []}, parsed.readings_by_date["2025-01-03"])
+        self.assertEqual({"apostle": [], "gospel": []}, parsed.readings_by_date["2025-01-31"])
+
+    def test_build_month_readings_rejects_non_trailing_missing_day_mapping(self):
+        year_html = """
+        <div class="w3-fifth w3-container">&nbsp;01/01/2025&nbsp;-&nbsp;</div>
+        <div class="w3-fourfifth w3-container"><a href="16077/readingsday.aspx">x</a></div>
+        <div class="w3-fifth w3-container">&nbsp;03/01/2025&nbsp;-&nbsp;</div>
+        <div class="w3-fourfifth w3-container"><a href="16079/readingsday.aspx">z</a></div>
+        """
+
+        with patch.object(MODULE, "fetch_readings_year_page", return_value=year_html):
+            with self.assertRaises(ValueError):
+                MODULE.build_month_readings(2025, 1)
+
 
 if __name__ == "__main__":
     unittest.main()

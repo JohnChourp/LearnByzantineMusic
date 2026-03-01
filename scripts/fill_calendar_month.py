@@ -580,9 +580,13 @@ def build_month_readings(year: int, month: int) -> ParsedMonthReadings:
     expected_days = [day.isoformat() for day in month_days(year, month)]
     missing_days = [day_iso for day_iso in expected_days if day_iso not in day_id_map]
     if missing_days:
-        raise ValueError(
-            f"Month mapping is incomplete for {year:04d}-{month:02d}. Missing: {', '.join(missing_days)}"
-        )
+        missing_indexes = [expected_days.index(day_iso) for day_iso in missing_days]
+        first_missing_index = min(missing_indexes)
+        expected_missing_indexes = list(range(first_missing_index, len(expected_days)))
+        if sorted(missing_indexes) != expected_missing_indexes:
+            raise ValueError(
+                f"Month mapping is incomplete for {year:04d}-{month:02d}. Missing: {', '.join(missing_days)}"
+            )
 
     readings_result: Dict[str, dict] = {}
     provider_counters = {"provider-1": 0, "provider-2": 0, "provider-3": 0, "generated": 0}
@@ -591,7 +595,11 @@ def build_month_readings(year: int, month: int) -> ParsedMonthReadings:
     days_with_feast_extra = 0
 
     for day_iso in expected_days:
-        reading_day_id = day_id_map[day_iso]
+        reading_day_id = day_id_map.get(day_iso)
+        if not reading_day_id:
+            readings_result[day_iso] = {"apostle": [], "gospel": []}
+            continue
+
         day_html = fetch_readings_day_page(reading_day_id)
         day_readings, day_counters, has_liturgy = parse_day_readings(day_iso, day_html)
 
@@ -614,7 +622,7 @@ def build_month_readings(year: int, month: int) -> ParsedMonthReadings:
     return ParsedMonthReadings(
         readings_by_date=readings_result,
         provider_counters=provider_counters,
-        days_parsed=len(expected_days),
+        days_parsed=len(expected_days) - len(missing_days),
         apostle_count=apostle_total,
         gospel_count=gospel_total,
         days_with_feast_extra_readings=days_with_feast_extra,
