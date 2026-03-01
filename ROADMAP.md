@@ -31,6 +31,7 @@
 - Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `commons-compress` σε `1.26.0` για mitigation OOM advisory σε unpacking Pack200 αρχείων.
 - Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `commons-lang3` σε `3.18.0` για mitigation του ClassUtils uncontrolled recursion advisory.
 - Προστέθηκε buildscript classpath hardening με forced transitive αναβάθμιση `bcpkix-jdk18on`/`bcprov-jdk18on`/`bcutil-jdk18on` σε `1.79` για mitigation Excessive Allocation και Ed25519 infinite-loop advisories.
+- Προστέθηκε explicit pin `com.google.guava:guava:32.1.3-jre` στο app dependency graph (`implementation` + `kapt`) και force fallback για deterministic mitigation του temporary-directory advisory.
 - Προστέθηκε script `scripts/setup-release-signing.sh` για ασφαλή αρχική δημιουργία keystore, local signing env setup και προαιρετική αυτόματη ενημέρωση GitHub Actions signing secrets.
 - Απλοποιήθηκαν τα GitHub Release custom assets ώστε να ανεβαίνει μόνο το `apk-release.apk` (με τα source archives να παρέχονται αυτόματα από το GitHub).
 - Προστέθηκε αυτόματη δημιουργία user-friendly release notes στο `scripts/release-and-tag.sh` με σύνοψη και πλήρη λίστα αλλαγών από previous tag στο νέο release.

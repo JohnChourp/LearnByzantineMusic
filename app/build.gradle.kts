@@ -4,6 +4,10 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 }
 
+configurations.configureEach {
+    resolutionStrategy.force("com.google.guava:guava:32.1.3-jre")
+}
+
 android {
     namespace = "com.johnchourp.learnbyzantinemusic"
     compileSdk = 34
@@ -21,8 +25,8 @@ android {
         applicationId = "com.johnchourp.learnbyzantinemusic"
         minSdk = 24
         targetSdk = 34
-        versionCode = 23
-        versionName = "1.0.23"
+        versionCode = 24
+        versionName = "1.0.24"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -98,7 +102,9 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.paging)
+    implementation(libs.guava)
     kapt(libs.androidx.room.compiler)
+    kapt(libs.guava)
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.work.runtime)

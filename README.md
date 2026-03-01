@@ -30,6 +30,7 @@
 Ο επιλεγμένος `Ήχος` επηρεάζει πλέον πραγματικά την καμπύλη πορείας μέσω mode profiles (`byzantine_mode_rules_v1.json`), ενώ η διάρκεια ανά event αποδίδεται με κανόνες χρόνου.
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
 Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.14.0`, `protobuf-java` σε `3.25.5`, `jdom2` σε `2.0.6.1`, `netty-codec` σε `4.1.129.Final`, `netty-codec-http` σε `4.1.129.Final`, `netty-codec-http2` σε `4.1.129.Final`, `netty-handler` σε `4.1.129.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.26.0`, `commons-lang3` σε `3.18.0`, `bcpkix-jdk18on` σε `1.79`, `bcprov-jdk18on` σε `1.79` και `bcutil-jdk18on` σε `1.79`.
+Για το app dependency graph υπάρχει πλέον και explicit pin στο `com.google.guava:guava:32.1.3-jre` (catalog + `implementation` + `kapt`) ώστε το security graph να αναγνωρίζει deterministic patched version.
 
 ## Business flow
 - Ο χρήστης ανοίγει την αρχική οθόνη και επιλέγει θεωρητική ενότητα.
@@ -297,6 +298,7 @@
 - `org.bouncycastle:bcpkix-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcprov-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcutil-jdk18on = 1.79` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `com.google.guava:guava = 32.1.3-jre` (explicit pin στο app dependency graph για mitigation του temporary-directory advisory)
 - `com.arthenica:ffmpeg-kit-full-gpl = 6.0-2` (για transcode ηχογραφήσεων σε `flac/mp3/aac/m4a/opus`)
 
 - Κύρια components:
@@ -482,6 +484,11 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Το `org.bouncycastle:bcprov-jdk18on` έρχεται transitive από AGP dependencies (`bcpkix-jdk18on`/`bcutil-jdk18on`).
 - Η προηγούμενη resolved έκδοση ήταν `1.77` και τα advisories καλύπτονται με έκδοση `1.79`.
 - Το project κάνει forced resolve σε `org.bouncycastle:bcprov-jdk18on:1.79` στο build classpath.
+
+### Γιατί εμφανίστηκε Dependabot alert για `guava`;
+- Το `com.google.guava:guava` έρχεται transitive από `androidx.room` και `androidx.work` dependencies.
+- Το advisory για insecure use of temporary directory καλύπτεται από patched γραμμή `>= 32.0.0-android`, με σύσταση απο maintainers να αποφεύγεται το `32.0.0`.
+- Το project κάνει explicit pin σε `com.google.guava:guava:32.1.3-jre` στο app dependency graph (`implementation` + `kapt`) και κρατά force fallback για πλήρη ευθυγράμμιση resolve.
 
 ### Γιατί αποτυγχάνει το login/auth;
 - Η εφαρμογή δεν χρησιμοποιεί login/auth ροή.
