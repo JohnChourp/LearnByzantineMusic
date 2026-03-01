@@ -1,10 +1,13 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -27,8 +30,16 @@ class EightModesActivity : BaseActivity() {
     private lateinit var selectedModeDetails: TextView
     private lateinit var ascendingDiagramView: ScaleDiagramView
     private lateinit var touchHintText: TextView
+    private lateinit var baseShiftValueText: TextView
+    private lateinit var baseShiftSeekBar: SeekBar
+    private lateinit var baseShiftResetButton: Button
+    private lateinit var baseShiftPrefs: SharedPreferences
     private val tonePlayer: PhthongTonePlayer by lazy { PhthongTonePlayer() }
+    private val modeBaseShiftMoria: MutableMap<Int, Int> = mutableMapOf()
     private var frequenciesTopToBottom: List<Double> = emptyList()
+    private var currentModePosition: Int = 0
+    private var currentAscendingIntervalsExtended: List<Int> = emptyList()
+    private var isSyncingBaseShiftControls: Boolean = false
 
     private val modes: List<ModeDefinition> by lazy {
         listOf(
@@ -175,10 +186,47 @@ class EightModesActivity : BaseActivity() {
         selectedModeDetails = findViewById(R.id.selected_mode_details)
         ascendingDiagramView = findViewById(R.id.ascending_diagram_view)
         touchHintText = findViewById(R.id.touch_hint_text)
+        baseShiftValueText = findViewById(R.id.base_shift_value)
+        baseShiftSeekBar = findViewById(R.id.base_shift_seekbar)
+        baseShiftResetButton = findViewById(R.id.base_shift_reset_button)
+        baseShiftPrefs = getSharedPreferences(BASE_SHIFT_PREFS_NAME, MODE_PRIVATE)
 
+        loadSavedModeBaseShifts()
+        setupBaseShiftControls()
         setupSelector()
         setupPhthongTouchPlayback()
         touchHintText.text = getString(R.string.eight_modes_touch_hint)
+    }
+
+    private fun loadSavedModeBaseShifts() {
+        modeBaseShiftMoria.clear()
+        for (modeIndex in modes.indices) {
+            val savedShift = baseShiftPrefs
+                .getInt(baseShiftPrefKey(modeIndex), BASE_SHIFT_DEFAULT_MORIA)
+                .coerceIn(BASE_SHIFT_MORIA_MIN, BASE_SHIFT_MORIA_MAX)
+            modeBaseShiftMoria[modeIndex] = savedShift
+        }
+    }
+
+    private fun setupBaseShiftControls() {
+        baseShiftSeekBar.max = BASE_SHIFT_MORIA_MAX - BASE_SHIFT_MORIA_MIN
+        baseShiftSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (isSyncingBaseShiftControls) {
+                    return
+                }
+                val shiftMoria = progressToShiftMoria(progress)
+                applyBaseShiftToCurrentMode(shiftMoria, persist = true)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
+        })
+        baseShiftResetButton.setOnClickListener {
+            syncBaseShiftControls(BASE_SHIFT_DEFAULT_MORIA)
+            applyBaseShiftToCurrentMode(BASE_SHIFT_DEFAULT_MORIA, persist = true)
+        }
     }
 
     private fun setupSelector() {
@@ -236,8 +284,11 @@ class EightModesActivity : BaseActivity() {
     }
 
     private fun renderMode(position: Int) {
-        val mode = modes.getOrElse(position) { modes.first() }
+        val safePosition = if (position in modes.indices) position else 0
+        currentModePosition = safePosition
+        val mode = modes[safePosition]
         val ascendingIntervalsExtended = mode.ascendingIntervals.repeatTimes(SCALE_OCTAVES)
+        currentAscendingIntervalsExtended = ascendingIntervalsExtended
         val ascendingPhthongsExtended = buildTripleOctaveAscendingPhthongs()
         selectedModeType.text = getString(mode.typeRes)
         selectedModeApichimaText.text =
@@ -277,7 +328,6 @@ class EightModesActivity : BaseActivity() {
         selectedModeApichimaSignName.text =
             getString(R.string.mode_apichima_sign_name, getString(mode.apichimaSignNameRes))
         selectedModeDetails.text = getString(mode.detailsRes)
-        frequenciesTopToBottom = calculateFrequenciesTopToBottom(ascendingIntervalsExtended)
         tonePlayer.stop()
         ascendingDiagramView.clearTouchState()
 
@@ -285,6 +335,9 @@ class EightModesActivity : BaseActivity() {
             phthongsTopToBottom = ascendingPhthongsExtended.reversed(),
             intervalsTopToBottom = ascendingIntervalsExtended.reversed()
         )
+        val savedShift = modeBaseShiftMoria[safePosition] ?: BASE_SHIFT_DEFAULT_MORIA
+        syncBaseShiftControls(savedShift)
+        applyBaseShiftToCurrentMode(savedShift, persist = false)
     }
 
     private fun setupPhthongTouchPlayback() {
@@ -305,17 +358,63 @@ class EightModesActivity : BaseActivity() {
         tonePlayer.start(frequencyHz)
     }
 
-    private fun calculateFrequenciesTopToBottom(ascendingIntervals: List<Int>): List<Double> {
+    private fun syncBaseShiftControls(shiftMoria: Int) {
+        isSyncingBaseShiftControls = true
+        baseShiftSeekBar.progress = shiftMoriaToProgress(shiftMoria)
+        isSyncingBaseShiftControls = false
+        updateBaseShiftValueText(shiftMoria)
+    }
+
+    private fun applyBaseShiftToCurrentMode(shiftMoria: Int, persist: Boolean) {
+        val boundedShiftMoria = shiftMoria.coerceIn(BASE_SHIFT_MORIA_MIN, BASE_SHIFT_MORIA_MAX)
+        modeBaseShiftMoria[currentModePosition] = boundedShiftMoria
+        if (persist) {
+            persistModeBaseShift(currentModePosition, boundedShiftMoria)
+        }
+        updateBaseShiftValueText(boundedShiftMoria)
+        frequenciesTopToBottom = calculateFrequenciesTopToBottom(
+            ascendingIntervals = currentAscendingIntervalsExtended,
+            baseShiftMoria = boundedShiftMoria
+        )
+    }
+
+    private fun updateBaseShiftValueText(shiftMoria: Int) {
+        baseShiftValueText.text = if (shiftMoria == BASE_SHIFT_DEFAULT_MORIA) {
+            getString(R.string.eight_modes_base_shift_default_value)
+        } else {
+            getString(R.string.eight_modes_base_shift_value_template, shiftMoria)
+        }
+    }
+
+    private fun persistModeBaseShift(modeIndex: Int, shiftMoria: Int) {
+        baseShiftPrefs.edit()
+            .putInt(baseShiftPrefKey(modeIndex), shiftMoria)
+            .apply()
+    }
+
+    private fun baseShiftPrefKey(modeIndex: Int): String = "$BASE_SHIFT_PREF_KEY_PREFIX$modeIndex"
+
+    private fun shiftMoriaToProgress(shiftMoria: Int): Int =
+        shiftMoria.coerceIn(BASE_SHIFT_MORIA_MIN, BASE_SHIFT_MORIA_MAX) - BASE_SHIFT_MORIA_MIN
+
+    private fun progressToShiftMoria(progress: Int): Int =
+        (progress + BASE_SHIFT_MORIA_MIN).coerceIn(BASE_SHIFT_MORIA_MIN, BASE_SHIFT_MORIA_MAX)
+
+    private fun calculateFrequenciesTopToBottom(
+        ascendingIntervals: List<Int>,
+        baseShiftMoria: Int
+    ): List<Double> {
         val cumulativeMoriaBottomToTop = mutableListOf(0)
         var currentMoria = 0
         for (interval in ascendingIntervals) {
             currentMoria += interval
             cumulativeMoriaBottomToTop.add(currentMoria)
         }
+        val transposeFactor = 2.0.pow(baseShiftMoria / MORIA_PER_OCTAVE)
         return cumulativeMoriaBottomToTop
             .map { moria ->
                 val moriaFromBaseNi = moria - MORIA_PER_OCTAVE
-                BASE_NI_FREQUENCY_HZ * 2.0.pow(moriaFromBaseNi / MORIA_PER_OCTAVE)
+                (BASE_NI_FREQUENCY_HZ * 2.0.pow(moriaFromBaseNi / MORIA_PER_OCTAVE)) * transposeFactor
             }
             .reversed()
     }
@@ -365,6 +464,11 @@ class EightModesActivity : BaseActivity() {
         const val BASE_NI_FREQUENCY_HZ = 220.0
         const val MORIA_PER_OCTAVE = 72.0
         const val SCALE_OCTAVES = 3
+        const val BASE_SHIFT_MORIA_MIN = -12
+        const val BASE_SHIFT_MORIA_MAX = 12
+        const val BASE_SHIFT_DEFAULT_MORIA = 0
+        const val BASE_SHIFT_PREFS_NAME = "eight_modes_base_shift_prefs"
+        const val BASE_SHIFT_PREF_KEY_PREFIX = "mode_base_shift_moria_"
         val PHTHONGS_WITHOUT_NI = listOf("Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω")
     }
 }

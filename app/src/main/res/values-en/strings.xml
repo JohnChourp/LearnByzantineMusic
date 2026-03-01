@@ -212,6 +212,13 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="eight_modes_page_title">Scales of the 8 Modes</string>
     <string name="eight_modes_selector_label">Sound selection</string>
     <string name="eight_modes_touch_hint">Press and hold the name of the font to hear the tone.</string>
+    <string name="eight_modes_base_shift_title">Base transposition</string>
+    <string name="eight_modes_base_shift_hint">Move the base lower or higher without changing the scale intervals.</string>
+    <string name="eight_modes_base_shift_default_value">0 moria (default)</string>
+    <string name="eight_modes_base_shift_value_template">%1$+d moria</string>
+    <string name="eight_modes_base_shift_reset">Reset</string>
+    <string name="eight_modes_base_shift_lower">Lower base</string>
+    <string name="eight_modes_base_shift_higher">Higher base</string>
     <string name="mode_ascending_label">Anode</string>
     <string name="mode_scale_notes">Photongi: %1$s</string>
     <string name="mode_interval_row">%1$s → %2$s : %3$d molecules</string>
