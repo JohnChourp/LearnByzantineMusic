@@ -73,6 +73,7 @@ class ScaleDiagramView @JvmOverloads constructor(
         if (activeLabelIndexTopToBottom !in phthongsTopToBottom.indices) {
             activeLabelIndexTopToBottom = -1
         }
+        requestLayout()
         invalidate()
     }
 
@@ -250,7 +251,15 @@ class ScaleDiagramView @JvmOverloads constructor(
             return emptyList()
         }
 
-        val minSegmentHeight = dp(12f)
+        val minSegmentHeight = max(
+            dp(12f),
+            max(intervalTextPaint.fontSpacing * 0.85f, phthongTextPaint.fontSpacing * 0.75f)
+        )
+        val requiredMinHeight = minSegmentHeight * intervalsTopToBottom.size
+        if (requiredMinHeight >= totalHeight) {
+            val equalHeight = totalHeight / intervalsTopToBottom.size
+            return List(intervalsTopToBottom.size) { equalHeight }
+        }
         val freeHeight = max(0f, totalHeight - minSegmentHeight * intervalsTopToBottom.size)
         val totalInterval = intervalsTopToBottom.sum().toFloat()
 
@@ -277,7 +286,9 @@ class ScaleDiagramView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val desiredHeight = dp(520f).toInt()
+        val intervalCount = intervalsTopToBottom.size.coerceAtLeast(BASE_INTERVAL_COUNT)
+        val scaleFactor = intervalCount.toFloat() / BASE_INTERVAL_COUNT
+        val desiredHeight = (dp(BASE_HEIGHT_DP) * scaleFactor).toInt()
         setMeasuredDimension(measuredWidth, resolveSize(max(desiredHeight, suggestedMinimumHeight), heightMeasureSpec))
     }
 
@@ -290,4 +301,9 @@ class ScaleDiagramView @JvmOverloads constructor(
         value,
         resources.displayMetrics
     )
+
+    private companion object {
+        const val BASE_INTERVAL_COUNT = 7
+        const val BASE_HEIGHT_DP = 520f
+    }
 }

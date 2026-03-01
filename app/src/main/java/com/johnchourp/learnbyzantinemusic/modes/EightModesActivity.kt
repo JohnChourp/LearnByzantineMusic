@@ -30,8 +30,6 @@ class EightModesActivity : BaseActivity() {
     private val tonePlayer: PhthongTonePlayer by lazy { PhthongTonePlayer() }
     private var frequenciesTopToBottom: List<Double> = emptyList()
 
-    private val ascendingPhthongs = listOf("Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω", "Νη΄")
-
     private val modes: List<ModeDefinition> by lazy {
         listOf(
             ModeDefinition(
@@ -239,6 +237,8 @@ class EightModesActivity : BaseActivity() {
 
     private fun renderMode(position: Int) {
         val mode = modes.getOrElse(position) { modes.first() }
+        val ascendingIntervalsExtended = mode.ascendingIntervals.repeatTimes(SCALE_OCTAVES)
+        val ascendingPhthongsExtended = buildTripleOctaveAscendingPhthongs()
         selectedModeType.text = getString(mode.typeRes)
         selectedModeApichimaText.text =
             getString(R.string.mode_apichima_label, getString(mode.apichimaRes))
@@ -277,13 +277,13 @@ class EightModesActivity : BaseActivity() {
         selectedModeApichimaSignName.text =
             getString(R.string.mode_apichima_sign_name, getString(mode.apichimaSignNameRes))
         selectedModeDetails.text = getString(mode.detailsRes)
-        frequenciesTopToBottom = calculateFrequenciesTopToBottom(mode.ascendingIntervals)
+        frequenciesTopToBottom = calculateFrequenciesTopToBottom(ascendingIntervalsExtended)
         tonePlayer.stop()
         ascendingDiagramView.clearTouchState()
 
         ascendingDiagramView.setDiagramData(
-            phthongsTopToBottom = ascendingPhthongs.reversed(),
-            intervalsTopToBottom = mode.ascendingIntervals.reversed()
+            phthongsTopToBottom = ascendingPhthongsExtended.reversed(),
+            intervalsTopToBottom = ascendingIntervalsExtended.reversed()
         )
     }
 
@@ -313,8 +313,18 @@ class EightModesActivity : BaseActivity() {
             cumulativeMoriaBottomToTop.add(currentMoria)
         }
         return cumulativeMoriaBottomToTop
-            .map { moria -> BASE_NI_FREQUENCY_HZ * 2.0.pow(moria / MORIA_PER_OCTAVE) }
+            .map { moria ->
+                val moriaFromBaseNi = moria - MORIA_PER_OCTAVE
+                BASE_NI_FREQUENCY_HZ * 2.0.pow(moriaFromBaseNi / MORIA_PER_OCTAVE)
+            }
             .reversed()
+    }
+
+    private fun buildTripleOctaveAscendingPhthongs(): List<String> {
+        val lowOctave = PHTHONGS_WITHOUT_NI.map { "$it," }
+        val middleOctave = PHTHONGS_WITHOUT_NI
+        val highOctave = PHTHONGS_WITHOUT_NI.map { "$it΄" }
+        return lowOctave + middleOctave + highOctave + listOf("Νη΄΄")
     }
 
     override fun onStop() {
@@ -354,5 +364,16 @@ class EightModesActivity : BaseActivity() {
     private companion object {
         const val BASE_NI_FREQUENCY_HZ = 220.0
         const val MORIA_PER_OCTAVE = 72.0
+        const val SCALE_OCTAVES = 3
+        val PHTHONGS_WITHOUT_NI = listOf("Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω")
+    }
+}
+
+private fun List<Int>.repeatTimes(times: Int): List<Int> {
+    if (times <= 1 || isEmpty()) {
+        return this
+    }
+    return buildList(size * times) {
+        repeat(times) { addAll(this@repeatTimes) }
     }
 }

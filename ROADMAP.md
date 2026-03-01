@@ -11,6 +11,7 @@
 - Προστέθηκε χρωματική διάκριση στον selector της σελίδας `8 Ήχοι` (μαύρο: διατονικοί, μπλε: σκληρό χρωματικό, μωβ: μαλακό χρωματικό, πορτοκαλί: εναρμόνιο).
 - Προστέθηκε αναλογική οπτική αποτύπωση διαστημάτων τύπου «σκάλα» στην ενότητα `8 Ήχοι`.
 - Προστέθηκε tap-and-hold αλληλεπίδραση στους φθόγγους της σελίδας `8 Ήχοι` με αναπαραγωγή συχνοτήτων βάσει μορίων (`Νη = 220Hz`, `f = 220 * 2^(m/72)`).
+- Επεκτάθηκε η κλίμακα της σελίδας `8 Ήχοι` σε 3 οκτάβες (`Νη, → Νη΄΄`) με 22 φθόγγους/21 διαστήματα ανά ήχο και touch playback σε όλο το εύρος.
 - Ρυθμίστηκε αυτοματοποιημένο Android release pipeline με tag trigger (`vX.Y.Z`) σε GitHub Actions.
 - Προστέθηκε direct GitHub Release publish στο `scripts/release-and-tag.sh` με upload assets και σταθερό alias `apk-release.apk` για εύκολο mobile download/install.
 - Προστέθηκε signing guard σε release script και GitHub Actions ώστε να αποτυγχάνει το release όταν λείπουν keystore credentials ή όταν παράγεται μόνο unsigned APK.
