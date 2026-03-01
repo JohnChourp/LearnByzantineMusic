@@ -8,6 +8,25 @@
     <color name="mode_hard_chromatic_blue">#FF1565C0</color>
     <color name="mode_soft_chromatic_purple">#FF6A1B9A</color>
     <color name="mode_enharmonic_orange">#FFEF6C00</color>
+    <color name="weekly_calendar_background">#FFF5F9FF</color>
+    <color name="weekly_calendar_card_background">#FFFFFFFF</color>
+    <color name="weekly_calendar_card_border">#FFD8E6F7</color>
+    <color name="weekly_calendar_month_label_background">#FFE9F2FF</color>
+    <color name="weekly_calendar_day_default_background">#FFF7FBFF</color>
+    <color name="weekly_calendar_day_default_border">#FFDCE8F7</color>
+    <color name="weekly_calendar_today_background">#FFE8F1FF</color>
+    <color name="weekly_calendar_today_text">#FF0D47A1</color>
+    <color name="weekly_calendar_dot_public">#FFC62828</color>
+    <color name="weekly_calendar_dot_half">#FFEF6C00</color>
+    <color name="weekly_calendar_dot_religious">#FF1565C0</color>
+    <color name="weekly_calendar_celebration_public_bg">#FFFFF1F1</color>
+    <color name="weekly_calendar_celebration_public_border">#FFF3BBBB</color>
+    <color name="weekly_calendar_celebration_half_bg">#FFFFF7ED</color>
+    <color name="weekly_calendar_celebration_half_border">#FFF4D2A6</color>
+    <color name="weekly_calendar_celebration_religious_bg">#FFF1F7FF</color>
+    <color name="weekly_calendar_celebration_religious_border">#FFB9D1F3</color>
+    <color name="weekly_calendar_celebration_normal_bg">#FFF9FAFC</color>
+    <color name="weekly_calendar_celebration_normal_border">#FFD8DEE8</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

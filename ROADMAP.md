@@ -64,6 +64,12 @@
 - Προστέθηκαν assets `byzantine_core_symbol_rules_v2.json`, `byzantine_mode_rules_v1.json`, `byzantine_display_names_v1.json` και regression unit tests για το παράδειγμα Α’ Ήχου/βάση Νη.
 - Απενεργοποιήθηκε προσωρινά η πρόσβαση στη σελίδα `Σάρωση Βυζαντινού Κειμένου` (αφαίρεση entry από αρχική και runtime guard στην activity).
 - Προστέθηκε νέα σελίδα `Ημερολόγιο` με μηνιαίο grid και αυτόματη επιλογή της τρέχουσας ημέρας συσκευής.
+- Αναβαθμίστηκε η σελίδα `Ημερολόγιο` με άμεσο picker `μήνα/έτους` (tap στον τίτλο μήνα), κουμπί `Σήμερα`, locale-aware μορφοποίηση ημερομηνιών και βελτιωμένη οπτική διάκριση ημέρας επιλογής/σημερινής ημέρας.
+- Προστέθηκε πιλοτικό εορτολόγιο για `Ιανουάριο 2025` στη σελίδα `Ημερολόγιο` με dot indicator σε ειδικές ημέρες, αναλυτικό panel ανά επιλεγμένη ημερομηνία και offline dataset `calendar_celebrations_v1.json`.
+- Προστέθηκε ροή αναγνωσμάτων ημερολογίου με παραπομπές στο grid/panel και νέα σελίδα πλήρους κειμένου (`ReadingTextActivity`) με toggle `Αρχαία/Νεοελληνικά`.
+- Το dataset `calendar_celebrations_v1.json` επεκτάθηκε με section `readings` ανά ημέρα (`reference`, `text_ancient`, `text_modern`) χωρίς αποθήκευση πηγών/URLs.
+- Προστέθηκε script `scripts/fill_calendar_month.py` και local skill `learn-byzantine-calendar-fill` για deterministic monthly overwrite (`YYYY-MM` ή `DD-MM-YYYY`) με internet retrieval pipeline (year page -> day ids -> full day parsing), multi-source policy για Νεοελληνικά και confidential dataset (χωρίς source/url/domain fields).
+- Συμπληρώθηκαν για τον `Ιανουάριο 2025` πλήρη κείμενα αναγνωσμάτων (`text_ancient` + `text_modern`) με υποστήριξη πολλαπλών αναγνωσμάτων ανά ημέρα (καθημερινό + εορτής όπου υπάρχουν).
 - Προστέθηκε resolver εκκλησιαστικού κύκλου ήχων (`OrthodoxPaschaCalculator` + `LiturgicalToneCycle`) με αφετηρία Α’ Ήχου στη 2η Κυριακή μετά την Πεντηκοστή.
 - Προστέθηκαν unit tests για υπολογισμό Ορθόδοξου Πάσχα και για τη λογική αλλαγής ήχου ανά εβδομάδα.
 - Προστέθηκε νέα σελίδα `Ηχογραφήσεις` με επιλογή φακέλου μέσω SAF, μεγάλη εγγραφή μικροφώνου, controls `Παύση/Συνέχεια` + `Σταμάτημα` και δυναμική λίστα αρχείων από τον επιλεγμένο φάκελο.
@@ -98,3 +104,5 @@
 - [ ] Βελτίωση mapping `token -> delta` με μουσικολογική βαθμονόμηση για περισσότερα φθογγόσημα.
 - [ ] Επέκταση scanner από πρώτη γραμμή σε πολλαπλές γραμμές/blocks στην ίδια εικόνα.
 - [ ] Προσθήκη instrumentation tests για edge-cases SAF providers (missing/moved docs, tree/document URI mismatch, rename fallback).
+- [ ] Σταδιακή επέκταση του εορτολογίου σε όλους τους μήνες/έτη `1900-2100` με τον ίδιο offline monthly fill μηχανισμό.
+- [ ] Επέκταση του `readings` dataset σε όλους τους μήνες/έτη `1900-2100` με πλήρη παραπομπή/κείμενα ανά ημέρα και το ίδιο confidential policy (χωρίς source/url σε app assets).

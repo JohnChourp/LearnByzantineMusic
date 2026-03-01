@@ -38,6 +38,11 @@
             android:label="@string/title_activity_weekly_mode_calendar"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
+            android:name=".calendar.ReadingTextActivity"
+            android:exported="false"
+            android:label="@string/title_activity_reading_text"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
             android:name=".recordings.RecordingsActivity"
             android:exported="false"
             android:label="@string/title_activity_recordings"
