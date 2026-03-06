@@ -17,6 +17,7 @@ import kotlin.math.pow
 
 class EightModesActivity : BaseActivity() {
     private lateinit var modeSelector: Spinner
+    private lateinit var timbreSelector: Spinner
     private lateinit var selectedModeType: TextView
     private lateinit var selectedModeApichimaText: TextView
     private lateinit var selectedModeApichimaAlternatives: TextView
@@ -40,6 +41,12 @@ class EightModesActivity : BaseActivity() {
     private var currentModePosition: Int = 0
     private var currentAscendingIntervalsExtended: List<Int> = emptyList()
     private var isSyncingBaseShiftControls: Boolean = false
+    private var selectedToneTimbre: ToneTimbre = ToneTimbre.CLEAN
+    private val timbreOptions: List<ToneTimbre> = listOf(
+        ToneTimbre.CLEAN,
+        ToneTimbre.SOFT,
+        ToneTimbre.CRYSTAL
+    )
 
     private val modes: List<ModeDefinition> by lazy {
         listOf(
@@ -171,6 +178,7 @@ class EightModesActivity : BaseActivity() {
         setContentView(R.layout.layout_eight_modes)
 
         modeSelector = findViewById(R.id.mode_selector)
+        timbreSelector = findViewById(R.id.timbre_selector)
         selectedModeType = findViewById(R.id.selected_mode_type)
         selectedModeApichimaText = findViewById(R.id.selected_mode_apichima_text)
         selectedModeApichimaAlternatives = findViewById(R.id.selected_mode_apichima_alternatives)
@@ -192,8 +200,10 @@ class EightModesActivity : BaseActivity() {
         baseShiftPrefs = getSharedPreferences(BASE_SHIFT_PREFS_NAME, MODE_PRIVATE)
 
         loadSavedModeBaseShifts()
+        loadSavedToneTimbre()
         setupBaseShiftControls()
         setupSelector()
+        setupTimbreSelector()
         setupPhthongTouchPlayback()
         touchHintText.text = getString(R.string.eight_modes_touch_hint)
     }
@@ -254,8 +264,9 @@ class EightModesActivity : BaseActivity() {
         }
         modeSelector.adapter = adapter
 
-        modeSelector.setSelection(0, false)
-        renderMode(0)
+        val initialModePosition = loadSavedModePosition()
+        modeSelector.setSelection(initialModePosition, false)
+        renderMode(initialModePosition)
         modeSelector.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: android.widget.AdapterView<*>?,
@@ -272,6 +283,81 @@ class EightModesActivity : BaseActivity() {
         }
     }
 
+    private fun loadSavedModePosition(): Int {
+        val saved = baseShiftPrefs.getInt(SELECTED_MODE_POSITION_PREF_KEY, 0)
+        return saved.coerceIn(0, modes.lastIndex)
+    }
+
+    private fun persistSelectedModePosition(position: Int) {
+        baseShiftPrefs.edit()
+            .putInt(SELECTED_MODE_POSITION_PREF_KEY, position)
+            .apply()
+    }
+
+    private fun setupTimbreSelector() {
+        val adapter = object :
+            ArrayAdapter<ToneTimbre>(this, android.R.layout.simple_spinner_item, timbreOptions) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                return bindTimbreText(view, position)
+            }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                return bindTimbreText(view, position)
+            }
+
+            private fun bindTimbreText(view: View, position: Int): View {
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                val timbre = getItem(position)
+                textView.text = timbre?.let { getString(getToneTimbreLabelRes(it)) }.orEmpty()
+                return view
+            }
+        }.apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        timbreSelector.adapter = adapter
+
+        val selectedIndex = timbreOptions.indexOf(selectedToneTimbre).coerceAtLeast(0)
+        timbreSelector.setSelection(selectedIndex, false)
+        timbreSelector.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: android.widget.AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selected = timbreOptions.getOrNull(position) ?: ToneTimbre.CLEAN
+                if (selected == selectedToneTimbre) {
+                    return
+                }
+                selectedToneTimbre = selected
+                persistToneTimbre(selected)
+                tonePlayer.stop()
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) = Unit
+        }
+    }
+
+    private fun getToneTimbreLabelRes(timbre: ToneTimbre): Int = when (timbre) {
+        ToneTimbre.CLEAN -> R.string.eight_modes_timbre_clean
+        ToneTimbre.SOFT -> R.string.eight_modes_timbre_soft
+        ToneTimbre.CRYSTAL -> R.string.eight_modes_timbre_crystal
+    }
+
+    private fun loadSavedToneTimbre() {
+        val storedValue = baseShiftPrefs.getString(TONE_TIMBRE_PREF_KEY, ToneTimbre.CLEAN.name)
+        val resolved = ToneTimbre.entries.firstOrNull { it.name == storedValue } ?: ToneTimbre.CLEAN
+        selectedToneTimbre = if (resolved in timbreOptions) resolved else ToneTimbre.CLEAN
+    }
+
+    private fun persistToneTimbre(timbre: ToneTimbre) {
+        baseShiftPrefs.edit()
+            .putString(TONE_TIMBRE_PREF_KEY, timbre.name)
+            .apply()
+    }
+
     private fun getModeSelectorColor(category: ModeColorCategory): Int {
         val colorRes = when (category) {
             ModeColorCategory.DIATONIC -> R.color.black
@@ -286,6 +372,7 @@ class EightModesActivity : BaseActivity() {
     private fun renderMode(position: Int) {
         val safePosition = if (position in modes.indices) position else 0
         currentModePosition = safePosition
+        persistSelectedModePosition(safePosition)
         val mode = modes[safePosition]
         val ascendingIntervalsExtended = mode.ascendingIntervals.repeatTimes(SCALE_OCTAVES)
         currentAscendingIntervalsExtended = ascendingIntervalsExtended
@@ -355,7 +442,7 @@ class EightModesActivity : BaseActivity() {
 
     private fun playFrequencyForIndex(indexTopToBottom: Int) {
         val frequencyHz = frequenciesTopToBottom.getOrNull(indexTopToBottom) ?: return
-        tonePlayer.start(frequencyHz)
+        tonePlayer.start(frequencyHz, selectedToneTimbre)
     }
 
     private fun syncBaseShiftControls(shiftMoria: Int) {
@@ -469,6 +556,8 @@ class EightModesActivity : BaseActivity() {
         const val BASE_SHIFT_DEFAULT_MORIA = 0
         const val BASE_SHIFT_PREFS_NAME = "eight_modes_base_shift_prefs"
         const val BASE_SHIFT_PREF_KEY_PREFIX = "mode_base_shift_moria_"
+        const val TONE_TIMBRE_PREF_KEY = "selected_tone_timbre"
+        const val SELECTED_MODE_POSITION_PREF_KEY = "selected_mode_position"
         val PHTHONGS_WITHOUT_NI = listOf("Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω")
     }
 }

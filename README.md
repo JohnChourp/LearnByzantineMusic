@@ -18,6 +18,9 @@
 Η σελίδα `Ηχογραφήσεις` ζητά υποχρεωτικά επιλογή φακέλου μέσω SAF στην πρώτη είσοδο και αποθηκεύει μόνιμη πρόσβαση.
 Οι ηχογραφήσεις μπορούν να αποθηκευτούν σε `.flac/.mp3/.wav/.aac/.m4a/.opus` με default το `.flac` και περιγραφή για κάθε format μέσα στο UI.
 Προστέθηκε ξεχωριστή σελίδα `Διαχείριση ηχογραφήσεων` (Compose UI) για πλοήγηση φακέλων, δημιουργία φακέλου, μετακίνηση μέσω action menu `Move to...` (χωρίς drag/drop), και inline rename/delete.
+Προστέθηκε νέα σελίδα `Σημειώσεις` (Compose UI) με πολλαπλές σημειώσεις (`τίτλος + κείμενο`), local-first αποθήκευση σε Room, auto-save όσο γράφει ο χρήστης και χειροκίνητο `Save τώρα`.
+Η σελίδα `Σημειώσεις` απαιτεί υποχρεωτικά επιλογή φακέλου backup/sync μέσω SAF στην πρώτη είσοδο, δημιουργεί full JSON snapshot σε κάθε save και κρατά απεριόριστο ιστορικό snapshots.
+Υποστηρίζεται `Εξαγωγή τώρα`, `Import backup (replace-all)` και pending resync ροή όταν το write στον εξωτερικό φάκελο αποτυγχάνει (χωρίς να χάνεται το τοπικό save).
 Η λίστα `Ηχογραφήσεις` εμφανίζει σταθερά τις 10 τελευταίες δικές μου ηχογραφήσεις, ενώ η `Διαχείριση ηχογραφήσεων` διατηρεί ταξινόμηση/αναζήτηση/φίλτρα και virtualization/paging πάνω από Room index για απόκριση σε μεγάλους φακέλους.
 Διορθώθηκε η κενή κατάσταση της σελίδας `Ηχογραφήσεις` ώστε όταν δεν υπάρχουν δικές μου εγγραφές να εμφανίζεται άμεσα μήνυμα `δεν υπάρχουν εγγραφές` αντί για ατέρμονο loading.
 Η σελίδα `Σάρωση Βυζαντινού Κειμένου` έχει τεθεί προσωρινά ανενεργή και δεν είναι διαθέσιμη από την αρχική πλοήγηση.
@@ -53,6 +56,11 @@
 - Στη σελίδα `Ρυθμίσεις`, τα δύο κουμπιά γλώσσας (`Ελληνικά`, `English`) ζητούν πάντα επιβεβαίωση πριν από κάθε αλλαγή locale.
 - Πατώντας `Ηχογραφήσεις`, ανοίγει σελίδα εγγραφής με controls (`Έναρξη/Παύση/Συνέχεια/Σταμάτημα`) και λίστα με τις 10 τελευταίες ηχογραφήσεις που δημιουργήθηκαν από το app.
 - Στην πρώτη είσοδο της σελίδας `Ηχογραφήσεις`, αν δεν υπάρχει αποθηκευμένη πρόσβαση φακέλου, ανοίγει picker φακέλου (`OpenDocumentTree`) και απαιτείται παραχώρηση άδειας.
+- Πατώντας `Σημειώσεις`, ανοίγει νέα σελίδα για πολλαπλές σημειώσεις (`τίτλος + κείμενο`) με αναζήτηση και ταξινόμηση κατά πρόσφατη ενημέρωση.
+- Στην πρώτη είσοδο της σελίδας `Σημειώσεις`, αν δεν υπάρχει αποθηκευμένη πρόσβαση φακέλου backup, ανοίγει υποχρεωτικά picker φακέλου (`OpenDocumentTree`) και επανεμφανίζεται μέχρι να επιλεγεί έγκυρος φάκελος.
+- Σε κάθε save σημείωσης (auto-save ή `Save τώρα`) η εφαρμογή γράφει πρώτα local δεδομένα στη Room και έπειτα δημιουργεί full JSON snapshot για sync στον επιλεγμένο φάκελο.
+- Αν το sync φακέλου αποτύχει, το save παραμένει επιτυχές τοπικά και το snapshot μπαίνει σε pending queue για επόμενο retry ή `Επανασυγχρονισμό`.
+- Με `Import backup` γίνεται replace-all επαναφορά των σημειώσεων, και αμέσως μετά δημιουργείται νέο snapshot/sync.
 - Με `Έναρξη ηχογράφησης` το μεγάλο κόκκινο κουμπί κρύβεται και εμφανίζονται `Παύση/Συνέχεια` + `Σταμάτημα`.
 - Με `Σταμάτημα` το app αποθηκεύει την εγγραφή στο επιλεγμένο format (`FLAC` default) και ενημερώνει άμεσα το τοπικό history recent.
 - Με `Παραχώρηση/Αλλαγή φακέλου` εμφανίζεται πρώτα επιβεβαίωση (`Συνέχεια`/`Ακύρωση`) ώστε να μη χαθεί ο τρέχων φάκελος από κατά λάθος πάτημα.
@@ -185,6 +193,27 @@
   "folder": "ByzantineRecordings",
   "format": "flac",
   "status": "saved"
+}
+```
+
+### Input (save σημείωσης)
+```json
+{
+  "note_id": "4f5eb74f-6362-4bb6-a618-0f37f8bf9c39",
+  "title": "Χερουβικό Κυριακής",
+  "body": "Να δουλέψω αργά το ανέβασμα στο «Και ζωοποιώ».",
+  "trigger": "auto_or_manual"
+}
+```
+
+### Output (notes snapshot sync)
+```json
+{
+  "local_saved": true,
+  "snapshot_schema_version": 1,
+  "snapshot_file": "notes_snapshot_20260306_213015_144.json",
+  "folder_sync": "success_or_pending_retry",
+  "pending_sync_count": 0
 }
 ```
 
@@ -340,6 +369,12 @@
 - `AudioTranscoder`
 - `RecordingDocumentOps`
 - `RecordingModels`
+- `NotesActivity`
+- `NotesViewModel`
+- `NotesRepository`
+- `NotesDatabase`
+- `NotesBackupManager`
+- `NotesBackupCodec`
 
 - Ρυθμίσεις εφαρμογής:
 - SharedPreferences file: `learn_byzantine_music_settings`
@@ -349,6 +384,10 @@
 - SharedPreferences file: `learn_byzantine_music_recordings`
 - Keys: `recordings_folder_tree_uri`, `recordings_output_format`
 - Default format: `FLAC`
+- SharedPreferences file: `learn_byzantine_music_notes`
+- Keys: `notes_folder_tree_uri`, `notes_last_sync_epoch_ms`, `notes_last_sync_error`
+- Room DB: `notes.db` (`NoteEntity`: `id`, `title`, `body`, `createdAtEpochMs`, `updatedAtEpochMs`)
+- Internal pending backup directory: `files/notes_pending_snapshots/`
 
 - Release automation scripts:
 - `scripts/bump-version.sh`
@@ -394,6 +433,11 @@
 - Κρατά πατημένο τον χαμηλό `Νη,` και έπειτα τον υψηλό `Νη΄΄`, και ακούει σωστή διαφορά ύψους σε όλο το τριπλό εύρος.
 - Τέλος ανοίγει `Σάρωση Βυζαντινού Κειμένου`, τραβά φωτογραφία, και βλέπει cropped block + πορεία φθόγγων ανά σύμβολο.
 
+### Happy path (notes)
+- Ο χρήστης ανοίγει `Σημειώσεις`, επιλέγει φάκελο backup και δημιουργεί νέα σημείωση.
+- Καθώς γράφει, ενεργοποιείται auto-save και δημιουργούνται JSON snapshots στον εξωτερικό φάκελο.
+- Πατά `Import backup` με παλιό snapshot, η εφαρμογή κάνει replace-all στη λίστα και γράφει άμεσα νέο snapshot.
+
 ### Happy path (release)
 ```bash
 ./scripts/setup-release-signing.sh --set-github-secrets
@@ -436,6 +480,16 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
   "error": "camera_permission_denied",
   "fallback": "gallery_available",
   "message": "Η κάμερα απορρίφθηκε. Χρησιμοποίησε gallery ή άνοιξε άδεια από ρυθμίσεις."
+}
+```
+
+### Failure example (notes sync failed but local saved)
+```json
+{
+  "error": "notes_backup_folder_write_failed",
+  "local_saved": true,
+  "pending_sync": true,
+  "message": "Το περιεχόμενο σώθηκε τοπικά και θα συγχρονιστεί στο επόμενο save/resync."
 }
 ```
 
@@ -537,6 +591,21 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Αν πατήσεις `Ακύρωση` ή κλείσεις τον picker χωρίς επιλογή, ο προηγούμενος φάκελος παραμένει ενεργός.
 - Η λίστα δείχνει μόνο τις 10 τελευταίες ηχογραφήσεις που έγιναν από το app στο ίδιο SAF root.
 
+### Γιατί στις `Σημειώσεις` μου λέει ότι το sync απέτυχε ενώ η αποθήκευση ολοκληρώθηκε;
+- Η λογική είναι local-first: πρώτα αποθηκεύει πάντα τοπικά (Room), μετά γράφει backup στον εξωτερικό φάκελο.
+- Αν αποτύχει το write στον φάκελο (provider/permission σφάλμα), το snapshot μένει σε pending queue στο app και γίνεται retry στο επόμενο save.
+- Δεν χάνονται οι σημειώσεις σου από αυτή την αποτυχία, εκτός αν χαλάσει η τοπική βάση και δεν υπάρχει κανένα έγκυρο backup.
+
+### Μπορώ να χάσω σημειώσεις αν διαγράψω την εφαρμογή;
+- Αν έχεις επιλέξει φάκελο backup και έχουν παραχθεί snapshots, μπορείς να κάνεις `Import backup` μετά από reinstall.
+- Αν δεν είχε επιλεγεί ποτέ φάκελος backup ή δεν υπάρχουν snapshots, η απεγκατάσταση αφαιρεί το τοπικό Room DB.
+- Για μέγιστη ασφάλεια, κράτα τον εξωτερικό φάκελο backup σε σημείο που δεν διαγράφεται μαζί με την εφαρμογή.
+
+### Τι ακριβώς κάνει το `Import backup`;
+- Διαβάζει ένα JSON snapshot και κάνει replace-all στις σημειώσεις (δεν κάνει merge).
+- Μετά το replace-all, η εφαρμογή δημιουργεί νέο snapshot και προσπαθεί άμεσο sync στον επιλεγμένο φάκελο.
+- Αν το import αρχείο είναι άκυρο (`schemaVersion`/δομή), η επαναφορά απορρίπτεται χωρίς να πειραχτούν οι υπάρχουσες σημειώσεις.
+
 ### Πώς ανοίγω μία ηχογράφηση από τη λίστα;
 - Πάτησε το αρχείο στη recent λίστα.
 - Το app δημιουργεί προσωρινό αντίγραφο στο cache και το ανοίγει μέσω `FileProvider` για καλύτερη συμβατότητα με εξωτερικούς players.
@@ -563,6 +632,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Πώς δουλεύει η «Μεταφορά βάσης» στους 8 ήχους;
 - Η μπάρα αλλάζει τη βάση από `-12` έως `+12` μόρια και κάνει transpose σε όλη την κλίμακα, χωρίς να αλλάζει ονόματα φθόγγων ή διαστήματα.
 - Κάθε ήχος κρατάει δική του τιμή βάσης και η τιμή αποθηκεύεται μόνιμα (παραμένει μετά από κλείσιμο/άνοιγμα app).
+- Η σελίδα θυμάται και τον τελευταίο επιλεγμένο ήχο από το πάνω selector και τον επαναφέρει αυτόματα στο επόμενο άνοιγμα.
 - Με `Επαναφορά` η τρέχουσα τιμή του συγκεκριμένου ήχου γυρίζει στο `0 μόρια (προεπιλογή)`.
 
 ### Δεν αλλάζει το μέγεθος γραμμάτων. Τι να ελέγξω;
@@ -624,16 +694,19 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - `.github/workflows/security-guard.yml`: τρέχει secrets guard σε κάθε push/PR.
 - `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, κάνει package signed APK σε σταθερό alias `apk-release.apk`, ελέγχει αν υπάρχει ήδη ίδιο custom asset στο release του tag και κάνει skip το fallback publish όταν υπάρχει ήδη.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
+- `MainActivity` και `layout_main_activity.xml`: προστέθηκε και νέο entry button `Σημειώσεις` για μετάβαση στη `NotesActivity`.
 - `RecordingsActivity` και `RecordingsManagerActivity`: πλήρης μετάβαση σε Compose UI με ViewModel/StateFlow, με τη σελίδα ηχογραφήσεων να δείχνει μόνο 10 local own recordings και τη διαχείριση να διατηρεί search+filters+sort.
 - `recordings/index/*`: νέο data layer με Room index (`recordings_index.db`), BFS indexer SAF, WorkManager reindex worker και repository για observe/operations.
 - `recordings/ui/*` και `recordings/ui/components/*`: νέα composables για recent list/manager list, row action menus και searchable `Move to...` επιλογή προορισμού.
 - `RecordingFormatOption`, `RecordingsPrefs`, `AudioTranscoder`: νέα helper modules για formats, persist settings φακέλου/μορφής και transcode μέσω FFmpeg.
 - `OwnedRecordingsStore`, `RecordingDocumentOps` και `RecordingModels`: local own-recordings history, κοινά μοντέλα + ασφαλής λογική rename fallback (direct rename και fallback copy/delete για αρχεία) με νέο outcome `καταργήθηκε`.
 - `RecordingExternalOpener` και `byzantine_scan_file_paths.xml`: ασφαλές άνοιγμα ηχογράφησης με audio-only MIME fallbacks (`resolved -> audio/*`) και dual URI strategy (δοκιμή original SAF URI και cache `FileProvider` URI) για μεγαλύτερη συμβατότητα σε Android 15 συσκευές.
+- `notes/*`: νέο notes module με Room (`notes.db`), repository/viewmodel, JSON snapshot codec, pending backup queue σε internal storage και SAF sync στον φάκελο που επιλέγει ο χρήστης.
+- `NotesActivity` και `notes/ui/NotesScreen.kt`: νέα Compose οθόνη με search, editor (`τίτλος + κείμενο`), auto-save, manual save, export/import και actions επανασυγχρονισμού.
 - `AndroidManifest.xml`: προστέθηκαν activities `RecordingsActivity`, `RecordingsManagerActivity` και permission `RECORD_AUDIO`.
 - `strings.xml`: προστέθηκαν labels/status/errors και περιγραφές για όλα τα διαθέσιμα formats ηχογράφησης.
 - `SettingsActivity`, `layout_settings.xml`, `AppFontScale` και `BaseActivity`: διαχειρίζονται την αποθήκευση/εφαρμογή global font scaling για όλη την εφαρμογή.
-- `EightModesActivity`, `layout_eight_modes.xml`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels, αναπαραγωγή συχνοτήτων (`Νη = 220Hz`) και ρυθμιζόμενη μεταφορά βάσης ανά ήχο (`-12..+12` μόρια) με μόνιμη αποθήκευση.
+- `EightModesActivity`, `layout_eight_modes.xml`, `ScaleDiagramView` και `PhthongTonePlayer`: διαχειρίζονται touch labels, αναπαραγωγή συχνοτήτων (`Νη = 220Hz`), επιλογή ηχοχρώματος με 3 presets (`Καθαρός`, `Μαλακός`, `Κρυστάλλινο`) και ρυθμιζόμενη μεταφορά βάσης ανά ήχο (`-12..+12` μόρια) με μόνιμη αποθήκευση.
 - `eight_modes_base_shift_card_bg.xml`: ορίζει το visual styling της κάρτας μεταφοράς βάσης.
 - `ByzantineScanActivity`: υλοποιεί camera/gallery ροή, επιλογή ήχου/βάσης και προβολή αποτελεσμάτων αναγνώρισης.
 - `ByzantineMelodyAnalyzer` + `BinaryImageOps`: υλοποιούν adaptive preprocessing, αποκοπή πρώτης γραμμής, segmentation και recognition σε events `base+modifier`.
@@ -741,3 +814,13 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Η εφαρμογή πλέον κάνει normalization του SAF URI (`tree -> document`) πριν τα queries του current/root path.
 - Αυτό επιτρέπει να εμφανίζονται σωστά φάκελοι που δεν έχουν άμεσα audio files αλλά περιέχουν υποφακέλους.
 - Αν επιμένει το πρόβλημα, κάνε αλλαγή φακέλου (re-grant) και ξανάνοιξε τη διαχείριση για νέο reindex.
+
+### Πώς αλλάζω τον χαρακτήρα ήχου στη σελίδα `8 Ήχοι`;
+- Πάνω από την κλίμακα υπάρχει νέο πεδίο `Επιλογή ηχοχρώματος`.
+- Μπορείς να επιλέξεις ανάμεσα σε `Καθαρός`, `Μαλακός`, `Κρυστάλλινο`.
+- Η επιλογή αποθηκεύεται και παραμένει ίδια μετά από κλείσιμο/άνοιγμα της εφαρμογής.
+
+### Γιατί δεν ακούγεται «ανθρώπινη» φωνή ακόμα;
+- Η τρέχουσα υλοποίηση είναι η Φάση 1: συνθετικά ηχοχρώματα για γρήγορο A/B test χωρίς licensing ρίσκο.
+- Η Φάση 2 προβλέπει sample-based ήχους μόνο CC0/Public Domain, αφού επιλέξεις ποια 1-2 ηχοχρώματα θέλεις να κρατήσουμε.
+- Μέχρι να κλειδώσουν τα τελικά samples, όλα τα πατήματα φθόγγων παίζουν από τον offline synth engine.

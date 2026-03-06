@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyModeCalendarActivity
 import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
+import com.johnchourp.learnbyzantinemusic.notes.NotesActivity
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity
 
 class MainActivity : BaseActivity() {
@@ -27,6 +28,7 @@ class MainActivity : BaseActivity() {
         val eightModesBtn = findViewById<Button>(R.id.eight_modes_btn)
         val calendarBtn = findViewById<Button>(R.id.calendar_btn)
         val recordingsBtn = findViewById<Button>(R.id.recordings_btn)
+        val notesBtn = findViewById<Button>(R.id.notes_btn)
         val settingsBtn = findViewById<Button>(R.id.settings_btn)
         val poweredByTextView = findViewById<TextView>(R.id.powered_by_text_view)
 
@@ -47,6 +49,7 @@ class MainActivity : BaseActivity() {
         eightModesBtn.setOnClickListener { openEightModes() }
         calendarBtn.setOnClickListener { openWeeklyModeCalendar() }
         recordingsBtn.setOnClickListener { openRecordings() }
+        notesBtn.setOnClickListener { openNotes() }
         settingsBtn.setOnClickListener { openSettings() }
 
         maybeShowLanguageOnboarding()
@@ -178,6 +181,11 @@ class MainActivity : BaseActivity() {
 
     private fun openRecordings() {
         val intent = Intent(this, RecordingsActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openNotes() {
+        val intent = Intent(this, NotesActivity::class.java)
         startActivity(intent)
     }
 

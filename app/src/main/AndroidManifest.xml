@@ -53,6 +53,11 @@
             android:label="@string/recordings_manage_open"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
+            android:name=".notes.NotesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_notes"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
             android:name=".summary_theory.Testimonies"
             android:exported="false"
             android:label="@string/title_activity_testimonies"
