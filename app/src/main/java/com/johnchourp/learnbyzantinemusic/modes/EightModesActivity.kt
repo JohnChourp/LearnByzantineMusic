@@ -82,7 +82,7 @@ class EightModesActivity : BaseActivity() {
             ),
             ModeDefinition(
                 nameRes = R.string.mode_third,
-                typeRes = R.string.mode_type_diatonic,
+                typeRes = R.string.mode_type_enharmonic,
                 apichimaRes = R.string.mode_apichima_third,
                 apichimaAlternativeRes = null,
                 apichimaPhthongsRes = R.string.mode_apichima_phthongs_third,
@@ -92,8 +92,8 @@ class EightModesActivity : BaseActivity() {
                 apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_ga,
                 apichimaSignNameRes = R.string.phthong_ga,
                 detailsRes = R.string.mode_details_third,
-                colorCategory = ModeColorCategory.DIATONIC,
-                ascendingIntervals = listOf(8, 12, 12, 10, 8, 12, 10)
+                colorCategory = ModeColorCategory.ENHARMONIC,
+                ascendingIntervals = listOf(12, 12, 6, 12, 12, 6, 12)
             ),
             ModeDefinition(
                 nameRes = R.string.mode_fourth,
