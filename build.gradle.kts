@@ -8,13 +8,13 @@ buildscript {
         // Force patched jdom2 due AGP transitive dependency vulnerability.
         resolutionStrategy.force("org.jdom:jdom2:2.0.6.1")
         // Force patched netty-codec due AGP/UTP transitive dependency vulnerability.
-        resolutionStrategy.force("io.netty:netty-codec:4.1.129.Final")
+        resolutionStrategy.force("io.netty:netty-codec:4.1.132.Final")
         // Force patched netty-codec-http due AGP/UTP transitive dependency vulnerability.
-        resolutionStrategy.force("io.netty:netty-codec-http:4.1.129.Final")
+        resolutionStrategy.force("io.netty:netty-codec-http:4.1.132.Final")
         // Force patched netty-codec-http2 due AGP/UTP transitive dependency vulnerability.
-        resolutionStrategy.force("io.netty:netty-codec-http2:4.1.129.Final")
+        resolutionStrategy.force("io.netty:netty-codec-http2:4.1.132.Final")
         // Force patched netty-handler due AGP/UTP transitive dependency vulnerability.
-        resolutionStrategy.force("io.netty:netty-handler:4.1.129.Final")
+        resolutionStrategy.force("io.netty:netty-handler:4.1.132.Final")
         // Force patched jose4j due AGP transitive dependency vulnerability.
         resolutionStrategy.force("org.bitbucket.b_c:jose4j:0.9.6")
         // Force patched commons-compress due AGP transitive dependency vulnerability.
