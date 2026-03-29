@@ -143,6 +143,16 @@
             android:layout_marginTop="10dp"
             android:textSize="15sp" />
 
+        <Button
+            android:id="@+id/selected_mode_theory_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:paddingVertical="10dp"
+            android:text="@string/eight_modes_first_mode_theory_cta"
+            android:textAllCaps="false"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/base_shift_card"
             android:layout_width="match_parent"

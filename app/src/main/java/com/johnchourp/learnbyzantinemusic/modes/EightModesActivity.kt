@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
@@ -29,6 +30,7 @@ class EightModesActivity : BaseActivity() {
     private lateinit var selectedModeApichimaSign: ImageView
     private lateinit var selectedModeApichimaSignName: TextView
     private lateinit var selectedModeDetails: TextView
+    private lateinit var selectedModeTheoryButton: Button
     private lateinit var ascendingDiagramView: ScaleDiagramView
     private lateinit var touchHintText: TextView
     private lateinit var baseShiftValueText: TextView
@@ -192,6 +194,7 @@ class EightModesActivity : BaseActivity() {
         selectedModeApichimaSign = findViewById(R.id.selected_mode_apichima_sign)
         selectedModeApichimaSignName = findViewById(R.id.selected_mode_apichima_sign_name)
         selectedModeDetails = findViewById(R.id.selected_mode_details)
+        selectedModeTheoryButton = findViewById(R.id.selected_mode_theory_button)
         ascendingDiagramView = findViewById(R.id.ascending_diagram_view)
         touchHintText = findViewById(R.id.touch_hint_text)
         baseShiftValueText = findViewById(R.id.base_shift_value)
@@ -205,6 +208,7 @@ class EightModesActivity : BaseActivity() {
         setupSelector()
         setupTimbreSelector()
         setupPhthongTouchPlayback()
+        selectedModeTheoryButton.setOnClickListener { openDetailedTheoryForCurrentMode() }
         touchHintText.text = getString(R.string.eight_modes_touch_hint)
     }
 
@@ -415,6 +419,11 @@ class EightModesActivity : BaseActivity() {
         selectedModeApichimaSignName.text =
             getString(R.string.mode_apichima_sign_name, getString(mode.apichimaSignNameRes))
         selectedModeDetails.text = getString(mode.detailsRes)
+        selectedModeTheoryButton.visibility = if (safePosition == FIRST_MODE_POSITION) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
         tonePlayer.stop()
         ascendingDiagramView.clearTouchState()
 
@@ -513,6 +522,13 @@ class EightModesActivity : BaseActivity() {
         return lowOctave + middleOctave + highOctave + listOf("Νη΄΄")
     }
 
+    private fun openDetailedTheoryForCurrentMode() {
+        if (currentModePosition != FIRST_MODE_POSITION) {
+            return
+        }
+        startActivity(Intent(this, FirstModeTheoryActivity::class.java))
+    }
+
     override fun onStop() {
         tonePlayer.stop()
         super.onStop()
@@ -548,6 +564,7 @@ class EightModesActivity : BaseActivity() {
     }
 
     private companion object {
+        const val FIRST_MODE_POSITION = 0
         const val BASE_NI_FREQUENCY_HZ = 220.0
         const val MORIA_PER_OCTAVE = 72.0
         const val SCALE_OCTAVES = 3

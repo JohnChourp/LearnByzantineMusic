@@ -27,6 +27,17 @@
     <color name="weekly_calendar_celebration_religious_border">#FFB9D1F3</color>
     <color name="weekly_calendar_celebration_normal_bg">#FFF9FAFC</color>
     <color name="weekly_calendar_celebration_normal_border">#FFD8DEE8</color>
+    <color name="first_mode_theory_page_bg">#FFF6F2EA</color>
+    <color name="first_mode_theory_card_bg">#FFFFFCF7</color>
+    <color name="first_mode_theory_card_border">#FFE1D2B8</color>
+    <color name="first_mode_theory_callout_bg">#FFF7E8D3</color>
+    <color name="first_mode_theory_callout_border">#FFE0BA88</color>
+    <color name="first_mode_theory_hero_start">#FFEADCC5</color>
+    <color name="first_mode_theory_hero_end">#FFF7EFE1</color>
+    <color name="first_mode_theory_accent">#FF7A4E24</color>
+    <color name="first_mode_theory_accent_soft">#FFA16839</color>
+    <color name="first_mode_theory_text_primary">#FF2F251A</color>
+    <color name="first_mode_theory_text_secondary">#FF655644</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

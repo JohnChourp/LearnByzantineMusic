@@ -33,6 +33,11 @@
             android:label="@string/title_activity_eight_modes"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
+            android:name=".modes.FirstModeTheoryActivity"
+            android:exported="false"
+            android:label="@string/title_activity_first_mode_theory"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
             android:name=".calendar.WeeklyModeCalendarActivity"
             android:exported="false"
             android:label="@string/title_activity_weekly_mode_calendar"
