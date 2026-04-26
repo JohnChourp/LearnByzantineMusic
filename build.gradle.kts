@@ -22,9 +22,9 @@ buildscript {
         // Force patched commons-lang3 due AGP transitive dependency vulnerability.
         resolutionStrategy.force("org.apache.commons:commons-lang3:3.18.0")
         // Force patched bouncycastle modules due AGP transitive dependency vulnerabilities.
-        resolutionStrategy.force("org.bouncycastle:bcpkix-jdk18on:1.79")
-        resolutionStrategy.force("org.bouncycastle:bcprov-jdk18on:1.79")
-        resolutionStrategy.force("org.bouncycastle:bcutil-jdk18on:1.79")
+        resolutionStrategy.force("org.bouncycastle:bcpkix-jdk18on:1.84")
+        resolutionStrategy.force("org.bouncycastle:bcprov-jdk18on:1.84")
+        resolutionStrategy.force("org.bouncycastle:bcutil-jdk18on:1.84")
     }
 }
 
