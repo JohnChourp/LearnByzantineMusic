@@ -20,6 +20,8 @@ class EightModesActivity : BaseActivity() {
     private lateinit var modeSelector: Spinner
     private lateinit var timbreSelector: Spinner
     private lateinit var selectedModeType: TextView
+    private lateinit var selectedModeScaleRange: TextView
+    private lateinit var selectedModeIntervalSummary: TextView
     private lateinit var selectedModeApichimaText: TextView
     private lateinit var selectedModeApichimaAlternatives: TextView
     private lateinit var selectedModeApichimaFormsHint: TextView
@@ -42,6 +44,7 @@ class EightModesActivity : BaseActivity() {
     private var frequenciesTopToBottom: List<Double> = emptyList()
     private var currentModePosition: Int = 0
     private var currentAscendingIntervalsExtended: List<Int> = emptyList()
+    private var currentReferenceMoriaFromBottom: Int = 0
     private var isSyncingBaseShiftControls: Boolean = false
     private var selectedToneTimbre: ToneTimbre = ToneTimbre.CLEAN
     private val timbreOptions: List<ToneTimbre> = listOf(
@@ -65,11 +68,11 @@ class EightModesActivity : BaseActivity() {
                 apichimaSignNameRes = R.string.phthong_pa,
                 detailsRes = R.string.mode_details_first,
                 colorCategory = ModeColorCategory.DIATONIC,
-                ascendingIntervals = listOf(12, 10, 8, 12, 12, 10, 8)
+                scale = EightModeScaleDefinitions.DIATONIC
             ),
             ModeDefinition(
                 nameRes = R.string.mode_second,
-                typeRes = R.string.mode_type_hard_chromatic,
+                typeRes = R.string.mode_type_soft_chromatic,
                 apichimaRes = R.string.mode_apichima_second,
                 apichimaAlternativeRes = null,
                 apichimaPhthongsRes = R.string.mode_apichima_phthongs_second,
@@ -79,8 +82,8 @@ class EightModesActivity : BaseActivity() {
                 apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_di,
                 apichimaSignNameRes = R.string.phthong_di,
                 detailsRes = R.string.mode_details_second,
-                colorCategory = ModeColorCategory.HARD_CHROMATIC,
-                ascendingIntervals = listOf(6, 20, 4, 12, 6, 20, 4)
+                colorCategory = ModeColorCategory.SOFT_CHROMATIC,
+                scale = EightModeScaleDefinitions.SOFT_CHROMATIC
             ),
             ModeDefinition(
                 nameRes = R.string.mode_third,
@@ -95,7 +98,7 @@ class EightModesActivity : BaseActivity() {
                 apichimaSignNameRes = R.string.phthong_ga,
                 detailsRes = R.string.mode_details_third,
                 colorCategory = ModeColorCategory.ENHARMONIC,
-                ascendingIntervals = listOf(12, 12, 6, 12, 12, 6, 12)
+                scale = EightModeScaleDefinitions.ENHARMONIC
             ),
             ModeDefinition(
                 nameRes = R.string.mode_fourth,
@@ -110,7 +113,7 @@ class EightModesActivity : BaseActivity() {
                 apichimaSignNameRes = R.string.phthong_di,
                 detailsRes = R.string.mode_details_fourth,
                 colorCategory = ModeColorCategory.DIATONIC,
-                ascendingIntervals = listOf(10, 8, 12, 12, 10, 8, 12)
+                scale = EightModeScaleDefinitions.DIATONIC
             ),
             ModeDefinition(
                 nameRes = R.string.mode_plagal_first,
@@ -125,11 +128,11 @@ class EightModesActivity : BaseActivity() {
                 apichimaSignNameRes = R.string.phthong_ke,
                 detailsRes = R.string.mode_details_plagal_first,
                 colorCategory = ModeColorCategory.DIATONIC,
-                ascendingIntervals = listOf(10, 8, 12, 12, 10, 8, 12)
+                scale = EightModeScaleDefinitions.DIATONIC
             ),
             ModeDefinition(
                 nameRes = R.string.mode_plagal_second,
-                typeRes = R.string.mode_type_soft_chromatic,
+                typeRes = R.string.mode_type_hard_chromatic,
                 apichimaRes = R.string.mode_apichima_plagal_second,
                 apichimaAlternativeRes = R.string.mode_apichima_alternative_plagal_second,
                 apichimaPhthongsRes = R.string.mode_apichima_phthongs_plagal_second,
@@ -139,8 +142,8 @@ class EightModesActivity : BaseActivity() {
                 apichimaSignRes = R.drawable.diatonic_intermediates_testimonial_ni,
                 apichimaSignNameRes = R.string.phthong_ni,
                 detailsRes = R.string.mode_details_plagal_second,
-                colorCategory = ModeColorCategory.SOFT_CHROMATIC,
-                ascendingIntervals = listOf(8, 14, 8, 12, 8, 14, 8)
+                colorCategory = ModeColorCategory.HARD_CHROMATIC,
+                scale = EightModeScaleDefinitions.HARD_CHROMATIC
             ),
             ModeDefinition(
                 nameRes = R.string.mode_varys,
@@ -155,7 +158,7 @@ class EightModesActivity : BaseActivity() {
                 apichimaSignNameRes = R.string.phthong_zo,
                 detailsRes = R.string.mode_details_varys,
                 colorCategory = ModeColorCategory.ENHARMONIC,
-                ascendingIntervals = listOf(12, 12, 6, 12, 12, 6, 12)
+                scale = EightModeScaleDefinitions.ENHARMONIC
             ),
             ModeDefinition(
                 nameRes = R.string.mode_plagal_fourth,
@@ -170,7 +173,7 @@ class EightModesActivity : BaseActivity() {
                 apichimaSignNameRes = R.string.phthong_ni,
                 detailsRes = R.string.mode_details_plagal_fourth,
                 colorCategory = ModeColorCategory.DIATONIC,
-                ascendingIntervals = listOf(12, 10, 8, 12, 12, 10, 8)
+                scale = EightModeScaleDefinitions.DIATONIC
             )
         )
     }
@@ -201,6 +204,8 @@ class EightModesActivity : BaseActivity() {
         baseShiftSeekBar = findViewById(R.id.base_shift_seekbar)
         baseShiftResetButton = findViewById(R.id.base_shift_reset_button)
         baseShiftPrefs = getSharedPreferences(BASE_SHIFT_PREFS_NAME, MODE_PRIVATE)
+        selectedModeScaleRange = findViewById(R.id.selected_mode_scale_range)
+        selectedModeIntervalSummary = findViewById(R.id.selected_mode_interval_summary)
 
         loadSavedModeBaseShifts()
         loadSavedToneTimbre()
@@ -378,10 +383,20 @@ class EightModesActivity : BaseActivity() {
         currentModePosition = safePosition
         persistSelectedModePosition(safePosition)
         val mode = modes[safePosition]
-        val ascendingIntervalsExtended = mode.ascendingIntervals.repeatTimes(SCALE_OCTAVES)
+        val scale = mode.scale
+        val ascendingIntervalsExtended = scale.repeatedIntervals(SCALE_OCTAVES)
         currentAscendingIntervalsExtended = ascendingIntervalsExtended
-        val ascendingPhthongsExtended = buildTripleOctaveAscendingPhthongs()
+        currentReferenceMoriaFromBottom =
+            scale.referenceMoriaFromBottom(BASE_REFERENCE_PHTHONG, SCALE_OCTAVES)
+        val ascendingPhthongsExtended = scale.ascendingPhthongs(SCALE_OCTAVES)
         selectedModeType.text = getString(mode.typeRes)
+        selectedModeScaleRange.text = getString(
+            R.string.mode_scale_range_template,
+            scale.base.phthong,
+            scale.upperBase
+        )
+        selectedModeIntervalSummary.text =
+            getString(R.string.mode_interval_summary_template, scale.intervalSummary())
         selectedModeApichimaText.text =
             getString(R.string.mode_apichima_label, getString(mode.apichimaRes))
         val alternativeRes = mode.apichimaAlternativeRes
@@ -470,6 +485,7 @@ class EightModesActivity : BaseActivity() {
         updateBaseShiftValueText(boundedShiftMoria)
         frequenciesTopToBottom = calculateFrequenciesTopToBottom(
             ascendingIntervals = currentAscendingIntervalsExtended,
+            referenceMoriaFromBottom = currentReferenceMoriaFromBottom,
             baseShiftMoria = boundedShiftMoria
         )
     }
@@ -498,6 +514,7 @@ class EightModesActivity : BaseActivity() {
 
     private fun calculateFrequenciesTopToBottom(
         ascendingIntervals: List<Int>,
+        referenceMoriaFromBottom: Int,
         baseShiftMoria: Int
     ): List<Double> {
         val cumulativeMoriaBottomToTop = mutableListOf(0)
@@ -509,17 +526,10 @@ class EightModesActivity : BaseActivity() {
         val transposeFactor = 2.0.pow(baseShiftMoria / MORIA_PER_OCTAVE)
         return cumulativeMoriaBottomToTop
             .map { moria ->
-                val moriaFromBaseNi = moria - MORIA_PER_OCTAVE
+                val moriaFromBaseNi = moria - referenceMoriaFromBottom
                 (BASE_NI_FREQUENCY_HZ * 2.0.pow(moriaFromBaseNi / MORIA_PER_OCTAVE)) * transposeFactor
             }
             .reversed()
-    }
-
-    private fun buildTripleOctaveAscendingPhthongs(): List<String> {
-        val lowOctave = PHTHONGS_WITHOUT_NI.map { "$it," }
-        val middleOctave = PHTHONGS_WITHOUT_NI
-        val highOctave = PHTHONGS_WITHOUT_NI.map { "$it΄" }
-        return lowOctave + middleOctave + highOctave + listOf("Νη΄΄")
     }
 
     private fun openDetailedTheoryForCurrentMode() {
@@ -552,7 +562,7 @@ class EightModesActivity : BaseActivity() {
         val apichimaSignNameRes: Int,
         val detailsRes: Int,
         val colorCategory: ModeColorCategory,
-        val ascendingIntervals: List<Int>
+        val scale: ModeScaleDefinition
     )
 
     private enum class ModeColorCategory {
@@ -566,6 +576,7 @@ class EightModesActivity : BaseActivity() {
     private companion object {
         const val FIRST_MODE_POSITION = 0
         const val BASE_NI_FREQUENCY_HZ = 220.0
+        const val BASE_REFERENCE_PHTHONG = "Νη"
         const val MORIA_PER_OCTAVE = 72.0
         const val SCALE_OCTAVES = 3
         const val BASE_SHIFT_MORIA_MIN = -12
@@ -575,15 +586,5 @@ class EightModesActivity : BaseActivity() {
         const val BASE_SHIFT_PREF_KEY_PREFIX = "mode_base_shift_moria_"
         const val TONE_TIMBRE_PREF_KEY = "selected_tone_timbre"
         const val SELECTED_MODE_POSITION_PREF_KEY = "selected_mode_position"
-        val PHTHONGS_WITHOUT_NI = listOf("Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω")
-    }
-}
-
-private fun List<Int>.repeatTimes(times: Int): List<Int> {
-    if (times <= 1 || isEmpty()) {
-        return this
-    }
-    return buildList(size * times) {
-        repeat(times) { addAll(this@repeatTimes) }
     }
 }

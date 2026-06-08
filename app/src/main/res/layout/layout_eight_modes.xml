@@ -61,6 +61,21 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/selected_mode_scale_range"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/selected_mode_interval_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp" />
+
+        <TextView
             android:id="@+id/selected_mode_apichima_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

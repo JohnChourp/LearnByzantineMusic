@@ -1,0 +1,4 @@
+interface:
+  display_name: "LearnByzantine Release"
+  short_description: "Bump, sign, tag, push, and publish a LearnByzantineMusic release"
+  default_prompt: "Create a new LearnByzantineMusic patch release with signed artifacts, tag push, release notes, and GitHub Release publish."

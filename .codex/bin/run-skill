@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CODEX_HOME="${CODEX_HOME:-$(cd -- "$SCRIPT_DIR/.." && pwd)}"
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+
+export CODEX_HOME
+exec "$PYTHON_BIN" "$CODEX_HOME/skills/.system/skill-runtime-lib/scripts/run_skill.py" "$@"
