@@ -3,16 +3,22 @@ package com.johnchourp.learnbyzantinemusic.modes
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewConfiguration
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.HorizontalScrollView
 import android.widget.SeekBar
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
+import kotlin.math.abs
 import kotlin.math.pow
 
 class EightModesActivity : BaseActivity() {
@@ -26,6 +32,10 @@ class EightModesActivity : BaseActivity() {
     private lateinit var selectedModeApichimaAlternativeSyllables: TextView
     private lateinit var selectedModeDetails: TextView
     private lateinit var selectedModeTheoryButton: Button
+    private lateinit var modeSelectorCard: View
+    private lateinit var timbreSelectorCard: View
+    private lateinit var selectedModeSummaryCard: View
+    private lateinit var baseShiftCard: View
     private lateinit var ascendingDiagramView: ScaleDiagramView
     private lateinit var touchHintText: TextView
     private lateinit var baseShiftValueText: TextView
@@ -141,7 +151,7 @@ class EightModesActivity : BaseActivity() {
             ModeDefinition(
                 nameRes = R.string.mode_second,
                 selectorNameRes = R.string.mode_second,
-                selectorGenusRes = R.string.mode_genus_chromatic,
+                selectorGenusRes = R.string.mode_genus_chromatic_second,
                 apichimaRes = R.string.mode_apichima_second,
                 apichimaAlternativeRes = null,
                 apichimaPhthongsRes = R.string.mode_apichima_phthongs_second,
@@ -156,7 +166,7 @@ class EightModesActivity : BaseActivity() {
             ModeDefinition(
                 nameRes = R.string.mode_plagal_second,
                 selectorNameRes = R.string.mode_selector_plagal_second,
-                selectorGenusRes = R.string.mode_genus_chromatic,
+                selectorGenusRes = R.string.mode_genus_chromatic_plagal_second,
                 apichimaRes = R.string.mode_apichima_plagal_second,
                 apichimaAlternativeRes = null,
                 apichimaPhthongsRes = R.string.mode_apichima_phthongs_plagal_second,
@@ -177,6 +187,9 @@ class EightModesActivity : BaseActivity() {
 
         modeSelector = findViewById(R.id.mode_selector)
         timbreSelector = findViewById(R.id.timbre_selector)
+        modeSelectorCard = findViewById(R.id.mode_selector_card)
+        timbreSelectorCard = findViewById(R.id.timbre_selector_card)
+        selectedModeSummaryCard = findViewById(R.id.selected_mode_summary_card)
         selectedModeApichimaText = findViewById(R.id.selected_mode_apichima_text)
         selectedModeApichimaAlternatives = findViewById(R.id.selected_mode_apichima_alternatives)
         selectedModeApichimaPhthongs = findViewById(R.id.selected_mode_apichima_phthongs)
@@ -189,6 +202,7 @@ class EightModesActivity : BaseActivity() {
         selectedModeTheoryButton = findViewById(R.id.selected_mode_theory_button)
         ascendingDiagramView = findViewById(R.id.ascending_diagram_view)
         touchHintText = findViewById(R.id.touch_hint_text)
+        baseShiftCard = findViewById(R.id.base_shift_card)
         baseShiftValueText = findViewById(R.id.base_shift_value)
         baseShiftSeekBar = findViewById(R.id.base_shift_seekbar)
         baseShiftResetButton = findViewById(R.id.base_shift_reset_button)
@@ -202,6 +216,7 @@ class EightModesActivity : BaseActivity() {
         setupPhthongTouchPlayback()
         selectedModeTheoryButton.setOnClickListener { openDetailedTheoryForCurrentMode() }
         touchHintText.text = getString(R.string.eight_modes_touch_hint)
+        runEntranceAnimations()
     }
 
     private fun loadSavedModeBaseShifts() {
@@ -237,10 +252,17 @@ class EightModesActivity : BaseActivity() {
 
     private fun setupSelector() {
         val adapter = object :
-            ArrayAdapter<ModeDefinition>(this, android.R.layout.simple_spinner_item, modes) {
+            ArrayAdapter<ModeDefinition>(
+                this,
+                R.layout.list_item_mode_selector,
+                android.R.id.text1,
+                modes
+            ) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = super.getView(position, convertView, parent)
-                return bindAndColorModeText(view, position)
+                return bindAndColorModeText(view, position).also {
+                    forwardSelectorRowClicks(it, modeSelector)
+                }
             }
 
             override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -249,6 +271,7 @@ class EightModesActivity : BaseActivity() {
             }
 
             private fun bindAndColorModeText(view: View, position: Int): View {
+                resetSelectorScroll(view)
                 val textView = view.findViewById<TextView>(android.R.id.text1)
                 val mode = getItem(position)
                 textView.text = mode?.let { formatModeSelectorLabel(it) }.orEmpty()
@@ -256,13 +279,13 @@ class EightModesActivity : BaseActivity() {
                 return view
             }
         }.apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            setDropDownViewResource(R.layout.list_item_mode_selector_dropdown)
         }
         modeSelector.adapter = adapter
 
         val initialModePosition = loadSavedModePosition()
         modeSelector.setSelection(initialModePosition, false)
-        renderMode(initialModePosition)
+        renderMode(initialModePosition, animate = false)
         modeSelector.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: android.widget.AdapterView<*>?,
@@ -270,11 +293,11 @@ class EightModesActivity : BaseActivity() {
                 position: Int,
                 id: Long
             ) {
-                renderMode(position)
+                renderMode(position, animate = true)
             }
 
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
-                renderMode(0)
+                renderMode(0, animate = true)
             }
         }
     }
@@ -293,10 +316,17 @@ class EightModesActivity : BaseActivity() {
 
     private fun setupTimbreSelector() {
         val adapter = object :
-            ArrayAdapter<ToneTimbre>(this, android.R.layout.simple_spinner_item, timbreOptions) {
+            ArrayAdapter<ToneTimbre>(
+                this,
+                R.layout.list_item_mode_selector,
+                android.R.id.text1,
+                timbreOptions
+            ) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = super.getView(position, convertView, parent)
-                return bindTimbreText(view, position)
+                return bindTimbreText(view, position).also {
+                    forwardSelectorRowClicks(it, timbreSelector)
+                }
             }
 
             override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -305,13 +335,15 @@ class EightModesActivity : BaseActivity() {
             }
 
             private fun bindTimbreText(view: View, position: Int): View {
+                resetSelectorScroll(view)
                 val textView = view.findViewById<TextView>(android.R.id.text1)
                 val timbre = getItem(position)
                 textView.text = timbre?.let { getString(getToneTimbreLabelRes(it)) }.orEmpty()
+                textView.setTextColor(ContextCompat.getColor(this@EightModesActivity, R.color.black))
                 return view
             }
         }.apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            setDropDownViewResource(R.layout.list_item_mode_selector_dropdown)
         }
         timbreSelector.adapter = adapter
 
@@ -331,6 +363,7 @@ class EightModesActivity : BaseActivity() {
                 selectedToneTimbre = selected
                 persistToneTimbre(selected)
                 tonePlayer.stop()
+                animateTimbreSelection()
             }
 
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) = Unit
@@ -373,7 +406,47 @@ class EightModesActivity : BaseActivity() {
             getString(mode.selectorGenusRes)
         )
 
-    private fun renderMode(position: Int) {
+    private fun resetSelectorScroll(view: View) {
+        val scrollView: HorizontalScrollView? = view.findViewById(R.id.selector_text_scroll)
+        scrollView?.scrollTo(0, 0)
+    }
+
+    private fun forwardSelectorRowClicks(view: View, spinner: Spinner) {
+        val openSpinner = View.OnClickListener { spinner.performClick() }
+        view.setOnClickListener(openSpinner)
+        val scrollView: HorizontalScrollView? = view.findViewById(R.id.selector_text_scroll)
+        scrollView?.setOnTouchListener(createOpenSpinnerOnTapListener(spinner))
+        val arrowView: View? = view.findViewById(R.id.selector_dropdown_arrow)
+        arrowView?.setOnClickListener(openSpinner)
+    }
+
+    private fun createOpenSpinnerOnTapListener(spinner: Spinner): View.OnTouchListener {
+        val touchSlop = ViewConfiguration.get(spinner.context).scaledTouchSlop
+        var downRawX = 0f
+        var downRawY = 0f
+        return View.OnTouchListener { _, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    downRawX = event.rawX
+                    downRawY = event.rawY
+                    false
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    val isTap = abs(event.rawX - downRawX) <= touchSlop &&
+                        abs(event.rawY - downRawY) <= touchSlop
+                    if (isTap) {
+                        spinner.performClick()
+                    }
+                    isTap
+                }
+
+                else -> false
+            }
+        }
+    }
+
+    private fun renderMode(position: Int, animate: Boolean = true) {
         val safePosition = if (position in modes.indices) position else 0
         currentModePosition = safePosition
         persistSelectedModePosition(safePosition)
@@ -430,6 +503,70 @@ class EightModesActivity : BaseActivity() {
         val savedShift = modeBaseShiftMoria[safePosition] ?: BASE_SHIFT_DEFAULT_MORIA
         syncBaseShiftControls(savedShift)
         applyBaseShiftToCurrentMode(savedShift, persist = false)
+        if (animate) {
+            animateModeSelection()
+        }
+    }
+
+    private fun runEntranceAnimations() {
+        val entranceViews = listOf(
+            modeSelectorCard,
+            timbreSelectorCard,
+            selectedModeSummaryCard,
+            baseShiftCard,
+            touchHintText,
+            ascendingDiagramView
+        )
+        entranceViews.forEachIndexed { index, view ->
+            view.animate().cancel()
+            view.alpha = 0f
+            view.translationY = ENTRANCE_TRANSLATION_Y
+            view.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(ENTRANCE_ANIMATION_DURATION_MS)
+                .setStartDelay(index.toLong() * ENTRANCE_ANIMATION_STAGGER_MS)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
+    }
+
+    private fun animateModeSelection() {
+        pulseView(modeSelectorCard)
+        animateContentRefresh(selectedModeSummaryCard, delayMs = 0L)
+        animateContentRefresh(baseShiftCard, delayMs = CONTENT_REFRESH_STAGGER_MS)
+        animateContentRefresh(ascendingDiagramView, delayMs = CONTENT_REFRESH_STAGGER_MS * 2)
+    }
+
+    private fun animateTimbreSelection() {
+        pulseView(timbreSelectorCard)
+    }
+
+    private fun animateContentRefresh(view: View, delayMs: Long) {
+        view.animate().cancel()
+        view.alpha = CONTENT_REFRESH_START_ALPHA
+        view.translationY = CONTENT_REFRESH_TRANSLATION_Y
+        view.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(CONTENT_REFRESH_DURATION_MS)
+            .setStartDelay(delayMs)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
+    }
+
+    private fun pulseView(view: View) {
+        view.animate().cancel()
+        view.alpha = 1f
+        view.translationY = 0f
+        view.scaleX = SELECTOR_PULSE_START_SCALE
+        view.scaleY = SELECTOR_PULSE_START_SCALE
+        view.animate()
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(SELECTOR_PULSE_DURATION_MS)
+            .setInterpolator(OvershootInterpolator(SELECTOR_PULSE_TENSION))
+            .start()
     }
 
     private fun setupPhthongTouchPlayback() {
@@ -568,5 +705,15 @@ class EightModesActivity : BaseActivity() {
         const val BASE_SHIFT_PREF_KEY_PREFIX = "mode_base_shift_moria_"
         const val TONE_TIMBRE_PREF_KEY = "selected_tone_timbre"
         const val SELECTED_MODE_KEY_PREF_KEY = "selected_mode_key"
+        const val ENTRANCE_ANIMATION_DURATION_MS = 320L
+        const val ENTRANCE_ANIMATION_STAGGER_MS = 55L
+        const val ENTRANCE_TRANSLATION_Y = 28f
+        const val CONTENT_REFRESH_DURATION_MS = 240L
+        const val CONTENT_REFRESH_STAGGER_MS = 45L
+        const val CONTENT_REFRESH_TRANSLATION_Y = 14f
+        const val CONTENT_REFRESH_START_ALPHA = 0.68f
+        const val SELECTOR_PULSE_DURATION_MS = 220L
+        const val SELECTOR_PULSE_START_SCALE = 0.985f
+        const val SELECTOR_PULSE_TENSION = 1.5f
     }
 }

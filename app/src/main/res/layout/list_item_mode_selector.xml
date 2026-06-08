@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="54dp">
+
+    <HorizontalScrollView
+        android:id="@+id/selector_text_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:focusable="false"
+        android:overScrollMode="ifContentScrolls"
+        android:paddingEnd="42dp"
+        android:scrollbars="horizontal">
+
+        <TextView
+            android:id="@android:id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:ellipsize="none"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="8dp"
+            android:singleLine="true"
+            android:textAlignment="viewStart"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </HorizontalScrollView>
+
+    <ImageView
+        android:id="@+id/selector_dropdown_arrow"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="12dp"
+        android:contentDescription="@string/eight_modes_open_selector"
+        android:src="@drawable/ic_arrow_drop_down_24" />
+</FrameLayout>

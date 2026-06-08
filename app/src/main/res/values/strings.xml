@@ -201,7 +201,10 @@
     <string name="eight_modes_open">8 Ήχοι</string>
     <string name="title_activity_eight_modes">8 Ήχοι</string>
     <string name="eight_modes_page_title">Κλίμακες των 8 Ήχων</string>
+    <string name="eight_modes_page_subtitle">Ήχος, γένος, απήχημα και κλίμακα σε μία σελίδα</string>
     <string name="eight_modes_selector_label">Επιλογή ήχου</string>
+    <string name="eight_modes_mode_selector_hint">Γένος και διαστήματα του επιλεγμένου ήχου</string>
+    <string name="eight_modes_open_selector">Άνοιγμα επιλογής</string>
     <string name="eight_modes_timbre_selector_label">Επιλογή ηχοχρώματος</string>
     <string name="eight_modes_timbre_selector_hint">Διάλεξε τον χαρακτήρα ήχου που θα ακούς όταν πατάς έναν φθόγγο.</string>
     <string name="eight_modes_timbre_clean">Καθαρός</string>
@@ -216,6 +219,7 @@
     <string name="eight_modes_base_shift_reset">Επαναφορά</string>
     <string name="eight_modes_base_shift_lower">Πιο χαμηλή βάση</string>
     <string name="eight_modes_base_shift_higher">Πιο υψηλή βάση</string>
+    <string name="eight_modes_current_mode_title">Στοιχεία επιλεγμένου ήχου</string>
     <string name="mode_ascending_label">Άνοδος</string>
     <string name="mode_scale_notes">Φθόγγοι: %1$s</string>
     <string name="mode_interval_row">%1$s → %2$s : %3$d μόρια</string>
@@ -225,9 +229,11 @@
     <string name="mode_apichima_alternatives_label">Εναλλακτικά απηχήματα: %1$s</string>
     <string name="mode_apichima_alternative_phthongs_label">Φθόγγοι εναλλακτικού: %1$s</string>
     <string name="mode_apichima_alternative_syllables_label">Συλλαβές/φθόγγοι εναλλακτικού: %1$s</string>
-    <string name="mode_genus_diatonic">Διατονικό (12, 10, 8)</string>
+    <string name="mode_genus_diatonic">Διατονικό (10, 8, 12, 12)</string>
     <string name="mode_genus_chromatic">Χρωματικό (+12, -8)</string>
-    <string name="mode_genus_enharmonic">Εναρμόνιο (12, 6)</string>
+    <string name="mode_genus_chromatic_second">Μαλακό χρωματικό (8, 14, 8, 12)</string>
+    <string name="mode_genus_chromatic_plagal_second">Σκληρό χρωματικό (6, 20, 4, 12)</string>
+    <string name="mode_genus_enharmonic">Εναρμόνιο (12, 12, 6)</string>
     <string name="mode_apichima_first">Ανανές</string>
     <string name="mode_apichima_second">Νεχεανές</string>
     <string name="mode_apichima_third">Νάνα</string>

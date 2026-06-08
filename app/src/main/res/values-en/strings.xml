@@ -210,7 +210,10 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="eight_modes_open">8 Modes</string>
     <string name="title_activity_eight_modes">8 Modes</string>
     <string name="eight_modes_page_title">Scales of the 8 Modes</string>
+    <string name="eight_modes_page_subtitle">Mode, genus, apichima, and scale on one page</string>
     <string name="eight_modes_selector_label">Sound selection</string>
+    <string name="eight_modes_mode_selector_hint">Genus and intervals for the selected mode</string>
+    <string name="eight_modes_open_selector">Open selection</string>
     <string name="eight_modes_timbre_selector_label">Timbre selection</string>
     <string name="eight_modes_timbre_selector_hint">Choose the sound character used when you press a note.</string>
     <string name="eight_modes_timbre_clean">Clean</string>
@@ -225,6 +228,7 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="eight_modes_base_shift_reset">Reset</string>
     <string name="eight_modes_base_shift_lower">Lower base</string>
     <string name="eight_modes_base_shift_higher">Higher base</string>
+    <string name="eight_modes_current_mode_title">Selected mode details</string>
     <string name="mode_ascending_label">Ascent</string>
     <string name="mode_scale_notes">Phthongs: %1$s</string>
     <string name="mode_interval_row">%1$s → %2$s : %3$d moria</string>
@@ -234,9 +238,11 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="mode_apichima_alternatives_label">Alternative apichima: %1$s</string>
     <string name="mode_apichima_alternative_phthongs_label">Alternative phthongs: %1$s</string>
     <string name="mode_apichima_alternative_syllables_label">Alternative syllables/phthongs: %1$s</string>
-    <string name="mode_genus_diatonic">Diatonic (12, 10, 8)</string>
+    <string name="mode_genus_diatonic">Diatonic (10, 8, 12, 12)</string>
     <string name="mode_genus_chromatic">Chromatic (+12, -8)</string>
-    <string name="mode_genus_enharmonic">Enharmonic (12, 6)</string>
+    <string name="mode_genus_chromatic_second">Soft chromatic (8, 14, 8, 12)</string>
+    <string name="mode_genus_chromatic_plagal_second">Hard chromatic (6, 20, 4, 12)</string>
+    <string name="mode_genus_enharmonic">Enharmonic (12, 12, 6)</string>
     <string name="mode_apichima_first">Ananes</string>
     <string name="mode_apichima_second">Necheanes</string>
     <string name="mode_apichima_third">Nana</string>
