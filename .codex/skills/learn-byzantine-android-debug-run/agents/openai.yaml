@@ -1,4 +1,0 @@
-interface:
-  display_name: "LearnByzantine Debug Run"
-  short_description: "Install and launch the debug APK on a connected Android device"
-  default_prompt: "Build LearnByzantineMusic debug, install it on my connected Android phone, archive the APK, and launch the app."
