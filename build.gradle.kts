@@ -4,10 +4,10 @@ buildscript {
         // Force patched commons-io due AGP/UTP transitive dependency vulnerability.
         resolutionStrategy.force("commons-io:commons-io:2.22.0")
         // Force patched protobuf runtime modules due AGP/UTP transitive dependency vulnerability.
-        resolutionStrategy.force("com.google.protobuf:protobuf-java:3.25.5")
-        resolutionStrategy.force("com.google.protobuf:protobuf-javalite:3.25.5")
-        resolutionStrategy.force("com.google.protobuf:protobuf-kotlin:3.25.5")
-        resolutionStrategy.force("com.google.protobuf:protobuf-kotlin-lite:3.25.5")
+        resolutionStrategy.force("com.google.protobuf:protobuf-java:4.35.1")
+        resolutionStrategy.force("com.google.protobuf:protobuf-javalite:4.35.1")
+        resolutionStrategy.force("com.google.protobuf:protobuf-kotlin:4.35.1")
+        resolutionStrategy.force("com.google.protobuf:protobuf-kotlin-lite:4.35.1")
         // Force patched jdom2 due AGP transitive dependency vulnerability.
         resolutionStrategy.force("org.jdom:jdom2:2.0.6.1")
         // Force patched netty-codec due AGP/UTP transitive dependency vulnerability.
