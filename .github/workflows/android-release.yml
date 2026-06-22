@@ -83,7 +83,7 @@ jobs:
 
       - name: Check existing custom APK asset
         id: release_guard
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const tag = context.ref.replace("refs/tags/", "");
