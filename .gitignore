@@ -15,9 +15,7 @@
 local.properties
 app/src/main/assets/local_fonts/
 app/src/main/assets/editor_symbols_local_v1.json
-build-artifacts/release
-build-artifacts/apk
-build-artifacts/emulator-logs
+/build-artifacts/
 .env
 .env.*
 *.jks
