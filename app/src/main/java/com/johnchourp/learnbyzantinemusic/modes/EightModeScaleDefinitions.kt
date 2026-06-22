@@ -82,13 +82,13 @@ object EightModeScaleDefinitions {
     val SOFT_CHROMATIC = ModeScaleDefinition(
         genus = ModeScaleGenus.SOFT_CHROMATIC,
         base = ModeScaleBase.PA,
-        intervals = listOf(6, 20, 4, 12, 6, 20, 4)
+        intervals = listOf(8, 14, 8, 12, 8, 14, 8)
     )
 
     val HARD_CHROMATIC = ModeScaleDefinition(
         genus = ModeScaleGenus.HARD_CHROMATIC,
         base = ModeScaleBase.NI,
-        intervals = listOf(8, 14, 8, 12, 8, 14, 8)
+        intervals = listOf(6, 20, 4, 12, 6, 20, 4)
     )
 
     val ENHARMONIC = ModeScaleDefinition(

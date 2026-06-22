@@ -16,7 +16,7 @@ class EightModeScaleDefinitionsTest {
             modeId = "second",
             expectedGenus = ModeScaleGenus.SOFT_CHROMATIC,
             expectedBase = ModeScaleBase.PA,
-            expectedIntervals = listOf(6, 20, 4, 12, 6, 20, 4)
+            expectedIntervals = listOf(8, 14, 8, 12, 8, 14, 8)
         )
         assertScale(
             modeId = "third",
@@ -40,7 +40,7 @@ class EightModeScaleDefinitionsTest {
             modeId = "plagal_second",
             expectedGenus = ModeScaleGenus.HARD_CHROMATIC,
             expectedBase = ModeScaleBase.NI,
-            expectedIntervals = listOf(8, 14, 8, 12, 8, 14, 8)
+            expectedIntervals = listOf(6, 20, 4, 12, 6, 20, 4)
         )
         assertScale(
             modeId = "varys",
@@ -74,7 +74,7 @@ class EightModeScaleDefinitionsTest {
     @Test
     fun `frequency reference remains unmarked ni for each scale`() {
         assertEquals(60, EightModeScaleDefinitions.DIATONIC.referenceMoriaFromBottom("Νη", octaves = 3))
-        assertEquals(68, EightModeScaleDefinitions.SOFT_CHROMATIC.referenceMoriaFromBottom("Νη", octaves = 3))
+        assertEquals(64, EightModeScaleDefinitions.SOFT_CHROMATIC.referenceMoriaFromBottom("Νη", octaves = 3))
         assertEquals(72, EightModeScaleDefinitions.HARD_CHROMATIC.referenceMoriaFromBottom("Νη", octaves = 3))
         assertEquals(72, EightModeScaleDefinitions.ENHARMONIC.referenceMoriaFromBottom("Νη", octaves = 3))
     }
