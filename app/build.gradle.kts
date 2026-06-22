@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.jetbrainsKotlinCompose)
     id("org.jetbrains.kotlin.kapt")
 }
 
@@ -10,7 +11,7 @@ configurations.configureEach {
 
 android {
     namespace = "com.johnchourp.learnbyzantinemusic"
-    compileSdk = 34
+    compileSdk = 36
     val signingStoreFile = System.getenv("ANDROID_SIGNING_STORE_FILE")
     val signingStorePassword = System.getenv("ANDROID_SIGNING_STORE_PASSWORD")
     val signingKeyAlias = System.getenv("ANDROID_SIGNING_KEY_ALIAS")
@@ -66,9 +67,6 @@ android {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -94,7 +92,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.appcompat)
-    implementation("androidx.documentfile:documentfile:1.0.1")
+    implementation("androidx.documentfile:documentfile:1.1.0")
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
