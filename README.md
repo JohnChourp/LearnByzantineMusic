@@ -42,7 +42,7 @@
 Στο Core MVP v2 ο scanner engine χρησιμοποιεί primary OCR templates από core drawables και semantic parser `base+modifier` (π.χ. `πεταστή`, `απόστροφος`, `κλάσμα`, `γοργό`, `αντικένωμα+απλή`).
 Ο επιλεγμένος `Ήχος` επηρεάζει πλέον πραγματικά την καμπύλη πορείας μέσω mode profiles (`byzantine_mode_rules_v1.json`), ενώ η διάρκεια ανά event αποδίδεται με κανόνες χρόνου.
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
-Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.22.0`, Protobuf runtime modules σε `3.25.5`, `jdom2` σε `2.0.6.1`, Netty modules σε `4.2.15.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.28.0`, `commons-lang3` σε `3.20.0`, `bcpkix-jdk18on` σε `1.84`, `bcprov-jdk18on` σε `1.84` και `bcutil-jdk18on` σε `1.84`.
+Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.22.0`, Protobuf runtime modules σε `4.35.1`, `jdom2` σε `2.0.6.1`, Netty modules σε `4.2.15.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.28.0`, `commons-lang3` σε `3.20.0`, `bcpkix-jdk18on` σε `1.84`, `bcprov-jdk18on` σε `1.84` και `bcutil-jdk18on` σε `1.84`.
 Για το app dependency graph υπάρχει πλέον και explicit pin στο `com.google.guava:guava:32.1.3-jre` (catalog + `implementation` + `kapt`) ώστε το security graph να αναγνωρίζει deterministic patched version.
 
 ## Business flow
@@ -331,10 +331,10 @@
 - `AGP = 8.13.2`
 - Buildscript classpath override:
 - `commons-io:commons-io = 2.22.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
-- `com.google.protobuf:protobuf-java = 3.25.5` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
-- `com.google.protobuf:protobuf-javalite = 3.25.5` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
-- `com.google.protobuf:protobuf-kotlin = 3.25.5` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
-- `com.google.protobuf:protobuf-kotlin-lite = 3.25.5` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `com.google.protobuf:protobuf-java = 4.35.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `com.google.protobuf:protobuf-javalite = 4.35.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `com.google.protobuf:protobuf-kotlin = 4.35.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `com.google.protobuf:protobuf-kotlin-lite = 4.35.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
 - `org.jdom:jdom2 = 2.0.6.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `io.netty:netty-codec = 4.2.15.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
 - `io.netty:netty-codec-compression = 4.2.15.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
@@ -508,7 +508,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Γιατί εμφανίστηκε Dependabot alert για `protobuf-java`;
 - Το `protobuf-java` έρχεται transitive από AGP/UTP dependencies και όχι από direct declaration στο app module.
 - Η προηγούμενη resolved έκδοση ήταν `3.22.3` και το advisory ζητά patched έκδοση `>= 3.25.5`.
-- Το project κάνει forced resolve στα Protobuf runtime modules (`protobuf-java`, `protobuf-javalite`, `protobuf-kotlin`, `protobuf-kotlin-lite`) σε `3.25.5` στο build classpath.
+- Το project κάνει forced resolve στα Protobuf runtime modules (`protobuf-java`, `protobuf-javalite`, `protobuf-kotlin`, `protobuf-kotlin-lite`) σε `4.35.1` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `jdom2`;
 - Το `jdom2` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
