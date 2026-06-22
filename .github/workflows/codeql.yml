@@ -12,6 +12,7 @@
 name: "CodeQL Advanced"
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "master" ]
   pull_request:
@@ -44,6 +45,8 @@ jobs:
       matrix:
         include:
         - language: actions
+          build-mode: none
+        - language: python
           build-mode: none
         - language: java-kotlin
           build-mode: manual
