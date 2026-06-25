@@ -1,5 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import kotlin.math.roundToLong
+
 /**
  * Playback tempo expressed in χρόνοι-per-minute (beats per minute). One χρόνος lasts
  * `60000 / bpm` milliseconds, so a higher bpm makes the timer count faster — the speed
@@ -10,7 +12,7 @@ data class MelodyTempo(val beatsPerMinute: Int) {
     val millisPerBeat: Double get() = MILLIS_PER_MINUTE / beatsPerMinute.coerceAtLeast(1)
 
     /** Milliseconds a span of [beats] χρόνοι lasts at this tempo. */
-    fun beatsToMillis(beats: Float): Long = (beats.coerceAtLeast(0f) * millisPerBeat).toLong()
+    fun beatsToMillis(beats: Float): Long = (beats.coerceAtLeast(0f) * millisPerBeat).roundToLong()
 
     companion object {
         const val MIN_BPM = 30

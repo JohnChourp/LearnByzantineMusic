@@ -86,4 +86,21 @@ class RhythmTimingEvaluatorTest {
         assertNull(evaluator.onFrame(200, false))
         assertFalse(evaluator.isComplete)
     }
+
+    @Test
+    fun `a legato run is split at note boundaries and greens every note`() {
+        val evaluator = RhythmTimingEvaluator(twoNotePlan())
+        val verdicts = mutableListOf<RhythmVerdict>()
+        // Continuous voicing from 0 to ~1975 ms with no silence between the two notes.
+        var t = 0L
+        while (t <= 1975) {
+            evaluator.onFrame(t, true)?.let { verdicts.add(it) }
+            t += 50
+        }
+        evaluator.finish(2000)?.let { verdicts.add(it) }
+
+        assertEquals(listOf(0, 1), verdicts.map { it.noteIndex })
+        assertTrue(verdicts.all { it.matched })
+        assertTrue(evaluator.isComplete)
+    }
 }

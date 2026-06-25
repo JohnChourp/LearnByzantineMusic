@@ -22,6 +22,8 @@ import androidx.core.view.children
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.modes.PhthongTonePlayer
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
@@ -179,7 +181,7 @@ class MelodyTrainerActivity : BaseActivity() {
 
     private fun setupTransport() {
         playButton.setOnClickListener { startPlayback() }
-        stopButton.setOnClickListener { player.stop() }
+        stopButton.setOnClickListener { stopPlayback() }
         clearButton.setOnClickListener {
             if (isBusy) return@setOnClickListener
             notes.clear()
@@ -248,6 +250,12 @@ class MelodyTrainerActivity : BaseActivity() {
         isPlaybackActive = true
         renderNotes()
         player.play(plan, playerListener)
+    }
+
+    private fun stopPlayback() {
+        if (!isPlaybackActive) return
+        player.stop()
+        onPlaybackStopped()
     }
 
     private fun onPlaybackStopped() {
@@ -433,8 +441,11 @@ class MelodyTrainerActivity : BaseActivity() {
         rhythmEvaluator = RhythmTimingEvaluator(rhythmPlan)
         rhythmTotalMillis = MelodyPlaybackPlanner.totalDurationMillis(rhythmPlan)
         if (!pitchEngine.start()) {
-            rhythmStatusText.text = getString(R.string.melody_trainer_mic_unavailable)
+            // stopRhythmSession resets the status to the hint, so uncheck + stop first and
+            // set the failure message last, otherwise the user never sees why it failed.
+            setRhythmSwitchChecked(false)
             stopRhythmSession(clearGreens = false)
+            rhythmStatusText.text = getString(R.string.melody_trainer_mic_unavailable)
             return
         }
         rhythmStartMillis = SystemClock.elapsedRealtime()
@@ -464,7 +475,10 @@ class MelodyTrainerActivity : BaseActivity() {
             clearHighlight()
         }
 
-        if (elapsed >= rhythmTotalMillis) {
+        // Only end once the singer has actually gone silent (or the safety grace fires), so a
+        // final note held well past its tolerance is judged on its real release instead of
+        // being closed at the scheduled end and counted correct.
+        if (elapsed >= rhythmTotalMillis && match == null) {
             finishRhythm()
         }
     }
@@ -534,19 +548,20 @@ class MelodyTrainerActivity : BaseActivity() {
         noteRowViews.clear()
         highlightedRow = -1
 
+        val effectiveDurations = MelodySequence(notes.toList()).effectiveDurationsBeats()
         notes.forEachIndexed { index, note ->
-            val row = createNoteRow(index, note)
+            val effectiveBeats = effectiveDurations.getOrElse(index) { note.baseDurationBeats }
+            val row = createNoteRow(index, note, effectiveBeats)
             noteRowViews.add(row)
             noteListContainer.addView(row)
         }
 
         emptyHintText.visibility = if (notes.isEmpty()) View.VISIBLE else View.GONE
-        val total = MelodySequence(notes.toList()).totalBeats()
-        totalBeatsText.text = getString(R.string.melody_trainer_total_beats, formatBeats(total))
+        totalBeatsText.text = getString(R.string.melody_trainer_total_beats, formatBeats(effectiveDurations.sum()))
         applyControlState()
     }
 
-    private fun createNoteRow(index: Int, note: TrainerNote): View {
+    private fun createNoteRow(index: Int, note: TrainerNote, effectiveBeats: Float): View {
         val row = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -578,7 +593,7 @@ class MelodyTrainerActivity : BaseActivity() {
 
         row.addView(
             TextView(this).apply {
-                text = getString(R.string.melody_trainer_note_duration, effectiveDurationLabel(note))
+                text = getString(R.string.melody_trainer_note_duration, formatBeats(effectiveBeats))
                 gravity = Gravity.CENTER
                 minWidth = dp(56)
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
@@ -669,16 +684,17 @@ class MelodyTrainerActivity : BaseActivity() {
         return note.phthong.displayName + suffix
     }
 
-    private fun effectiveDurationLabel(note: TrainerNote): String =
-        if (note.hasGorgo) formatBeats(GORGO_BEATS) else formatBeats(note.baseDurationBeats)
-
     private fun octaveLabel(shift: Int): String = if (shift > 0) "+$shift" else shift.toString()
 
     private fun formatBeats(beats: Float): String {
         val halves = (beats * 2).roundToInt()
         val whole = halves / 2
-        return if (halves % 2 == 0) whole.toString() else "$whole,5"
+        if (halves % 2 == 0) return whole.toString()
+        val separator = DecimalFormatSymbols.getInstance(currentLocale()).decimalSeparator
+        return "$whole${separator}5"
     }
+
+    private fun currentLocale(): Locale = resources.configuration.locales.get(0)
 
     private fun wrapContent(): LinearLayout.LayoutParams =
         LinearLayout.LayoutParams(
@@ -718,7 +734,6 @@ class MelodyTrainerActivity : BaseActivity() {
         const val DURATION_STEP = 0.5f
         const val MIN_DURATION = 0.5f
         const val MAX_DURATION = 4.0f
-        const val GORGO_BEATS = 0.5f
         const val COUNTDOWN_TICK_MILLIS = 1_000L
         const val RHYTHM_END_GRACE_MILLIS = 1_500L
         const val HIGHLIGHT_COLOR = 0x33FFC107 // translucent amber: note currently active

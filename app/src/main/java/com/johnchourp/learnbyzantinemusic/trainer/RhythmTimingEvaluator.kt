@@ -15,12 +15,16 @@ data class RhythmVerdict(
 /**
  * Streaming evaluator for the rhythm-timing ("άσκηση χρόνου") mode. After the countdown,
  * it is fed one frame per analysis window — `(elapsedMillis since the clock started,
- * voiced)` — and detects sung segments from the voiced↔silent transitions. Each completed
- * segment is assigned to the nearest not-yet-judged scheduled note (by onset time) from the
- * [MelodyPlaybackPlanner] schedule, so a skipped note is simply left un-green rather than
- * dragging every later note out of alignment. A note turns green only when the singer
- * started near its scheduled time and held it for roughly its scheduled duration. Pure
- * logic, fully unit-testable.
+ * voiced)` — and detects sung segments from the voiced↔silent transitions.
+ *
+ * Each segment is assigned to a scheduled note from the [MelodyPlaybackPlanner] timeline.
+ * Crucially, while the singer keeps voicing across a scheduled note boundary the current
+ * segment is closed at that boundary and a new one is opened for the next note, so a normal
+ * legato run (no silence between phthongi) still advances and greens note-by-note instead
+ * of collapsing into one long segment. A note turns green only when its onset is within
+ * tolerance of the scheduled start and its held duration is within tolerance of the
+ * scheduled duration. A skipped (never voiced) note is simply left un-green. Pure logic,
+ * fully unit-testable.
  */
 class RhythmTimingEvaluator(
     private val plan: List<PlannedNoteEvent>,
@@ -32,6 +36,7 @@ class RhythmTimingEvaluator(
     private var judgedCount = 0
     private var voiced = false
     private var segmentStart = -1L
+    private var segmentNote = -1
 
     val isComplete: Boolean get() = judgedCount >= plan.size
 
@@ -42,9 +47,18 @@ class RhythmTimingEvaluator(
     fun onFrame(elapsedMillis: Long, voicedNow: Boolean): RhythmVerdict? {
         var verdict: RhythmVerdict? = null
         if (voicedNow && !voiced) {
-            segmentStart = elapsedMillis
+            startSegment(elapsedMillis)
         } else if (!voicedNow && voiced) {
-            verdict = closeSegment(elapsedMillis)
+            verdict = finalizeSegment(segmentStart, elapsedMillis, segmentNote)
+            clearSegment()
+        } else if (voicedNow && voiced && segmentNote >= 0) {
+            // Still singing: if we have crossed past the current note's scheduled window,
+            // close it at the boundary and continue the legato line into the next note.
+            val note = plan[segmentNote]
+            if (elapsedMillis >= note.endMillis) {
+                verdict = finalizeSegment(segmentStart, note.endMillis, segmentNote)
+                startSegment(note.endMillis)
+            }
         }
         voiced = voicedNow
         return verdict
@@ -52,32 +66,46 @@ class RhythmTimingEvaluator(
 
     /** Closes a still-open sung segment when the exercise ends while voiced. */
     fun finish(elapsedMillis: Long): RhythmVerdict? {
-        val verdict = if (voiced) closeSegment(elapsedMillis) else null
+        val verdict = if (voiced) finalizeSegment(segmentStart, elapsedMillis, segmentNote) else null
+        clearSegment()
         voiced = false
         return verdict
     }
 
-    private fun closeSegment(offsetMillis: Long): RhythmVerdict? {
-        val onset = segmentStart
-        segmentStart = -1L
-        if (onset < 0L) return null
+    private fun startSegment(onsetMillis: Long) {
+        segmentStart = onsetMillis
+        segmentNote = chooseNote(onsetMillis)
+    }
 
-        val target = nearestUnjudged(onset) ?: return null
-        judged[target] = true
+    private fun clearSegment() {
+        segmentStart = -1L
+        segmentNote = -1
+    }
+
+    /** The note this onset belongs to: the one whose window contains it, else nearest. */
+    private fun chooseNote(onsetMillis: Long): Int {
+        val active = activeNoteIndex(onsetMillis)
+        if (active >= 0 && !judged[active]) return active
+        return nearestUnjudged(onsetMillis)
+    }
+
+    private fun finalizeSegment(onsetMillis: Long, offsetMillis: Long, noteIndex: Int): RhythmVerdict? {
+        if (noteIndex < 0 || onsetMillis < 0L || judged[noteIndex]) return null
+        judged[noteIndex] = true
         judgedCount++
 
-        val note = plan[target]
-        val onsetError = onset - note.startMillis
-        val durationError = (offsetMillis - onset) - note.durationMillis
+        val note = plan[noteIndex]
+        val onsetError = onsetMillis - note.startMillis
+        val durationError = (offsetMillis - onsetMillis) - note.durationMillis
         val durationAllowance = maxOf(
             minDurationToleranceMillis,
             (note.durationMillis * durationToleranceRatio).toLong()
         )
         val matched = abs(onsetError) <= onsetToleranceMillis && abs(durationError) <= durationAllowance
-        return RhythmVerdict(target, matched, onsetError, durationError)
+        return RhythmVerdict(noteIndex, matched, onsetError, durationError)
     }
 
-    private fun nearestUnjudged(onsetMillis: Long): Int? {
+    private fun nearestUnjudged(onsetMillis: Long): Int {
         var best = -1
         var bestDistance = Long.MAX_VALUE
         for (index in plan.indices) {
@@ -88,14 +116,14 @@ class RhythmTimingEvaluator(
                 best = index
             }
         }
-        return if (best >= 0) best else null
+        return best
     }
 
     fun reset() {
         judged.fill(false)
         judgedCount = 0
         voiced = false
-        segmentStart = -1L
+        clearSegment()
     }
 
     companion object {

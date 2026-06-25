@@ -84,4 +84,20 @@ class PitchGreeningEvaluatorTest {
         assertFalse(evaluator.isComplete)
         assertEquals(TrainerPhthong.NI, evaluator.currentTarget())
     }
+
+    @Test
+    fun `a held note advances through repeated identical targets`() {
+        val evaluator = PitchGreeningEvaluator(
+            listOf(TrainerPhthong.NI, TrainerPhthong.NI),
+            minStableFrames = stableFrames
+        )
+        val results = mutableListOf<GreeningResult>()
+        // Sing one continuous Νη with no silence in between.
+        repeat(2 * stableFrames) {
+            evaluator.onFrame(match(TrainerPhthong.NI))?.let { results.add(it) }
+        }
+        assertEquals(listOf(0, 1), results.map { it.targetIndex })
+        assertTrue(results.all { it.matched })
+        assertTrue(evaluator.isComplete)
+    }
 }
