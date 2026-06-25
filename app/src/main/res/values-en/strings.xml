@@ -36,16 +36,22 @@
     <string name="lesson_8">Lesson 8</string>
     <string name="title_activity_phthongs_names">Phthongs Names</string>
     <string name="phthongs_names">Names of Phthongs</string>
-    <string name="phthongs">... Ni 	 Pa 	 Vou 	 Ga 	 Di 	 Ke 	 Zo 	 Ni ...</string>
-    <string name="phthongs_definition">The Phthongs come from the first 7 letters of the Greek alphabet:
-A, B, G, D, E, Z, H
-PA \t BOU \t GA \t DI \t KE \t ZO \t NI
-
-Phthongs do not stop on the right or the left side. If we continue this octave to the right, it becomes:
-
-Ni Pa Vou Ga Di Ke Zo ... Ni Pa Vou Ga Di Ke Zo Ni
-
-Imagine the phthongs placed on a ladder as shown below:</string>
+    <string name="phthongs_names_subtitle">The note names &amp; their staircase</string>
+    <string name="phthongs_origin_title">Where the names come from</string>
+    <string name="phthongs_origin_intro">The phthongs come from the first 7 letters of the Greek alphabet. Each letter gives the name of one phthong:</string>
+    <string name="phthongs_octave_title">The octave of phthongs</string>
+    <string name="phthongs_octave_explainer">The phthongs never stop to the right or to the left: after Zo comes Ni again and the sequence repeats over endless octaves. Tap a phthong to see it.</string>
+    <string name="phthongs_staircase_title">The staircase of phthongs</string>
+    <string name="phthongs_staircase_hint">Tap ▶ to watch the voice climb up and down the staircase, or tap a step.</string>
+    <string name="phthongs_staircase_play">Play</string>
+    <string name="phthongs_staircase_pause">Pause</string>
+    <string name="phthongs_ascending">Ascending</string>
+    <string name="phthongs_descending">Descending</string>
+    <string name="phthongs_staircase_image_caption">Going up to the top, coming down to the bottom — then over again.</string>
+    <string name="cd_phthongs_staircase">Staircase diagram with the phthongs Ni, Pa, Vou, Ga, Di, Ke, Zo and Ni again, ascending and descending.</string>
+    <string name="phthongs_exercise_hint">Say each phthong aloud in order, first ascending and then descending.</string>
+    <string name="cd_exercise_1">Score of Exercise 1 showing the order of the phthongs.</string>
+    <string name="action_back">Back</string>
     <string name="todo">TODO</string>
     <string name="testimonials">Testimonies</string>
     <string name="testimonials_definition">The Testimonies tell us what sound and sound we are in. Testimonies are also not sung.</string>
