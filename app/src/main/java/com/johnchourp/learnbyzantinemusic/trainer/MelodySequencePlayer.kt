@@ -86,14 +86,18 @@ class MelodySequencePlayer(
         }
 
         val totalMillis = MelodyPlaybackPlanner.totalDurationMillis(plan)
-        workerHandlerLocal.postDelayed({
-            if (playing && token == sessionToken) finish(listener)
-        }, totalMillis)
+        workerHandlerLocal.postDelayed({ finish(listener, token) }, totalMillis)
     }
 
-    private fun finish(listener: Listener?) {
+    private fun finish(listener: Listener?, token: Long) {
+        // Bail if a newer session (a fresh play()/stop()) has superseded this one — otherwise
+        // an old finish could tear down the new session's worker/fade threads.
+        if (token != sessionToken) return
         playing = false
         voices.forEach { it.stop() }
+        // A stop()+play() can slip in during the blocking voices.stop() above; re-check before
+        // touching the shared thread fields so we never quit the new session's handlers.
+        if (token != sessionToken) return
         teardownThreads()
         mainHandler.post { listener?.onFinished(true) }
     }
