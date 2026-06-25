@@ -1,32 +1,31 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class ComboPitchGateTest {
 
     @Test
-    fun `correct phthong in tune passes`() {
+    fun `in-tune pitch returns its phthong`() {
         val match = PitchMatch(TrainerPhthong.DI, deviationMoria = 1.5)
-        assertTrue(ComboPitchGate.isCorrectPhthong(match, TrainerPhthong.DI, toleranceMoria = 4.0))
+        assertEquals(TrainerPhthong.DI, ComboPitchGate.inTunePhthong(match, toleranceMoria = 4.0))
     }
 
     @Test
-    fun `wrong phthong fails even if perfectly in tune`() {
-        val match = PitchMatch(TrainerPhthong.PA, deviationMoria = 0.0)
-        assertFalse(ComboPitchGate.isCorrectPhthong(match, TrainerPhthong.DI, toleranceMoria = 4.0))
-    }
-
-    @Test
-    fun `right phthong but out of tune fails`() {
+    fun `out-of-tune pitch returns null`() {
         val match = PitchMatch(TrainerPhthong.DI, deviationMoria = 6.0)
-        assertFalse(ComboPitchGate.isCorrectPhthong(match, TrainerPhthong.DI, toleranceMoria = 4.0))
+        assertNull(ComboPitchGate.inTunePhthong(match, toleranceMoria = 4.0))
     }
 
     @Test
-    fun `silence or missing target fails`() {
-        assertFalse(ComboPitchGate.isCorrectPhthong(null, TrainerPhthong.DI))
-        assertFalse(ComboPitchGate.isCorrectPhthong(PitchMatch(TrainerPhthong.DI, 0.0), null))
+    fun `flat pitch just inside tolerance still returns its phthong`() {
+        val match = PitchMatch(TrainerPhthong.KE, deviationMoria = -4.0)
+        assertEquals(TrainerPhthong.KE, ComboPitchGate.inTunePhthong(match, toleranceMoria = 4.0))
+    }
+
+    @Test
+    fun `silence returns null`() {
+        assertNull(ComboPitchGate.inTunePhthong(null))
     }
 }

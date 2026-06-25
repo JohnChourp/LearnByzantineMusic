@@ -3,22 +3,19 @@ package com.johnchourp.learnbyzantinemusic.trainer
 import kotlin.math.abs
 
 /**
- * Pitch gate for the combined "phthong + time" exercise (Mode 3). It decides whether a
- * detected pitch counts as singing the *expected* phthong: the nearest phthong must equal
- * the expected one (octave-independent) and be within [toleranceMoria] of it. The timing
- * engine then only "hears" voicing while the right phthong is being sung, so a note greens
- * only when the singer hits the correct phthong at the correct time.
+ * Intonation gate for the combined "phthong + time" exercise (Mode 3). It turns a raw
+ * detected pitch into the phthong the singer is actually holding *in tune*: the nearest
+ * phthong is returned only when the pitch is within [toleranceMoria] of it, otherwise null
+ * (read as silence by the timing engine). The engine then matches that phthong against the
+ * scheduled note, so a note greens only when the right phthong is sung in tune at the right
+ * time.
  */
 object ComboPitchGate {
     /** Reuses the voice-check intonation window so the two pitch modes agree. */
     const val DEFAULT_TOLERANCE_MORIA = PitchGreeningEvaluator.DEFAULT_TOLERANCE_MORIA
 
-    fun isCorrectPhthong(
-        match: PitchMatch?,
-        expected: TrainerPhthong?,
-        toleranceMoria: Double = DEFAULT_TOLERANCE_MORIA
-    ): Boolean {
-        if (match == null || expected == null) return false
-        return match.phthong == expected && abs(match.deviationMoria) <= toleranceMoria
+    fun inTunePhthong(match: PitchMatch?, toleranceMoria: Double = DEFAULT_TOLERANCE_MORIA): TrainerPhthong? {
+        if (match == null) return null
+        return if (abs(match.deviationMoria) <= toleranceMoria) match.phthong else null
     }
 }

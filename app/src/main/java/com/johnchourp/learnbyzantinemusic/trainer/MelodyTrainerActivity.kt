@@ -474,7 +474,7 @@ class MelodyTrainerActivity : BaseActivity() {
             stopRhythmSession(clearGreens = true)
             return
         }
-        rhythmEvaluator = RhythmTimingEvaluator(rhythmPlan)
+        rhythmEvaluator = RhythmTimingEvaluator(rhythmPlan, requirePitch = rhythmRequirePitch)
         rhythmTotalMillis = MelodyPlaybackPlanner.totalDurationMillis(rhythmPlan)
         if (!pitchEngine.start()) {
             // stopRhythmSession resets the status to the hint, so uncheck + stop first and
@@ -495,17 +495,12 @@ class MelodyTrainerActivity : BaseActivity() {
         // main-thread queueing/GC delay cannot shift an on-time onset past tolerance.
         val elapsed = capturedAtMillis - rhythmStartMillis
 
-        // Time-only (Mode 2) scores voicing in the right window regardless of pitch. The
-        // combined Mode 3 additionally gates voicing on singing the *expected* phthong, so a
-        // note greens only when sung at the right pitch AND time.
-        val voicedNow = if (!rhythmRequirePitch) {
-            match != null
-        } else {
-            val expected = notes.getOrNull(evaluator.activeNoteIndex(elapsed))?.phthong
-            ComboPitchGate.isCorrectPhthong(match, expected)
-        }
-
-        val verdict = evaluator.onFrame(elapsed, voicedNow)
+        // The evaluator scores time-only vs phthong+time itself (per requirePitch). We always
+        // hand it the in-tune phthong; in time-only mode it is ignored, in combined mode the
+        // engine segments by phthong and matches it against the assigned note — so an early
+        // pitch change and a still-held final note are handled by the timing engine itself.
+        val inTunePhthong = ComboPitchGate.inTunePhthong(match)
+        val verdict = evaluator.onFrame(elapsed, voicedNow = match != null, phthong = inTunePhthong)
         if (verdict != null && verdict.matched) {
             matchedIndices.add(verdict.noteIndex)
             rhythmCorrectCount++
