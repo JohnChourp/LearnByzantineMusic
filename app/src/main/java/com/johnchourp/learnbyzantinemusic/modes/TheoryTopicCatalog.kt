@@ -17,6 +17,8 @@ object TheoryTopicCatalog {
     const val SCALE = "scale"
     const val TESTIMONIES = "testimonies"
     const val PENTACHORD_TROCHOS = "pentachord_trochos"
+    const val TROCHOS = "trochos"
+    const val FIGURE_XVI = "figure_xvi"
 
     val topics: List<TheoryTopic> = listOf(
         TheoryTopic(
@@ -38,7 +40,17 @@ object TheoryTopicCatalog {
         ),
         TheoryTopic(
             key = PENTACHORD_TROCHOS,
-            titleRes = R.string.theory_topic_pentachord_trochos_title
+            titleRes = R.string.theory_topic_pentachord_trochos_title,
+            bodyRes = R.string.theory_topic_pentachord_trochos_body
+        ),
+        TheoryTopic(
+            key = TROCHOS,
+            titleRes = R.string.theory_topic_trochos_title,
+            bodyRes = R.string.theory_topic_trochos_body
+        ),
+        TheoryTopic(
+            key = FIGURE_XVI,
+            titleRes = R.string.theory_topic_figure_xvi_title
         )
     )
 

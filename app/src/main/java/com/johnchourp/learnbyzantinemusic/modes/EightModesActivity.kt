@@ -23,6 +23,8 @@ import kotlin.math.abs
 import kotlin.math.pow
 
 class EightModesActivity : BaseActivity() {
+    private lateinit var navigationMenuButton: Button
+    private lateinit var breadcrumbText: TextView
     private lateinit var modeSelector: Spinner
     private lateinit var timbreSelector: Spinner
     private lateinit var selectedModeTheorySectionsContainer: LinearLayout
@@ -155,6 +157,8 @@ class EightModesActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_eight_modes)
 
+        navigationMenuButton = findViewById(R.id.eight_modes_navigation_menu_button)
+        breadcrumbText = findViewById(R.id.eight_modes_breadcrumb)
         modeSelector = findViewById(R.id.mode_selector)
         timbreSelector = findViewById(R.id.timbre_selector)
         modeSelectorCard = findViewById(R.id.mode_selector_card)
@@ -171,6 +175,7 @@ class EightModesActivity : BaseActivity() {
         baseShiftResetButton = findViewById(R.id.base_shift_reset_button)
         baseShiftPrefs = getSharedPreferences(BASE_SHIFT_PREFS_NAME, MODE_PRIVATE)
 
+        setupNavigationHeader()
         loadSavedModeBaseShifts()
         loadSavedToneTimbre()
         setupBaseShiftControls()
@@ -179,6 +184,13 @@ class EightModesActivity : BaseActivity() {
         setupPhthongTouchPlayback()
         touchHintText.text = getString(R.string.eight_modes_touch_hint)
         runEntranceAnimations()
+    }
+
+    private fun setupNavigationHeader() {
+        breadcrumbText.text = EightModesNavigation.breadcrumbText(this, emptyList())
+        navigationMenuButton.setOnClickListener {
+            EightModesNavigation.showMenu(this, selectedTopicKey = null)
+        }
     }
 
     private fun loadSavedModeBaseShifts() {

@@ -11,16 +11,39 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <Button
-            android:id="@+id/theory_topic_back_button"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/first_mode_theory_callout_bg"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
-            android:text="@string/theory_topic_back_button"
-            android:textAllCaps="false"
-            android:textColor="@color/first_mode_theory_accent" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/theory_topic_navigation_menu_button"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/first_mode_theory_callout_bg"
+                android:contentDescription="@string/eight_modes_navigation_menu_content_description"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:text="@string/eight_modes_navigation_menu_button"
+                android:textAllCaps="false"
+                android:textColor="@color/first_mode_theory_accent"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/theory_topic_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/first_mode_theory_callout_bg"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:text="@string/theory_topic_back_button"
+                android:textAllCaps="false"
+                android:textColor="@color/first_mode_theory_accent" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,9 +54,18 @@
             android:padding="20dp">
 
             <TextView
+                android:id="@+id/theory_topic_breadcrumb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/first_mode_theory_text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/theory_topic_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:textColor="@color/first_mode_theory_text_primary"
                 android:textSize="28sp"
                 android:textStyle="bold" />
