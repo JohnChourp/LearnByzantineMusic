@@ -715,4 +715,10 @@
     <string name="melody_trainer_voice_need_notes">Πρόσθεσε πρώτα φθόγγους για να χρησιμοποιήσεις τον φωνητικό έλεγχο.</string>
     <string name="melody_trainer_mic_permission_required">Χρειάζεται άδεια μικροφώνου για τον φωνητικό έλεγχο.</string>
     <string name="melody_trainer_mic_unavailable">Το μικρόφωνο δεν είναι διαθέσιμο αυτή τη στιγμή.</string>
+    <string name="melody_trainer_rhythm_check">Άσκηση χρόνου</string>
+    <string name="melody_trainer_rhythm_hint">Άναψε την άσκηση χρόνου: μετά από αντίστροφη μέτρηση 5 δευτ. πες κάθε φθόγγο στον σωστό χρόνο για να πρασινίσει.</string>
+    <string name="melody_trainer_rhythm_countdown">Ετοιμάσου… %1$d</string>
+    <string name="melody_trainer_rhythm_go">Ξεκίνα!</string>
+    <string name="melody_trainer_rhythm_running">Πες: %1$s</string>
+    <string name="melody_trainer_rhythm_done">Ολοκληρώθηκε! Σωστός χρόνος: %1$d/%2$d</string>
 </resources>
