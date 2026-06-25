@@ -13,7 +13,6 @@ import android.widget.TextView
 import androidx.core.view.children
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
-import com.johnchourp.learnbyzantinemusic.modes.PhthongTonePlayer
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -31,8 +30,7 @@ class MelodyTrainerActivity : BaseActivity() {
     private var bpm = MelodyTempo.DEFAULT_BPM
     private var isPlaybackActive = false
 
-    private val tonePlayer = PhthongTonePlayer()
-    private val player by lazy { MelodySequencePlayer(tonePlayer) }
+    private val player = MelodySequencePlayer()
 
     private lateinit var noteListContainer: LinearLayout
     private lateinit var emptyHintText: TextView
@@ -246,12 +244,14 @@ class MelodyTrainerActivity : BaseActivity() {
 
         row.addView(
             Button(this).apply {
+                // γοργόν shortens the *previous* note, so it is invalid on the first row.
+                val gorgoAllowed = index > 0
                 text = getString(R.string.melody_trainer_gorgo)
                 isAllCaps = false
                 minWidth = dp(64)
                 minimumWidth = dp(64)
                 alpha = if (note.hasGorgo) 1f else 0.45f
-                isEnabled = !isPlaybackActive
+                isEnabled = !isPlaybackActive && gorgoAllowed
                 setOnClickListener { toggleGorgo(index) }
             },
             wrapContent()
@@ -285,6 +285,7 @@ class MelodyTrainerActivity : BaseActivity() {
 
     private fun toggleGorgo(index: Int) {
         if (isPlaybackActive) return
+        if (index == 0) return // γοργόν needs a previous note to shorten
         val note = notes.getOrNull(index) ?: return
         notes[index] = note.withGorgo(!note.hasGorgo)
         renderNotes()
@@ -359,8 +360,7 @@ class MelodyTrainerActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        player.stop()
-        tonePlayer.release()
+        player.release()
     }
 
     private companion object {
