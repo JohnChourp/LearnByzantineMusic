@@ -41,7 +41,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,30 +86,6 @@ private fun accentColors(accent: TileAccent): Pair<Color, Color> = when (accent)
     TileAccent.Orange -> AccentOrangeContainer to AccentOrangeContent
     TileAccent.Green -> AccentGreenContainer to AccentGreenContent
     TileAccent.Brown -> AccentBrownContainer to AccentBrownContent
-}
-
-/** Fades + slides its content up on first composition, staggered by [delayMillis]. */
-@Composable
-fun StaggeredAppear(
-    delayMillis: Int,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { visible = true }
-    val progress by animateFloatAsState(
-        targetValue = if (visible) 1f else 0f,
-        animationSpec = tween(durationMillis = 420, delayMillis = delayMillis, easing = FastOutSlowInEasing),
-        label = "appear",
-    )
-    Box(
-        modifier = modifier.graphicsLayer {
-            alpha = progress
-            translationY = (1f - progress) * 28.dp.toPx()
-        },
-    ) {
-        content()
-    }
 }
 
 /** Gradient hero header with an animated music-note badge, app title and subtitle. */

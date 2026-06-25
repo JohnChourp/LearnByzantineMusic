@@ -1,12 +1,18 @@
 package com.johnchourp.learnbyzantinemusic.lessons
 
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import com.johnchourp.learnbyzantinemusic.BaseActivity
-import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.lessons.ui.PhthongsNamesScreen
+import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 
 class PhthongsNames : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.phthong_names) // Set the layout resource ID
+        setContent {
+            LbmTheme {
+                PhthongsNamesScreen(onBack = ::finish)
+            }
+        }
     }
 }
