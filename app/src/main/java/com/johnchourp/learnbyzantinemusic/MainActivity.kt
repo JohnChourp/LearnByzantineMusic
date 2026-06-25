@@ -26,6 +26,7 @@ class MainActivity : BaseActivity() {
 
         val testimoniesBtn = findViewById<Button>(R.id.testimonies_btn)
         val eightModesBtn = findViewById<Button>(R.id.eight_modes_btn)
+        val melodyTrainerBtn = findViewById<Button>(R.id.melody_trainer_btn)
         val calendarBtn = findViewById<Button>(R.id.calendar_btn)
         val recordingsBtn = findViewById<Button>(R.id.recordings_btn)
         val notesBtn = findViewById<Button>(R.id.notes_btn)
@@ -47,6 +48,7 @@ class MainActivity : BaseActivity() {
 
         testimoniesBtn.setOnClickListener { openTestimonies() }
         eightModesBtn.setOnClickListener { openEightModes() }
+        melodyTrainerBtn.setOnClickListener { openMelodyTrainer() }
         calendarBtn.setOnClickListener { openWeeklyModeCalendar() }
         recordingsBtn.setOnClickListener { openRecordings() }
         notesBtn.setOnClickListener { openNotes() }
@@ -171,6 +173,11 @@ class MainActivity : BaseActivity() {
 
     private fun openEightModes() {
         val intent = Intent(this, EightModesActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openMelodyTrainer() {
+        val intent = Intent(this, com.johnchourp.learnbyzantinemusic.trainer.MelodyTrainerActivity::class.java)
         startActivity(intent)
     }
 
