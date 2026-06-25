@@ -4,6 +4,29 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="lesson_1">Lesson 1</string>
     <string name="learn_byzantine_music">LEARN BYZANTINE MUSIC</string>
+
+    <!-- Home screen (redesigned Compose) -->
+    <string name="home_subtitle">Learn Byzantine music step by step</string>
+    <string name="home_section_phthongs">Notes &amp; Names</string>
+    <string name="home_section_phthongs_sub">Start with the basics</string>
+    <string name="home_tile_phthongs_names_sub">The names of the notes</string>
+    <string name="home_tile_duotrioquatro_sub">Two-, three-, four-beat</string>
+    <string name="home_tile_ascents_sub">Ascending characters</string>
+    <string name="home_tile_descents_sub">Descending characters</string>
+    <string name="home_tile_climbing_sub">Ascending compositions</string>
+    <string name="home_section_characters_sub">Quality &amp; time</string>
+    <string name="home_tile_quality_sub">Quality characters</string>
+    <string name="home_tile_time_sub">Time characters</string>
+    <string name="home_section_testimonies_modes">Testimonies &amp; Modes</string>
+    <string name="home_tile_testimonies_sub">Testimonies of the notes</string>
+    <string name="home_tile_eight_modes_sub">The 8 modes of Byzantine music</string>
+    <string name="home_section_practice">Practice &amp; Tools</string>
+    <string name="home_section_practice_sub">Practice and take notes</string>
+    <string name="home_tile_melody_trainer_sub">Melody trainer</string>
+    <string name="home_tile_calendar_sub">Weekly mode calendar</string>
+    <string name="home_tile_recordings_sub">Record and listen</string>
+    <string name="home_tile_notes_sub">Your notes</string>
+    <string name="home_tile_settings_sub">Language &amp; preferences</string>
     <string name="lesson_2">Lesson 2</string>
     <string name="lesson_3">Lesson 3</string>
     <string name="lesson_4">Lesson 4</string>

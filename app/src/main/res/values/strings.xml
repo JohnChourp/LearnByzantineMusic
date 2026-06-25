@@ -3,6 +3,29 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="lesson_1">Μάθημα 1</string>
     <string name="learn_byzantine_music">ΜΑΘΕΤΕ ΒΥΖΑΝΤΙΝΗ ΜΟΥΣΙΚΗ</string>
+
+    <!-- Home screen (redesigned Compose) -->
+    <string name="home_subtitle">Μάθε βυζαντινή μουσική βήμα-βήμα</string>
+    <string name="home_section_phthongs">Φθόγγοι &amp; Ονόματα</string>
+    <string name="home_section_phthongs_sub">Ξεκίνα από τα βασικά</string>
+    <string name="home_tile_phthongs_names_sub">Τα ονόματα των φθόγγων</string>
+    <string name="home_tile_duotrioquatro_sub">Δίσημος, τρίσημος, τετράσημος</string>
+    <string name="home_tile_ascents_sub">Ανιόντες χαρακτήρες</string>
+    <string name="home_tile_descents_sub">Κατιόντες χαρακτήρες</string>
+    <string name="home_tile_climbing_sub">Συνθέσεις ανάβασης</string>
+    <string name="home_section_characters_sub">Ποιότητος &amp; χρόνου</string>
+    <string name="home_tile_quality_sub">Χαρακτήρες ποιότητος</string>
+    <string name="home_tile_time_sub">Χαρακτήρες χρόνου</string>
+    <string name="home_section_testimonies_modes">Μαρτυρίες &amp; Ήχοι</string>
+    <string name="home_tile_testimonies_sub">Μαρτυρίες των φθόγγων</string>
+    <string name="home_tile_eight_modes_sub">Οι 8 ήχοι της βυζαντινής μουσικής</string>
+    <string name="home_section_practice">Εξάσκηση &amp; Εργαλεία</string>
+    <string name="home_section_practice_sub">Εξασκήσου και κράτα σημειώσεις</string>
+    <string name="home_tile_melody_trainer_sub">Γυμναστής μελωδίας</string>
+    <string name="home_tile_calendar_sub">Εβδομαδιαίο ημερολόγιο ήχων</string>
+    <string name="home_tile_recordings_sub">Ηχογράφησε και άκουσε</string>
+    <string name="home_tile_notes_sub">Οι σημειώσεις σου</string>
+    <string name="home_tile_settings_sub">Γλώσσα &amp; προτιμήσεις</string>
     <string name="lesson_2">Μάθημα 2</string>
     <string name="lesson_3">Μάθημα 3</string>
     <string name="lesson_4">Μάθημα 4</string>
