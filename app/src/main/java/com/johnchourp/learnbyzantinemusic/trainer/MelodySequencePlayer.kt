@@ -7,11 +7,12 @@ import com.johnchourp.learnbyzantinemusic.modes.PhthongTonePlayer
 import com.johnchourp.learnbyzantinemusic.modes.ToneTimbre
 
 /**
- * Plays a [MelodyPlaybackPlanner] schedule by driving the shared [PhthongTonePlayer] from
- * note to note. Scheduling runs on a dedicated background thread so the tone player's
- * fade-out/join never blocks the UI; note-start and completion callbacks are delivered on
- * the main thread for safe view updates. A short gap between notes keeps repeated phthongi
- * audibly distinct.
+ * Plays a [MelodyPlaybackPlanner] schedule by driving the shared [PhthongTonePlayer].
+ * Each note start is scheduled at its **absolute** planned time (and the final stop at the
+ * planned total), so the tone player's fade/start latency does not accumulate into tempo
+ * drift across the melody. Scheduling runs on a dedicated background thread so that
+ * latency never blocks the UI; note-start and completion callbacks are delivered on the
+ * main thread for safe view updates.
  */
 class MelodySequencePlayer(
     private val tonePlayer: PhthongTonePlayer,
@@ -23,12 +24,12 @@ class MelodySequencePlayer(
     }
 
     private val mainHandler = Handler(Looper.getMainLooper())
-    private var workerThread: HandlerThread? = null
-    private var workerHandler: Handler? = null
 
-    private var plan: List<PlannedNoteEvent> = emptyList()
-    private var listener: Listener? = null
-    private var cursor = 0
+    @Volatile
+    private var workerThread: HandlerThread? = null
+
+    @Volatile
+    private var workerHandler: Handler? = null
 
     @Volatile
     private var playing = false
@@ -41,45 +42,31 @@ class MelodySequencePlayer(
             listener?.onFinished(true)
             return
         }
-        this.plan = plan
-        this.listener = listener
-        cursor = 0
         playing = true
 
         val thread = HandlerThread("MelodyTrainerPlayback").apply { start() }
+        val handler = Handler(thread.looper)
         workerThread = thread
-        workerHandler = Handler(thread.looper).also { it.post { step() } }
-    }
+        workerHandler = handler
 
-    private fun step() {
-        if (!playing) return
-        if (cursor >= plan.size) {
-            finish(completed = true)
-            return
-        }
-        val event = plan[cursor]
-        tonePlayer.start(event.frequencyHz, timbre)
-        mainHandler.post { if (playing) listener?.onNoteStarted(event) }
-
-        val gap = NOTE_GAP_MILLIS.coerceAtMost(event.durationMillis / 4)
-        val audibleMillis = (event.durationMillis - gap).coerceAtLeast(MIN_AUDIBLE_MILLIS)
-        val handler = workerHandler ?: return
-        handler.postDelayed({
-            if (!playing) return@postDelayed
-            tonePlayer.stop()
+        for (event in plan) {
             handler.postDelayed({
                 if (!playing) return@postDelayed
-                cursor++
-                step()
-            }, gap)
-        }, audibleMillis)
+                tonePlayer.start(event.frequencyHz, timbre)
+                mainHandler.post { if (playing) listener?.onNoteStarted(event) }
+            }, event.startMillis)
+        }
+
+        val totalMillis = MelodyPlaybackPlanner.totalDurationMillis(plan)
+        handler.postDelayed({ finish(listener) }, totalMillis)
     }
 
-    private fun finish(completed: Boolean) {
+    private fun finish(listener: Listener?) {
+        if (!playing) return
         playing = false
         tonePlayer.stop()
         teardownWorker()
-        mainHandler.post { listener?.onFinished(completed) }
+        mainHandler.post { listener?.onFinished(true) }
     }
 
     /** Stops playback immediately. Safe to call from the main thread and idempotent. */
@@ -97,10 +84,5 @@ class MelodySequencePlayer(
         workerThread?.quit()
         workerThread = null
         workerHandler = null
-    }
-
-    companion object {
-        const val NOTE_GAP_MILLIS = 45L
-        const val MIN_AUDIBLE_MILLIS = 90L
     }
 }
