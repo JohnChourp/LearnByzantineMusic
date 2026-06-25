@@ -1,5 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
@@ -7,9 +9,13 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
@@ -19,18 +25,31 @@ import kotlin.math.roundToInt
 
 /**
  * Practice page where the user writes a sequence of phthongi (Νη … Ζω), sets how long
- * each one lasts in χρόνοι, picks a tempo, and plays the melody back (Mode 1). The timing
- * rules (γοργόν, κλάσμα) are documented at the top and applied through [MelodySequence] /
- * the shared ByzantineRhythmMapper.
+ * each one lasts in χρόνοι, picks a tempo, and either:
+ *  - Mode 1: plays the melody back at that tempo, or
+ *  - Mode 2 (voice check): sings the melody while the microphone greens each phthong said
+ *    correctly and advances through the sequence.
+ * The timing rules (γοργόν, κλάσμα) are documented at the top and applied through
+ * [MelodySequence] / the shared ByzantineRhythmMapper.
  */
 class MelodyTrainerActivity : BaseActivity() {
 
     private val notes = mutableListOf<TrainerNote>()
     private var currentOctaveShift = 0
     private var bpm = MelodyTempo.DEFAULT_BPM
+
     private var isPlaybackActive = false
+    private var isVoiceActive = false
+    private var suppressVoiceSwitchCallback = false
 
     private val player = MelodySequencePlayer()
+    private val pitchEngine by lazy {
+        // Voice check does not use the capture timestamp; the rhythm mode does.
+        TrainerPitchEngine(onPitch = { match, _ -> onPitchDetected(match) }, onCaptureError = ::onCaptureError)
+    }
+    private var evaluator: PitchGreeningEvaluator? = null
+    private val matchedIndices = mutableSetOf<Int>()
+    private var correctCount = 0
 
     private lateinit var noteListContainer: LinearLayout
     private lateinit var emptyHintText: TextView
@@ -44,9 +63,22 @@ class MelodyTrainerActivity : BaseActivity() {
     private lateinit var octaveUpButton: Button
     private lateinit var tempoSeek: SeekBar
     private lateinit var addNoteButtonsRow: LinearLayout
+    private lateinit var voiceCheckSwitch: CheckBox
+    private lateinit var voiceStatusText: TextView
 
     private val noteRowViews = mutableListOf<View>()
     private var highlightedRow = -1
+
+    private val micPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            startVoiceSession()
+        } else {
+            setVoiceSwitchChecked(false)
+            voiceStatusText.text = getString(R.string.melody_trainer_mic_permission_required)
+        }
+    }
 
     private val playerListener = object : MelodySequencePlayer.Listener {
         override fun onNoteStarted(event: PlannedNoteEvent) = highlightRow(event.index)
@@ -69,16 +101,18 @@ class MelodyTrainerActivity : BaseActivity() {
         octaveUpButton = findViewById(R.id.octave_up_btn)
         tempoSeek = findViewById(R.id.tempo_seek)
         addNoteButtonsRow = findViewById(R.id.add_note_buttons_row)
+        voiceCheckSwitch = findViewById(R.id.voice_check_switch)
+        voiceStatusText = findViewById(R.id.voice_status_text)
 
         buildAddNoteButtons()
         setupOctaveControls()
         setupTempoControl()
         setupTransport()
+        setupVoiceCheck()
 
         renderOctave()
         renderTempo()
         renderNotes()
-        setGlobalControlsForPlayback(false)
     }
 
     private fun buildAddNoteButtons() {
@@ -126,25 +160,72 @@ class MelodyTrainerActivity : BaseActivity() {
         playButton.setOnClickListener { startPlayback() }
         stopButton.setOnClickListener { stopPlayback() }
         clearButton.setOnClickListener {
-            if (isPlaybackActive) return@setOnClickListener
+            if (isBusy) return@setOnClickListener
             notes.clear()
+            matchedIndices.clear()
             renderNotes()
         }
     }
 
+    private fun setupVoiceCheck() {
+        voiceCheckSwitch.setOnCheckedChangeListener { _, checked ->
+            if (suppressVoiceSwitchCallback) return@setOnCheckedChangeListener
+            if (checked) requestVoiceSession() else stopVoiceSession(clearGreens = true)
+        }
+    }
+
+    // region editing
+
+    private val isBusy: Boolean get() = isPlaybackActive || isVoiceActive
+
     private fun addNote(phthong: TrainerPhthong) {
-        if (isPlaybackActive) return
+        if (isBusy) return
         notes.add(TrainerNote(phthong = phthong, octaveShift = currentOctaveShift))
         renderNotes()
     }
 
+    private fun changeDuration(index: Int, delta: Float) {
+        if (isBusy) return
+        val note = notes.getOrNull(index) ?: return
+        if (note.hasGorgo) return
+        val updated = (note.baseDurationBeats + delta).coerceIn(MIN_DURATION, MAX_DURATION)
+        notes[index] = note.copy(baseDurationBeats = updated)
+        renderNotes()
+    }
+
+    private fun toggleGorgo(index: Int) {
+        if (isBusy) return
+        if (index == 0) return // γοργόν needs a previous note to shorten
+        val note = notes.getOrNull(index) ?: return
+        notes[index] = note.withGorgo(!note.hasGorgo)
+        renderNotes()
+    }
+
+    private fun removeNote(index: Int) {
+        if (isBusy) return
+        if (index !in notes.indices) return
+        notes.removeAt(index)
+        normalizeLeadingGorgo()
+        matchedIndices.clear()
+        renderNotes()
+    }
+
+    /** γοργόν is invalid on the first note, so strip it if a deletion shifted one to index 0. */
+    private fun normalizeLeadingGorgo() {
+        val first = notes.firstOrNull() ?: return
+        if (first.hasGorgo) notes[0] = first.withGorgo(false)
+    }
+
+    // endregion
+
+    // region Mode 1: playback
+
     private fun startPlayback() {
-        if (isPlaybackActive || notes.isEmpty()) return
+        if (isBusy || notes.isEmpty()) return
         val sequence = MelodySequence(notes.toList())
         val plan = MelodyPlaybackPlanner.plan(sequence, MelodyTempo.of(bpm))
         if (plan.isEmpty()) return
         isPlaybackActive = true
-        setGlobalControlsForPlayback(true)
         renderNotes()
         player.play(plan, playerListener)
     }
@@ -158,16 +239,125 @@ class MelodyTrainerActivity : BaseActivity() {
     private fun onPlaybackStopped() {
         isPlaybackActive = false
         clearHighlight()
-        setGlobalControlsForPlayback(false)
         renderNotes()
     }
+
+    // endregion
+
+    // region Mode 2: voice check
+
+    private fun requestVoiceSession() {
+        if (isPlaybackActive) {
+            setVoiceSwitchChecked(false)
+            return
+        }
+        if (notes.isEmpty()) {
+            setVoiceSwitchChecked(false)
+            voiceStatusText.text = getString(R.string.melody_trainer_voice_need_notes)
+            return
+        }
+        val granted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.RECORD_AUDIO
+        ) == PackageManager.PERMISSION_GRANTED
+        if (granted) {
+            startVoiceSession()
+        } else {
+            micPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+    private fun startVoiceSession() {
+        if (notes.isEmpty()) {
+            setVoiceSwitchChecked(false)
+            return
+        }
+        matchedIndices.clear()
+        correctCount = 0
+        evaluator = PitchGreeningEvaluator(notes.map { it.phthong })
+        isVoiceActive = true
+        renderNotes()
+        if (!pitchEngine.start()) {
+            isVoiceActive = false
+            evaluator = null
+            setVoiceSwitchChecked(false)
+            voiceStatusText.text = getString(R.string.melody_trainer_mic_unavailable)
+            renderNotes()
+            return
+        }
+        updateVoiceStatus()
+    }
+
+    private fun onPitchDetected(match: PitchMatch?) {
+        val activeEvaluator = evaluator ?: return
+        if (!isVoiceActive) return
+        val result = activeEvaluator.onFrame(match)
+        if (result != null && result.matched) {
+            matchedIndices.add(result.targetIndex)
+            correctCount++
+            colorRow(result.targetIndex, MATCHED_COLOR)
+        }
+        if (activeEvaluator.isComplete) {
+            finishVoiceSession()
+        } else {
+            updateVoiceStatus()
+        }
+    }
+
+    private fun onCaptureError() {
+        if (!isVoiceActive) return
+        setVoiceSwitchChecked(false)
+        stopVoiceSession(clearGreens = false)
+        voiceStatusText.text = getString(R.string.melody_trainer_mic_unavailable)
+    }
+
+    private fun finishVoiceSession() {
+        pitchEngine.stop()
+        isVoiceActive = false
+        setVoiceSwitchChecked(false)
+        voiceStatusText.text = getString(
+            R.string.melody_trainer_voice_done,
+            correctCount,
+            notes.size
+        )
+        // Re-render so the note rows (which were rendered while voice check was active)
+        // get their edit/remove controls back, not just the global controls.
+        renderNotes()
+    }
+
+    private fun stopVoiceSession(clearGreens: Boolean) {
+        val wasActive = isVoiceActive
+        pitchEngine.stop()
+        isVoiceActive = false
+        evaluator = null
+        if (clearGreens) {
+            matchedIndices.clear()
+        }
+        if (wasActive) {
+            voiceStatusText.text = getString(R.string.melody_trainer_voice_hint)
+        }
+        renderNotes()
+    }
+
+    private fun updateVoiceStatus() {
+        val target = evaluator?.currentTarget() ?: return
+        voiceStatusText.text = getString(R.string.melody_trainer_voice_listening, target.displayName)
+    }
+
+    private fun setVoiceSwitchChecked(checked: Boolean) {
+        suppressVoiceSwitchCallback = true
+        voiceCheckSwitch.isChecked = checked
+        suppressVoiceSwitchCallback = false
+    }
+
+    // endregion
 
     // region rendering
 
     private fun renderOctave() {
         octaveValueText.text = getString(R.string.melody_trainer_octave_label, octaveLabel(currentOctaveShift))
-        octaveDownButton.isEnabled = !isPlaybackActive && currentOctaveShift > MIN_OCTAVE_SHIFT
-        octaveUpButton.isEnabled = !isPlaybackActive && currentOctaveShift < MAX_OCTAVE_SHIFT
+        octaveDownButton.isEnabled = !isBusy && currentOctaveShift > MIN_OCTAVE_SHIFT
+        octaveUpButton.isEnabled = !isBusy && currentOctaveShift < MAX_OCTAVE_SHIFT
     }
 
     private fun renderTempo() {
@@ -189,8 +379,7 @@ class MelodyTrainerActivity : BaseActivity() {
 
         emptyHintText.visibility = if (notes.isEmpty()) View.VISIBLE else View.GONE
         totalBeatsText.text = getString(R.string.melody_trainer_total_beats, formatBeats(effectiveDurations.sum()))
-        playButton.isEnabled = notes.isNotEmpty() && !isPlaybackActive
-        clearButton.isEnabled = notes.isNotEmpty() && !isPlaybackActive
+        applyControlState()
     }
 
     private fun createNoteRow(index: Int, note: TrainerNote, effectiveBeats: Float): View {
@@ -198,6 +387,9 @@ class MelodyTrainerActivity : BaseActivity() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
             setPadding(dp(4), dp(6), dp(4), dp(6))
+            if (matchedIndices.contains(index)) {
+                setBackgroundColor(MATCHED_COLOR)
+            }
         }
 
         val label = TextView(this).apply {
@@ -206,7 +398,7 @@ class MelodyTrainerActivity : BaseActivity() {
         }
         row.addView(label, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
 
-        val durationEditable = !note.hasGorgo && !isPlaybackActive
+        val durationEditable = !note.hasGorgo && !isBusy
 
         row.addView(
             Button(this).apply {
@@ -251,7 +443,7 @@ class MelodyTrainerActivity : BaseActivity() {
                 minWidth = dp(64)
                 minimumWidth = dp(64)
                 alpha = if (note.hasGorgo) 1f else 0.45f
-                isEnabled = !isPlaybackActive && gorgoAllowed
+                isEnabled = !isBusy && gorgoAllowed
                 setOnClickListener { toggleGorgo(index) }
             },
             wrapContent()
@@ -263,46 +455,13 @@ class MelodyTrainerActivity : BaseActivity() {
                 minWidth = dp(44)
                 minimumWidth = dp(44)
                 contentDescription = getString(R.string.melody_trainer_note_remove)
-                isEnabled = !isPlaybackActive
+                isEnabled = !isBusy
                 setOnClickListener { removeNote(index) }
             },
             wrapContent()
         )
 
         return row
-    }
-
-    // endregion
-
-    private fun changeDuration(index: Int, delta: Float) {
-        if (isPlaybackActive) return
-        val note = notes.getOrNull(index) ?: return
-        if (note.hasGorgo) return
-        val updated = (note.baseDurationBeats + delta).coerceIn(MIN_DURATION, MAX_DURATION)
-        notes[index] = note.copy(baseDurationBeats = updated)
-        renderNotes()
-    }
-
-    private fun toggleGorgo(index: Int) {
-        if (isPlaybackActive) return
-        if (index == 0) return // γοργόν needs a previous note to shorten
-        val note = notes.getOrNull(index) ?: return
-        notes[index] = note.withGorgo(!note.hasGorgo)
-        renderNotes()
-    }
-
-    private fun removeNote(index: Int) {
-        if (isPlaybackActive) return
-        if (index !in notes.indices) return
-        notes.removeAt(index)
-        normalizeLeadingGorgo()
-        renderNotes()
-    }
-
-    /** γοργόν is invalid on the first note, so strip it if a deletion shifted one to index 0. */
-    private fun normalizeLeadingGorgo() {
-        val first = notes.firstOrNull() ?: return
-        if (first.hasGorgo) notes[0] = first.withGorgo(false)
     }
 
     private fun highlightRow(index: Int) {
@@ -312,21 +471,29 @@ class MelodyTrainerActivity : BaseActivity() {
     }
 
     private fun clearHighlight() {
-        noteRowViews.getOrNull(highlightedRow)?.setBackgroundColor(Color.TRANSPARENT)
+        val restore = if (matchedIndices.contains(highlightedRow)) MATCHED_COLOR else Color.TRANSPARENT
+        noteRowViews.getOrNull(highlightedRow)?.setBackgroundColor(restore)
         highlightedRow = -1
     }
 
-    private fun setGlobalControlsForPlayback(playing: Boolean) {
-        stopButton.isEnabled = playing
-        playButton.isEnabled = !playing && notes.isNotEmpty()
-        clearButton.isEnabled = !playing && notes.isNotEmpty()
-        tempoSeek.isEnabled = !playing
-        for (button in addNoteButtonsRow.children) {
-            button.isEnabled = !playing
-        }
-        octaveDownButton.isEnabled = !playing && currentOctaveShift > MIN_OCTAVE_SHIFT
-        octaveUpButton.isEnabled = !playing && currentOctaveShift < MAX_OCTAVE_SHIFT
+    private fun colorRow(index: Int, color: Int) {
+        noteRowViews.getOrNull(index)?.setBackgroundColor(color)
     }
+
+    private fun applyControlState() {
+        stopButton.isEnabled = isPlaybackActive
+        playButton.isEnabled = !isBusy && notes.isNotEmpty()
+        clearButton.isEnabled = !isBusy && notes.isNotEmpty()
+        tempoSeek.isEnabled = !isBusy
+        voiceCheckSwitch.isEnabled = !isPlaybackActive
+        for (button in addNoteButtonsRow.children) {
+            button.isEnabled = !isBusy
+        }
+        octaveDownButton.isEnabled = !isBusy && currentOctaveShift > MIN_OCTAVE_SHIFT
+        octaveUpButton.isEnabled = !isBusy && currentOctaveShift < MAX_OCTAVE_SHIFT
+    }
+
+    // endregion
 
     private fun phthongDisplay(note: TrainerNote): String {
         val suffix = when {
@@ -363,11 +530,16 @@ class MelodyTrainerActivity : BaseActivity() {
             player.stop()
             onPlaybackStopped()
         }
+        if (isVoiceActive) {
+            setVoiceSwitchChecked(false)
+            stopVoiceSession(clearGreens = false)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         player.release()
+        pitchEngine.stop()
     }
 
     private companion object {
@@ -376,6 +548,7 @@ class MelodyTrainerActivity : BaseActivity() {
         const val DURATION_STEP = 0.5f
         const val MIN_DURATION = 0.5f
         const val MAX_DURATION = 4.0f
-        const val HIGHLIGHT_COLOR = 0x3300C853 // translucent green
+        const val HIGHLIGHT_COLOR = 0x33FFC107 // translucent amber: note currently playing
+        const val MATCHED_COLOR = 0x6600C853 // green: phthong sung correctly
     }
 }
