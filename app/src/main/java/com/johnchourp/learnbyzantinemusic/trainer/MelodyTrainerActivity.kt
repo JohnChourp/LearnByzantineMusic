@@ -295,7 +295,14 @@ class MelodyTrainerActivity : BaseActivity() {
         if (isPlaybackActive) return
         if (index !in notes.indices) return
         notes.removeAt(index)
+        normalizeLeadingGorgo()
         renderNotes()
+    }
+
+    /** γοργόν is invalid on the first note, so strip it if a deletion shifted one to index 0. */
+    private fun normalizeLeadingGorgo() {
+        val first = notes.firstOrNull() ?: return
+        if (first.hasGorgo) notes[0] = first.withGorgo(false)
     }
 
     private fun highlightRow(index: Int) {
