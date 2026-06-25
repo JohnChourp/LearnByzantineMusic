@@ -4,6 +4,9 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -13,7 +16,6 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
@@ -24,10 +26,11 @@ import kotlin.math.roundToInt
 
 /**
  * Practice page where the user writes a sequence of phthongi (Νη … Ζω), sets how long
- * each one lasts in χρόνοι, picks a tempo, and either:
- *  - Mode 1: plays the melody back at that tempo, or
- *  - Mode 2 (voice check): sings the melody while the microphone greens each phthong said
- *    correctly and advances through the sequence.
+ * each one lasts in χρόνοι, picks a tempo, and then either:
+ *  - Mode 1: plays the melody back at that tempo,
+ *  - Mode 2 (voice check): sings while the mic greens each phthong said correctly, or
+ *  - Mode 3 (timing exercise): after a 5-second countdown, sings each phthong on time and
+ *    the notes said in the right χρόνο turn green.
  * The timing rules (γοργόν, κλάσμα) are documented at the top and applied through
  * [MelodySequence] / the shared ByzantineRhythmMapper.
  */
@@ -39,14 +42,29 @@ class MelodyTrainerActivity : BaseActivity() {
 
     private var isPlaybackActive = false
     private var isVoiceActive = false
+    private var isRhythmActive = false
     private var suppressVoiceSwitchCallback = false
+    private var suppressRhythmSwitchCallback = false
 
     private val tonePlayer = PhthongTonePlayer()
     private val player by lazy { MelodySequencePlayer(tonePlayer) }
     private val pitchEngine by lazy { TrainerPitchEngine(onPitch = ::onPitchDetected) }
-    private var evaluator: PitchGreeningEvaluator? = null
+    private val uiHandler = Handler(Looper.getMainLooper())
+
+    private var voiceEvaluator: PitchGreeningEvaluator? = null
+    private var voiceCorrectCount = 0
+
+    private var rhythmEvaluator: RhythmTimingEvaluator? = null
+    private var rhythmPlan: List<PlannedNoteEvent> = emptyList()
+    private var rhythmStartMillis = -1L
+    private var rhythmTotalMillis = 0L
+    private var rhythmCorrectCount = 0
+    private var countdownRemaining = 0
+
     private val matchedIndices = mutableSetOf<Int>()
-    private var correctCount = 0
+
+    private var pendingMicGrant: (() -> Unit)? = null
+    private var pendingMicDeny: (() -> Unit)? = null
 
     private lateinit var noteListContainer: LinearLayout
     private lateinit var emptyHintText: TextView
@@ -62,19 +80,22 @@ class MelodyTrainerActivity : BaseActivity() {
     private lateinit var addNoteButtonsRow: LinearLayout
     private lateinit var voiceCheckSwitch: CheckBox
     private lateinit var voiceStatusText: TextView
+    private lateinit var rhythmCheckSwitch: CheckBox
+    private lateinit var rhythmStatusText: TextView
 
     private val noteRowViews = mutableListOf<View>()
     private var highlightedRow = -1
 
+    private val rhythmEndRunnable = Runnable { finishRhythm() }
+
     private val micPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) {
-            startVoiceSession()
-        } else {
-            setVoiceSwitchChecked(false)
-            voiceStatusText.text = getString(R.string.melody_trainer_mic_permission_required)
-        }
+        val grant = pendingMicGrant
+        val deny = pendingMicDeny
+        pendingMicGrant = null
+        pendingMicDeny = null
+        if (granted) grant?.invoke() else deny?.invoke()
     }
 
     private val playerListener = object : MelodySequencePlayer.Listener {
@@ -100,12 +121,15 @@ class MelodyTrainerActivity : BaseActivity() {
         addNoteButtonsRow = findViewById(R.id.add_note_buttons_row)
         voiceCheckSwitch = findViewById(R.id.voice_check_switch)
         voiceStatusText = findViewById(R.id.voice_status_text)
+        rhythmCheckSwitch = findViewById(R.id.rhythm_check_switch)
+        rhythmStatusText = findViewById(R.id.rhythm_status_text)
 
         buildAddNoteButtons()
         setupOctaveControls()
         setupTempoControl()
         setupTransport()
         setupVoiceCheck()
+        setupRhythmCheck()
 
         renderOctave()
         renderTempo()
@@ -171,9 +195,16 @@ class MelodyTrainerActivity : BaseActivity() {
         }
     }
 
+    private fun setupRhythmCheck() {
+        rhythmCheckSwitch.setOnCheckedChangeListener { _, checked ->
+            if (suppressRhythmSwitchCallback) return@setOnCheckedChangeListener
+            if (checked) requestRhythmSession() else stopRhythmSession(clearGreens = true)
+        }
+    }
+
     // region editing
 
-    private val isBusy: Boolean get() = isPlaybackActive || isVoiceActive
+    private val isBusy: Boolean get() = isPlaybackActive || isVoiceActive || isRhythmActive
 
     private fun addNote(phthong: TrainerPhthong) {
         if (isBusy) return
@@ -227,10 +258,35 @@ class MelodyTrainerActivity : BaseActivity() {
 
     // endregion
 
+    // region microphone permission
+
+    private fun ensureMicThen(onGranted: () -> Unit, onDenied: () -> Unit) {
+        val granted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.RECORD_AUDIO
+        ) == PackageManager.PERMISSION_GRANTED
+        if (granted) {
+            onGranted()
+        } else {
+            pendingMicGrant = onGranted
+            pendingMicDeny = onDenied
+            micPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+    private fun onPitchDetected(match: PitchMatch?) {
+        when {
+            isVoiceActive -> handleVoiceFrame(match)
+            isRhythmActive -> handleRhythmFrame(match)
+        }
+    }
+
+    // endregion
+
     // region Mode 2: voice check
 
     private fun requestVoiceSession() {
-        if (isPlaybackActive) {
+        if (isPlaybackActive || isRhythmActive) {
             setVoiceSwitchChecked(false)
             return
         }
@@ -239,15 +295,12 @@ class MelodyTrainerActivity : BaseActivity() {
             voiceStatusText.text = getString(R.string.melody_trainer_voice_need_notes)
             return
         }
-        val granted = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.RECORD_AUDIO
-        ) == PackageManager.PERMISSION_GRANTED
-        if (granted) {
-            startVoiceSession()
-        } else {
-            micPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-        }
+        ensureMicThen(onGranted = ::startVoiceSession, onDenied = ::onVoiceMicDenied)
+    }
+
+    private fun onVoiceMicDenied() {
+        setVoiceSwitchChecked(false)
+        voiceStatusText.text = getString(R.string.melody_trainer_mic_permission_required)
     }
 
     private fun startVoiceSession() {
@@ -256,13 +309,13 @@ class MelodyTrainerActivity : BaseActivity() {
             return
         }
         matchedIndices.clear()
-        correctCount = 0
-        evaluator = PitchGreeningEvaluator(notes.map { it.phthong })
+        voiceCorrectCount = 0
+        voiceEvaluator = PitchGreeningEvaluator(notes.map { it.phthong })
         isVoiceActive = true
         renderNotes()
         if (!pitchEngine.start()) {
             isVoiceActive = false
-            evaluator = null
+            voiceEvaluator = null
             setVoiceSwitchChecked(false)
             voiceStatusText.text = getString(R.string.melody_trainer_mic_unavailable)
             renderNotes()
@@ -271,16 +324,15 @@ class MelodyTrainerActivity : BaseActivity() {
         updateVoiceStatus()
     }
 
-    private fun onPitchDetected(match: PitchMatch?) {
-        val activeEvaluator = evaluator ?: return
-        if (!isVoiceActive) return
-        val result = activeEvaluator.onFrame(match)
+    private fun handleVoiceFrame(match: PitchMatch?) {
+        val evaluator = voiceEvaluator ?: return
+        val result = evaluator.onFrame(match)
         if (result != null && result.matched) {
             matchedIndices.add(result.targetIndex)
-            correctCount++
+            voiceCorrectCount++
             colorRow(result.targetIndex, MATCHED_COLOR)
         }
-        if (activeEvaluator.isComplete) {
+        if (evaluator.isComplete) {
             finishVoiceSession()
         } else {
             updateVoiceStatus()
@@ -293,17 +345,17 @@ class MelodyTrainerActivity : BaseActivity() {
         setVoiceSwitchChecked(false)
         voiceStatusText.text = getString(
             R.string.melody_trainer_voice_done,
-            correctCount,
+            voiceCorrectCount,
             notes.size
         )
-        applyControlState()
+        renderNotes()
     }
 
     private fun stopVoiceSession(clearGreens: Boolean) {
         val wasActive = isVoiceActive
         pitchEngine.stop()
         isVoiceActive = false
-        evaluator = null
+        voiceEvaluator = null
         if (clearGreens) {
             matchedIndices.clear()
         }
@@ -314,7 +366,7 @@ class MelodyTrainerActivity : BaseActivity() {
     }
 
     private fun updateVoiceStatus() {
-        val target = evaluator?.currentTarget() ?: return
+        val target = voiceEvaluator?.currentTarget() ?: return
         voiceStatusText.text = getString(R.string.melody_trainer_voice_listening, target.displayName)
     }
 
@@ -322,6 +374,145 @@ class MelodyTrainerActivity : BaseActivity() {
         suppressVoiceSwitchCallback = true
         voiceCheckSwitch.isChecked = checked
         suppressVoiceSwitchCallback = false
+    }
+
+    // endregion
+
+    // region Mode 3: rhythm timing
+
+    private fun requestRhythmSession() {
+        if (isPlaybackActive || isVoiceActive) {
+            setRhythmSwitchChecked(false)
+            return
+        }
+        if (notes.isEmpty()) {
+            setRhythmSwitchChecked(false)
+            rhythmStatusText.text = getString(R.string.melody_trainer_voice_need_notes)
+            return
+        }
+        ensureMicThen(onGranted = ::startRhythmCountdown, onDenied = ::onRhythmMicDenied)
+    }
+
+    private fun onRhythmMicDenied() {
+        setRhythmSwitchChecked(false)
+        rhythmStatusText.text = getString(R.string.melody_trainer_mic_permission_required)
+    }
+
+    private fun startRhythmCountdown() {
+        if (notes.isEmpty()) {
+            setRhythmSwitchChecked(false)
+            return
+        }
+        matchedIndices.clear()
+        rhythmCorrectCount = 0
+        rhythmStartMillis = -1L
+        isRhythmActive = true
+        renderNotes()
+        countdownRemaining = RhythmTimingEvaluator.COUNTDOWN_SECONDS
+        runCountdownTick()
+    }
+
+    private fun runCountdownTick() {
+        if (!isRhythmActive) return
+        if (countdownRemaining > 0) {
+            rhythmStatusText.text = getString(R.string.melody_trainer_rhythm_countdown, countdownRemaining)
+            countdownRemaining--
+            uiHandler.postDelayed({ runCountdownTick() }, COUNTDOWN_TICK_MILLIS)
+        } else {
+            rhythmStatusText.text = getString(R.string.melody_trainer_rhythm_go)
+            startRhythmClock()
+        }
+    }
+
+    private fun startRhythmClock() {
+        rhythmPlan = MelodyPlaybackPlanner.plan(MelodySequence(notes.toList()), MelodyTempo.of(bpm))
+        if (rhythmPlan.isEmpty()) {
+            stopRhythmSession(clearGreens = true)
+            return
+        }
+        rhythmEvaluator = RhythmTimingEvaluator(rhythmPlan)
+        rhythmTotalMillis = MelodyPlaybackPlanner.totalDurationMillis(rhythmPlan)
+        if (!pitchEngine.start()) {
+            rhythmStatusText.text = getString(R.string.melody_trainer_mic_unavailable)
+            stopRhythmSession(clearGreens = false)
+            return
+        }
+        rhythmStartMillis = SystemClock.elapsedRealtime()
+        uiHandler.postDelayed(rhythmEndRunnable, rhythmTotalMillis + RHYTHM_END_GRACE_MILLIS)
+    }
+
+    private fun handleRhythmFrame(match: PitchMatch?) {
+        val evaluator = rhythmEvaluator ?: return
+        if (rhythmStartMillis < 0L) return
+        val elapsed = SystemClock.elapsedRealtime() - rhythmStartMillis
+
+        val verdict = evaluator.onFrame(elapsed, voicedNow = match != null)
+        if (verdict != null && verdict.matched) {
+            matchedIndices.add(verdict.noteIndex)
+            rhythmCorrectCount++
+            colorRow(verdict.noteIndex, MATCHED_COLOR)
+        }
+
+        val active = evaluator.activeNoteIndex(elapsed)
+        if (active in notes.indices && !matchedIndices.contains(active)) {
+            highlightRow(active)
+            rhythmStatusText.text = getString(
+                R.string.melody_trainer_rhythm_running,
+                phthongDisplay(notes[active])
+            )
+        } else {
+            clearHighlight()
+        }
+
+        if (elapsed >= rhythmTotalMillis) {
+            finishRhythm()
+        }
+    }
+
+    private fun finishRhythm() {
+        if (!isRhythmActive) return
+        uiHandler.removeCallbacks(rhythmEndRunnable)
+        val elapsed = if (rhythmStartMillis >= 0L) SystemClock.elapsedRealtime() - rhythmStartMillis else 0L
+        val verdict = rhythmEvaluator?.finish(elapsed)
+        if (verdict != null && verdict.matched) {
+            matchedIndices.add(verdict.noteIndex)
+            rhythmCorrectCount++
+        }
+        pitchEngine.stop()
+        isRhythmActive = false
+        rhythmStartMillis = -1L
+        rhythmEvaluator = null
+        clearHighlight()
+        setRhythmSwitchChecked(false)
+        rhythmStatusText.text = getString(
+            R.string.melody_trainer_rhythm_done,
+            rhythmCorrectCount,
+            notes.size
+        )
+        renderNotes()
+    }
+
+    private fun stopRhythmSession(clearGreens: Boolean) {
+        val wasActive = isRhythmActive
+        uiHandler.removeCallbacksAndMessages(null)
+        pitchEngine.stop()
+        isRhythmActive = false
+        rhythmStartMillis = -1L
+        rhythmEvaluator = null
+        if (clearGreens) {
+            matchedIndices.clear()
+        }
+        clearHighlight()
+        if (wasActive) {
+            rhythmStatusText.text = getString(R.string.melody_trainer_rhythm_hint)
+        }
+        renderNotes()
+    }
+
+    private fun setRhythmSwitchChecked(checked: Boolean) {
+        suppressRhythmSwitchCallback = true
+        rhythmCheckSwitch.isChecked = checked
+        suppressRhythmSwitchCallback = false
     }
 
     // endregion
@@ -436,12 +627,14 @@ class MelodyTrainerActivity : BaseActivity() {
     }
 
     private fun highlightRow(index: Int) {
+        if (index == highlightedRow) return
         clearHighlight()
         noteRowViews.getOrNull(index)?.setBackgroundColor(HIGHLIGHT_COLOR)
         highlightedRow = index
     }
 
     private fun clearHighlight() {
+        if (highlightedRow < 0) return
         val restore = if (matchedIndices.contains(highlightedRow)) MATCHED_COLOR else Color.TRANSPARENT
         noteRowViews.getOrNull(highlightedRow)?.setBackgroundColor(restore)
         highlightedRow = -1
@@ -456,7 +649,8 @@ class MelodyTrainerActivity : BaseActivity() {
         playButton.isEnabled = !isBusy && notes.isNotEmpty()
         clearButton.isEnabled = !isBusy && notes.isNotEmpty()
         tempoSeek.isEnabled = !isBusy
-        voiceCheckSwitch.isEnabled = !isPlaybackActive
+        voiceCheckSwitch.isEnabled = !isPlaybackActive && !isRhythmActive
+        rhythmCheckSwitch.isEnabled = !isPlaybackActive && !isVoiceActive
         for (button in addNoteButtonsRow.children) {
             button.isEnabled = !isBusy
         }
@@ -504,10 +698,15 @@ class MelodyTrainerActivity : BaseActivity() {
             setVoiceSwitchChecked(false)
             stopVoiceSession(clearGreens = false)
         }
+        if (isRhythmActive) {
+            setRhythmSwitchChecked(false)
+            stopRhythmSession(clearGreens = false)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        uiHandler.removeCallbacksAndMessages(null)
         player.stop()
         tonePlayer.release()
         pitchEngine.stop()
@@ -520,7 +719,9 @@ class MelodyTrainerActivity : BaseActivity() {
         const val MIN_DURATION = 0.5f
         const val MAX_DURATION = 4.0f
         const val GORGO_BEATS = 0.5f
-        const val HIGHLIGHT_COLOR = 0x33FFC107 // translucent amber: note currently playing
-        const val MATCHED_COLOR = 0x6600C853 // green: phthong sung correctly
+        const val COUNTDOWN_TICK_MILLIS = 1_000L
+        const val RHYTHM_END_GRACE_MILLIS = 1_500L
+        const val HIGHLIGHT_COLOR = 0x33FFC107 // translucent amber: note currently active
+        const val MATCHED_COLOR = 0x6600C853 // green: phthong sung / timed correctly
     }
 }

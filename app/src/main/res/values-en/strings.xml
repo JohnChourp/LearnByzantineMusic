@@ -724,4 +724,10 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="melody_trainer_voice_need_notes">Add some phthongi first to use voice check.</string>
     <string name="melody_trainer_mic_permission_required">Microphone permission is required for voice check.</string>
     <string name="melody_trainer_mic_unavailable">The microphone is not available right now.</string>
+    <string name="melody_trainer_rhythm_check">Timing exercise</string>
+    <string name="melody_trainer_rhythm_hint">Turn on the timing exercise: after a 5-second countdown, say each phthong on time for it to turn green.</string>
+    <string name="melody_trainer_rhythm_countdown">Get ready… %1$d</string>
+    <string name="melody_trainer_rhythm_go">Go!</string>
+    <string name="melody_trainer_rhythm_running">Say: %1$s</string>
+    <string name="melody_trainer_rhythm_done">Done! Correct timing: %1$d/%2$d</string>
 </resources>
