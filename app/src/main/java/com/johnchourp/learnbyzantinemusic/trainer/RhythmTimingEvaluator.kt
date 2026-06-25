@@ -52,10 +52,13 @@ class RhythmTimingEvaluator(
             verdict = finalizeSegment(segmentStart, elapsedMillis, segmentNote)
             clearSegment()
         } else if (voicedNow && voiced && segmentNote >= 0) {
-            // Still singing: if we have crossed past the current note's scheduled window,
-            // close it at the boundary and continue the legato line into the next note.
+            // Still singing and crossed past the current note's scheduled window: close it at
+            // the boundary and continue the legato line into the next note — but only when
+            // there IS a next note. The final note is left open until the real release (or the
+            // safety cutoff) so an over-held last note is judged on its true offset, not closed
+            // as correct at its scheduled end.
             val note = plan[segmentNote]
-            if (elapsedMillis >= note.endMillis) {
+            if (elapsedMillis >= note.endMillis && segmentNote < plan.lastIndex) {
                 verdict = finalizeSegment(segmentStart, note.endMillis, segmentNote)
                 startSegment(note.endMillis)
             }
@@ -101,14 +104,24 @@ class RhythmTimingEvaluator(
      *  3. otherwise (the onset precedes every remaining note) the earliest not-yet-judged note.
      */
     private fun chooseNote(onsetMillis: Long): Int {
+        // 1. the NEAREST not-yet-judged note whose start is within onset tolerance (when two
+        //    close notes are both eligible, the closer start wins, not just the earlier one).
+        var nearest = -1
+        var nearestDistance = Long.MAX_VALUE
         for (index in plan.indices) {
-            if (!judged[index] && abs(onsetMillis - plan[index].startMillis) <= onsetToleranceMillis) {
-                return index
+            if (judged[index]) continue
+            val distance = abs(onsetMillis - plan[index].startMillis)
+            if (distance <= onsetToleranceMillis && distance < nearestDistance) {
+                nearestDistance = distance
+                nearest = index
             }
         }
+        if (nearest >= 0) return nearest
+        // 2. otherwise (not near any start: late/sloppy) the earliest already-started one.
         for (index in plan.indices) {
             if (!judged[index] && plan[index].startMillis <= onsetMillis) return index
         }
+        // 3. otherwise (precedes every remaining note) the earliest not-yet-judged note.
         for (index in plan.indices) {
             if (!judged[index]) return index
         }

@@ -142,4 +142,25 @@ class RhythmTimingEvaluatorTest {
         assertEquals(1, second?.noteIndex)
         assertTrue(second!!.matched)
     }
+
+    @Test
+    fun `the final note is left open past its scheduled end while still held`() {
+        val evaluator = RhythmTimingEvaluator(twoNotePlan()) // note0 [0,1000), note1 [1000,2000)
+        evaluator.singSegment(0, 980) // note0 on time
+
+        // Hold note1 continuously well past its scheduled end (2000) without releasing.
+        val verdicts = mutableListOf<RhythmVerdict>()
+        var t = 1000L
+        while (t <= 2400) {
+            evaluator.onFrame(t, true)?.let { verdicts.add(it) }
+            t += 50
+        }
+        // It must NOT be closed/greened at the 2000 ms boundary — no verdict yet.
+        assertTrue(verdicts.isEmpty())
+
+        // Only when the safety cutoff fires (still held) is it judged — and not matched.
+        val verdict = evaluator.finish(3500)
+        assertEquals(1, verdict?.noteIndex)
+        assertFalse(verdict!!.matched)
+    }
 }
