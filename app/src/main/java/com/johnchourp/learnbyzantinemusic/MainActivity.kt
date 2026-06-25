@@ -3,59 +3,202 @@ package com.johnchourp.learnbyzantinemusic
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.remember
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Stairs
+import androidx.compose.material.icons.filled.Timer
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyModeCalendarActivity
+import com.johnchourp.learnbyzantinemusic.home.HomeInfo
+import com.johnchourp.learnbyzantinemusic.home.HomeScreen
+import com.johnchourp.learnbyzantinemusic.home.HomeSection
+import com.johnchourp.learnbyzantinemusic.home.HomeTile
+import com.johnchourp.learnbyzantinemusic.home.TileAccent
 import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
 import com.johnchourp.learnbyzantinemusic.notes.NotesActivity
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity
+import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 
 class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_main_activity)
-        val phthongsNamesBtn = findViewById<Button>(R.id.phthongs_names_btn)
-        val duotrioquatroBtn = findViewById<Button>(R.id.duotrioquatro_btn)
-        val climbingCompositionsBtn = findViewById<Button>(R.id.climbing_compositions_btn)
-
-        val ascentsBtn = findViewById<Button>(R.id.ascents_btn)
-        val descentsBtn = findViewById<Button>(R.id.descents_btn)
-
-        val qualityBtn = findViewById<Button>(R.id.quality_btn)
-        val timeBtn = findViewById<Button>(R.id.time_btn)
-
-        val testimoniesBtn = findViewById<Button>(R.id.testimonies_btn)
-        val eightModesBtn = findViewById<Button>(R.id.eight_modes_btn)
-        val melodyTrainerBtn = findViewById<Button>(R.id.melody_trainer_btn)
-        val calendarBtn = findViewById<Button>(R.id.calendar_btn)
-        val recordingsBtn = findViewById<Button>(R.id.recordings_btn)
-        val notesBtn = findViewById<Button>(R.id.notes_btn)
-        val settingsBtn = findViewById<Button>(R.id.settings_btn)
-        val poweredByTextView = findViewById<TextView>(R.id.powered_by_text_view)
-
-        poweredByTextView.text =
-            getString(R.string.powered_by_version, BuildConfig.VERSION_NAME)
-
-        phthongsNamesBtn.setOnClickListener { openPhthongsNames() }
-        duotrioquatroBtn.setOnClickListener { openDuotrioquatro() }
-        climbingCompositionsBtn.setOnClickListener { openClimbingCompositions() }
-
-        ascentsBtn.setOnClickListener { openAscents() }
-        descentsBtn.setOnClickListener { openDescents() }
-
-        qualityBtn.setOnClickListener { openQuality() }
-        timeBtn.setOnClickListener { openTime() }
-
-        testimoniesBtn.setOnClickListener { openTestimonies() }
-        eightModesBtn.setOnClickListener { openEightModes() }
-        melodyTrainerBtn.setOnClickListener { openMelodyTrainer() }
-        calendarBtn.setOnClickListener { openWeeklyModeCalendar() }
-        recordingsBtn.setOnClickListener { openRecordings() }
-        notesBtn.setOnClickListener { openNotes() }
-        settingsBtn.setOnClickListener { openSettings() }
+        setContent {
+            LbmTheme {
+                HomeScreen(
+                    title = getString(R.string.learn_byzantine_music),
+                    subtitle = getString(R.string.home_subtitle),
+                    version = BuildConfig.VERSION_NAME,
+                    sections = remember { buildHomeSections() },
+                )
+            }
+        }
 
         maybeShowLanguageOnboarding()
     }
+
+    private fun buildHomeSections(): List<HomeSection> = listOf(
+        HomeSection(
+            titleRes = R.string.home_section_phthongs,
+            subtitleRes = R.string.home_section_phthongs_sub,
+            tiles = listOf(
+                HomeTile(
+                    id = "phthongs_names",
+                    titleRes = R.string.phthongs_names,
+                    subtitleRes = R.string.home_tile_phthongs_names_sub,
+                    icon = Icons.Filled.MusicNote,
+                    accent = TileAccent.Gold,
+                    onClick = ::openPhthongsNames,
+                ),
+                HomeTile(
+                    id = "duotrioquatro",
+                    titleRes = R.string.duotrioquatro,
+                    subtitleRes = R.string.home_tile_duotrioquatro_sub,
+                    icon = Icons.Filled.Timer,
+                    accent = TileAccent.Gold,
+                    onClick = ::openDuotrioquatro,
+                ),
+            ),
+        ),
+        HomeSection(
+            titleRes = R.string.quantity_characters,
+            subtitleRes = null,
+            info = HomeInfo.QuantityVoices,
+            tiles = listOf(
+                HomeTile(
+                    id = "ascents",
+                    titleRes = R.string.ascents,
+                    subtitleRes = R.string.home_tile_ascents_sub,
+                    icon = Icons.AutoMirrored.Filled.TrendingUp,
+                    accent = TileAccent.Blue,
+                    onClick = ::openAscents,
+                ),
+                HomeTile(
+                    id = "descents",
+                    titleRes = R.string.descents,
+                    subtitleRes = R.string.home_tile_descents_sub,
+                    icon = Icons.AutoMirrored.Filled.TrendingDown,
+                    accent = TileAccent.Blue,
+                    onClick = ::openDescents,
+                ),
+                HomeTile(
+                    id = "climbing_compositions",
+                    titleRes = R.string.climbing_compositions,
+                    subtitleRes = R.string.home_tile_climbing_sub,
+                    icon = Icons.Filled.Stairs,
+                    accent = TileAccent.Blue,
+                    onClick = ::openClimbingCompositions,
+                ),
+            ),
+        ),
+        HomeSection(
+            titleRes = R.string.characters,
+            subtitleRes = R.string.home_section_characters_sub,
+            tiles = listOf(
+                HomeTile(
+                    id = "quality",
+                    titleRes = R.string.quality,
+                    subtitleRes = R.string.home_tile_quality_sub,
+                    icon = Icons.Filled.AutoAwesome,
+                    accent = TileAccent.Purple,
+                    onClick = ::openQuality,
+                ),
+                HomeTile(
+                    id = "time",
+                    titleRes = R.string.time,
+                    subtitleRes = R.string.home_tile_time_sub,
+                    icon = Icons.Filled.Schedule,
+                    accent = TileAccent.Purple,
+                    onClick = ::openTime,
+                ),
+            ),
+        ),
+        HomeSection(
+            titleRes = R.string.home_section_testimonies_modes,
+            subtitleRes = null,
+            tiles = listOf(
+                HomeTile(
+                    id = "testimonies",
+                    titleRes = R.string.testimonies,
+                    subtitleRes = R.string.home_tile_testimonies_sub,
+                    icon = Icons.AutoMirrored.Filled.MenuBook,
+                    accent = TileAccent.Brown,
+                    onClick = ::openTestimonies,
+                ),
+                HomeTile(
+                    id = "eight_modes",
+                    titleRes = R.string.eight_modes_open,
+                    subtitleRes = R.string.home_tile_eight_modes_sub,
+                    icon = Icons.Filled.LibraryMusic,
+                    accent = TileAccent.Brown,
+                    onClick = ::openEightModes,
+                ),
+            ),
+        ),
+        HomeSection(
+            titleRes = R.string.home_section_practice,
+            subtitleRes = R.string.home_section_practice_sub,
+            tiles = listOf(
+                HomeTile(
+                    id = "melody_trainer",
+                    titleRes = R.string.melody_trainer_open,
+                    subtitleRes = R.string.home_tile_melody_trainer_sub,
+                    icon = Icons.Filled.GraphicEq,
+                    accent = TileAccent.Green,
+                    onClick = ::openMelodyTrainer,
+                ),
+                HomeTile(
+                    id = "calendar",
+                    titleRes = R.string.weekly_mode_calendar_open,
+                    subtitleRes = R.string.home_tile_calendar_sub,
+                    icon = Icons.Filled.CalendarMonth,
+                    accent = TileAccent.Green,
+                    onClick = ::openWeeklyModeCalendar,
+                ),
+                HomeTile(
+                    id = "recordings",
+                    titleRes = R.string.recordings_open,
+                    subtitleRes = R.string.home_tile_recordings_sub,
+                    icon = Icons.Filled.Mic,
+                    accent = TileAccent.Orange,
+                    onClick = ::openRecordings,
+                ),
+                HomeTile(
+                    id = "notes",
+                    titleRes = R.string.notes_open,
+                    subtitleRes = R.string.home_tile_notes_sub,
+                    icon = Icons.Filled.EditNote,
+                    accent = TileAccent.Orange,
+                    onClick = ::openNotes,
+                ),
+            ),
+        ),
+        HomeSection(
+            titleRes = R.string.settings_button,
+            subtitleRes = null,
+            tiles = listOf(
+                HomeTile(
+                    id = "settings",
+                    titleRes = R.string.settings_button,
+                    subtitleRes = R.string.home_tile_settings_sub,
+                    icon = Icons.Filled.Settings,
+                    accent = TileAccent.Brown,
+                    onClick = ::openSettings,
+                ),
+            ),
+        ),
+    )
 
     private fun maybeShowLanguageOnboarding() {
         if (AppLanguage.isLanguageOnboardingCompleted(this)) {
