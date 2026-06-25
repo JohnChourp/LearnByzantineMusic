@@ -7,6 +7,7 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import androidx.annotation.RequiresPermission
 import kotlin.math.sqrt
 
@@ -16,12 +17,17 @@ import kotlin.math.sqrt
  * loudness gate suppresses background hiss so silence reads as "no pitch" rather than a
  * spurious note. The caller must hold RECORD_AUDIO before calling [start].
  *
+ * [onPitch] receives the detected match together with the `SystemClock.elapsedRealtime()`
+ * captured on the audio thread when the window was read — the rhythm exercise needs that
+ * capture time, not the time the main-thread callback runs, so main-thread queueing/GC
+ * delay cannot shift an on-time onset past tolerance.
+ *
  * If capture dies on a hard read error (e.g. the mic is taken by another app), [onCaptureError]
  * is invoked on the main thread so the UI can leave its listening state instead of hanging
  * with controls disabled and the recorder allocated.
  */
 class TrainerPitchEngine(
-    private val onPitch: (PitchMatch?) -> Unit,
+    private val onPitch: (PitchMatch?, Long) -> Unit,
     private val onCaptureError: () -> Unit = {},
     private val sampleRate: Int = DEFAULT_SAMPLE_RATE,
     private val windowSize: Int = DEFAULT_WINDOW_SIZE
@@ -105,13 +111,14 @@ class TrainerPitchEngine(
                 floatBuffer[i] = shortBuffer[i] / SHORT_FULL_SCALE
             }
 
+            val capturedAtMillis = SystemClock.elapsedRealtime()
             val match = if (rootMeanSquare(floatBuffer) < SILENCE_RMS) {
                 null
             } else {
                 val frequency = YinPitchDetector.detect(floatBuffer, sampleRate)
                 if (frequency <= 0f) null else TrainerPitchTable.nearestPhthong(frequency.toDouble())
             }
-            mainHandler.post { if (running) onPitch(match) }
+            mainHandler.post { if (running) onPitch(match, capturedAtMillis) }
         }
         if (failed) {
             mainHandler.post { onCaptureError() }

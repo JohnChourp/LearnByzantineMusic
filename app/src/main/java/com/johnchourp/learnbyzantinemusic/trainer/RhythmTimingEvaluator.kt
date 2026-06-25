@@ -92,11 +92,28 @@ class RhythmTimingEvaluator(
     }
 
     /**
-     * The note this onset belongs to: the not-yet-judged scheduled note whose start is
-     * nearest the onset. Using nearest (rather than the containing window) lets a slightly
-     * early note after a skipped one still attach to the right target.
+     * The note this sung onset belongs to:
+     *  1. the earliest not-yet-judged note whose scheduled start is within onset tolerance —
+     *     so hitting the next note slightly early (after skipping one) attaches to it; then
+     *  2. otherwise (the onset is not near any start, i.e. late/sloppy) the earliest
+     *     not-yet-judged note that has already started — so a late onset fails its OWN note
+     *     instead of consuming a future one; then
+     *  3. otherwise (the onset precedes every remaining note) the earliest not-yet-judged note.
      */
-    private fun chooseNote(onsetMillis: Long): Int = nearestUnjudged(onsetMillis)
+    private fun chooseNote(onsetMillis: Long): Int {
+        for (index in plan.indices) {
+            if (!judged[index] && abs(onsetMillis - plan[index].startMillis) <= onsetToleranceMillis) {
+                return index
+            }
+        }
+        for (index in plan.indices) {
+            if (!judged[index] && plan[index].startMillis <= onsetMillis) return index
+        }
+        for (index in plan.indices) {
+            if (!judged[index]) return index
+        }
+        return -1
+    }
 
     private fun finalizeSegment(onsetMillis: Long, offsetMillis: Long, noteIndex: Int): RhythmVerdict? {
         if (noteIndex < 0 || onsetMillis < 0L || judged[noteIndex]) return null
@@ -112,20 +129,6 @@ class RhythmTimingEvaluator(
         )
         val matched = abs(onsetError) <= onsetToleranceMillis && abs(durationError) <= durationAllowance
         return RhythmVerdict(noteIndex, matched, onsetError, durationError)
-    }
-
-    private fun nearestUnjudged(onsetMillis: Long): Int {
-        var best = -1
-        var bestDistance = Long.MAX_VALUE
-        for (index in plan.indices) {
-            if (judged[index]) continue
-            val distance = abs(onsetMillis - plan[index].startMillis)
-            if (distance < bestDistance) {
-                bestDistance = distance
-                best = index
-            }
-        }
-        return best
     }
 
     fun reset() {

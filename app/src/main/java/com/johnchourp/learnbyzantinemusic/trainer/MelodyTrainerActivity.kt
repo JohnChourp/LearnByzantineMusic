@@ -235,8 +235,15 @@ class MelodyTrainerActivity : BaseActivity() {
         if (isBusy) return
         if (index !in notes.indices) return
         notes.removeAt(index)
+        normalizeLeadingGorgo()
         matchedIndices.clear()
         renderNotes()
+    }
+
+    /** γοργόν is invalid on the first note, so strip it if a deletion shifted one to index 0. */
+    private fun normalizeLeadingGorgo() {
+        val first = notes.firstOrNull() ?: return
+        if (first.hasGorgo) notes[0] = first.withGorgo(false)
     }
 
     // endregion
@@ -283,10 +290,10 @@ class MelodyTrainerActivity : BaseActivity() {
         }
     }
 
-    private fun onPitchDetected(match: PitchMatch?) {
+    private fun onPitchDetected(match: PitchMatch?, capturedAtMillis: Long) {
         when {
             isVoiceActive -> handleVoiceFrame(match)
-            isRhythmActive -> handleRhythmFrame(match)
+            isRhythmActive -> handleRhythmFrame(match, capturedAtMillis)
         }
     }
 
@@ -466,11 +473,17 @@ class MelodyTrainerActivity : BaseActivity() {
         uiHandler.postDelayed(rhythmEndRunnable, rhythmTotalMillis + RHYTHM_END_GRACE_MILLIS)
     }
 
-    private fun handleRhythmFrame(match: PitchMatch?) {
+    private fun handleRhythmFrame(match: PitchMatch?, capturedAtMillis: Long) {
         val evaluator = rhythmEvaluator ?: return
         if (rhythmStartMillis < 0L) return
-        val elapsed = SystemClock.elapsedRealtime() - rhythmStartMillis
+        // Use the time the audio frame was captured (on the audio thread), not now, so
+        // main-thread queueing/GC delay cannot shift an on-time onset past tolerance.
+        val elapsed = capturedAtMillis - rhythmStartMillis
 
+        // Mode 3 is intentionally a TIMING exercise: it scores only whether each phthong is
+        // voiced in its scheduled window for the right duration, not which pitch is sung
+        // (pitch accuracy is what Mode 2 / voice check is for). So the detected phthong is
+        // deliberately reduced to a voiced/silent flag here.
         val verdict = evaluator.onFrame(elapsed, voicedNow = match != null)
         if (verdict != null && verdict.matched) {
             matchedIndices.add(verdict.noteIndex)

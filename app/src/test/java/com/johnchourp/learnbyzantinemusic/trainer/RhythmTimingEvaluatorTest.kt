@@ -123,9 +123,23 @@ class RhythmTimingEvaluatorTest {
         }
         evaluator.onFrame(1920, false)?.let { verdicts.add(it) }
 
-        // 900 ms is nearest note1's start (1000) and within tolerance, so note1 greens; note0
-        // was never sung and stays unjudged.
+        // 900 ms is within tolerance of note1's start (1000) so note1 greens; note0 was never
+        // sung and stays unjudged.
         assertEquals(listOf(1), verdicts.map { it.noteIndex })
         assertTrue(verdicts.single().matched)
+    }
+
+    @Test
+    fun `a late onset fails its own note without consuming the next`() {
+        val evaluator = RhythmTimingEvaluator(twoNotePlan())
+        // note0 started 600 ms late — not within 250 ms of any scheduled start — so it attaches
+        // to note0 and fails, instead of being grabbed by the nearer note1 start.
+        val first = evaluator.singSegment(600, 980)
+        assertEquals(0, first?.noteIndex)
+        assertFalse(first!!.matched)
+        // note1 sung on time still greens.
+        val second = evaluator.singSegment(1000, 1950)
+        assertEquals(1, second?.noteIndex)
+        assertTrue(second!!.matched)
     }
 }
