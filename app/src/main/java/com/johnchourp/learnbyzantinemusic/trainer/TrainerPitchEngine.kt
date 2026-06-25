@@ -15,9 +15,14 @@ import kotlin.math.sqrt
  * each, maps the result to the nearest phthong, and delivers it on the main thread. A
  * loudness gate suppresses background hiss so silence reads as "no pitch" rather than a
  * spurious note. The caller must hold RECORD_AUDIO before calling [start].
+ *
+ * If capture dies on a hard read error (e.g. the mic is taken by another app), [onCaptureError]
+ * is invoked on the main thread so the UI can leave its listening state instead of hanging
+ * with controls disabled and the recorder allocated.
  */
 class TrainerPitchEngine(
     private val onPitch: (PitchMatch?) -> Unit,
+    private val onCaptureError: () -> Unit = {},
     private val sampleRate: Int = DEFAULT_SAMPLE_RATE,
     private val windowSize: Int = DEFAULT_WINDOW_SIZE
 ) {
@@ -79,13 +84,15 @@ class TrainerPitchEngine(
     private fun captureLoop(recorder: AudioRecord) {
         val shortBuffer = ShortArray(windowSize)
         val floatBuffer = FloatArray(windowSize)
+        var failed = false
         while (running) {
             var read = 0
             while (read < windowSize && running) {
                 val r = recorder.read(shortBuffer, read, windowSize - read)
                 if (r < 0) {
                     // Hard read error (e.g. the mic was taken by another app): stop the
-                    // capture loop instead of busy-spinning at 100% CPU.
+                    // capture loop instead of busy-spinning at 100% CPU, and report it.
+                    failed = true
                     running = false
                     break
                 }
@@ -106,13 +113,24 @@ class TrainerPitchEngine(
             }
             mainHandler.post { if (running) onPitch(match) }
         }
+        if (failed) {
+            mainHandler.post { onCaptureError() }
+        }
     }
 
     fun stop() {
         running = false
-        // Join the capture thread before releasing the recorder: the thread is very likely
-        // blocked inside AudioRecord.read(), and releasing the recorder out from under it is
-        // undefined behaviour (native crash on some devices).
+        // Stop the recorder first so a capture thread blocked inside AudioRecord.read()
+        // unblocks; then join it; only then release — never release while a read is in flight.
+        val recorder = audioRecord
+        audioRecord = null
+        if (recorder != null) {
+            try {
+                recorder.stop()
+            } catch (_: IllegalStateException) {
+                // Already stopped.
+            }
+        }
         val thread = captureThread
         captureThread = null
         if (thread != null && thread !== Thread.currentThread()) {
@@ -122,16 +140,7 @@ class TrainerPitchEngine(
                 Thread.currentThread().interrupt()
             }
         }
-        val recorder = audioRecord
-        audioRecord = null
-        if (recorder != null) {
-            try {
-                recorder.stop()
-            } catch (_: IllegalStateException) {
-                // Already stopped.
-            }
-            recorder.release()
-        }
+        recorder?.release()
         mainHandler.removeCallbacksAndMessages(null)
     }
 
