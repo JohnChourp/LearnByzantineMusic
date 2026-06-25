@@ -717,17 +717,20 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="melody_trainer_play">Play</string>
     <string name="melody_trainer_stop">Stop</string>
     <string name="melody_trainer_clear">Clear</string>
-    <string name="melody_trainer_voice_check">Voice check</string>
-    <string name="melody_trainer_voice_hint">Turn on voice check and sing the melody; phthongi you sing correctly turn green.</string>
+    <string name="melody_trainer_voice_check">Right phthong</string>
+    <string name="melody_trainer_voice_hint">Phthong only (no timing): sing the melody; each phthong you sing at the correct pitch turns green — timing does not count here.</string>
     <string name="melody_trainer_voice_listening">Listening… Sing: %1$s</string>
     <string name="melody_trainer_voice_done">Done! Correct phthongi: %1$d/%2$d</string>
     <string name="melody_trainer_voice_need_notes">Add some phthongi first to use voice check.</string>
     <string name="melody_trainer_mic_permission_required">Microphone permission is required for voice check.</string>
     <string name="melody_trainer_mic_unavailable">The microphone is not available right now.</string>
-    <string name="melody_trainer_rhythm_check">Timing exercise</string>
-    <string name="melody_trainer_rhythm_hint">Turn on the timing exercise: after a 5-second countdown, say each phthong on time for it to turn green.</string>
+    <string name="melody_trainer_rhythm_check">Right timing</string>
+    <string name="melody_trainer_rhythm_hint">Timing only (no pitch): after a 5-second countdown, say each phthong on time for it to turn green — pitch does not count here.</string>
     <string name="melody_trainer_rhythm_countdown">Get ready… %1$d</string>
     <string name="melody_trainer_rhythm_go">Go!</string>
     <string name="melody_trainer_rhythm_running">Say: %1$s</string>
     <string name="melody_trainer_rhythm_done">Done! Correct timing: %1$d/%2$d</string>
+    <string name="melody_trainer_combo_check">Phthong + timing</string>
+    <string name="melody_trainer_combo_hint">Phthong AND timing: after a 5-second countdown, say each phthong correctly (right pitch) AND on time for it to turn green.</string>
+    <string name="melody_trainer_combo_done">Done! Correct (phthong+timing): %1$d/%2$d</string>
 </resources>

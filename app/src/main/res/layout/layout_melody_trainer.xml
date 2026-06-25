@@ -255,5 +255,29 @@
             android:layout_marginTop="6dp"
             android:text="@string/melody_trainer_rhythm_hint"
             android:textSize="15sp" />
+
+        <!-- Phthong + timing (combined): green a note only when sung at the right pitch AND time -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#33888888" />
+
+        <CheckBox
+            android:id="@+id/combo_check_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/melody_trainer_combo_check"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/combo_status_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/melody_trainer_combo_hint"
+            android:textSize="15sp" />
     </LinearLayout>
 </ScrollView>
