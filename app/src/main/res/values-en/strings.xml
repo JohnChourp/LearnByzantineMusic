@@ -717,4 +717,11 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="melody_trainer_play">Play</string>
     <string name="melody_trainer_stop">Stop</string>
     <string name="melody_trainer_clear">Clear</string>
+    <string name="melody_trainer_voice_check">Voice check</string>
+    <string name="melody_trainer_voice_hint">Turn on voice check and sing the melody; phthongi you sing correctly turn green.</string>
+    <string name="melody_trainer_voice_listening">Listening… Sing: %1$s</string>
+    <string name="melody_trainer_voice_done">Done! Correct phthongi: %1$d/%2$d</string>
+    <string name="melody_trainer_voice_need_notes">Add some phthongi first to use voice check.</string>
+    <string name="melody_trainer_mic_permission_required">Microphone permission is required for voice check.</string>
+    <string name="melody_trainer_mic_unavailable">The microphone is not available right now.</string>
 </resources>

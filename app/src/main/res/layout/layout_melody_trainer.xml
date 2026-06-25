@@ -207,5 +207,29 @@
                 android:layout_weight="1"
                 android:text="@string/melody_trainer_clear" />
         </LinearLayout>
+
+        <!-- Voice check (Mode 2): greens correctly-sung phthongi -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#33888888" />
+
+        <CheckBox
+            android:id="@+id/voice_check_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/melody_trainer_voice_check"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/voice_status_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/melody_trainer_voice_hint"
+            android:textSize="15sp" />
     </LinearLayout>
 </ScrollView>
