@@ -83,7 +83,13 @@ class TrainerPitchEngine(
             var read = 0
             while (read < windowSize && running) {
                 val r = recorder.read(shortBuffer, read, windowSize - read)
-                if (r <= 0) break
+                if (r < 0) {
+                    // Hard read error (e.g. the mic was taken by another app): stop the
+                    // capture loop instead of busy-spinning at 100% CPU.
+                    running = false
+                    break
+                }
+                if (r == 0) break
                 read += r
             }
             if (!running || read < windowSize) continue
@@ -104,7 +110,18 @@ class TrainerPitchEngine(
 
     fun stop() {
         running = false
+        // Join the capture thread before releasing the recorder: the thread is very likely
+        // blocked inside AudioRecord.read(), and releasing the recorder out from under it is
+        // undefined behaviour (native crash on some devices).
+        val thread = captureThread
         captureThread = null
+        if (thread != null && thread !== Thread.currentThread()) {
+            try {
+                thread.join(CAPTURE_JOIN_TIMEOUT_MS)
+            } catch (_: InterruptedException) {
+                Thread.currentThread().interrupt()
+            }
+        }
         val recorder = audioRecord
         audioRecord = null
         if (recorder != null) {
@@ -131,5 +148,6 @@ class TrainerPitchEngine(
         const val DEFAULT_WINDOW_SIZE = 2_048
         private const val SHORT_FULL_SCALE = 32_768f
         private const val SILENCE_RMS = 0.012
+        private const val CAPTURE_JOIN_TIMEOUT_MS = 300L
     }
 }

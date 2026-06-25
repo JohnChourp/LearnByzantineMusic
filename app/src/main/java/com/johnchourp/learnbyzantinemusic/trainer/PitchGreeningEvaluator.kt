@@ -61,11 +61,19 @@ class PitchGreeningEvaluator(
             return null
         }
 
-        segmentCommitted = true
         val target = targets[index]
         val matched = phthong == target && abs(match.deviationMoria) <= toleranceMoria
         val result = GreeningResult(targetIndex = index, matched = matched, sungPhthong = phthong)
         index++
+        // If the next target is the same phthong, let a continuously-held note commit it too
+        // after another stable window; otherwise wait for the pitch to change so a sustained
+        // note is not charged against a different upcoming target.
+        if (!isComplete && targets[index] == phthong) {
+            stableFrames = 0
+            segmentCommitted = false
+        } else {
+            segmentCommitted = true
+        }
         return result
     }
 
