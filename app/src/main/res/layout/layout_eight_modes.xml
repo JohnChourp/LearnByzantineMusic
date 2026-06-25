@@ -126,79 +126,12 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/selected_mode_apichima_text"
+            <LinearLayout
+                android:id="@+id/selected_mode_theory_sections_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:textColor="#111827"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/selected_mode_apichima_phthongs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
-                android:textColor="#374151"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/selected_mode_apichima_syllables"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="#4B5563"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/selected_mode_apichima_alternatives"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="#4B5563"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/selected_mode_apichima_alternative_phthongs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="#4B5563"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/selected_mode_apichima_alternative_syllables"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="#4B5563"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/selected_mode_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:lineSpacingExtra="2dp"
-                android:textColor="#374151"
-                android:textSize="15sp" />
-
-            <Button
-                android:id="@+id/selected_mode_theory_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/eight_modes_primary_button_bg"
-                android:paddingVertical="11dp"
-                android:text="@string/eight_modes_first_mode_theory_cta"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                android:orientation="vertical" />
         </LinearLayout>
 
         <LinearLayout

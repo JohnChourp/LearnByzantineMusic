@@ -1,7 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
-import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -12,6 +12,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.HorizontalScrollView
+import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.Spinner
 import android.widget.TextView
@@ -24,14 +25,7 @@ import kotlin.math.pow
 class EightModesActivity : BaseActivity() {
     private lateinit var modeSelector: Spinner
     private lateinit var timbreSelector: Spinner
-    private lateinit var selectedModeApichimaText: TextView
-    private lateinit var selectedModeApichimaAlternatives: TextView
-    private lateinit var selectedModeApichimaPhthongs: TextView
-    private lateinit var selectedModeApichimaSyllables: TextView
-    private lateinit var selectedModeApichimaAlternativePhthongs: TextView
-    private lateinit var selectedModeApichimaAlternativeSyllables: TextView
-    private lateinit var selectedModeDetails: TextView
-    private lateinit var selectedModeTheoryButton: Button
+    private lateinit var selectedModeTheorySectionsContainer: LinearLayout
     private lateinit var modeSelectorCard: View
     private lateinit var timbreSelectorCard: View
     private lateinit var selectedModeSummaryCard: View
@@ -64,11 +58,8 @@ class EightModesActivity : BaseActivity() {
                 selectorGenusRes = R.string.mode_genus_diatonic,
                 apichimaRes = R.string.mode_apichima_first,
                 apichimaAlternativeRes = null,
-                apichimaPhthongsRes = R.string.mode_apichima_phthongs_first,
                 apichimaSyllablesRes = R.string.mode_apichima_syllables_first,
-                apichimaAlternativePhthongsRes = null,
                 apichimaAlternativeSyllablesRes = null,
-                detailsRes = R.string.mode_details_first,
                 theoryKey = ModeTheoryCatalog.keyForPosition(0),
                 colorCategory = ModeColorCategory.DIATONIC,
                 scale = EightModeScaleDefinitions.DIATONIC
@@ -79,11 +70,8 @@ class EightModesActivity : BaseActivity() {
                 selectorGenusRes = R.string.mode_genus_diatonic,
                 apichimaRes = R.string.mode_apichima_fourth,
                 apichimaAlternativeRes = R.string.mode_apichima_alternative_fourth,
-                apichimaPhthongsRes = R.string.mode_apichima_phthongs_fourth,
                 apichimaSyllablesRes = R.string.mode_apichima_syllables_fourth,
-                apichimaAlternativePhthongsRes = R.string.mode_apichima_alternative_phthongs_fourth,
                 apichimaAlternativeSyllablesRes = R.string.mode_apichima_alternative_syllables_fourth,
-                detailsRes = R.string.mode_details_fourth,
                 theoryKey = ModeTheoryCatalog.keyForPosition(1),
                 colorCategory = ModeColorCategory.DIATONIC,
                 scale = EightModeScaleDefinitions.DIATONIC
@@ -94,11 +82,8 @@ class EightModesActivity : BaseActivity() {
                 selectorGenusRes = R.string.mode_genus_diatonic,
                 apichimaRes = R.string.mode_apichima_plagal_first,
                 apichimaAlternativeRes = null,
-                apichimaPhthongsRes = R.string.mode_apichima_phthongs_plagal_first,
                 apichimaSyllablesRes = R.string.mode_apichima_syllables_plagal_first,
-                apichimaAlternativePhthongsRes = null,
                 apichimaAlternativeSyllablesRes = null,
-                detailsRes = R.string.mode_details_plagal_first,
                 theoryKey = ModeTheoryCatalog.keyForPosition(2),
                 colorCategory = ModeColorCategory.DIATONIC,
                 scale = EightModeScaleDefinitions.DIATONIC
@@ -109,11 +94,8 @@ class EightModesActivity : BaseActivity() {
                 selectorGenusRes = R.string.mode_genus_diatonic,
                 apichimaRes = R.string.mode_apichima_plagal_fourth,
                 apichimaAlternativeRes = null,
-                apichimaPhthongsRes = R.string.mode_apichima_phthongs_plagal_fourth,
                 apichimaSyllablesRes = R.string.mode_apichima_syllables_plagal_fourth,
-                apichimaAlternativePhthongsRes = null,
                 apichimaAlternativeSyllablesRes = null,
-                detailsRes = R.string.mode_details_plagal_fourth,
                 theoryKey = ModeTheoryCatalog.keyForPosition(3),
                 colorCategory = ModeColorCategory.DIATONIC,
                 scale = EightModeScaleDefinitions.DIATONIC
@@ -124,11 +106,8 @@ class EightModesActivity : BaseActivity() {
                 selectorGenusRes = R.string.mode_genus_enharmonic,
                 apichimaRes = R.string.mode_apichima_third,
                 apichimaAlternativeRes = null,
-                apichimaPhthongsRes = R.string.mode_apichima_phthongs_third,
                 apichimaSyllablesRes = R.string.mode_apichima_syllables_third,
-                apichimaAlternativePhthongsRes = null,
                 apichimaAlternativeSyllablesRes = null,
-                detailsRes = R.string.mode_details_third,
                 theoryKey = ModeTheoryCatalog.keyForPosition(4),
                 colorCategory = ModeColorCategory.ENHARMONIC,
                 scale = EightModeScaleDefinitions.ENHARMONIC
@@ -139,11 +118,8 @@ class EightModesActivity : BaseActivity() {
                 selectorGenusRes = R.string.mode_genus_enharmonic,
                 apichimaRes = R.string.mode_apichima_varys,
                 apichimaAlternativeRes = null,
-                apichimaPhthongsRes = R.string.mode_apichima_phthongs_varys,
                 apichimaSyllablesRes = R.string.mode_apichima_syllables_varys,
-                apichimaAlternativePhthongsRes = null,
                 apichimaAlternativeSyllablesRes = null,
-                detailsRes = R.string.mode_details_varys,
                 theoryKey = ModeTheoryCatalog.keyForPosition(5),
                 colorCategory = ModeColorCategory.ENHARMONIC,
                 scale = EightModeScaleDefinitions.ENHARMONIC
@@ -154,11 +130,8 @@ class EightModesActivity : BaseActivity() {
                 selectorGenusRes = R.string.mode_genus_chromatic_second,
                 apichimaRes = R.string.mode_apichima_second,
                 apichimaAlternativeRes = null,
-                apichimaPhthongsRes = R.string.mode_apichima_phthongs_second,
                 apichimaSyllablesRes = R.string.mode_apichima_syllables_second,
-                apichimaAlternativePhthongsRes = null,
                 apichimaAlternativeSyllablesRes = null,
-                detailsRes = R.string.mode_details_second,
                 theoryKey = ModeTheoryCatalog.keyForPosition(6),
                 colorCategory = ModeColorCategory.SOFT_CHROMATIC,
                 scale = EightModeScaleDefinitions.SOFT_CHROMATIC
@@ -169,11 +142,8 @@ class EightModesActivity : BaseActivity() {
                 selectorGenusRes = R.string.mode_genus_chromatic_plagal_second,
                 apichimaRes = R.string.mode_apichima_plagal_second,
                 apichimaAlternativeRes = null,
-                apichimaPhthongsRes = R.string.mode_apichima_phthongs_plagal_second,
                 apichimaSyllablesRes = R.string.mode_apichima_syllables_plagal_second,
-                apichimaAlternativePhthongsRes = null,
                 apichimaAlternativeSyllablesRes = null,
-                detailsRes = R.string.mode_details_plagal_second,
                 theoryKey = ModeTheoryCatalog.keyForPosition(7),
                 colorCategory = ModeColorCategory.HARD_CHROMATIC,
                 scale = EightModeScaleDefinitions.HARD_CHROMATIC
@@ -190,16 +160,9 @@ class EightModesActivity : BaseActivity() {
         modeSelectorCard = findViewById(R.id.mode_selector_card)
         timbreSelectorCard = findViewById(R.id.timbre_selector_card)
         selectedModeSummaryCard = findViewById(R.id.selected_mode_summary_card)
-        selectedModeApichimaText = findViewById(R.id.selected_mode_apichima_text)
-        selectedModeApichimaAlternatives = findViewById(R.id.selected_mode_apichima_alternatives)
-        selectedModeApichimaPhthongs = findViewById(R.id.selected_mode_apichima_phthongs)
-        selectedModeApichimaSyllables = findViewById(R.id.selected_mode_apichima_syllables)
-        selectedModeApichimaAlternativePhthongs =
-            findViewById(R.id.selected_mode_apichima_alternative_phthongs)
-        selectedModeApichimaAlternativeSyllables =
-            findViewById(R.id.selected_mode_apichima_alternative_syllables)
-        selectedModeDetails = findViewById(R.id.selected_mode_details)
-        selectedModeTheoryButton = findViewById(R.id.selected_mode_theory_button)
+        selectedModeTheorySectionsContainer = findViewById(
+            R.id.selected_mode_theory_sections_container
+        )
         ascendingDiagramView = findViewById(R.id.ascending_diagram_view)
         touchHintText = findViewById(R.id.touch_hint_text)
         baseShiftCard = findViewById(R.id.base_shift_card)
@@ -214,7 +177,6 @@ class EightModesActivity : BaseActivity() {
         setupSelector()
         setupTimbreSelector()
         setupPhthongTouchPlayback()
-        selectedModeTheoryButton.setOnClickListener { openDetailedTheoryForCurrentMode() }
         touchHintText.text = getString(R.string.eight_modes_touch_hint)
         runEntranceAnimations()
     }
@@ -457,42 +419,7 @@ class EightModesActivity : BaseActivity() {
         currentReferenceMoriaFromBottom =
             scale.referenceMoriaFromBottom(BASE_REFERENCE_PHTHONG, SCALE_OCTAVES)
         val ascendingPhthongsExtended = scale.ascendingPhthongs(SCALE_OCTAVES)
-        selectedModeApichimaText.text =
-            getString(R.string.mode_apichima_label, getString(mode.apichimaRes))
-        val alternativeRes = mode.apichimaAlternativeRes
-        if (alternativeRes != null) {
-            selectedModeApichimaAlternatives.visibility = View.VISIBLE
-            selectedModeApichimaAlternatives.text =
-                getString(R.string.mode_apichima_alternatives_label, getString(alternativeRes))
-        } else {
-            selectedModeApichimaAlternatives.visibility = View.GONE
-        }
-        selectedModeApichimaPhthongs.text =
-            getString(R.string.mode_apichima_phthongs_label, getString(mode.apichimaPhthongsRes))
-        selectedModeApichimaSyllables.text =
-            getString(R.string.mode_apichima_syllables_label, getString(mode.apichimaSyllablesRes))
-
-        val alternativePhthongsRes = mode.apichimaAlternativePhthongsRes
-        val alternativeSyllablesRes = mode.apichimaAlternativeSyllablesRes
-        if (alternativeRes != null && alternativePhthongsRes != null && alternativeSyllablesRes != null) {
-            selectedModeApichimaAlternativePhthongs.visibility = View.VISIBLE
-            selectedModeApichimaAlternativeSyllables.visibility = View.VISIBLE
-            selectedModeApichimaAlternativePhthongs.text = getString(
-                R.string.mode_apichima_alternative_phthongs_label,
-                getString(alternativePhthongsRes)
-            )
-            selectedModeApichimaAlternativeSyllables.text = getString(
-                R.string.mode_apichima_alternative_syllables_label,
-                getString(alternativeSyllablesRes)
-            )
-        } else {
-            selectedModeApichimaAlternativePhthongs.visibility = View.GONE
-            selectedModeApichimaAlternativeSyllables.visibility = View.GONE
-        }
-        selectedModeDetails.text = getString(mode.detailsRes)
-        selectedModeTheoryButton.text =
-            getString(R.string.eight_modes_mode_theory_cta, getString(mode.nameRes))
-        selectedModeTheoryButton.visibility = View.VISIBLE
+        renderSelectedModeTheory(mode)
         tonePlayer.stop()
         ascendingDiagramView.clearTouchState()
 
@@ -507,6 +434,188 @@ class EightModesActivity : BaseActivity() {
             animateModeSelection()
         }
     }
+
+    private fun renderSelectedModeTheory(mode: ModeDefinition) {
+        val theory = ModeTheoryCatalog.byKey(mode.theoryKey)
+        selectedModeTheorySectionsContainer.removeAllViews()
+        selectedModeTheorySectionsContainer.addView(
+            createTextTheorySection(
+                number = 1,
+                titleRes = R.string.mode_theory_section_apichima,
+                bodyText = formatApichima(mode)
+            )
+        )
+        selectedModeTheorySectionsContainer.addView(
+            createTextTheorySection(
+                number = 2,
+                titleRes = R.string.mode_theory_section_syllables_phthongs,
+                bodyText = formatApichimaSyllables(mode)
+            )
+        )
+        theory.styleRows.forEachIndexed { index, styleRow ->
+            selectedModeTheorySectionsContainer.addView(
+                createStyleTheorySection(
+                    number = index + 3,
+                    row = styleRow
+                )
+            )
+        }
+        selectedModeTheorySectionsContainer.addView(
+            createTextTheorySection(
+                number = 6,
+                titleRes = R.string.mode_theory_section_modulations,
+                bodyText = getString(theory.modulationsRes)
+            )
+        )
+        selectedModeTheorySectionsContainer.addView(
+            createTextTheorySection(
+                number = 7,
+                titleRes = R.string.mode_theory_section_attractions,
+                bodyText = getString(theory.attractionsRes)
+            )
+        )
+        selectedModeTheorySectionsContainer.addView(
+            createTextTheorySection(
+                number = 8,
+                titleRes = R.string.mode_theory_section_phthores,
+                bodyText = getString(theory.phthoresRes)
+            )
+        )
+    }
+
+    private fun formatApichima(mode: ModeDefinition): String =
+        listOfNotNull(
+            getString(mode.apichimaRes),
+            mode.apichimaAlternativeRes?.let { getString(it) }
+        ).joinToString(" / ")
+
+    private fun formatApichimaSyllables(mode: ModeDefinition): String {
+        val primarySyllables = getString(mode.apichimaSyllablesRes)
+        val alternativeApichimaRes = mode.apichimaAlternativeRes
+        val alternativeSyllablesRes = mode.apichimaAlternativeSyllablesRes
+        return if (alternativeApichimaRes != null && alternativeSyllablesRes != null) {
+            getString(
+                R.string.mode_theory_primary_alternative_template,
+                getString(mode.apichimaRes),
+                primarySyllables,
+                getString(alternativeApichimaRes),
+                getString(alternativeSyllablesRes)
+            )
+        } else {
+            primarySyllables
+        }
+    }
+
+    private fun createTextTheorySection(number: Int, titleRes: Int, bodyText: String): View =
+        createSectionContainer().apply {
+            addView(createSectionTitle(number, titleRes))
+            addView(createSectionBody(bodyText))
+        }
+
+    private fun createStyleTheorySection(number: Int, row: ModeTheoryStyleRow): View =
+        createSectionContainer().apply {
+            addView(createSectionTitle(number, row.styleNameRes))
+            addView(createTheoryTable(row))
+        }
+
+    private fun createTheoryTable(row: ModeTheoryStyleRow): LinearLayout =
+        LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(8)
+            }
+            addView(createTheoryTableRow(R.string.mode_theory_field_system, row.systemRes))
+            addView(createTheoryTableRow(R.string.mode_theory_field_scale, row.scaleRes))
+            addView(
+                createTheoryTableRow(
+                    R.string.mode_theory_field_dominant_phthongs,
+                    row.dominantsCadencesRes
+                )
+            )
+            addView(createTheoryTableRow(R.string.mode_theory_field_cadences, row.dominantsCadencesRes))
+            addView(
+                createTheoryTableRow(
+                    R.string.mode_theory_field_final_cadences,
+                    row.dominantsCadencesRes
+                )
+            )
+        }
+
+    private fun createTheoryTableRow(labelRes: Int, valueRes: Int): LinearLayout =
+        LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            isBaselineAligned = false
+            setPadding(0, dp(5), 0, dp(5))
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            addView(createTheoryTableCell(getString(labelRes), isLabel = true))
+            addView(createTheoryTableCell(getString(valueRes), isLabel = false))
+        }
+
+    private fun createTheoryTableCell(textValue: String, isLabel: Boolean): TextView =
+        TextView(this).apply {
+            text = textValue
+            setTextColor(
+                ContextCompat.getColor(
+                    this@EightModesActivity,
+                    if (isLabel) {
+                        R.color.first_mode_theory_text_secondary
+                    } else {
+                        R.color.first_mode_theory_text_primary
+                    }
+                )
+            )
+            textSize = if (isLabel) 13f else 14f
+            if (isLabel) {
+                typeface = Typeface.DEFAULT_BOLD
+            }
+            setLineSpacing(dp(2).toFloat(), 1.0f)
+            layoutParams = LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                if (isLabel) TABLE_LABEL_WEIGHT else TABLE_VALUE_WEIGHT
+            ).apply {
+                marginEnd = if (isLabel) dp(8) else 0
+            }
+        }
+
+    private fun createSectionContainer(): LinearLayout =
+        LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(12)
+            }
+        }
+
+    private fun createSectionTitle(number: Int, titleRes: Int): TextView =
+        TextView(this).apply {
+            text = getString(R.string.mode_theory_numbered_section_template, number, getString(titleRes))
+            setTextColor(ContextCompat.getColor(this@EightModesActivity, R.color.first_mode_theory_accent))
+            textSize = 16f
+            typeface = Typeface.DEFAULT_BOLD
+        }
+
+    private fun createSectionBody(textValue: String): TextView =
+        TextView(this).apply {
+            text = textValue
+            setTextColor(ContextCompat.getColor(this@EightModesActivity, R.color.first_mode_theory_text_primary))
+            textSize = 15f
+            setLineSpacing(dp(2).toFloat(), 1.0f)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(5)
+            }
+        }
 
     private fun runEntranceAnimations() {
         val entranceViews = listOf(
@@ -651,13 +760,8 @@ class EightModesActivity : BaseActivity() {
             .reversed()
     }
 
-    private fun openDetailedTheoryForCurrentMode() {
-        val mode = modes.getOrNull(currentModePosition) ?: modes.first()
-        startActivity(
-            Intent(this, ModeTheoryActivity::class.java)
-                .putExtra(ModeTheoryCatalog.EXTRA_MODE_KEY, mode.theoryKey)
-        )
-    }
+    private fun dp(value: Int): Int =
+        (value * resources.displayMetrics.density).toInt()
 
     override fun onStop() {
         tonePlayer.stop()
@@ -675,11 +779,8 @@ class EightModesActivity : BaseActivity() {
         val selectorGenusRes: Int,
         val apichimaRes: Int,
         val apichimaAlternativeRes: Int?,
-        val apichimaPhthongsRes: Int,
         val apichimaSyllablesRes: Int,
-        val apichimaAlternativePhthongsRes: Int?,
         val apichimaAlternativeSyllablesRes: Int?,
-        val detailsRes: Int,
         val theoryKey: String,
         val colorCategory: ModeColorCategory,
         val scale: ModeScaleDefinition
@@ -715,5 +816,7 @@ class EightModesActivity : BaseActivity() {
         const val SELECTOR_PULSE_DURATION_MS = 220L
         const val SELECTOR_PULSE_START_SCALE = 0.985f
         const val SELECTOR_PULSE_TENSION = 1.5f
+        const val TABLE_LABEL_WEIGHT = 0.43f
+        const val TABLE_VALUE_WEIGHT = 0.57f
     }
 }
