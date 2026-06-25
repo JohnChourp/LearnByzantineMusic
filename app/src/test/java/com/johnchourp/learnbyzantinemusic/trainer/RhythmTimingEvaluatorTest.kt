@@ -63,12 +63,19 @@ class RhythmTimingEvaluatorTest {
     }
 
     @Test
-    fun `finish closes a segment still voiced at the end`() {
-        val evaluator = RhythmTimingEvaluator(twoNotePlan())
-        evaluator.onFrame(0, true)
-        val verdict = evaluator.finish(1000)
+    fun `a note still voiced at the safety cutoff is not counted correct`() {
+        // One 8 s note (4 beats at 30 bpm); duration tolerance is a generous 4 s.
+        val plan = MelodyPlaybackPlanner.plan(
+            MelodySequence(listOf(TrainerNote(TrainerPhthong.NI, baseDurationBeats = 4f))),
+            MelodyTempo(30)
+        )
+        val evaluator = RhythmTimingEvaluator(plan)
+        evaluator.onFrame(0, true) // start on time, never release
+        // Safety cutoff fires at total + grace ≈ 9500 ms — within the 4 s tolerance, but a
+        // never-released note must not count as correctly timed.
+        val verdict = evaluator.finish(9500)
         assertEquals(0, verdict?.noteIndex)
-        assertTrue(verdict!!.matched)
+        assertFalse(verdict!!.matched)
     }
 
     @Test
@@ -97,10 +104,28 @@ class RhythmTimingEvaluatorTest {
             evaluator.onFrame(t, true)?.let { verdicts.add(it) }
             t += 50
         }
-        evaluator.finish(2000)?.let { verdicts.add(it) }
+        evaluator.onFrame(2000, false)?.let { verdicts.add(it) } // release at the end
 
         assertEquals(listOf(0, 1), verdicts.map { it.noteIndex })
         assertTrue(verdicts.all { it.matched })
         assertTrue(evaluator.isComplete)
+    }
+
+    @Test
+    fun `a correctly timed second note still greens after the first is skipped`() {
+        val evaluator = RhythmTimingEvaluator(twoNotePlan())
+        val verdicts = mutableListOf<RhythmVerdict>()
+        // Sing only the second note, starting slightly early (900 ms) and releasing at 1920.
+        var t = 900L
+        while (t <= 1900) {
+            evaluator.onFrame(t, true)?.let { verdicts.add(it) }
+            t += 50
+        }
+        evaluator.onFrame(1920, false)?.let { verdicts.add(it) }
+
+        // 900 ms is nearest note1's start (1000) and within tolerance, so note1 greens; note0
+        // was never sung and stays unjudged.
+        assertEquals(listOf(1), verdicts.map { it.noteIndex })
+        assertTrue(verdicts.single().matched)
     }
 }

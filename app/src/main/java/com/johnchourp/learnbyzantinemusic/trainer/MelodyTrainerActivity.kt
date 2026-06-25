@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
-import com.johnchourp.learnbyzantinemusic.modes.PhthongTonePlayer
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -48,9 +47,10 @@ class MelodyTrainerActivity : BaseActivity() {
     private var suppressVoiceSwitchCallback = false
     private var suppressRhythmSwitchCallback = false
 
-    private val tonePlayer = PhthongTonePlayer()
-    private val player by lazy { MelodySequencePlayer(tonePlayer) }
-    private val pitchEngine by lazy { TrainerPitchEngine(onPitch = ::onPitchDetected) }
+    private val player = MelodySequencePlayer()
+    private val pitchEngine by lazy {
+        TrainerPitchEngine(onPitch = ::onPitchDetected, onCaptureError = ::onCaptureError)
+    }
     private val uiHandler = Handler(Looper.getMainLooper())
 
     private var voiceEvaluator: PitchGreeningEvaluator? = null
@@ -225,6 +225,7 @@ class MelodyTrainerActivity : BaseActivity() {
 
     private fun toggleGorgo(index: Int) {
         if (isBusy) return
+        if (index == 0) return // γοργόν needs a previous note to shorten
         val note = notes.getOrNull(index) ?: return
         notes[index] = note.withGorgo(!note.hasGorgo)
         renderNotes()
@@ -344,6 +345,19 @@ class MelodyTrainerActivity : BaseActivity() {
             finishVoiceSession()
         } else {
             updateVoiceStatus()
+        }
+    }
+
+    private fun onCaptureError() {
+        if (isVoiceActive) {
+            setVoiceSwitchChecked(false)
+            stopVoiceSession(clearGreens = false)
+            voiceStatusText.text = getString(R.string.melody_trainer_mic_unavailable)
+        }
+        if (isRhythmActive) {
+            setRhythmSwitchChecked(false)
+            stopRhythmSession(clearGreens = false)
+            rhythmStatusText.text = getString(R.string.melody_trainer_mic_unavailable)
         }
     }
 
@@ -615,12 +629,14 @@ class MelodyTrainerActivity : BaseActivity() {
 
         row.addView(
             Button(this).apply {
+                // γοργόν shortens the *previous* note, so it is invalid on the first row.
+                val gorgoAllowed = index > 0
                 text = getString(R.string.melody_trainer_gorgo)
                 isAllCaps = false
                 minWidth = dp(64)
                 minimumWidth = dp(64)
                 alpha = if (note.hasGorgo) 1f else 0.45f
-                isEnabled = !isBusy
+                isEnabled = !isBusy && gorgoAllowed
                 setOnClickListener { toggleGorgo(index) }
             },
             wrapContent()
@@ -723,8 +739,7 @@ class MelodyTrainerActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         uiHandler.removeCallbacksAndMessages(null)
-        player.stop()
-        tonePlayer.release()
+        player.release()
         pitchEngine.stop()
     }
 

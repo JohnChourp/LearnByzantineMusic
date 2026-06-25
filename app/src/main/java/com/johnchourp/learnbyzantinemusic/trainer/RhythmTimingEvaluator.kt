@@ -64,9 +64,18 @@ class RhythmTimingEvaluator(
         return verdict
     }
 
-    /** Closes a still-open sung segment when the exercise ends while voiced. */
+    /**
+     * Closes a still-open sung segment when the exercise ends while voiced. Reaching here
+     * while voiced means the safety cutoff fired before the singer released the note, so an
+     * indefinitely held note is forced to *not* match — otherwise a long note's generous
+     * duration tolerance could let an unreleased note count as correctly timed.
+     */
     fun finish(elapsedMillis: Long): RhythmVerdict? {
-        val verdict = if (voiced) finalizeSegment(segmentStart, elapsedMillis, segmentNote) else null
+        val verdict = if (voiced) {
+            finalizeSegment(segmentStart, elapsedMillis, segmentNote)?.copy(matched = false)
+        } else {
+            null
+        }
         clearSegment()
         voiced = false
         return verdict
@@ -82,12 +91,12 @@ class RhythmTimingEvaluator(
         segmentNote = -1
     }
 
-    /** The note this onset belongs to: the one whose window contains it, else nearest. */
-    private fun chooseNote(onsetMillis: Long): Int {
-        val active = activeNoteIndex(onsetMillis)
-        if (active >= 0 && !judged[active]) return active
-        return nearestUnjudged(onsetMillis)
-    }
+    /**
+     * The note this onset belongs to: the not-yet-judged scheduled note whose start is
+     * nearest the onset. Using nearest (rather than the containing window) lets a slightly
+     * early note after a skipped one still attach to the right target.
+     */
+    private fun chooseNote(onsetMillis: Long): Int = nearestUnjudged(onsetMillis)
 
     private fun finalizeSegment(onsetMillis: Long, offsetMillis: Long, noteIndex: Int): RhythmVerdict? {
         if (noteIndex < 0 || onsetMillis < 0L || judged[noteIndex]) return null
