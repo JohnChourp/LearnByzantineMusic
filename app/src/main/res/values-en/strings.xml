@@ -692,4 +692,29 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="notes_status_import_invalid_json">Invalid backup file.</string>
     <string name="notes_status_import_read_failed">Failed to read backup file.</string>
     <string name="notes_status_folder_selected">Backup folder selected.</string>
+
+    <!-- Melody trainer -->
+    <string name="title_activity_melody_trainer">Melody Trainer</string>
+    <string name="melody_trainer_open">Melody Trainer</string>
+    <string name="melody_trainer_title">Melody Trainer — Time &amp; Phthongi</string>
+    <string name="melody_trainer_intro">Write a sequence of phthongi, set how long each one lasts, and hear the melody at the speed you choose.</string>
+    <string name="melody_trainer_rules_title">Timing rules</string>
+    <string name="melody_trainer_rules_body">• Each phthong lasts 1 beat by default.\n• Gorgon: the phthong becomes half a beat (0.5) and takes 0.5 beat from the previous one, so two phthongi are said in one beat.\n• Klasma (apli): adds one whole beat to the phthong.\n• Use the speed control to set how fast the timer counts (beats per minute).</string>
+    <string name="melody_trainer_add_note_title">Add a phthong</string>
+    <string name="melody_trainer_octave_label">Octave: %1$s</string>
+    <string name="melody_trainer_octave_lower">Octave down</string>
+    <string name="melody_trainer_octave_higher">Octave up</string>
+    <string name="melody_trainer_sequence_title">Your sequence</string>
+    <string name="melody_trainer_total_beats">Total: %1$s beats</string>
+    <string name="melody_trainer_empty_hint">You haven\'t added any phthongi yet. Tap a phthong above to start.</string>
+    <string name="melody_trainer_note_duration">%1$s b.</string>
+    <string name="melody_trainer_duration_decrease">Less time</string>
+    <string name="melody_trainer_duration_increase">More time</string>
+    <string name="melody_trainer_gorgo">Gorgon</string>
+    <string name="melody_trainer_note_remove">Remove phthong</string>
+    <string name="melody_trainer_tempo_title">Speed</string>
+    <string name="melody_trainer_tempo_value">%1$d beats/min</string>
+    <string name="melody_trainer_play">Play</string>
+    <string name="melody_trainer_stop">Stop</string>
+    <string name="melody_trainer_clear">Clear</string>
 </resources>

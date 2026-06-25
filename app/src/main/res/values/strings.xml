@@ -683,4 +683,29 @@
     <string name="notes_status_import_invalid_json">Μη έγκυρο backup αρχείο.</string>
     <string name="notes_status_import_read_failed">Αποτυχία ανάγνωσης backup αρχείου.</string>
     <string name="notes_status_folder_selected">Ο φάκελος backup επιλέχθηκε.</string>
+
+    <!-- Melody trainer (Γυμναστής Μελωδίας) -->
+    <string name="title_activity_melody_trainer">Γυμναστής Μελωδίας</string>
+    <string name="melody_trainer_open">Γυμναστής Μελωδίας</string>
+    <string name="melody_trainer_title">Γυμναστής Μελωδίας — Χρόνος &amp; Φθόγγοι</string>
+    <string name="melody_trainer_intro">Γράψε μια σειρά από φθόγγους, όρισε πόσο χρόνο κρατάει ο καθένας και άκουσε τη μελωδία στην ταχύτητα που θέλεις.</string>
+    <string name="melody_trainer_rules_title">Κανόνες χρόνου</string>
+    <string name="melody_trainer_rules_body">• Κάθε φθόγγος κρατάει 1 χρόνο από προεπιλογή.\n• Γοργόν: ο φθόγγος γίνεται μισός χρόνος (0,5) και «τραβάει» 0,5 χρόνο από τον προηγούμενο, ώστε να ειπωθούν δύο φθόγγοι σε έναν χρόνο.\n• Κλάσμα (απλή): προσθέτει 1 χρόνο στον φθόγγο.\n• Με το κουμπί ταχύτητας ρυθμίζεις πόσο γρήγορα μετράει ο χρόνος (χρόνοι ανά λεπτό).</string>
+    <string name="melody_trainer_add_note_title">Πρόσθεσε φθόγγο</string>
+    <string name="melody_trainer_octave_label">Οκτάβα: %1$s</string>
+    <string name="melody_trainer_octave_lower">Οκτάβα κάτω</string>
+    <string name="melody_trainer_octave_higher">Οκτάβα πάνω</string>
+    <string name="melody_trainer_sequence_title">Η σειρά σου</string>
+    <string name="melody_trainer_total_beats">Σύνολο: %1$s χρόνοι</string>
+    <string name="melody_trainer_empty_hint">Δεν έχεις προσθέσει φθόγγους ακόμα. Πάτησε έναν φθόγγο πιο πάνω για να ξεκινήσεις.</string>
+    <string name="melody_trainer_note_duration">%1$s χρ.</string>
+    <string name="melody_trainer_duration_decrease">Λιγότερος χρόνος</string>
+    <string name="melody_trainer_duration_increase">Περισσότερος χρόνος</string>
+    <string name="melody_trainer_gorgo">Γοργόν</string>
+    <string name="melody_trainer_note_remove">Αφαίρεση φθόγγου</string>
+    <string name="melody_trainer_tempo_title">Ταχύτητα</string>
+    <string name="melody_trainer_tempo_value">%1$d χρόνοι/λεπτό</string>
+    <string name="melody_trainer_play">Αναπαραγωγή</string>
+    <string name="melody_trainer_stop">Διακοπή</string>
+    <string name="melody_trainer_clear">Καθαρισμός</string>
 </resources>

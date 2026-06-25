@@ -108,6 +108,11 @@
             android:label="@string/title_activity_phthongs_names"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
+            android:name=".trainer.MelodyTrainerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_melody_trainer"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings"
