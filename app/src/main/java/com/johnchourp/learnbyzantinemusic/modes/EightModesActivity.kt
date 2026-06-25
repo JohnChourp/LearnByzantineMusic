@@ -528,7 +528,6 @@ class EightModesActivity : BaseActivity() {
                 topMargin = dp(8)
             }
             addView(createTheoryTableRow(R.string.mode_theory_field_system, row.systemRes))
-            addView(createTheoryTableRow(R.string.mode_theory_field_scale, row.scaleRes))
             addView(
                 createTheoryTableRow(
                     R.string.mode_theory_field_dominant_phthongs,
@@ -559,7 +558,11 @@ class EightModesActivity : BaseActivity() {
 
     private fun createTheoryTableCell(textValue: String, isLabel: Boolean): TextView =
         TextView(this).apply {
-            text = textValue
+            if (isLabel) {
+                text = textValue
+            } else {
+                TheoryTopicLinks.setLinkedText(this@EightModesActivity, this, textValue)
+            }
             setTextColor(
                 ContextCompat.getColor(
                     this@EightModesActivity,
@@ -605,7 +608,7 @@ class EightModesActivity : BaseActivity() {
 
     private fun createSectionBody(textValue: String): TextView =
         TextView(this).apply {
-            text = textValue
+            TheoryTopicLinks.setLinkedText(this@EightModesActivity, this, textValue)
             setTextColor(ContextCompat.getColor(this@EightModesActivity, R.color.first_mode_theory_text_primary))
             textSize = 15f
             setLineSpacing(dp(2).toFloat(), 1.0f)

@@ -285,7 +285,9 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="mode_selector_plagal_second">Pl. Second</string>
     <string name="mode_selector_plagal_fourth">Pl. Fourth</string>
     <string name="title_activity_mode_theory">Detailed Mode Theory</string>
+    <string name="title_activity_theory_topic">System Theory</string>
     <string name="mode_theory_back_button">← Back to the 8 Modes</string>
+    <string name="theory_topic_back_button">← Back</string>
     <string name="mode_theory_badge">Theory from the Octoechos table</string>
     <string name="mode_theory_quick_facts_title">Quick view</string>
     <string name="mode_theory_quick_facts_template">Apichima: %1$s\nEthos/effect: %2$s</string>
@@ -307,6 +309,12 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="mode_theory_section_phthores">Phthores</string>
     <string name="mode_theory_section_ethos">Ethos</string>
     <string name="mode_theory_source_note">Source: ΗΧΟΙ.pdf, the provided Octoechos table. Empty cells in the source table are shown as “Not specified in the source table”. No new musical symbols were added beyond the verified local assets already present in the app.</string>
+    <string name="theory_topic_octave_diapason_title">Octachord or Diapason System</string>
+    <string name="theory_topic_middle_acute_grave_diapason_title">Middle, acute and grave diapason; double diapason</string>
+    <string name="theory_topic_scale_title">Scale</string>
+    <string name="theory_topic_testimonies_title">Testimonies of the phthongs</string>
+    <string name="theory_topic_pentachord_trochos_title">The pentachord system or trochos</string>
+    <string name="theory_topic_octave_diapason_body">The octachord system, the most useful of all, is also called diapason and heptaphony. It consists of eight phthongs, which form seven intervals. Thus the diatonic scale Pa Vou Ga Di Ke Zo Ni, which is repeated toward the acute and the grave with the same number of phthongs and the same proportion of intervals, is an octachord or diapason system.\n\nIn this system, the first phthong Pa of the middle diapason (6) corresponds and coincides with the eighth phthong Pa΄ of the acute diapason and likewise with the eighth phthong Pa of the grave diapason. The same applies proportionally to the remaining phthongs, and also to the intervals formed by the various phthongs of the scale.\n\nIn each scale of this system, the first phthong, which is the base of the scale (4), is at the same time the highest degree of the immediately graver scale. And the last phthong of each scale, which is its highest degree, is at the same time the base of the immediately more acute scale.\n\nThe parallage of the diatonic scale according to the diapason system is done in the ways set out in Part A. The diatonic testimonies according to this system are noted as nine (9).</string>
     <string name="mode_theory_style_eirmologic">Heirmologic</string>
     <string name="mode_theory_style_sticheraric">Sticheraric</string>
     <string name="mode_theory_style_papadic">Papadic</string>
@@ -377,7 +385,7 @@ Imagine the phthongs placed on a ladder as shown below:</string>
     <string name="mode_theory_dominants_varys_sticheraric">Ga, Di, Zo</string>
     <string name="mode_theory_dominants_plagal_fourth_eirmologic">Ni, Vou, Di</string>
     <string name="mode_theory_dominants_plagal_fourth_sticheraric">Ga, Di</string>
-    <string name="mode_theory_modulations_first">To the chromatic genus, mainly hard; also to the enharmonic genus.</string>
+    <string name="mode_theory_modulations_first">To the chromatic genus, mainly hard; also to the enharmonic genus.\nOccasionally, however, it moves into the pentachord or trochos. (44)</string>
     <string name="mode_theory_modulations_second">1. The upper tetrachord Di-Ni΄ often becomes diatonic when it does not complete at the upper Pa΄.\n2. The chromatic behavior is connected with pentachord or trochos practice.</string>
     <string name="mode_theory_modulations_third">To the chromatic genus, rarely.</string>
     <string name="mode_theory_modulations_fourth">To the chromatic genus, mainly soft.</string>

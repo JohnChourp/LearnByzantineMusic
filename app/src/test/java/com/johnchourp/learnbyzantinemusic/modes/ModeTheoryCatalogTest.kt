@@ -39,7 +39,6 @@ class ModeTheoryCatalogTest {
             R.string.mode_theory_section_attractions,
             R.string.mode_theory_section_phthores,
             R.string.mode_theory_field_system,
-            R.string.mode_theory_field_scale,
             R.string.mode_theory_field_dominant_phthongs,
             R.string.mode_theory_field_cadences,
             R.string.mode_theory_field_final_cadences

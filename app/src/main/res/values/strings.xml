@@ -276,7 +276,9 @@
     <string name="mode_selector_plagal_second">Πλ. Β’</string>
     <string name="mode_selector_plagal_fourth">Πλ. Δ’</string>
     <string name="title_activity_mode_theory">Αναλυτική Θεωρία Ήχου</string>
+    <string name="title_activity_theory_topic">Θεωρία Συστήματος</string>
     <string name="mode_theory_back_button">← Επιστροφή στους 8 Ήχους</string>
+    <string name="theory_topic_back_button">← Επιστροφή</string>
     <string name="mode_theory_badge">Θεωρία από τον πίνακα Οκτωηχείας</string>
     <string name="mode_theory_quick_facts_title">Γρήγορη εικόνα</string>
     <string name="mode_theory_quick_facts_template">Απήχημα: %1$s\nΉθος/προκαλεί: %2$s</string>
@@ -298,6 +300,12 @@
     <string name="mode_theory_section_phthores">Φθορές</string>
     <string name="mode_theory_section_ethos">Ήθος</string>
     <string name="mode_theory_source_note">Πηγή: ΗΧΟΙ.pdf, ο πίνακας Οκτωηχείας που δόθηκε. Τα κενά κελιά του πίνακα αποδίδονται ως «Δεν σημειώνεται στον πίνακα». Δεν προστέθηκαν νέα μουσικά σύμβολα πέρα από τα ήδη επιβεβαιωμένα τοπικά assets.</string>
+    <string name="theory_topic_octave_diapason_title">Οκτάχορδον ή διαπασών σύστημα</string>
+    <string name="theory_topic_middle_acute_grave_diapason_title">Μέση οξεία και βαρεία διαπασών, δις διαπασών</string>
+    <string name="theory_topic_scale_title">Κλίμαξ</string>
+    <string name="theory_topic_testimonies_title">Μαρτυρίαι των φθόγγων</string>
+    <string name="theory_topic_pentachord_trochos_title">Το πεντάχορδον σύστημα ή τροχός</string>
+    <string name="theory_topic_octave_diapason_body">Και το μεν οκτάχορδον σύστημα, το περισσότερον εύχρηστον απ\' όλα, ονομάζεται και διαπασών και επταφωνία. Αποτελείται δε από φθόγγους οκτώ, οι οποίοι σχηματίζουν διαστήματα επτά. Ούτω η διατονική κλίμαξ Πα Βου Γα Δι Κε Ζω Νη, η οποία επαναλαμβάνεται επί το οξύ και το βαρύ με τον αυτόν αριθμόν φθόγγων και την αυτήν αναλογίαν διαστημάτων, είναι σύστημα οκτάχορδον ή διαπασών.\n\nΕις το σύστημα τούτο ο πρώτος φθόγγος Πα της μέσης διαπασών (6) αντιστοιχεί και συμπίπτει προς τον όγδοον φθόγγον Πα΄ της οξείας διαπασών και τον όγδοον επίσης φθόγγον Πα της βαρείας διαπασών. Τα αυτά εν αναλογία ισχύουν και διά τους λοιπούς φθόγγους, καθώς και διά τα διαστήματα τα οποία σχηματίζουν οι διάφοροι φθόγγοι της κλίμακος.\n\nΕις εκάστην κλίμακα του συστήματος τούτου, ο πρώτος φθόγγος, ο οποίος είναι η βάσις της κλίμακος (4), είναι συγχρόνως και η ανώτατη βαθμίς της αμέσως βαρυτέρας κλίμακος. Και ο τελευταίος φθόγγος εκάστης κλίμακος, ο οποίος είναι η ανώτατη βαθμίς αυτής, είναι συγχρόνως η βάσις της αμέσως οξυτέρας κλίμακος.\n\nΗ παραλλαγή της διατονικής κλίμακος κατά το διαπασών σύστημα γίνεται καθ\' ών τρόπων εξεθέσαμεν εις το Α΄ μέρος. Διατονικαί δε μαρτυρίαι κατά το σύστημα τούτο εσημειώθησαν εννέα (9).</string>
     <string name="mode_theory_style_eirmologic">Ειρμολογικά</string>
     <string name="mode_theory_style_sticheraric">Στιχηραρικά</string>
     <string name="mode_theory_style_papadic">Παπαδικά</string>
@@ -368,7 +376,7 @@
     <string name="mode_theory_dominants_varys_sticheraric">Γα, Δι, Ζω</string>
     <string name="mode_theory_dominants_plagal_fourth_eirmologic">Νη, Βου, Δι</string>
     <string name="mode_theory_dominants_plagal_fourth_sticheraric">Γα, Δι</string>
-    <string name="mode_theory_modulations_first">Σε χρωματικό γένος, κυρίως σκληρό· επίσης σε εναρμόνιο.</string>
+    <string name="mode_theory_modulations_first">Σε χρωματικό γένος, κυρίως σκληρό· επίσης σε εναρμόνιο.\nΕνίοτε όμως μεταβαίνει εις τον πεντάχορδον ή τον τροχόν. (44)</string>
     <string name="mode_theory_modulations_second">1. Το οξύ τετράχορδο Δι-Νη΄, όταν δεν ολοκληρώνεται στην κορυφή Πα΄, γίνεται διατονικό συχνά.\n2. Η χρωματική συμπεριφορά συνδέεται με πεντάχορδο ή τροχό.</string>
     <string name="mode_theory_modulations_third">Σε χρωματικό γένος σπάνια.</string>
     <string name="mode_theory_modulations_fourth">Σε χρωματικό γένος, κυρίως μαλακό.</string>

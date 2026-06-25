@@ -159,7 +159,7 @@ class ModeTheoryActivity : BaseActivity() {
 
     private fun createBodyText(textValue: String): TextView =
         TextView(this).apply {
-            text = textValue
+            TheoryTopicLinks.setLinkedText(this@ModeTheoryActivity, this, textValue)
             setTextColor(
                 ContextCompat.getColor(
                     this@ModeTheoryActivity,
