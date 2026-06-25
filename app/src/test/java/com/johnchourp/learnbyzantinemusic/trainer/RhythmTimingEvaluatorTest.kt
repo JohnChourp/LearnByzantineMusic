@@ -163,4 +163,70 @@ class RhythmTimingEvaluatorTest {
         assertEquals(1, verdict?.noteIndex)
         assertFalse(verdict!!.matched)
     }
+
+    // ----- combined phthong+time mode (requirePitch = true) -----
+
+    private fun comboEvaluator() = RhythmTimingEvaluator(twoNotePlan(), requirePitch = true)
+
+    /** Sings [phthong] from [onset] to [offset] in combined mode; returns the verdict. */
+    private fun RhythmTimingEvaluator.singCombo(
+        onset: Long,
+        offset: Long,
+        phthong: TrainerPhthong
+    ): RhythmVerdict? {
+        onFrame(onset, true, phthong)
+        return onFrame(offset, false, null)
+    }
+
+    @Test
+    fun `combo greens the right phthong sung at the right time`() {
+        val evaluator = comboEvaluator()
+        val first = evaluator.singCombo(0, 975, TrainerPhthong.NI)
+        assertEquals(0, first?.noteIndex)
+        assertTrue(first!!.matched)
+        val second = evaluator.singCombo(1000, 1975, TrainerPhthong.PA)
+        assertEquals(1, second?.noteIndex)
+        assertTrue(second!!.matched)
+    }
+
+    @Test
+    fun `combo does not green the wrong phthong even with perfect timing`() {
+        val evaluator = comboEvaluator()
+        // Sing Πα where Νη is expected, perfectly on time.
+        val verdict = evaluator.singCombo(0, 975, TrainerPhthong.PA)
+        assertEquals(0, verdict?.noteIndex)
+        assertFalse(verdict!!.matched)
+    }
+
+    @Test
+    fun `combo does not green the right phthong sung at the wrong time`() {
+        val evaluator = comboEvaluator()
+        val verdict = evaluator.singCombo(400, 1300, TrainerPhthong.NI) // right phthong, 400 ms late
+        assertEquals(0, verdict?.noteIndex)
+        assertFalse(verdict!!.matched)
+    }
+
+    @Test
+    fun `combo captures an early pitch change as an early onset`() {
+        val evaluator = comboEvaluator()
+        val verdicts = mutableListOf<RhythmVerdict>()
+        // Legato: hold Νη from 0, switch to Πα 150 ms early (at 850), release at 2000.
+        evaluator.onFrame(0, true, TrainerPhthong.NI)?.let { verdicts.add(it) }
+        evaluator.onFrame(800, true, TrainerPhthong.NI)?.let { verdicts.add(it) }
+        evaluator.onFrame(850, true, TrainerPhthong.PA)?.let { verdicts.add(it) }
+        evaluator.onFrame(1975, true, TrainerPhthong.PA)?.let { verdicts.add(it) }
+        evaluator.onFrame(2000, false, null)?.let { verdicts.add(it) }
+
+        assertEquals(listOf(0, 1), verdicts.map { it.noteIndex })
+        assertTrue(verdicts.all { it.matched })
+    }
+
+    @Test
+    fun `combo silence or off-tune phthong does not start a segment`() {
+        val evaluator = comboEvaluator()
+        // Voiced but off-tune (phthong = null) reads as silence in combined mode.
+        assertNull(evaluator.onFrame(0, true, null))
+        assertNull(evaluator.onFrame(500, true, null))
+        assertFalse(evaluator.isComplete)
+    }
 }
