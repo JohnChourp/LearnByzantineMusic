@@ -833,9 +833,17 @@
     <!-- Συνθέσεις ανάβασης (ClimbingCompositions) — Compose redesign -->
     <string name="climbing_subtitle">Πώς γράφονται οι σύνθετοι χαρακτήρες ανάβασης</string>
     <string name="climbing_concept_title">Τι είναι μια σύνθεση ανάβασης;</string>
-    <string name="climbing_concept_body">Ένας σύνθετος χαρακτήρας ανάβασης είναι ένα και μόνο γραπτό σημάδι που διαβάζεται σαν συνδυασμός απλούστερων νευμάτων. Διάβασε πρώτα τη βάση (Ολίγον, Ίσον ή Απόστροφος) — αυτή ορίζει την κίνηση της φωνής — και μετά τα μικρά σημάδια γύρω της, που προσθέτουν στόλισμα ή χρόνο.</string>
+    <string name="climbing_concept_body">Ένας σύνθετος χαρακτήρας ανάβασης είναι ένα και μόνο γραπτό σημάδι που διαβάζεται σαν συνδυασμός απλούστερων νευμάτων. Βρες πρώτα τη βάση (Ολίγον, Ίσον ή Απόστροφος) — αυτή ορίζει την κίνηση της φωνής — και μετά τα μικρά σημάδια γύρω της, που προσθέτουν στόλισμα ή χρόνο. Τη σειρά με την οποία διαβάζονται τη δείχνει η ανάλυση δεξιά από κάθε σύνθεση.</string>
     <string name="climbing_how_to_read">Σε κάθε γραμμή, αριστερά είναι ο σύνθετος χαρακτήρας και δεξιά τα νεύματα που τον αποτελούν. Πάτησε μια γραμμή για να δεις ξανά πώς «σπάει» στα μέρη του.</string>
+    <string name="name_oligon">Ολίγον</string>
+    <string name="name_ison">Ίσον</string>
+    <string name="name_apostrophe">Απόστροφος</string>
+    <string name="name_embroideries">Κεντήματα</string>
+    <string name="name_underflow">Υπορροή</string>
+    <string name="name_gorgo">Γοργόν</string>
+    <string name="name_digorgo">Δίγοργον</string>
     <string name="name_simple_dot">Απλή στιγμή</string>
+    <string name="name_fraction">Κλάσμα</string>
 
     <string name="climbing_legend_title">Τα σύμβολα με μια ματιά</string>
     <string name="climbing_legend_oligon">Ανεβαίνει μία φωνή — η βασική ανάβαση.</string>
@@ -843,13 +851,13 @@
     <string name="climbing_legend_apostrophe">Κατεβαίνει μία φωνή ή δίνει κλίση.</string>
     <string name="climbing_legend_embroideries">Κεντήματα: στολίζουν και ανεβάζουν τη φωνή.</string>
     <string name="climbing_legend_underflow">Υπορροή: γρήγορη κατιούσα κίνηση.</string>
-    <string name="climbing_legend_gorgo">Γοργόν: τρέχει τη σύνθεση στον μισό χρόνο (½).</string>
-    <string name="climbing_legend_digorgo">Δίγοργον: τρέχει τη σύνθεση στο ¼ του χρόνου.</string>
+    <string name="climbing_legend_gorgo">Γοργόν: τα νεύματα διαβάζονται γρήγορα, στον μισό χρόνο (½).</string>
+    <string name="climbing_legend_digorgo">Δίγοργον: ακόμη πιο γρήγορα — τα νεύματα στο ¼ του χρόνου.</string>
     <string name="climbing_legend_simple_dot">Απλή στιγμή: σημάδι χρόνου.</string>
     <string name="climbing_legend_fraction">Κλάσμα: μικρή χρονική προσθήκη.</string>
 
-    <string name="gorgo_section_intro">Το γοργόν είναι ένα μικρό σημάδι που μπαίνει πάνω σε μια σύνθεση και τη διπλασιάζει σε ταχύτητα — διαβάζεται στον μισό χρόνο (½).</string>
-    <string name="digorgo_section_intro">Το δίγοργον τριπλασιάζει την ταχύτητα: η σύνθεση διαβάζεται στο ¼ του χρόνου.</string>
+    <string name="gorgo_section_intro">Το γοργόν είναι ένα μικρό σημάδι που μπαίνει πάνω σε μια σύνθεση και κάνει τα νεύματά της να διαβάζονται γρήγορα — στον μισό χρόνο (½) το καθένα.</string>
+    <string name="digorgo_section_intro">Το δίγοργον επιταχύνει ακόμη περισσότερο: μοιράζει τον χρόνο σε ακόμη μικρότερα μέρη, ώστε τα νεύματα να διαβάζονται στο ¼ — ο συνολικός χρόνος της σύνθεσης μένει ίδιος.</string>
     <string name="climbing_gorgo_badge">½ χρόνος</string>
     <string name="climbing_digorgo_badge">¼ χρόνου</string>
 
@@ -859,7 +867,7 @@
     <string name="climbing_timing_caption">Ο συνολικός χρόνος μένει ίδιος και στις δύο πλευρές — απλώς μοιράζεται σε περισσότερα, ταχύτερα μέρη.</string>
 
     <string name="climbing_tip_title">Συμβουλή</string>
-    <string name="climbing_tip_body">Διάβασε πάντα πρώτα τη βάση (Ολίγον / Ίσον / Απόστροφος) — αυτή ορίζει την ανάβαση — και μετά τα μικρά σημάδια που προσθέτουν στόλισμα ή χρόνο.</string>
+    <string name="climbing_tip_body">Βρες πρώτα τη βάση (Ολίγον / Ίσον / Απόστροφος) — αυτή ορίζει την ανάβαση — και μετά κοίτα τα μικρά σημάδια που προσθέτουν στόλισμα ή χρόνο. Τη σειρά με την οποία διαβάζονται τη δείχνει η ανάλυση δεξιά.</string>
     <string name="climbing_replay">Ξαναπαίξτε</string>
 
     <string name="climbing_reading_simple_1">Ολίγον με κεντήματα από πάνω: ανέβα μία φωνή και στόλισέ την με τα κεντήματα.</string>

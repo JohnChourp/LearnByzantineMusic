@@ -145,15 +145,15 @@ private data class LegendItem(
 )
 
 private val LEGEND = listOf(
-    LegendItem(Neume.OLIGON, R.string.oligon, R.string.climbing_legend_oligon, R.string.cd_oligon),
-    LegendItem(Neume.ISON, R.string.ison, R.string.climbing_legend_ison, R.string.cd_ison),
-    LegendItem(Neume.APOSTROPHE, R.string.apostrophe, R.string.climbing_legend_apostrophe, R.string.cd_apostrophe),
-    LegendItem(Neume.EMBROIDERIES, R.string.embroideries, R.string.climbing_legend_embroideries, R.string.cd_embroideries),
-    LegendItem(Neume.UNDERFLOW, R.string.underflow, R.string.climbing_legend_underflow, R.string.cd_underflow),
-    LegendItem(Neume.GORGO, R.string.gorgo, R.string.climbing_legend_gorgo, R.string.cd_gorgo),
-    LegendItem(Neume.DIGORGO, R.string.digorgo, R.string.climbing_legend_digorgo, R.string.cd_digorgo),
+    LegendItem(Neume.OLIGON, R.string.name_oligon, R.string.climbing_legend_oligon, R.string.cd_oligon),
+    LegendItem(Neume.ISON, R.string.name_ison, R.string.climbing_legend_ison, R.string.cd_ison),
+    LegendItem(Neume.APOSTROPHE, R.string.name_apostrophe, R.string.climbing_legend_apostrophe, R.string.cd_apostrophe),
+    LegendItem(Neume.EMBROIDERIES, R.string.name_embroideries, R.string.climbing_legend_embroideries, R.string.cd_embroideries),
+    LegendItem(Neume.UNDERFLOW, R.string.name_underflow, R.string.climbing_legend_underflow, R.string.cd_underflow),
+    LegendItem(Neume.GORGO, R.string.name_gorgo, R.string.climbing_legend_gorgo, R.string.cd_gorgo),
+    LegendItem(Neume.DIGORGO, R.string.name_digorgo, R.string.climbing_legend_digorgo, R.string.cd_digorgo),
     LegendItem(Neume.SIMPLE_DOT, R.string.name_simple_dot, R.string.climbing_legend_simple_dot, R.string.cd_simple_dot),
-    LegendItem(Neume.FRACTION, R.string.fraction, R.string.climbing_legend_fraction, R.string.cd_fraction),
+    LegendItem(Neume.FRACTION, R.string.name_fraction, R.string.climbing_legend_fraction, R.string.cd_fraction),
 )
 
 @Composable
