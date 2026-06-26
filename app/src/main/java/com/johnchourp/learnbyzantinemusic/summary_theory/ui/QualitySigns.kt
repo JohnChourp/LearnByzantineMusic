@@ -104,8 +104,9 @@ private fun apostropheF() = f(18, apostrophe())
 /** Απόστροφος with a γοργόν above it. */
 private fun apGorgoF() = f(32, apostrophe(dy = 5), gorgo(dx = -1, dy = 2))
 
-/** Κεντήματα with a γοργόν above them. */
-private fun embGorgoF() = f(34, embroideries(a = NeumeAlign.CENTER, dy = 4), gorgo(dx = 2, dy = 0))
+/** Κεντήματα with a παρεστιγμένο γοργόν above them — as in the original Ομαλόν diagram. */
+private fun embPresentedGorgoF() =
+    f(34, embroideries(a = NeumeAlign.CENTER, dy = 4), NeumeGlyph(Neume.PRESENTED_GORGO, 21, 10, NeumeAlign.TOP_CENTER, 2, 0))
 
 object QualitySigns {
 
@@ -116,6 +117,7 @@ object QualitySigns {
         QualityLegendItem(Neume.APOSTROPHE, R.string.name_apostrophe, R.string.q_legend_apostrophe, R.string.cd_apostrophe),
         QualityLegendItem(Neume.GORGO, R.string.name_gorgo, R.string.q_legend_gorgo, R.string.cd_gorgo),
         QualityLegendItem(Neume.EMBROIDERIES, R.string.name_embroideries, R.string.q_legend_embroideries, R.string.cd_embroideries),
+        QualityLegendItem(Neume.EMBROIDERY, R.string.embroidery, R.string.q_legend_embroidery, R.string.cd_embroidery),
         QualityLegendItem(Neume.FRACTION, R.string.name_fraction, R.string.q_legend_fraction, R.string.cd_fraction),
         QualityLegendItem(Neume.SLIGHT, R.string.name_slight, R.string.q_legend_slight, R.string.cd_slight),
         QualityLegendItem(Neume.FLYER, R.string.name_flyer, R.string.q_legend_flyer, R.string.cd_flyer),
@@ -254,12 +256,20 @@ object QualitySigns {
             examples = listOf(
                 QualityExample(
                     combined = listOf(f(50, oligon(a = NeumeAlign.TOP_CENTER), ison(w = 34, a = NeumeAlign.TOP_END, dy = 2), under(Neume.ALL_RIGHT))),
-                    parts = listOf(oligonF(), embGorgoF(), apostropheF()),
+                    parts = listOf(oligonF(), embPresentedGorgoF(), apostropheF()),
                     readingRes = R.string.q_read_omalon_1,
                 ),
+                // Three notes under one ομαλόν: ολίγον, ίσον-με-γοργό, ίσον (as the original diagram).
                 QualityExample(
                     combined = listOf(
-                        f(50, oligon(a = NeumeAlign.TOP_CENTER, dx = -18), ison(w = 36, a = NeumeAlign.TOP_CENTER, dx = 18), under(Neume.ALL_RIGHT, w = 70)),
+                        f(
+                            54,
+                            oligon(w = 36, a = NeumeAlign.TOP_CENTER, dx = -30, dy = 6),
+                            ison(w = 28, a = NeumeAlign.TOP_CENTER, dx = 2, dy = 6),
+                            gorgo(dx = 2, dy = -2),
+                            ison(w = 28, a = NeumeAlign.TOP_CENTER, dx = 32, dy = 6),
+                            under(Neume.ALL_RIGHT, w = 92),
+                        ),
                     ),
                     readingRes = R.string.q_read_omalon_3,
                 ),

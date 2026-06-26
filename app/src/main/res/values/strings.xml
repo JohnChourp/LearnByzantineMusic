@@ -890,7 +890,7 @@
     <!-- «Ποιότητος» page redesign (Compose) -->
     <string name="quality_subtitle">Τα σημάδια που αλλάζουν το χρώμα του φθόγγου</string>
     <string name="quality_intro_title">Τι είναι τα σημάδια ποιότητος;</string>
-    <string name="quality_intro_body">Τα σημάδια ποιότητος δεν αλλάζουν το ύψος του φθόγγου· αλλάζουν τον τρόπο που τον λες — τον τονισμό, τη ζωηρότητα, την ομαλότητα ή τη χροιά του. Μπαίνουν πάνω, κάτω ή δίπλα από έναν φθόγγο και του δίνουν χαρακτήρα.</string>
+    <string name="quality_intro_body">Τα σημάδια ποιότητος δεν μετακινούν τον φθόγγο σε άλλη νότα· αλλάζουν τον τρόπο που τον λες — τον τονισμό, τη ζωηρότητα, την ομαλότητα, τη χροιά ή μικρές διακυμάνσεις στο ύψος του. Μπαίνουν πάνω, κάτω ή δίπλα από έναν φθόγγο και του δίνουν χαρακτήρα.</string>
     <string name="quality_taxonomy_hint">Τα οκτώ σημάδια ποιότητος με μια ματιά:</string>
     <string name="quality_legend_title">Βασικά νεύματα στα παραδείγματα</string>
     <string name="quality_tip_title">Καλό να θυμάσαι</string>
@@ -921,6 +921,7 @@
     <string name="q_legend_apostrophe">Κατεβαίνει έναν φθόγγο</string>
     <string name="q_legend_gorgo">Διπλάσια ταχύτητα (μισός χρόνος)</string>
     <string name="q_legend_embroideries">Στόλισμα πάνω από τη βάση</string>
+    <string name="q_legend_embroidery">Ένα μονό στόλισμα (κέντημα)</string>
     <string name="q_legend_fraction">Μικρή χρονική προσθήκη</string>
     <string name="q_legend_slight">Κατάβαση με ελαφρότητα</string>
     <string name="q_legend_flyer">Ζωηρό, τονισμένο ανέβασμα</string>
@@ -941,7 +942,7 @@
     <!-- Quality: short readings under each worked example -->
     <string name="q_read_heavy_even">Χωρίς Βαρεία: ίσον, απόστροφος με γοργόν και ολίγον — όλα με την ίδια ζωηρότητα.</string>
     <string name="q_read_heavy_with">Με Βαρεία μπροστά, το ίσον παίρνει βαρύ τονισμό και ξεχωρίζει από τους γειτονικούς φθόγγους.</string>
-    <string name="q_read_heavy_dots">Μπροστά από μία ή δύο κουκκίδες η Βαρεία δεν συνδέεται· γίνεται παύση ενός ή δύο χρόνων.</string>
+    <string name="q_read_heavy_dots">Μπροστά από μία, δύο ή περισσότερες κουκκίδες η Βαρεία δεν συνδέεται· γίνεται παύση αντίστοιχων χρόνων.</string>
     <string name="q_read_yfen_1">Ίσον με κλάσμα = δύο ίσα ενωμένα με ένα υφέν.</string>
     <string name="q_read_yfen_2">Ίσον με δύο κουκκίδες = τρία ίσα ενωμένα με δύο υφέν.</string>
     <string name="q_read_cs_1">Συνεχές ελαφρόν = απόστροφος με γοργόν και απόστροφος, σχεδόν κολλητά.</string>
@@ -953,6 +954,6 @@
     <string name="q_read_vaccum_1">Αντικένωμα κάτω από ολίγον, με απόστροφο να ακολουθεί — ένα μικρό πέταγμα της φωνής.</string>
     <string name="q_read_vaccum_2">Συνδεδεμένο με απλήν, ενεργεί ανάμεσα στον πρώτο και τον δεύτερο χρόνο του φθόγγου.</string>
     <string name="q_read_link_1">Ο σύνδεσμος ενώνει δύο ίσα σε μία συλλαβή, χωρίς να κόβεται η φωνή.</string>
-    <string name="q_read_link_3">Σε σύνθετες θέσεις ενώνει τους χρόνους του ολίγου με τη φωνή του ίσου.</string>
+    <string name="q_read_link_3">Ενώνει επίσης έναν ολίγον με ίσον σε μία συλλαβή.</string>
     <string name="q_read_intercom_1">Ο φθόγγος με ενδόφωνο προφέρεται με κλειστό στόμα, ασθενώς και διά της ρινός.</string>
 </resources>

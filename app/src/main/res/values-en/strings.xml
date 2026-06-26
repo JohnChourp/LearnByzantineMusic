@@ -891,7 +891,7 @@
     <!-- «Quality» page redesign (Compose) -->
     <string name="quality_subtitle">The signs that change the colour of a note</string>
     <string name="quality_intro_title">What are the quality signs?</string>
-    <string name="quality_intro_body">Quality signs do not change the pitch of a note; they change how you sing it — its accent, liveliness, smoothness or timbre. They sit above, below or beside a note and give it character.</string>
+    <string name="quality_intro_body">Quality signs do not move a note to a different pitch; they change how you sing it — its accent, liveliness, smoothness, timbre or a small waver in pitch. They sit above, below or beside a note and give it character.</string>
     <string name="quality_taxonomy_hint">All eight quality signs at a glance:</string>
     <string name="quality_legend_title">Base neumes used in the examples</string>
     <string name="quality_tip_title">Worth remembering</string>
@@ -922,6 +922,7 @@
     <string name="q_legend_apostrophe">Goes down one note</string>
     <string name="q_legend_gorgo">Double speed (half the time)</string>
     <string name="q_legend_embroideries">Ornament above the base</string>
+    <string name="q_legend_embroidery">A single ornament (kentima)</string>
     <string name="q_legend_fraction">A small time addition</string>
     <string name="q_legend_slight">A light descent</string>
     <string name="q_legend_flyer">A lively, accented ascent</string>
@@ -942,7 +943,7 @@
     <!-- Quality: short readings under each worked example -->
     <string name="q_read_heavy_even">Without a Vareia: ison, apostrophe with a gorgon and oligon — all with the same liveliness.</string>
     <string name="q_read_heavy_with">With a Vareia in front, the ison takes a heavy accent and stands out from its neighbouring notes.</string>
-    <string name="q_read_heavy_dots">In front of one or two dots the Vareia no longer binds; it becomes a one- or two-beat pause.</string>
+    <string name="q_read_heavy_dots">In front of one, two or more dots the Vareia no longer binds; it becomes a pause of as many beats.</string>
     <string name="q_read_yfen_1">Ison with a fraction = two isons joined by one yfen.</string>
     <string name="q_read_yfen_2">Ison with two dots = three isons joined by two yfen.</string>
     <string name="q_read_cs_1">Continuous elaphron = apostrophe with a gorgon and apostrophe, almost glued together.</string>
@@ -954,6 +955,6 @@
     <string name="q_read_vaccum_1">Antikenoma under an oligon, with an apostrophe following — a small flick of the voice.</string>
     <string name="q_read_vaccum_2">Bound to a single dot, it acts between the first and second beat of the note.</string>
     <string name="q_read_link_1">The syndesmos joins two isons into one syllable, without breaking the voice.</string>
-    <string name="q_read_link_3">In compound cases it joins the beats of the oligon to the voice of the ison.</string>
+    <string name="q_read_link_3">It likewise joins an oligon and an ison into one syllable.</string>
     <string name="q_read_intercom_1">A note with an endofono is sung with a closed mouth, weakly and through the nose.</string>
 </resources>
