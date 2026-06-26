@@ -30,7 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.Icon
@@ -70,92 +70,75 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurfaceVariant
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
 
-/** Localized name of a simple ascending character. */
+/** Localized name of a simple descending character. */
 @StringRes
-internal fun AscentCharacter.nameRes(): Int = when (this) {
-    AscentCharacter.ISON -> R.string.ison
-    AscentCharacter.OLIGON -> R.string.oligon
-    AscentCharacter.PETASTI -> R.string.flyer
-    AscentCharacter.KENTIMATA -> R.string.embroideries
-    AscentCharacter.KENTIMA -> R.string.embroidery
-    AscentCharacter.YPSILI -> R.string.high
+internal fun DescentCharacter.nameRes(): Int = when (this) {
+    DescentCharacter.APOSTROPHOS -> R.string.apostrophe
+    DescentCharacter.ELAFRON -> R.string.slight
+    DescentCharacter.YPORROI -> R.string.underflow
+    DescentCharacter.CHAMILI -> R.string.low
 }
 
-/** The neume drawable for a simple ascending character. */
+/** The neume drawable for a simple descending character. */
 @DrawableRes
-internal fun AscentCharacter.diagramRes(): Int = when (this) {
-    AscentCharacter.ISON -> R.drawable.ison
-    AscentCharacter.OLIGON -> R.drawable.oligon
-    AscentCharacter.PETASTI -> R.drawable.flyer
-    AscentCharacter.KENTIMATA -> R.drawable.embroideries
-    AscentCharacter.KENTIMA -> R.drawable.embroidery
-    AscentCharacter.YPSILI -> R.drawable.high
+internal fun DescentCharacter.diagramRes(): Int = when (this) {
+    DescentCharacter.APOSTROPHOS -> R.drawable.apostrophe
+    DescentCharacter.ELAFRON -> R.drawable.slight
+    DescentCharacter.YPORROI -> R.drawable.underflow
+    DescentCharacter.CHAMILI -> R.drawable.low
 }
 
 /** Accessibility description for a simple character's neume. */
 @StringRes
-internal fun AscentCharacter.cdRes(): Int = when (this) {
-    AscentCharacter.ISON -> R.string.cd_ison
-    AscentCharacter.OLIGON -> R.string.cd_oligon
-    AscentCharacter.PETASTI -> R.string.cd_flyer
-    AscentCharacter.KENTIMATA -> R.string.cd_embroideries
-    AscentCharacter.KENTIMA -> R.string.cd_embroidery
-    AscentCharacter.YPSILI -> R.string.cd_high
+internal fun DescentCharacter.cdRes(): Int = when (this) {
+    DescentCharacter.APOSTROPHOS -> R.string.cd_apostrophe
+    DescentCharacter.ELAFRON -> R.string.cd_slight
+    DescentCharacter.YPORROI -> R.string.cd_underflow
+    DescentCharacter.CHAMILI -> R.string.cd_low
 }
 
-/** One-line definition for the characters that have one (Πεταστή, Κεντήματα); else null. */
+/** One-line definition for the characters that have one (Υπορροή); else null. */
 @StringRes
-internal fun AscentCharacter.definitionRes(): Int? = when (this) {
-    AscentCharacter.PETASTI -> R.string.flyer_definition
-    AscentCharacter.KENTIMATA -> R.string.embroideries_definition
+internal fun DescentCharacter.definitionRes(): Int? = when (this) {
+    DescentCharacter.YPORROI -> R.string.yporroi_definition
     else -> null
 }
 
 /** Intrinsic neume size (width × height, dp) from the original layout, kept to preserve scale. */
-internal fun AscentCharacter.glyphSize(): Pair<Int, Int> = when (this) {
-    AscentCharacter.ISON -> 62 to 18
-    // The original simple Ολίγον row overrode its height to 8dp (a thin, flat mark); the
-    // leaping section keeps the 18dp default — see LeapingAscent.
-    AscentCharacter.OLIGON -> 70 to 8
-    AscentCharacter.PETASTI -> 62 to 23
-    AscentCharacter.KENTIMATA -> 30 to 18
-    AscentCharacter.KENTIMA -> 15 to 18
-    AscentCharacter.YPSILI -> 42 to 36
+internal fun DescentCharacter.glyphSize(): Pair<Int, Int> = when (this) {
+    DescentCharacter.APOSTROPHOS -> 30 to 18
+    DescentCharacter.ELAFRON -> 52 to 18
+    // The Υπορροή neume (underflow) is a small, compact mark.
+    DescentCharacter.YPORROI -> 19 to 18
+    DescentCharacter.CHAMILI -> 58 to 36
 }
 
-/** Localized "+N φωνές" / "0 φωνή" label for a voice count 0..14. */
+/** Localized "-N φωνές" label for a descent magnitude 1..12. */
 @StringRes
-internal fun voicesLabelRes(voices: Int): Int = when (voices) {
-    0 -> R.string.zero_voice
-    1 -> R.string.add_one_voice
-    2 -> R.string.add_two_voice
-    3 -> R.string.add_three_voice
-    4 -> R.string.add_four_voice
-    5 -> R.string.add_five_voice
-    6 -> R.string.add_six_voice
-    7 -> R.string.add_seven_voice
-    8 -> R.string.add_eight_voice
-    9 -> R.string.add_nine_voice
-    10 -> R.string.add_ten_voice
-    11 -> R.string.add_eleven_voice
-    12 -> R.string.add_twelve_voice
-    13 -> R.string.add_thirteen_voice
-    else -> R.string.add_fourteen_voice
+internal fun minusVoicesLabelRes(voices: Int): Int = when (voices) {
+    1 -> R.string.minus_one_voice
+    2 -> R.string.minus_two_voice
+    3 -> R.string.minus_three_voice
+    4 -> R.string.minus_four_voice
+    5 -> R.string.minus_five_voice
+    6 -> R.string.minus_six_voice
+    7 -> R.string.minus_seven_voice
+    8 -> R.string.minus_eight_voice
+    9 -> R.string.minus_nine_voice
+    10 -> R.string.minus_ten_voice
+    11 -> R.string.minus_eleven_voice
+    else -> R.string.minus_twelve_voice
 }
-
-/** Whether a form is written on the emphatic Πεταστή base (else the plain Ολίγον base). */
-internal fun NeumeForm.baseLabelRes(): Int =
-    if (glyphs.any { it.neume == Neume.FLYER }) R.string.ascents_base_petasti
-    else R.string.ascents_base_oligon
 
 /**
- * Redesigned «Ανιόντες» page: an animated hero, a concept card, an interactive ladder that
- * shows how far each character lifts the voice, a reference of the simple ascending characters
- * with their neumes and definitions, an explorer of the leaping ascents (+2 … +14) with the
- * original neume spellings rendered faithfully, and a practice tip. Back navigation via [onBack].
+ * Redesigned «Κατιόντες» page: an animated hero, a concept card, an interactive ladder that
+ * shows how far each character lowers the voice, a reference of the simple descending characters
+ * with their neumes and definitions, an explorer of the leaping descents (-2 … -12) with the
+ * original neume spellings rendered faithfully, and a practice tip. The whole page mirrors the
+ * «Ανιόντες» screen but inverts the metaphor — here the voice *drops*. Back navigation via [onBack].
  */
 @Composable
-fun AscentsScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
+fun DescentsScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val scroll = rememberScrollState()
     Column(
         modifier = modifier
@@ -164,10 +147,10 @@ fun AscentsScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
             .verticalScroll(scroll),
     ) {
         LessonHero(
-            title = stringResource(R.string.ascents),
-            subtitle = stringResource(R.string.ascents_subtitle),
+            title = stringResource(R.string.descents),
+            subtitle = stringResource(R.string.descents_subtitle),
             onBack = onBack,
-            icon = Icons.AutoMirrored.Filled.TrendingUp,
+            icon = Icons.AutoMirrored.Filled.TrendingDown,
         )
         Column(
             modifier = Modifier
@@ -177,21 +160,21 @@ fun AscentsScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
         ) {
             Spacer(Modifier.height(2.dp))
             StaggeredAppear(delayMillis = 60) { ConceptCard() }
-            StaggeredAppear(delayMillis = 140) { VoiceRiseCard() }
+            StaggeredAppear(delayMillis = 140) { VoiceDropCard() }
             StaggeredAppear(delayMillis = 220) { SimpleCharactersCard() }
-            StaggeredAppear(delayMillis = 300) { LeapingAscentsCard() }
+            StaggeredAppear(delayMillis = 300) { LeapingDescentsCard() }
             StaggeredAppear(delayMillis = 380) { TipCard() }
             Spacer(Modifier.height(8.dp))
         }
     }
 }
 
-/** What the ascending quantity characters are. */
+/** What the descending quantity characters are. */
 @Composable
 private fun ConceptCard() {
-    LessonCard(title = stringResource(R.string.ascents_concept_title)) {
+    LessonCard(title = stringResource(R.string.descents_concept_title)) {
         Text(
-            text = stringResource(R.string.ascents_concept_body),
+            text = stringResource(R.string.descents_concept_body),
             style = MaterialTheme.typography.bodyMedium,
             color = LbmTextSecondary,
         )
@@ -203,15 +186,15 @@ private fun ConceptCard() {
 private val RUNG_HEIGHT = 44.dp
 private val MARKER_SIZE = 26.dp
 
-/** Pick a character and watch the voice climb the ladder by that many φωνές. */
+/** Pick a character and watch the voice drop the ladder by that many φωνές. */
 @Composable
-private fun VoiceRiseCard() {
-    var selected by remember { mutableStateOf(AscentCharacter.OLIGON) }
+private fun VoiceDropCard() {
+    var selected by remember { mutableStateOf(DescentCharacter.APOSTROPHOS) }
     var replay by remember { mutableIntStateOf(0) }
 
-    LessonCard(title = stringResource(R.string.ascents_interactive_title)) {
+    LessonCard(title = stringResource(R.string.descents_interactive_title)) {
         Text(
-            text = stringResource(R.string.ascents_interactive_hint),
+            text = stringResource(R.string.descents_interactive_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = LbmTextSecondary,
         )
@@ -222,13 +205,13 @@ private fun VoiceRiseCard() {
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            AscentCharacter.all.forEach { character ->
+            DescentCharacter.all.forEach { character ->
                 LessonChip(
                     label = stringResource(character.nameRes()),
                     selected = character == selected,
                     onClick = {
-                        // Always restart the climb, even when switching between equal-rise
-                        // characters (e.g. Ολίγον → Πεταστή → Κεντήματα are all +1 φωνή).
+                        // Always restart the drop, even when switching between equal-depth
+                        // characters (e.g. Ελαφρόν → Υπορροή are both -2 φωνές).
                         selected = character
                         replay++
                     },
@@ -236,16 +219,13 @@ private fun VoiceRiseCard() {
             }
         }
         Spacer(Modifier.height(18.dp))
-        VoiceRiseLadder(target = selected.voices, maxLevel = AscentCharacter.maxVoices, replayKey = replay)
+        VoiceDropLadder(target = selected.voices, maxLevel = DescentCharacter.maxVoices, replayKey = replay)
         Spacer(Modifier.height(16.dp))
-        val captionRes =
-            if (selected.voices == 0) R.string.ascents_interactive_caption_zero
-            else R.string.ascents_interactive_caption
         Text(
             text = stringResource(
-                captionRes,
+                R.string.descents_interactive_caption,
                 stringResource(selected.nameRes()),
-                stringResource(voicesLabelRes(selected.voices)),
+                stringResource(minusVoicesLabelRes(selected.voices)),
             ),
             style = MaterialTheme.typography.bodyMedium,
             color = LbmTextSecondary,
@@ -269,7 +249,7 @@ private fun VoiceRiseCard() {
             )
             Spacer(Modifier.width(6.dp))
             Text(
-                text = stringResource(R.string.ascents_replay),
+                text = stringResource(R.string.descents_replay),
                 style = MaterialTheme.typography.labelLarge,
                 color = LbmBrown,
                 fontWeight = FontWeight.SemiBold,
@@ -279,11 +259,12 @@ private fun VoiceRiseCard() {
 }
 
 /**
- * A vertical ladder with rungs 0..[maxLevel]; a marker climbs from 0 up to [target] φωνές each
- * time the selection (or [replayKey]) changes, so the learner sees the voice rise.
+ * A vertical ladder with rungs 0..[maxLevel] running top-to-bottom; a marker drops from the start
+ * (top) down to [target] φωνές each time the selection (or [replayKey]) changes, so the learner
+ * sees the voice fall.
  */
 @Composable
-private fun VoiceRiseLadder(target: Int, maxLevel: Int, replayKey: Int) {
+private fun VoiceDropLadder(target: Int, maxLevel: Int, replayKey: Int) {
     val pos = remember { Animatable(target.toFloat()) }
     LaunchedEffect(target, replayKey) {
         pos.snapTo(0f)
@@ -296,7 +277,7 @@ private fun VoiceRiseLadder(target: Int, maxLevel: Int, replayKey: Int) {
     val reached = pos.value
 
     Row(modifier = Modifier.fillMaxWidth()) {
-        // Left rail: guide line, filled path, ticks and the climbing marker.
+        // Left rail: guide line, filled path from the top, ticks and the dropping marker.
         Box(
             modifier = Modifier
                 .width(56.dp)
@@ -312,7 +293,7 @@ private fun VoiceRiseLadder(target: Int, maxLevel: Int, replayKey: Int) {
             )
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.TopCenter)
                     .width(4.dp)
                     .height(RUNG_HEIGHT * reached + RUNG_HEIGHT / 2)
                     .clip(RoundedCornerShape(2.dp))
@@ -321,8 +302,8 @@ private fun VoiceRiseLadder(target: Int, maxLevel: Int, replayKey: Int) {
             for (level in 0..maxLevel) {
                 Box(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .offset(y = -(RUNG_HEIGHT * level + RUNG_HEIGHT / 2 - 5.dp))
+                        .align(Alignment.TopCenter)
+                        .offset(y = RUNG_HEIGHT * level + RUNG_HEIGHT / 2 - 5.dp)
                         .size(10.dp)
                         .clip(CircleShape)
                         .background(if (level <= reached + 0.5f) LbmBrown else LbmOutline),
@@ -330,8 +311,8 @@ private fun VoiceRiseLadder(target: Int, maxLevel: Int, replayKey: Int) {
             }
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .offset(y = -(RUNG_HEIGHT * reached + RUNG_HEIGHT / 2 - MARKER_SIZE / 2))
+                    .align(Alignment.TopCenter)
+                    .offset(y = RUNG_HEIGHT * reached + RUNG_HEIGHT / 2 - MARKER_SIZE / 2)
                     .size(MARKER_SIZE)
                     .clip(CircleShape)
                     .background(LbmBrown)
@@ -339,9 +320,9 @@ private fun VoiceRiseLadder(target: Int, maxLevel: Int, replayKey: Int) {
             )
         }
         Spacer(Modifier.width(8.dp))
-        // Right column: the voice-count label for each rung, lining up with the rail.
+        // Right column: the depth label for each rung, lining up with the rail (start at the top).
         Column(modifier = Modifier.height(trackHeight)) {
-            for (level in maxLevel downTo 0) {
+            for (level in 0..maxLevel) {
                 val isReached = level <= reached + 0.5f
                 Box(
                     modifier = Modifier
@@ -350,7 +331,8 @@ private fun VoiceRiseLadder(target: Int, maxLevel: Int, replayKey: Int) {
                     contentAlignment = Alignment.CenterStart,
                 ) {
                     Text(
-                        text = stringResource(voicesLabelRes(level)),
+                        text = if (level == 0) stringResource(R.string.descents_start)
+                        else stringResource(minusVoicesLabelRes(level)),
                         style = MaterialTheme.typography.titleMedium,
                         color = if (isReached) LbmTextPrimary else LbmTextSecondary,
                         fontWeight = if (isReached) FontWeight.SemiBold else FontWeight.Normal,
@@ -363,24 +345,24 @@ private fun VoiceRiseLadder(target: Int, maxLevel: Int, replayKey: Int) {
 
 /* ----------------------------- Simple characters ----------------------------- */
 
-/** The six simple ascending characters, each with its neume, +N badge and definition. */
+/** The four simple descending characters, each with its neume, -N badge and definition. */
 @Composable
 private fun SimpleCharactersCard() {
-    LessonCard(title = stringResource(R.string.ascents_simple_title)) {
+    LessonCard(title = stringResource(R.string.descents_simple_title)) {
         Text(
-            text = stringResource(R.string.ascents_simple_intro),
+            text = stringResource(R.string.descents_simple_intro),
             style = MaterialTheme.typography.bodyMedium,
             color = LbmTextSecondary,
         )
         Spacer(Modifier.height(16.dp))
         Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-            AscentCharacter.all.forEach { character -> SimpleCharacterRow(character) }
+            DescentCharacter.all.forEach { character -> SimpleCharacterRow(character) }
         }
     }
 }
 
 @Composable
-private fun SimpleCharacterRow(character: AscentCharacter) {
+private fun SimpleCharacterRow(character: DescentCharacter) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             VoiceBadge(voices = character.voices)
@@ -393,7 +375,7 @@ private fun SimpleCharacterRow(character: AscentCharacter) {
                 modifier = Modifier.weight(1f),
             )
             Text(
-                text = stringResource(voicesLabelRes(character.voices)),
+                text = stringResource(minusVoicesLabelRes(character.voices)),
                 style = MaterialTheme.typography.titleMedium,
                 color = LbmBrown,
                 fontWeight = FontWeight.SemiBold,
@@ -417,7 +399,7 @@ private val SIMPLE_NEUME_FRAME_HEIGHT = 88.dp
 
 /** A single neume on a white frame, drawn at its true (scaled) size so rows stay compact. */
 @Composable
-private fun SimpleNeumeFrame(character: AscentCharacter) {
+private fun SimpleNeumeFrame(character: DescentCharacter) {
     val (w, h) = character.glyphSize()
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -444,18 +426,18 @@ private fun SimpleNeumeFrame(character: AscentCharacter) {
     }
 }
 
-/** Round badge showing a "+N" voice count (or "0" for Ίσον). */
+/** Round badge showing a "-N" descent depth. */
 @Composable
 private fun VoiceBadge(voices: Int) {
     Box(
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
-            .background(if (voices == 0) LbmBrownSoft else LbmBrown),
+            .background(LbmBrown),
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = if (voices == 0) "0" else "+$voices",
+            text = "-$voices",
             style = MaterialTheme.typography.titleMedium,
             color = Color.White,
             fontWeight = FontWeight.Bold,
@@ -463,22 +445,22 @@ private fun VoiceBadge(voices: Int) {
     }
 }
 
-/* ----------------------------- Leaping ascents ----------------------------- */
+/* ----------------------------- Leaping descents ----------------------------- */
 
-/** Explore each leap +2 … +14 and see its authored neume spellings + the rising meter. */
+/** Explore each descent -2 … -12 and see its authored neume spelling + the falling meter. */
 @Composable
-private fun LeapingAscentsCard() {
+private fun LeapingDescentsCard() {
     var selected by remember { mutableIntStateOf(0) }
-    val leap = LeapingAscents.all[selected]
-    LessonCard(title = stringResource(R.string.transcendent_ascents)) {
+    val leap = LeapingDescents.all[selected]
+    LessonCard(title = stringResource(R.string.transcendent_descents)) {
         Text(
-            text = stringResource(R.string.ascents_leaping_intro),
+            text = stringResource(R.string.descents_leaping_intro),
             style = MaterialTheme.typography.bodyMedium,
             color = LbmTextSecondary,
         )
         Spacer(Modifier.height(14.dp))
         Text(
-            text = stringResource(R.string.ascents_leaping_pick),
+            text = stringResource(R.string.descents_leaping_pick),
             style = MaterialTheme.typography.labelLarge,
             color = LbmTextPrimary,
             fontWeight = FontWeight.SemiBold,
@@ -490,51 +472,39 @@ private fun LeapingAscentsCard() {
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            LeapingAscents.all.forEachIndexed { index, item ->
+            LeapingDescents.all.forEachIndexed { index, item ->
                 LessonChip(
-                    label = "+${item.voices}",
+                    label = "-${item.voices}",
                     selected = index == selected,
                     onClick = { selected = index },
                 )
             }
         }
         Spacer(Modifier.height(18.dp))
-        VoiceLeapMeter(voices = leap.voices)
+        VoiceDropMeter(voices = leap.voices)
         Spacer(Modifier.height(20.dp))
         Text(
-            text = stringResource(R.string.ascents_leaping_forms_title),
+            text = stringResource(R.string.descents_leaping_forms_title),
             style = MaterialTheme.typography.labelLarge,
             color = LbmTextPrimary,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(Modifier.height(10.dp))
-        val cd = stringResource(R.string.cd_leaping_neume, stringResource(voicesLabelRes(leap.voices)))
-        // Fixed-width, horizontally scrollable forms so the authored glyph offsets (e.g. the
-        // +2 oligon + dx=45 embroidery) are never clipped on narrow screens.
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            leap.forms.forEach { form ->
-                LeapingForm(form = form, contentDescription = cd, modifier = Modifier.width(LEAPING_FORM_WIDTH))
-            }
-        }
+        val cd = stringResource(R.string.cd_leaping_descent, stringResource(minusVoicesLabelRes(leap.voices)))
+        LeapingDescentForm(form = leap.form, contentDescription = cd)
     }
 }
 
-/** Width that comfortably fits any authored form's base glyph (70dp) plus its offsets. */
-private val LEAPING_FORM_WIDTH = 150.dp
-
+/** The single authored neume spelling of a leaping descent, framed on white. */
 @Composable
-private fun LeapingForm(form: NeumeForm, contentDescription: String, modifier: Modifier = Modifier) {
-    Column(
+private fun LeapingDescentForm(form: DescentForm, contentDescription: String, modifier: Modifier = Modifier) {
+    Box(
         modifier = modifier
+            .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
             .background(LbmSurfaceVariant)
             .padding(vertical = 12.dp, horizontal = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
@@ -544,21 +514,14 @@ private fun LeapingForm(form: NeumeForm, contentDescription: String, modifier: M
                 .padding(8.dp),
             contentAlignment = Alignment.Center,
         ) {
-            NeumeStack(form = form, contentDescription = contentDescription)
+            DescentNeumeStack(form = form, contentDescription = contentDescription)
         }
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = stringResource(form.baseLabelRes()),
-            style = MaterialTheme.typography.labelLarge,
-            color = LbmTextSecondary,
-            textAlign = TextAlign.Center,
-        )
     }
 }
 
-/** A horizontal meter that fills to [voices]/[maxVoices] with a moving marker and "+N" label. */
+/** A horizontal meter that fills to [voices]/[maxVoices] with a moving fill and "-N" label. */
 @Composable
-private fun VoiceLeapMeter(voices: Int, maxVoices: Int = 14) {
+private fun VoiceDropMeter(voices: Int, maxVoices: Int = 12) {
     val fraction = remember { Animatable(0f) }
     LaunchedEffect(voices) {
         fraction.snapTo(0f)
@@ -591,7 +554,7 @@ private fun VoiceLeapMeter(voices: Int, maxVoices: Int = 14) {
                 .padding(horizontal = 12.dp, vertical = 6.dp),
         ) {
             Text(
-                text = stringResource(voicesLabelRes(voices)),
+                text = stringResource(minusVoicesLabelRes(voices)),
                 style = MaterialTheme.typography.titleMedium,
                 color = LbmBrown,
                 fontWeight = FontWeight.Bold,
@@ -604,7 +567,7 @@ private fun VoiceLeapMeter(voices: Int, maxVoices: Int = 14) {
 
 @Composable
 private fun TipCard() {
-    LessonCard(title = stringResource(R.string.ascents_tip_title)) {
+    LessonCard(title = stringResource(R.string.descents_tip_title)) {
         Row(verticalAlignment = Alignment.Top) {
             Icon(
                 imageVector = Icons.Filled.AutoAwesome,
@@ -614,7 +577,7 @@ private fun TipCard() {
             )
             Spacer(Modifier.width(10.dp))
             Text(
-                text = stringResource(R.string.ascents_tip_body),
+                text = stringResource(R.string.descents_tip_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = LbmTextSecondary,
             )
