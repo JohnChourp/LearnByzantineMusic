@@ -214,6 +214,29 @@
     <string name="cd_high">Neume: Ypsili</string>
     <string name="cd_leaping_neume">Neumes for a rise of %1$s</string>
 
+    <!-- «Descents» page redesign (Compose) -->
+    <string name="descents_subtitle">Quantity characters that lower the voice</string>
+    <string name="descents_concept_title">What the descending characters are</string>
+    <string name="descents_concept_body">Quantity characters show how many voices (phthongs) the melody falls. The “heavier” the character, the bigger the drop of the voice.</string>
+    <string name="descents_interactive_title">How much does the voice fall?</string>
+    <string name="descents_interactive_hint">Pick a character and watch the voice descend the ladder.</string>
+    <string name="descents_interactive_caption">“%1$s” lowers the voice by %2$s.</string>
+    <string name="descents_start">Start</string>
+    <string name="descents_replay">Show again</string>
+    <string name="descents_simple_title">Simple descending characters</string>
+    <string name="descents_simple_intro">Each character lowers the voice by a set number of voices:</string>
+    <string name="descents_leaping_intro">For bigger descents we combine the descending characters (slight, low…) into a single stacked neume. Pick an interval to see how it is written.</string>
+    <string name="descents_leaping_pick">Pick an interval</string>
+    <string name="descents_leaping_forms_title">How it is written</string>
+    <string name="descents_tip_title">Tip</string>
+    <string name="descents_tip_body">Learn the simple characters first. The leaping descents are just combinations of them — don’t be afraid of them!</string>
+    <string name="yporroi_definition">The Yporroi is written as a single neume but is worth two apostrophes — a drop of two voices (-2).</string>
+    <string name="cd_apostrophe">Neume: Apostrophos</string>
+    <string name="cd_slight">Neume: Elafron</string>
+    <string name="cd_underflow">Neume: Yporroi</string>
+    <string name="cd_low">Neume: Chamili</string>
+    <string name="cd_leaping_descent">Neumes for a descent of %1$s</string>
+
     <string name="title_activity_descents">Descents</string>
     <string name="slight">Slightly</string>
     <string name="minus_two_voice">-2 voices</string>

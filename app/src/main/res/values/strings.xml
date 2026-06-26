@@ -213,6 +213,29 @@
     <string name="cd_high">Νεύμα: Υψηλή</string>
     <string name="cd_leaping_neume">Νεύματα για ανάβαση %1$s</string>
 
+    <!-- «Κατιόντες» page redesign (Compose) -->
+    <string name="descents_subtitle">Χαρακτήρες ποσότητος που κατεβάζουν τη φωνή</string>
+    <string name="descents_concept_title">Τι είναι οι κατιόντες χαρακτήρες</string>
+    <string name="descents_concept_body">Οι χαρακτήρες ποσότητος δείχνουν πόσες φωνές (φθόγγους) κατεβαίνει η μελωδία. Όσο πιο «βαρύς» ο χαρακτήρας, τόσο μεγαλύτερη η κατάβαση της φωνής.</string>
+    <string name="descents_interactive_title">Πόσο κατεβαίνει η φωνή;</string>
+    <string name="descents_interactive_hint">Διάλεξε χαρακτήρα και δες τη φωνή να κατεβαίνει στη σκάλα.</string>
+    <string name="descents_interactive_caption">Το «%1$s» κατεβάζει τη φωνή κατά %2$s.</string>
+    <string name="descents_start">Αφετηρία</string>
+    <string name="descents_replay">Δείξε ξανά</string>
+    <string name="descents_simple_title">Απλοί κατιόντες χαρακτήρες</string>
+    <string name="descents_simple_intro">Κάθε χαρακτήρας κατεβάζει τη φωνή κατά ορισμένες φωνές:</string>
+    <string name="descents_leaping_intro">Για μεγαλύτερες καταβάσεις συνδυάζουμε τους κατιόντες χαρακτήρες (ελαφρόν, χαμηλή…) σε ένα σύνθετο σημάδι. Διάλεξε διάστημα για να δεις πώς γράφεται.</string>
+    <string name="descents_leaping_pick">Διάλεξε διάστημα</string>
+    <string name="descents_leaping_forms_title">Πώς γράφεται</string>
+    <string name="descents_tip_title">Συμβουλή</string>
+    <string name="descents_tip_body">Μάθε πρώτα τους απλούς χαρακτήρες. Οι υπερβατές καταβάσεις είναι απλώς συνδυασμοί τους — μην τις φοβάσαι!</string>
+    <string name="yporroi_definition">Η Υπορροή γράφεται ως ένα σημάδι, αλλά ισοδυναμεί με δύο αποστρόφους — κατεβάζει τη φωνή κατά δύο φωνές (-2).</string>
+    <string name="cd_apostrophe">Νεύμα: Απόστροφος</string>
+    <string name="cd_slight">Νεύμα: Ελαφρόν</string>
+    <string name="cd_underflow">Νεύμα: Υπορροή</string>
+    <string name="cd_low">Νεύμα: Χαμηλή</string>
+    <string name="cd_leaping_descent">Νεύματα για κατάβαση %1$s</string>
+
     <string name="title_activity_descents">Descents</string>
     <string name="slight">Ελαφρόν</string>
     <string name="minus_two_voice">-2 φωνές</string>
