@@ -259,7 +259,7 @@
     <string name="minus_twelve_voice">-12 voices</string>
     <string name="title_activity_quality">Quality</string>
     <string name="digital">Digital</string>
-    <string name="digital_definition">Dixiston is also called sharp and is written below phthongo and it is not necessary to pronounce this phthongo with liveliness or force or sharper.</string>
+    <string name="digital_definition">The Psifiston is also called oxeia and is written below a note, and requires that note to be pronounced with liveliness or force, or higher.</string>
     <string name="all_right">All right</string>
     <string name="all_right_definition">Omalon is written below the phthong, usually the equal and the minor, and requires a smooth undulation of the voice up to the high voice.</string>
     <string name="all_right_examples">Some examples with Omalon:</string>
@@ -887,4 +887,73 @@
     <string name="cd_digorgo">Neume: Digorgon</string>
     <string name="cd_simple_dot">Neume: Simple dot</string>
     <string name="cd_fraction">Neume: Fraction</string>
+
+    <!-- «Quality» page redesign (Compose) -->
+    <string name="quality_subtitle">The signs that change the colour of a note</string>
+    <string name="quality_intro_title">What are the quality signs?</string>
+    <string name="quality_intro_body">Quality signs do not change the pitch of a note; they change how you sing it — its accent, liveliness, smoothness or timbre. They sit above, below or beside a note and give it character.</string>
+    <string name="quality_taxonomy_hint">All eight quality signs at a glance:</string>
+    <string name="quality_legend_title">Base neumes used in the examples</string>
+    <string name="quality_tip_title">Worth remembering</string>
+    <string name="quality_tip_body">The same base neume (ison, oligon, apostrophe) sounds different depending on the quality sign next to it. Learn the base first, then “colour” it with the quality.</string>
+    <string name="quality_replay">Show the breakdown again</string>
+    <string name="quality_do_label">Correct</string>
+    <string name="quality_dont_label">Watch out</string>
+    <string name="quality_intercom_hint_title">How it sounds</string>
+    <string name="quality_intercom_hint_body">Close your mouth slightly and let the sound out through your nose — a soft, nasal “mmm”. If the note also has a time sign, its whole duration is sung this way.</string>
+
+    <!-- Quality: «what it changes» tags -->
+    <string name="q_tag_heavy">Changes: the accent</string>
+    <string name="q_tag_yfen">Changes: the pitch</string>
+    <string name="q_tag_continuous_slight">Changes: the flow</string>
+    <string name="q_tag_digital">Changes: the liveliness</string>
+    <string name="q_tag_all_right">Changes: the smoothness</string>
+    <string name="q_tag_vaccum">Changes: the liveliness</string>
+    <string name="q_tag_link">Changes: the linking</string>
+    <string name="q_tag_intercom">Changes: the timbre</string>
+
+    <!-- Quality: legend meanings + missing base-neume names/descriptions -->
+    <string name="name_slight">Elaphron</string>
+    <string name="name_flyer">Petasti</string>
+    <string name="name_double_dots">Two dots</string>
+    <string name="cd_double_dots">Neume: Two dots</string>
+    <string name="q_legend_ison">Holds the same pitch</string>
+    <string name="q_legend_oligon">Goes up one note</string>
+    <string name="q_legend_apostrophe">Goes down one note</string>
+    <string name="q_legend_gorgo">Double speed (half the time)</string>
+    <string name="q_legend_embroideries">Ornament above the base</string>
+    <string name="q_legend_fraction">A small time addition</string>
+    <string name="q_legend_slight">A light descent</string>
+    <string name="q_legend_flyer">A lively, accented ascent</string>
+    <string name="q_legend_underflow">Two descents in one sign</string>
+    <string name="q_legend_double_dots">Add time to the note</string>
+
+    <!-- Quality: content descriptions for the eight signs -->
+    <string name="cd_heavy">Quality sign: Vareia</string>
+    <string name="cd_yfen">Quality sign: Yfen</string>
+    <string name="cd_continuous_slight">Quality sign: Continuous elaphron</string>
+    <string name="cd_digital">Quality sign: Psifiston</string>
+    <string name="cd_all_right">Quality sign: Omalon</string>
+    <string name="cd_vaccum">Quality sign: Antikenoma</string>
+    <string name="cd_link">Quality sign: Syndesmos</string>
+    <string name="cd_intercom">Quality sign: Endofono</string>
+    <string name="cd_continuous_slight_example">An example where a continuous elaphron is NOT performed, because the syllable changes and there is a fraction over the apostrophe.</string>
+
+    <!-- Quality: short readings under each worked example -->
+    <string name="q_read_heavy_even">Without a Vareia: ison, apostrophe with a gorgon and oligon — all with the same liveliness.</string>
+    <string name="q_read_heavy_with">With a Vareia in front, the ison takes a heavy accent and stands out from its neighbouring notes.</string>
+    <string name="q_read_heavy_dots">In front of one or two dots the Vareia no longer binds; it becomes a one- or two-beat pause.</string>
+    <string name="q_read_yfen_1">Ison with a fraction = two isons joined by one yfen.</string>
+    <string name="q_read_yfen_2">Ison with two dots = three isons joined by two yfen.</string>
+    <string name="q_read_cs_1">Continuous elaphron = apostrophe with a gorgon and apostrophe, almost glued together.</string>
+    <string name="q_read_cs_2">With an ison in front: ison, then apostrophe with a gorgon and apostrophe.</string>
+    <string name="q_read_digital_1">The psifiston under the first note makes it livelier than the two that follow.</string>
+    <string name="q_read_digital_3">On the kentimata the psifiston gives a livelier delivery.</string>
+    <string name="q_read_omalon_1">Oligon with an omalon: oligon, kentimata with a gorgon and apostrophe — a smooth wave of the voice.</string>
+    <string name="q_read_omalon_3">Under three notes the omalon’s energy spreads across all three.</string>
+    <string name="q_read_vaccum_1">Antikenoma under an oligon, with an apostrophe following — a small flick of the voice.</string>
+    <string name="q_read_vaccum_2">Bound to a single dot, it acts between the first and second beat of the note.</string>
+    <string name="q_read_link_1">The syndesmos joins two isons into one syllable, without breaking the voice.</string>
+    <string name="q_read_link_3">In compound cases it joins the beats of the oligon to the voice of the ison.</string>
+    <string name="q_read_intercom_1">A note with an endofono is sung with a closed mouth, weakly and through the nose.</string>
 </resources>

@@ -258,12 +258,12 @@
     <string name="minus_twelve_voice">-12 φωνές</string>
     <string name="title_activity_quality">Quality</string>
     <string name="digital">Ψηφιστόν</string>
-    <string name="digital_definition">Το Ψηφιστόν λέγεται και οξεία και γράφεται κάτω από φθόγγο και αταιτεί να προφέρει αυτό τον φθόγγο με ζωηρότητα ή δύναμη ή οξυτερα.</string>
+    <string name="digital_definition">Το Ψηφιστόν λέγεται και οξεία και γράφεται κάτω από φθόγγο και απαιτεί να προφέρει αυτόν τον φθόγγο με ζωηρότητα ή δύναμη ή οξύτερα.</string>
     <string name="all_right">Ομαλόν</string>
     <string name="all_right_definition">Το Ομαλόν γραφεται κάτω από τον φθόγγο, συνήθως του ίσου και του ολίγου και απαιτεί ομαλό κυματισμό της φωνής μέχρι την υψηλή φωνή.</string>
     <string name="all_right_examples">Μερικά παραδείγματα με το Ομαλόν:</string>
     <string name="link">Σύνδεσμος</string>
-    <string name="link_definition">Ο Σύνδεσμος λεγεται και έτερον συνδέει φθόγγους ανιόντες με κατιόντες ή ίσον, ή ίσον με ίσον, χωρίς να διακόπτεται η φωνή.\nΟι φθόγγοι που συνδέονται μεταξύ τους δεν δέχονται δύο διαφοτερικές συλλαβές, αλλά πάντοτε μία, η οποία τοποθεταίται στην πρώτη θέση.</string>
+    <string name="link_definition">Ο Σύνδεσμος λέγεται και έτερον· συνδέει φθόγγους ανιόντες με κατιόντες ή ίσον, ή ίσον με ίσον, χωρίς να διακόπτεται η φωνή.\nΟι φθόγγοι που συνδέονται μεταξύ τους δεν δέχονται δύο διαφορετικές συλλαβές, αλλά πάντοτε μία, η οποία τοποθετείται στην πρώτη θέση.</string>
     <string name="link_examples">Έτσι για παράδειγμα έχουμε τις παρακάτω συνθέσεις:</string>
     <string name="_1">(1)</string>
     <string name="_2">(2)</string>
@@ -274,17 +274,17 @@
     <string name="link_example_5_definition">Στην πεμπτη σύνθεση ο σύνδεσμος συνδέει την φωνή της αποστρόφου με την φωνή του ολίγου.</string>
     <string name="link_example_6_definition">Στην έκτη σύνθεση ο σύνδεσμος συνδέει τον δεύτερο φθόγγο της υπορροής με την φωνή του ίσου.</string>
     <string name="vaccum">Αντικένωμα</string>
-    <string name="vaccum_definition">Το Αντικένωμα τοποθετείται επίσης κάτω από φθόγγους και πάντα ακολουθείται από καιόντες.\nΠροφέρει τη φωνή με μικρό πέταγμα, το οποίο ποσδίδει ζωηρότητα στον απαγγελλόμενο φθόγγο.</string>
+    <string name="vaccum_definition">Το Αντικένωμα τοποθετείται επίσης κάτω από φθόγγους και πάντα ακολουθείται από κατιόντες.\nΠροφέρει τη φωνή με μικρό πέταγμα, το οποίο προσδίδει ζωηρότητα στον απαγγελλόμενο φθόγγο.</string>
     <string name="vaccum_examples">Μερικά παραδείγματα με αντικένωμα έχουμε παρακάτω:</string>
     <string name="vaccum_examples_with_one_dot">Συνήθως το αντικένωμα βρίσκεται συνδεδεμένο με απλήν, οπότε ακολουθείται από κατιόντα φθόγγο με γοργό.\nΓια παράδειγμα:</string>
-    <string name="vaccum_examples_with_one_dot_definition">Σε τέτοια περίπτωση, το αντικένωμα ενεργεί μεταξύ του πρώτου και του δεύτερου χρόνου του φθόγγου, σε αυτόν που βρίσκεται.\nΟ φθόγγος του ακολουθού φθόγου προφέρεται κερμασμένος, κάπως αχρηστοποιημένος, από το φθόγγο του ίσου η το ολίγον φθόγγο.</string>
+    <string name="vaccum_examples_with_one_dot_definition">Σε τέτοια περίπτωση, το αντικένωμα ενεργεί μεταξύ του πρώτου και του δεύτερου χρόνου του φθόγγου, σε αυτόν που βρίσκεται.\nΟ φθόγγος του ακόλουθου φθόγγου προφέρεται κερματισμένος, κάπως αχρηστοποιημένος, από τον φθόγγο του ίσου ή το ολίγον φθόγγο.</string>
     <string name="intercom">Ενδόφωνο</string>
-    <string name="intercom_definition">Το Ενδόφωνο απαιτεί να προφέρουμε τον φθόγγον, κάτω από του οποίου βρίσκεται, με στόμα κλειστό, εποένως ασθενώς και δια της ρίνος.\nΕάν ο φθόγγος που έχει το ενδόφωνον έχει και χρονικό σημείο, το ενδόφωνον ενεργεί και στο χρονικό σημείο, ώστε όλοι οι χρόνοι του φθόγγου να απαγγελθούν δια της ρίνος.</string>
+    <string name="intercom_definition">Το Ενδόφωνο απαιτεί να προφέρουμε τον φθόγγο, κάτω από τον οποίο βρίσκεται, με στόμα κλειστό, επομένως ασθενώς και διά της ρινός.\nΕάν ο φθόγγος που έχει το ενδόφωνο έχει και χρονικό σημείο, το ενδόφωνο ενεργεί και στο χρονικό σημείο, ώστε όλοι οι χρόνοι του φθόγγου να απαγγελθούν διά της ρινός.</string>
     <string name="vaccum_complex_examples">Παρακάτω έχουμε λίγο πιο σύνθετα παραδείγματα:\nΣτη σύνθεση (1) το αντικένωμα ενεργεί στο ολίγον.\nΣτη σύνθεση (2) το αντικένωμα ενεργεί με ζωηρότητα στην ποιότητα της πεταστής.</string>
     <string name="link_pronounced">Οι συνδεόμενοι φθόγγοι προφέρονται με ομαλότητα και ασθενώς ένταση.</string>
     <string name="link_with_dots_examples">Όμοια ενέργεια έχει ο σύνδεσμος, όταν τοποθετείται κάτω από φθόγγο που έχει δυο η τρεις κουκκίδες.\nΓια παράδειγμα:</string>
     <string name="link_with_dots_examples_definition">Οπότε ενώνει σε έναν συνεχή και ομαλό φθόγγο τους χρόνους του φθόγγου.</string>
-    <string name="link_complex_examples">Παρακάτω έχουμε λίγο πιο σύνθετα παραδείγματα:\nΣτη σύνθεση (1) ο σύνδεσμος δυνδέει τους δύο χρόνους του πρώτου ολίγου με τον φθόγγο του ίσου.\nΣτη σύνθεση (2) ο σύνδεσμος ενεργεί ομοίως, το ψιφιστόν ενεργεί στα κεντήματα.</string>
+    <string name="link_complex_examples">Παρακάτω έχουμε λίγο πιο σύνθετα παραδείγματα:\nΣτη σύνθεση (1) ο σύνδεσμος συνδέει τους δύο χρόνους του πρώτου ολίγου με τον φθόγγο του ίσου.\nΣτη σύνθεση (2) ο σύνδεσμος ενεργεί ομοίως, το ψηφιστόν ενεργεί στα κεντήματα.</string>
     <string name="all_right_complex_examples">Παρακάτω έχουμε λίγο πιο σύνθετα παραδείγματα:\nΣτη σύνθεση (1) και (2) το ομαλόν ενεργεί στο ολίγον.\nΣτη σύνθεση (3) και (4) η ενέργεια του ομαλού καταναλώνεται μεταξύ του πρώτου και του δεύτερου χρόνου.</string>
     <string name="all_right_under_three_characters_example">Εννοείτε ότι όταν το ομαλόν βρίσκεται κάτω από τρεις φθόγγους, εκ των οποίων ο δεύτερος και ο τρίτος είναι ίσον, ο δεύτερος εχει και γοργο.\nΓια παράδειγμα:</string>
     <string name="all_right_under_three_characters_example_definition">Στην παραπάνω σύνθεση η ενέργεια του ομαλού εκτείνεται στους τρεις φθόγγους.\nΗ παραπάνω σύνθεση αυτή αναλύεται ως εξής:</string>
@@ -293,7 +293,7 @@
     <string name="digital_example_embroideries_definition">Στις παρακάτω συνθέσεις το ψηφιστόν ενεργεί στα κεντήματα, τα οποία εν τοιαύτη περίπτωση λαμβάνουν ζωηρότερα της συνηθούς απαγγελίας:</string>
     <string name="heavy_example_definition">Η Βαρεία τοποθετείται πάντα έμπροσθεν εμφώνου χαρακτήρος και απαιτεί να απαγγείλει τον φθόγγο αυτό με τόνο βαρύτερο, ώστε να διακρίνεται ο φθόγγος αυτός από τον προηγούμενον και τον επόμενον.</string>
     <string name="heavy_example_definition_2">Όπως για παράδειγμα στην παρακάτω σύνθεση:</string>
-    <string name="heavy_example_definition_3">Το ίσον προφέρεται με όσην ζωηρότητα και η απόστροφος και ο ολίγον.\n¨οταν όμως πριν το ίσον υπάρχει βαρεία, τότε:</string>
+    <string name="heavy_example_definition_3">Το ίσον προφέρεται με όσην ζωηρότητα και η απόστροφος και ο ολίγον.\nΌταν όμως πριν το ίσον υπάρχει βαρεία, τότε:</string>
     <string name="heavy_example_definition_4">Το Ίσον προφέρεται με βαρύν τονισμό, λόγου του οποίου διαφέρει από την απόστροφο και το ολίγον.</string>
     <string name="heavy_example_definition_5">Όταν η βαρεία βρίσκεται μπροστά από μια ή δυο κλπ. κουκκίδες, τότε δεν συνδέεται πλέον με αυτήν, παρα παύσιν ή σιωπή ενός χρόνου ή δυο κλπ.</string>
     <string name="pause">Παύση</string>
@@ -886,4 +886,73 @@
     <string name="cd_digorgo">Νεύμα: Δίγοργον</string>
     <string name="cd_simple_dot">Νεύμα: Απλή στιγμή</string>
     <string name="cd_fraction">Νεύμα: Κλάσμα</string>
+
+    <!-- «Ποιότητος» page redesign (Compose) -->
+    <string name="quality_subtitle">Τα σημάδια που αλλάζουν το χρώμα του φθόγγου</string>
+    <string name="quality_intro_title">Τι είναι τα σημάδια ποιότητος;</string>
+    <string name="quality_intro_body">Τα σημάδια ποιότητος δεν αλλάζουν το ύψος του φθόγγου· αλλάζουν τον τρόπο που τον λες — τον τονισμό, τη ζωηρότητα, την ομαλότητα ή τη χροιά του. Μπαίνουν πάνω, κάτω ή δίπλα από έναν φθόγγο και του δίνουν χαρακτήρα.</string>
+    <string name="quality_taxonomy_hint">Τα οκτώ σημάδια ποιότητος με μια ματιά:</string>
+    <string name="quality_legend_title">Βασικά νεύματα στα παραδείγματα</string>
+    <string name="quality_tip_title">Καλό να θυμάσαι</string>
+    <string name="quality_tip_body">Το ίδιο νεύμα βάσης (ίσον, ολίγον, απόστροφος) ακούγεται διαφορετικά ανάλογα με το σημάδι ποιότητος που το συνοδεύει. Μάθε πρώτα τη βάση και μετά «βάψε» την με την ποιότητα.</string>
+    <string name="quality_replay">Δείξε ξανά την ανάλυση</string>
+    <string name="quality_do_label">Σωστά</string>
+    <string name="quality_dont_label">Πρόσεξε</string>
+    <string name="quality_intercom_hint_title">Πώς ακούγεται</string>
+    <string name="quality_intercom_hint_body">Κλείσε ελαφρά το στόμα και βγάλε τον ήχο από τη μύτη — ένα απαλό, ένρινο «μμμ». Αν ο φθόγγος έχει και χρονικό σημάδι, όλος ο χρόνος του λέγεται έτσι.</string>
+
+    <!-- Quality: «what it changes» tags -->
+    <string name="q_tag_heavy">Αλλάζει: τονισμό</string>
+    <string name="q_tag_yfen">Αλλάζει: ύψος</string>
+    <string name="q_tag_continuous_slight">Αλλάζει: ροή</string>
+    <string name="q_tag_digital">Αλλάζει: ζωηρότητα</string>
+    <string name="q_tag_all_right">Αλλάζει: ομαλότητα</string>
+    <string name="q_tag_vaccum">Αλλάζει: ζωηρότητα</string>
+    <string name="q_tag_link">Αλλάζει: σύνδεση</string>
+    <string name="q_tag_intercom">Αλλάζει: χροιά</string>
+
+    <!-- Quality: legend meanings + missing base-neume names/descriptions -->
+    <string name="name_slight">Ελαφρόν</string>
+    <string name="name_flyer">Πεταστή</string>
+    <string name="name_double_dots">Δύο κουκκίδες</string>
+    <string name="cd_double_dots">Νεύμα: Δύο κουκκίδες</string>
+    <string name="q_legend_ison">Κρατάει το ίδιο ύψος</string>
+    <string name="q_legend_oligon">Ανεβαίνει έναν φθόγγο</string>
+    <string name="q_legend_apostrophe">Κατεβαίνει έναν φθόγγο</string>
+    <string name="q_legend_gorgo">Διπλάσια ταχύτητα (μισός χρόνος)</string>
+    <string name="q_legend_embroideries">Στόλισμα πάνω από τη βάση</string>
+    <string name="q_legend_fraction">Μικρή χρονική προσθήκη</string>
+    <string name="q_legend_slight">Κατάβαση με ελαφρότητα</string>
+    <string name="q_legend_flyer">Ζωηρό, τονισμένο ανέβασμα</string>
+    <string name="q_legend_underflow">Δύο κατιόντες σε ένα σημάδι</string>
+    <string name="q_legend_double_dots">Προσθέτουν χρόνους στον φθόγγο</string>
+
+    <!-- Quality: content descriptions for the eight signs -->
+    <string name="cd_heavy">Σημάδι ποιότητος: Βαρεία</string>
+    <string name="cd_yfen">Σημάδι ποιότητος: Υφέν</string>
+    <string name="cd_continuous_slight">Σημάδι ποιότητος: Συνεχές ελαφρόν</string>
+    <string name="cd_digital">Σημάδι ποιότητος: Ψηφιστόν</string>
+    <string name="cd_all_right">Σημάδι ποιότητος: Ομαλόν</string>
+    <string name="cd_vaccum">Σημάδι ποιότητος: Αντικένωμα</string>
+    <string name="cd_link">Σημάδι ποιότητος: Σύνδεσμος</string>
+    <string name="cd_intercom">Σημάδι ποιότητος: Ενδόφωνο</string>
+    <string name="cd_continuous_slight_example">Παράδειγμα όπου ΔΕΝ εκτελείται συνεχές ελαφρόν, γιατί αλλάζει συλλαβή και υπάρχει κλάσμα πάνω στην απόστροφο.</string>
+
+    <!-- Quality: short readings under each worked example -->
+    <string name="q_read_heavy_even">Χωρίς Βαρεία: ίσον, απόστροφος με γοργόν και ολίγον — όλα με την ίδια ζωηρότητα.</string>
+    <string name="q_read_heavy_with">Με Βαρεία μπροστά, το ίσον παίρνει βαρύ τονισμό και ξεχωρίζει από τους γειτονικούς φθόγγους.</string>
+    <string name="q_read_heavy_dots">Μπροστά από μία ή δύο κουκκίδες η Βαρεία δεν συνδέεται· γίνεται παύση ενός ή δύο χρόνων.</string>
+    <string name="q_read_yfen_1">Ίσον με κλάσμα = δύο ίσα ενωμένα με ένα υφέν.</string>
+    <string name="q_read_yfen_2">Ίσον με δύο κουκκίδες = τρία ίσα ενωμένα με δύο υφέν.</string>
+    <string name="q_read_cs_1">Συνεχές ελαφρόν = απόστροφος με γοργόν και απόστροφος, σχεδόν κολλητά.</string>
+    <string name="q_read_cs_2">Με ίσον μπροστά: ίσον, μετά απόστροφος με γοργόν και απόστροφος.</string>
+    <string name="q_read_digital_1">Το ψηφιστόν κάτω από τον πρώτο φθόγγο τον κάνει πιο ζωηρό από τους δύο επόμενους.</string>
+    <string name="q_read_digital_3">Στα κεντήματα το ψηφιστόν δίνει πιο ζωηρή απαγγελία.</string>
+    <string name="q_read_omalon_1">Ολίγον με ομαλόν: ολίγον, κεντήματα με γοργόν και απόστροφος — ομαλός κυματισμός της φωνής.</string>
+    <string name="q_read_omalon_3">Κάτω από τρεις φθόγγους η ενέργεια του ομαλού απλώνεται και στους τρεις.</string>
+    <string name="q_read_vaccum_1">Αντικένωμα κάτω από ολίγον, με απόστροφο να ακολουθεί — ένα μικρό πέταγμα της φωνής.</string>
+    <string name="q_read_vaccum_2">Συνδεδεμένο με απλήν, ενεργεί ανάμεσα στον πρώτο και τον δεύτερο χρόνο του φθόγγου.</string>
+    <string name="q_read_link_1">Ο σύνδεσμος ενώνει δύο ίσα σε μία συλλαβή, χωρίς να κόβεται η φωνή.</string>
+    <string name="q_read_link_3">Σε σύνθετες θέσεις ενώνει τους χρόνους του ολίγου με τη φωνή του ίσου.</string>
+    <string name="q_read_intercom_1">Ο φθόγγος με ενδόφωνο προφέρεται με κλειστό στόμα, ασθενώς και διά της ρινός.</string>
 </resources>

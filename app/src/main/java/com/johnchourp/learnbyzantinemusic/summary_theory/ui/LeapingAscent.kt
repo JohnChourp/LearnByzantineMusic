@@ -18,14 +18,19 @@ package com.johnchourp.learnbyzantinemusic.summary_theory.ui
 /**
  * The individual neume glyphs that compose a written character.
  *
- * The first five back the «Ανιόντες» leaping-ascent diagrams; the rest were added for the
+ * The first five back the «Ανιόντες» leaping-ascent diagrams; the next batch was added for the
  * «Συνθέσεις ανάβασης» (ClimbingCompositions) page, which reuses this same model + [NeumeStack]
- * renderer to draw its ascending-composition equations. Adding values here is additive — every
- * existing form keeps rendering identically.
+ * renderer to draw its ascending-composition equations. The final batch backs the «Ποιότητος»
+ * (Quality) page — the eight quality signs plus the base glyphs its examples need. Adding values
+ * here is additive — every existing form keeps rendering identically.
  */
 enum class Neume {
     OLIGON, FLYER, EMBROIDERY, EMBROIDERIES, HIGH,
     APOSTROPHE, ISON, UNDERFLOW, GORGO, DIGORGO, SIMPLE_DOT, FRACTION,
+    // «Ποιότητος» quality signs + their example glyphs.
+    HEAVY, HEAVY_SIMPLE_DOT, HEAVY_DOUBLE_DOTS, HEAVY_TRIPLE_DOTS,
+    YFEN, SLIGHT_CONTINUOUS, DIGITAL, ALL_RIGHT, VACCUM, VACCUM_SIMPLE, LINK, INTERCOM,
+    PRESENTED_GORGO, DOUBLE_DOTS, TRIPLE_DOTS, SLIGHT, ARGO, TRIGORGO,
 }
 
 /** Where a glyph sits inside its form box; mirrors the original FrameLayout gravities. */
