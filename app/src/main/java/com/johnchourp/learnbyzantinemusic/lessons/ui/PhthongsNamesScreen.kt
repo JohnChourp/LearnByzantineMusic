@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -230,11 +231,13 @@ private fun OctaveChip(@StringRes nameRes: Int, selected: Boolean, onClick: () -
     )
     Box(
         modifier = Modifier
+            .heightIn(min = 48.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(container)
             .border(1.dp, if (selected) LbmBrown else LbmOutline, RoundedCornerShape(12.dp))
             .selectable(selected = selected, role = Role.Button, onClick = onClick)
             .padding(horizontal = 14.dp, vertical = 10.dp),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(nameRes),
