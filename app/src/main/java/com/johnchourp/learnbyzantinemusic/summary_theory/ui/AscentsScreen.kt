@@ -115,7 +115,9 @@ internal fun AscentCharacter.definitionRes(): Int? = when (this) {
 /** Intrinsic neume size (width × height, dp) from the original layout, kept to preserve scale. */
 internal fun AscentCharacter.glyphSize(): Pair<Int, Int> = when (this) {
     AscentCharacter.ISON -> 62 to 18
-    AscentCharacter.OLIGON -> 70 to 18
+    // The original simple Ολίγον row overrode its height to 8dp (a thin, flat mark); the
+    // leaping section keeps the 18dp default — see LeapingAscent.
+    AscentCharacter.OLIGON -> 70 to 8
     AscentCharacter.PETASTI -> 62 to 23
     AscentCharacter.KENTIMATA -> 30 to 18
     AscentCharacter.KENTIMA -> 15 to 18
@@ -226,7 +228,10 @@ private fun VoiceRiseCard() {
                     label = stringResource(character.nameRes()),
                     selected = character == selected,
                     onClick = {
-                        if (character == selected) replay++ else selected = character
+                        // Always restart the climb, even when switching between equal-rise
+                        // characters (e.g. Ολίγον → Πεταστή → Κεντήματα are all +1 φωνή).
+                        selected = character
+                        replay++
                     },
                 )
             }
