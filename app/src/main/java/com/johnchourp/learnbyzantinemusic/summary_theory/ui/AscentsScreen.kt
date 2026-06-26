@@ -6,6 +6,8 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -35,6 +37,7 @@ import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,13 +50,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.johnchourp.learnbyzantinemusic.R
-import com.johnchourp.learnbyzantinemusic.ui.components.FramedImage
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
 import com.johnchourp.learnbyzantinemusic.ui.components.StaggeredAppear
@@ -106,6 +110,16 @@ internal fun AscentCharacter.definitionRes(): Int? = when (this) {
     AscentCharacter.PETASTI -> R.string.flyer_definition
     AscentCharacter.KENTIMATA -> R.string.embroideries_definition
     else -> null
+}
+
+/** Intrinsic neume size (width × height, dp) from the original layout, kept to preserve scale. */
+internal fun AscentCharacter.glyphSize(): Pair<Int, Int> = when (this) {
+    AscentCharacter.ISON -> 62 to 18
+    AscentCharacter.OLIGON -> 70 to 18
+    AscentCharacter.PETASTI -> 62 to 23
+    AscentCharacter.KENTIMATA -> 30 to 18
+    AscentCharacter.KENTIMA -> 15 to 18
+    AscentCharacter.YPSILI -> 42 to 36
 }
 
 /** Localized "+N φωνές" / "0 φωνή" label for a voice count 0..14. */
@@ -420,10 +434,39 @@ private fun SimpleCharacterRow(character: AscentCharacter) {
             )
         }
         Spacer(Modifier.height(10.dp))
-        FramedImage(
-            res = character.diagramRes(),
-            contentDescription = stringResource(character.cdRes()),
-        )
+        SimpleNeumeFrame(character)
+    }
+}
+
+private const val SIMPLE_NEUME_SCALE = 2.0f
+private val SIMPLE_NEUME_FRAME_HEIGHT = 88.dp
+
+/** A single neume on a white frame, drawn at its true (scaled) size so rows stay compact. */
+@Composable
+private fun SimpleNeumeFrame(character: AscentCharacter) {
+    val (w, h) = character.glyphSize()
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        color = Color.White,
+        border = BorderStroke(1.dp, LbmOutline),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(SIMPLE_NEUME_FRAME_HEIGHT),
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                painter = painterResource(character.diagramRes()),
+                contentDescription = stringResource(character.cdRes()),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(
+                    width = (w * SIMPLE_NEUME_SCALE).dp,
+                    height = (h * SIMPLE_NEUME_SCALE).dp,
+                ),
+            )
+        }
     }
 }
 
@@ -492,16 +535,23 @@ private fun LeapingAscentsCard() {
         )
         Spacer(Modifier.height(10.dp))
         val cd = stringResource(R.string.cd_leaping_neume, stringResource(voicesLabelRes(leap.voices)))
+        // Fixed-width, horizontally scrollable forms so the authored glyph offsets (e.g. the
+        // +2 oligon + dx=45 embroidery) are never clipped on narrow screens.
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             leap.forms.forEach { form ->
-                LeapingForm(form = form, contentDescription = cd, modifier = Modifier.weight(1f))
+                LeapingForm(form = form, contentDescription = cd, modifier = Modifier.width(LEAPING_FORM_WIDTH))
             }
         }
     }
 }
+
+/** Width that comfortably fits any authored form's base glyph (70dp) plus its offsets. */
+private val LEAPING_FORM_WIDTH = 150.dp
 
 @Composable
 private fun LeapingForm(form: NeumeForm, contentDescription: String, modifier: Modifier = Modifier) {
