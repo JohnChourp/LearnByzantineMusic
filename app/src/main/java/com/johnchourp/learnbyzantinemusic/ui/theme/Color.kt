@@ -15,6 +15,9 @@ val LbmPrimaryContainer = Color(0xFFF7E8D3)
 val LbmHeroStart = Color(0xFFEADCC5)
 val LbmHeroEnd = Color(0xFFF7EFE1)
 
+// Crimson measure-bar accent, echoing the red χρόνος boundary bars in the neume diagrams.
+val LbmMeasureBar = Color(0xFFA0003C)
+
 // Tile accent families (container background / icon-and-content tint).
 val AccentGoldContainer = Color(0xFFF7E8D3)
 val AccentGoldContent = Color(0xFF7A4E24)

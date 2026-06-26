@@ -82,6 +82,24 @@
     <string name="disimos">Δίσημος</string>
     <string name="trisimos">Τρίσημος</string>
     <string name="tetrasimos">Τετράσημος</string>
+    <!-- Redesigned «Δίσημος, Τρίσημος, Τετράσημος» lesson (Compose) -->
+    <string name="duotrio_subtitle">Οι ρυθμικές ομάδες των 2, 3 και 4 χρόνων</string>
+    <string name="duotrio_concept_title">Τι είναι ο δίσημος, τρίσημος, τετράσημος</string>
+    <string name="duotrio_concept_body">Οι φθόγγοι ομαδοποιούνται σε ρυθμικές ομάδες. Οι κόκκινες κάθετες γραμμές δείχνουν την αρχή και το τέλος κάθε ομάδας. Ανάλογα με το πόσοι χρόνοι (χτυπήματα) χωράνε σε μία ομάδα, λέγεται δίσημος (2), τρίσημος (3) ή τετράσημος (4) — και τόσοι φθόγγοι λέγονται μέσα της.</string>
+    <string name="duotrio_phthongs_count">%1$d φθόγγοι</string>
+    <string name="duotrio_interactive_title">Δοκίμασε τον ρυθμό</string>
+    <string name="duotrio_interactive_hint">Διάλεξε ομάδα και πάτησε ▶ για να δεις τον παλμό να χτυπά τους χρόνους, ξανά και ξανά. Πάτησε έναν χρόνο για να σταματήσεις εκεί.</string>
+    <string name="duotrio_interactive_caption">%1$s — %2$d φθόγγοι σε κάθε ομάδα</string>
+    <string name="duotrio_groupings_title">Οι τρεις ομάδες με τη σειρά</string>
+    <string name="duotrio_tip_title">Συμβουλή εξάσκησης</string>
+    <string name="duotrio_tip_body">Χτύπα σταθερά με το χέρι σου και πες τους φθόγγους μέσα σε κάθε ομάδα: «1-2» για δίσημο, «1-2-3» για τρίσημο, «1-2-3-4» για τετράσημο. Κράτα τον παλμό σταθερό.</string>
+    <string name="duotrio_play">Αναπαραγωγή</string>
+    <string name="duotrio_pause">Παύση</string>
+    <string name="duotrio_beat_counter">Χρόνος %1$d από %2$d</string>
+    <string name="duotrio_beat_cell_cd">Χρόνος %1$d</string>
+    <string name="cd_disimos">Δίσημος: δύο φθόγγοι ανάμεσα σε δύο κόκκινες γραμμές μέτρου.</string>
+    <string name="cd_trisimos">Τρίσημος: τρεις φθόγγοι ανάμεσα σε δύο κόκκινες γραμμές μέτρου.</string>
+    <string name="cd_tetrasimos">Τετράσημος: τέσσερις φθόγγοι ανάμεσα σε δύο κόκκινες γραμμές μέτρου.</string>
     <string name="time_characters">Χαρακτήρες Χρόνου</string>
     <string name="time_characters_definition">Στους χαρακτήρες χρόνου περιλαμβάνονται τα σημάδια, τα οποία δείχνουν πόσο χρόνο προσθέτουν σε έναν φθόγγο η μια παύση:</string>
     <string name="time_1">1 χρόνο</string>
@@ -111,7 +129,7 @@
     <string name="equal">=</string>
     <string name="yfen_examples">Παραδείγματα Υφέν</string>
     <string name="trisimos_definition">Τρίσημος σημαίνει ότι κάθε 3 χρόνους(ή χτυπήματα) 3 φθόγγοι λέγονται.</string>
-    <string name="tetrasimos_definition">Τρίσημος σημαίνει ότι κάθε 4 χρόνους(ή χτυπήματα) 4 φθόγγοι λέγονται.</string>
+    <string name="tetrasimos_definition">Τετράσημος σημαίνει ότι κάθε 4 χρόνους(ή χτυπήματα) 4 φθόγγοι λέγονται.</string>
     <string name="heavy_definition_used">Η Βαρεία χρησιμοποιείται και για παύση και είναι κενή (δεν λέμε τίποτα).</string>
     <string name="title_activity_lesson4">Lesson4</string>
     <string name="underflow">Υπορροή</string>

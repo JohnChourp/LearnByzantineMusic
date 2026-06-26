@@ -79,10 +79,28 @@
     <string name="exercise_1">Exercise 1</string>
     <string name="title_activity_lesson2">Lesson2</string>
     <string name="duotrioquatro">Duple, Triple, Quadruple</string>
-    <string name="disimos_definition">Dissign means that every 2 times (or beats) 2 phthongs are said.</string>
-    <string name="disimos">Famous</string>
+    <string name="disimos_definition">Disimos means that for every 2 beats (or counts) 2 phthongs are said.</string>
+    <string name="disimos">Disimos</string>
     <string name="trisimos">Trisimos</string>
-    <string name="tetrasimos">Four-pointer</string>
+    <string name="tetrasimos">Tetrasimos</string>
+    <!-- Redesigned «Disimos, Trisimos, Tetrasimos» lesson (Compose) -->
+    <string name="duotrio_subtitle">The rhythmic groups of 2, 3 and 4 beats</string>
+    <string name="duotrio_concept_title">What disimos, trisimos and tetrasimos are</string>
+    <string name="duotrio_concept_body">Phthongs are gathered into rhythmic groups. The red vertical bars mark where each group begins and ends. Depending on how many beats (counts) fit in one group, it is called disimos (2), trisimos (3) or tetrasimos (4) — and that many phthongs are said inside it.</string>
+    <string name="duotrio_phthongs_count">%1$d phthongs</string>
+    <string name="duotrio_interactive_title">Try the rhythm</string>
+    <string name="duotrio_interactive_hint">Pick a group and tap ▶ to watch the pulse beat out the counts, over and over. Tap a beat to stop there.</string>
+    <string name="duotrio_interactive_caption">%1$s — %2$d phthongs in each group</string>
+    <string name="duotrio_groupings_title">The three groups in order</string>
+    <string name="duotrio_tip_title">Practice tip</string>
+    <string name="duotrio_tip_body">Tap a steady beat with your hand and say the phthongs inside each group: \"1-2\" for disimos, \"1-2-3\" for trisimos, \"1-2-3-4\" for tetrasimos. Keep the pulse even.</string>
+    <string name="duotrio_play">Play</string>
+    <string name="duotrio_pause">Pause</string>
+    <string name="duotrio_beat_counter">Beat %1$d of %2$d</string>
+    <string name="duotrio_beat_cell_cd">Beat %1$d</string>
+    <string name="cd_disimos">Disimos: two phthongs between two red measure bars.</string>
+    <string name="cd_trisimos">Trisimos: three phthongs between two red measure bars.</string>
+    <string name="cd_tetrasimos">Tetrasimos: four phthongs between two red measure bars.</string>
     <string name="time_characters">Characters of Time</string>
     <string name="time_characters_definition">Time characters include the marks, which indicate how much time a pause or note adds to a note:</string>
     <string name="time_1">1 year</string>
@@ -111,8 +129,8 @@
     <string name="climbing_compositions">Ascending Combinations</string>
     <string name="equal">=</string>
     <string name="yfen_examples">Examples of Hyphen</string>
-    <string name="trisimos_definition">Trisimos means that every 3 times (or beats) 3 phthongos are said.</string>
-    <string name="tetrasimos_definition">Trisimos means that every 4 times (or beats) 4 phthongos are said.</string>
+    <string name="trisimos_definition">Trisimos means that for every 3 beats (or counts) 3 phthongs are said.</string>
+    <string name="tetrasimos_definition">Tetrasimos means that for every 4 beats (or counts) 4 phthongs are said.</string>
     <string name="heavy_definition_used">Varea is also used for a pause and is empty (we say nothing).</string>
     <string name="title_activity_lesson4">Lesson 4</string>
     <string name="underflow">Underflow</string>
