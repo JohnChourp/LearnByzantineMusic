@@ -1,16 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.lessons.ui
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
@@ -33,15 +24,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -51,11 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.Role
@@ -63,10 +45,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.ui.components.FramedImage
+import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
+import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
 import com.johnchourp.learnbyzantinemusic.ui.components.StaggeredAppear
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmBrown
-import com.johnchourp.learnbyzantinemusic.ui.theme.LbmHeroEnd
-import com.johnchourp.learnbyzantinemusic.ui.theme.LbmHeroStart
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmOutline
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPageBg
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPrimaryContainer
@@ -104,6 +87,7 @@ fun PhthongsNamesScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
             title = stringResource(R.string.phthongs_names),
             subtitle = stringResource(R.string.phthongs_names_subtitle),
             onBack = onBack,
+            icon = Icons.Filled.MusicNote,
         )
         Column(
             modifier = Modifier
@@ -117,110 +101,6 @@ fun PhthongsNamesScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
             StaggeredAppear(delayMillis = 220) { StaircaseCard() }
             StaggeredAppear(delayMillis = 300) { ExerciseCard() }
             Spacer(Modifier.height(8.dp))
-        }
-    }
-}
-
-@Composable
-private fun LessonHero(title: String, subtitle: String, onBack: () -> Unit) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
-        shadowElevation = 3.dp,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Brush.verticalGradient(listOf(LbmHeroStart, LbmHeroEnd)))
-                .padding(horizontal = 16.dp)
-                .padding(top = 10.dp, bottom = 24.dp),
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.action_back),
-                    tint = LbmBrown,
-                )
-            }
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                val infinite = rememberInfiniteTransition(label = "hero")
-                val scale by infinite.animateFloat(
-                    initialValue = 0.96f,
-                    targetValue = 1.05f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(1800, easing = FastOutSlowInEasing),
-                        repeatMode = RepeatMode.Reverse,
-                    ),
-                    label = "heroScale",
-                )
-                Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .graphicsLayer { scaleX = scale; scaleY = scale }
-                        .clip(CircleShape)
-                        .background(LbmBrown),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.MusicNote,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(32.dp),
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = LbmTextPrimary,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = LbmTextSecondary,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-    }
-}
-
-/** Card body wrapper: a titled [ElevatedCard] used by every lesson section. */
-@Composable
-private fun LessonCard(title: String, content: @Composable () -> Unit) {
-    ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = LbmSurface,
-            contentColor = LbmTextPrimary,
-        ),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(width = 4.dp, height = 18.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(LbmBrown),
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = LbmTextPrimary,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-            Spacer(Modifier.height(12.dp))
-            content()
         }
     }
 }
@@ -404,26 +284,6 @@ private fun ExerciseCard() {
         FramedImage(
             res = R.drawable.lesson1_exercise_1,
             contentDescription = stringResource(R.string.cd_exercise_1),
-        )
-    }
-}
-
-/** White, rounded frame for the original lesson diagrams so they sit cleanly on the page. */
-@Composable
-private fun FramedImage(@DrawableRes res: Int, contentDescription: String) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        color = Color.White,
-        border = BorderStroke(1.dp, LbmOutline),
-    ) {
-        Image(
-            painter = painterResource(res),
-            contentDescription = contentDescription,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            contentScale = ContentScale.FillWidth,
         )
     }
 }
