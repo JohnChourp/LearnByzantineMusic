@@ -186,6 +186,33 @@
     <string name="title_activity_ascents">Ascents</string>
     <string name="embroidery">Κέντημα</string>
     <string name="high">Υψηλή</string>
+
+    <!-- «Ανιόντες» page redesign (Compose) -->
+    <string name="ascents_subtitle">Χαρακτήρες ποσότητος που ανεβάζουν τη φωνή</string>
+    <string name="ascents_concept_title">Τι είναι οι ανιόντες χαρακτήρες</string>
+    <string name="ascents_concept_body">Οι χαρακτήρες ποσότητος δείχνουν πόσες φωνές (φθόγγους) ανεβαίνει η μελωδία. Όσο πιο «δυνατός» ο χαρακτήρας, τόσο μεγαλύτερη η ανάβαση της φωνής.</string>
+    <string name="ascents_interactive_title">Πόσο ανεβαίνει η φωνή;</string>
+    <string name="ascents_interactive_hint">Διάλεξε χαρακτήρα και δες τη φωνή να ανεβαίνει στη σκάλα.</string>
+    <string name="ascents_interactive_caption">Το «%1$s» ανεβάζει τη φωνή κατά %2$s.</string>
+    <string name="ascents_interactive_caption_zero">Το «%1$s» κρατάει την ίδια φωνή.</string>
+    <string name="ascents_replay">Δείξε ξανά</string>
+    <string name="ascents_simple_title">Απλοί ανιόντες χαρακτήρες</string>
+    <string name="ascents_simple_intro">Κάθε χαρακτήρας ανεβάζει τη φωνή κατά ορισμένες φωνές:</string>
+    <string name="ascents_leaping_intro">Για μεγαλύτερα πηδήματα συνδυάζουμε έναν βασικό χαρακτήρα (Ολίγον ή Πεταστή) με κεντήματα και υψηλές. Διάλεξε διάστημα για να δεις πώς γράφεται.</string>
+    <string name="ascents_leaping_pick">Διάλεξε διάστημα</string>
+    <string name="ascents_leaping_forms_title">Πώς γράφεται</string>
+    <string name="ascents_base_oligon">με Ολίγον</string>
+    <string name="ascents_base_petasti">με Πεταστή</string>
+    <string name="ascents_tip_title">Συμβουλή</string>
+    <string name="ascents_tip_body">Μάθε πρώτα τους απλούς χαρακτήρες. Οι υπερβατές αναβάσεις είναι απλώς συνδυασμοί τους — μην τις φοβάσαι!</string>
+    <string name="cd_ison">Νεύμα: Ίσον</string>
+    <string name="cd_oligon">Νεύμα: Ολίγον</string>
+    <string name="cd_flyer">Νεύμα: Πεταστή</string>
+    <string name="cd_embroidery">Νεύμα: Κέντημα</string>
+    <string name="cd_embroideries">Νεύμα: Κεντήματα</string>
+    <string name="cd_high">Νεύμα: Υψηλή</string>
+    <string name="cd_leaping_neume">Νεύματα για ανάβαση %1$s</string>
+
     <string name="title_activity_descents">Descents</string>
     <string name="slight">Ελαφρόν</string>
     <string name="minus_two_voice">-2 φωνές</string>
