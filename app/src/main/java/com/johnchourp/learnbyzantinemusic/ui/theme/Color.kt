@@ -31,3 +31,7 @@ val AccentGreenContainer = Color(0xFFE6F4EA)
 val AccentGreenContent = Color(0xFF2E7D32)
 val AccentBrownContainer = Color(0xFFEFE3D2)
 val AccentBrownContent = Color(0xFF5D4037)
+
+// Crimson «watch out» accent (pairs with the LbmMeasureBar content tint), for do/don't surfaces.
+val AccentCrimsonContainer = Color(0xFFF7E0E8)
+val AccentCrimsonContent = LbmMeasureBar
