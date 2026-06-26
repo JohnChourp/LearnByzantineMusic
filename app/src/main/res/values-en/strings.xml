@@ -830,4 +830,53 @@
     <string name="melody_trainer_combo_check">Phthong + timing</string>
     <string name="melody_trainer_combo_hint">Phthong AND timing: after a 5-second countdown, say each phthong correctly (right pitch) AND on time for it to turn green.</string>
     <string name="melody_trainer_combo_done">Done! Correct (phthong+timing): %1$d/%2$d</string>
+
+    <!-- Ascending compositions (ClimbingCompositions) — Compose redesign -->
+    <string name="climbing_subtitle">How the compound ascending characters are written</string>
+    <string name="climbing_concept_title">What is an ascending composition?</string>
+    <string name="climbing_concept_body">A compound ascending character is a single written sign read as a combination of simpler neumes. Read the base first (Oligon, Ison or Apostrophos) — it sets the movement of the voice — then the small marks around it that add ornament or timing.</string>
+    <string name="climbing_how_to_read">On each line the compound character is on the left and the neumes that make it up are on the right. Tap a line to watch it break apart into its parts again.</string>
+    <string name="name_simple_dot">Simple dot</string>
+
+    <string name="climbing_legend_title">The symbols at a glance</string>
+    <string name="climbing_legend_oligon">Rises one voice — the basic ascent.</string>
+    <string name="climbing_legend_ison">Stays on the same voice (a hold).</string>
+    <string name="climbing_legend_apostrophe">Descends one voice or gives an inflection.</string>
+    <string name="climbing_legend_embroideries">Kentimata: ornament that lifts the voice.</string>
+    <string name="climbing_legend_underflow">Yporroi: a quick descending run.</string>
+    <string name="climbing_legend_gorgo">Gorgon: runs the composition at half the time (½).</string>
+    <string name="climbing_legend_digorgo">Digorgon: runs the composition at a quarter of the time.</string>
+    <string name="climbing_legend_simple_dot">Simple dot: a timing mark.</string>
+    <string name="climbing_legend_fraction">Fraction: a small timing addition.</string>
+
+    <string name="gorgo_section_intro">The gorgon is a small mark placed on a composition that doubles its speed — it is read in half the time (½).</string>
+    <string name="digorgo_section_intro">The digorgon triples the speed: the composition is read in a quarter of the time (¼).</string>
+    <string name="climbing_gorgo_badge">½ time</string>
+    <string name="climbing_digorgo_badge">¼ time</string>
+
+    <string name="climbing_timing_title">The timing of the composition</string>
+    <string name="climbing_timing_combined_label">Compound</string>
+    <string name="climbing_timing_parts_label">Breakdown</string>
+    <string name="climbing_timing_caption">The total time stays the same on both sides — it is just shared among more, faster parts.</string>
+
+    <string name="climbing_tip_title">Tip</string>
+    <string name="climbing_tip_body">Always read the base first (Oligon / Ison / Apostrophos) — it sets the ascent — then the small marks that add ornament or timing.</string>
+    <string name="climbing_replay">Replay</string>
+
+    <string name="climbing_reading_simple_1">Oligon with kentimata above: rise one voice and ornament it with the kentimata.</string>
+    <string name="climbing_reading_simple_2">The kentimata sit below-right: read as kentimata, then Oligon.</string>
+    <string name="climbing_reading_simple_3">Oligon with an apostrophos and kentimata over the base.</string>
+    <string name="climbing_reading_simple_4">Oligon with an ison and kentimata: ison (same voice) and kentimata.</string>
+    <string name="climbing_reading_simple_5">The yporroi with a dot reads as ison, apostrophos and apostrophos with a fraction (a descending run).</string>
+    <string name="climbing_reading_gorgo_1">With a gorgon: Oligon and kentimata, but in half the time.</string>
+    <string name="climbing_reading_gorgo_2">Kentimata with a gorgon, then Oligon — double speed.</string>
+    <string name="climbing_reading_gorgo_3">Ison and kentimata with a gorgon: the composition runs at ½ time.</string>
+    <string name="climbing_reading_gorgo_4">Apostrophos and kentimata with a gorgon — fast ornament.</string>
+    <string name="climbing_reading_gorgo_5">Yporroi with a gorgon: apostrophos with a gorgon and apostrophos, in half the time.</string>
+    <string name="climbing_reading_digorgo_1">With a digorgon: ison, kentimata with a digorgon and Oligon — at ¼ of the time.</string>
+
+    <string name="cd_gorgo">Neume: Gorgon</string>
+    <string name="cd_digorgo">Neume: Digorgon</string>
+    <string name="cd_simple_dot">Neume: Simple dot</string>
+    <string name="cd_fraction">Neume: Fraction</string>
 </resources>

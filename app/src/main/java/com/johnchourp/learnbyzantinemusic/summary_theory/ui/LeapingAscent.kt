@@ -15,8 +15,18 @@ package com.johnchourp.learnbyzantinemusic.summary_theory.ui
  * [NeumeAlign] → `Alignment` and the [Int] sizes/offsets → `dp` (see `NeumeStack`).
  */
 
-/** The individual neume glyphs that compose an ascending leap. */
-enum class Neume { OLIGON, FLYER, EMBROIDERY, EMBROIDERIES, HIGH }
+/**
+ * The individual neume glyphs that compose a written character.
+ *
+ * The first five back the «Ανιόντες» leaping-ascent diagrams; the rest were added for the
+ * «Συνθέσεις ανάβασης» (ClimbingCompositions) page, which reuses this same model + [NeumeStack]
+ * renderer to draw its ascending-composition equations. Adding values here is additive — every
+ * existing form keeps rendering identically.
+ */
+enum class Neume {
+    OLIGON, FLYER, EMBROIDERY, EMBROIDERIES, HIGH,
+    APOSTROPHE, ISON, UNDERFLOW, GORGO, DIGORGO, SIMPLE_DOT, FRACTION,
+}
 
 /** Where a glyph sits inside its form box; mirrors the original FrameLayout gravities. */
 enum class NeumeAlign { CENTER, TOP_CENTER, TOP_START, TOP_END, BOTTOM_CENTER }

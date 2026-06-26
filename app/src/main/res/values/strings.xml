@@ -829,4 +829,53 @@
     <string name="melody_trainer_combo_check">Φθόγγος + Χρόνος</string>
     <string name="melody_trainer_combo_hint">Φθόγγος ΚΑΙ χρόνος: μετά από αντίστροφη μέτρηση 5 δευτ., πες κάθε φθόγγο σωστά (σωστό ύψος) ΚΑΙ στον σωστό χρόνο για να πρασινίσει.</string>
     <string name="melody_trainer_combo_done">Ολοκληρώθηκε! Σωστά (φθόγγος+χρόνος): %1$d/%2$d</string>
+
+    <!-- Συνθέσεις ανάβασης (ClimbingCompositions) — Compose redesign -->
+    <string name="climbing_subtitle">Πώς γράφονται οι σύνθετοι χαρακτήρες ανάβασης</string>
+    <string name="climbing_concept_title">Τι είναι μια σύνθεση ανάβασης;</string>
+    <string name="climbing_concept_body">Ένας σύνθετος χαρακτήρας ανάβασης είναι ένα και μόνο γραπτό σημάδι που διαβάζεται σαν συνδυασμός απλούστερων νευμάτων. Διάβασε πρώτα τη βάση (Ολίγον, Ίσον ή Απόστροφος) — αυτή ορίζει την κίνηση της φωνής — και μετά τα μικρά σημάδια γύρω της, που προσθέτουν στόλισμα ή χρόνο.</string>
+    <string name="climbing_how_to_read">Σε κάθε γραμμή, αριστερά είναι ο σύνθετος χαρακτήρας και δεξιά τα νεύματα που τον αποτελούν. Πάτησε μια γραμμή για να δεις ξανά πώς «σπάει» στα μέρη του.</string>
+    <string name="name_simple_dot">Απλή στιγμή</string>
+
+    <string name="climbing_legend_title">Τα σύμβολα με μια ματιά</string>
+    <string name="climbing_legend_oligon">Ανεβαίνει μία φωνή — η βασική ανάβαση.</string>
+    <string name="climbing_legend_ison">Μένει στην ίδια φωνή (κράτημα).</string>
+    <string name="climbing_legend_apostrophe">Κατεβαίνει μία φωνή ή δίνει κλίση.</string>
+    <string name="climbing_legend_embroideries">Κεντήματα: στολίζουν και ανεβάζουν τη φωνή.</string>
+    <string name="climbing_legend_underflow">Υπορροή: γρήγορη κατιούσα κίνηση.</string>
+    <string name="climbing_legend_gorgo">Γοργόν: τρέχει τη σύνθεση στον μισό χρόνο (½).</string>
+    <string name="climbing_legend_digorgo">Δίγοργον: τρέχει τη σύνθεση στο ¼ του χρόνου.</string>
+    <string name="climbing_legend_simple_dot">Απλή στιγμή: σημάδι χρόνου.</string>
+    <string name="climbing_legend_fraction">Κλάσμα: μικρή χρονική προσθήκη.</string>
+
+    <string name="gorgo_section_intro">Το γοργόν είναι ένα μικρό σημάδι που μπαίνει πάνω σε μια σύνθεση και τη διπλασιάζει σε ταχύτητα — διαβάζεται στον μισό χρόνο (½).</string>
+    <string name="digorgo_section_intro">Το δίγοργον τριπλασιάζει την ταχύτητα: η σύνθεση διαβάζεται στο ¼ του χρόνου.</string>
+    <string name="climbing_gorgo_badge">½ χρόνος</string>
+    <string name="climbing_digorgo_badge">¼ χρόνου</string>
+
+    <string name="climbing_timing_title">Ο χρόνος της σύνθεσης</string>
+    <string name="climbing_timing_combined_label">Σύνθετο</string>
+    <string name="climbing_timing_parts_label">Ανάλυση</string>
+    <string name="climbing_timing_caption">Ο συνολικός χρόνος μένει ίδιος και στις δύο πλευρές — απλώς μοιράζεται σε περισσότερα, ταχύτερα μέρη.</string>
+
+    <string name="climbing_tip_title">Συμβουλή</string>
+    <string name="climbing_tip_body">Διάβασε πάντα πρώτα τη βάση (Ολίγον / Ίσον / Απόστροφος) — αυτή ορίζει την ανάβαση — και μετά τα μικρά σημάδια που προσθέτουν στόλισμα ή χρόνο.</string>
+    <string name="climbing_replay">Ξαναπαίξτε</string>
+
+    <string name="climbing_reading_simple_1">Ολίγον με κεντήματα από πάνω: ανέβα μία φωνή και στόλισέ την με τα κεντήματα.</string>
+    <string name="climbing_reading_simple_2">Τα κεντήματα μπαίνουν κάτω-δεξιά: διαβάζεται κεντήματα και μετά Ολίγον.</string>
+    <string name="climbing_reading_simple_3">Ολίγον με απόστροφο και κεντήματα πάνω στη βάση.</string>
+    <string name="climbing_reading_simple_4">Ολίγον με ίσον και κεντήματα: ίσον (ίδια φωνή) και κεντήματα.</string>
+    <string name="climbing_reading_simple_5">Η υπορροή με στιγμή διαβάζεται ίσον, απόστροφος και απόστροφος με κλάσμα (κατιούσα ροή).</string>
+    <string name="climbing_reading_gorgo_1">Με γοργόν: Ολίγον και κεντήματα, αλλά στον μισό χρόνο.</string>
+    <string name="climbing_reading_gorgo_2">Κεντήματα με γοργόν και μετά Ολίγον — διπλή ταχύτητα.</string>
+    <string name="climbing_reading_gorgo_3">Ίσον και κεντήματα με γοργόν: η σύνθεση τρέχει στο ½ του χρόνου.</string>
+    <string name="climbing_reading_gorgo_4">Απόστροφος και κεντήματα με γοργόν — γρήγορο στόλισμα.</string>
+    <string name="climbing_reading_gorgo_5">Υπορροή με γοργόν: απόστροφος με γοργόν και απόστροφος, στον μισό χρόνο.</string>
+    <string name="climbing_reading_digorgo_1">Με δίγοργον: ίσον, κεντήματα με δίγοργον και Ολίγον — στο ¼ του χρόνου.</string>
+
+    <string name="cd_gorgo">Νεύμα: Γοργόν</string>
+    <string name="cd_digorgo">Νεύμα: Δίγοργον</string>
+    <string name="cd_simple_dot">Νεύμα: Απλή στιγμή</string>
+    <string name="cd_fraction">Νεύμα: Κλάσμα</string>
 </resources>

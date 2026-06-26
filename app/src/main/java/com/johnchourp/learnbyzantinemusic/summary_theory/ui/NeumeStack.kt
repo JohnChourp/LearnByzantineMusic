@@ -25,6 +25,13 @@ internal fun Neume.drawableRes(): Int = when (this) {
     Neume.EMBROIDERY -> R.drawable.embroidery
     Neume.EMBROIDERIES -> R.drawable.embroideries
     Neume.HIGH -> R.drawable.high
+    Neume.APOSTROPHE -> R.drawable.apostrophe
+    Neume.ISON -> R.drawable.ison
+    Neume.UNDERFLOW -> R.drawable.underflow
+    Neume.GORGO -> R.drawable.gorgo
+    Neume.DIGORGO -> R.drawable.digorgo
+    Neume.SIMPLE_DOT -> R.drawable.simple_dot
+    Neume.FRACTION -> R.drawable.fraction
 }
 
 /** Maps the model's [NeumeAlign] to a Compose [Alignment] inside the form box. */
