@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -52,6 +53,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -60,11 +62,12 @@ import com.johnchourp.learnbyzantinemusic.ui.components.FramedImage
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
 import com.johnchourp.learnbyzantinemusic.ui.components.StaggeredAppear
+import com.johnchourp.learnbyzantinemusic.ui.theme.AccentCrimsonContainer
+import com.johnchourp.learnbyzantinemusic.ui.theme.AccentCrimsonContent
 import com.johnchourp.learnbyzantinemusic.ui.theme.AccentGreenContainer
 import com.johnchourp.learnbyzantinemusic.ui.theme.AccentGreenContent
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmBrown
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmBrownSoft
-import com.johnchourp.learnbyzantinemusic.ui.theme.LbmMeasureBar
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmOutline
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPageBg
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPrimaryContainer
@@ -160,7 +163,7 @@ private fun TaxonomyRow(number: Int, sign: QualitySign) {
             style = MaterialTheme.typography.titleSmall,
             color = LbmTextPrimary,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.width(116.dp),
+            modifier = Modifier.widthIn(min = 116.dp),
         )
         Text(
             text = stringResource(sign.tagRes),
@@ -251,8 +254,11 @@ private fun SignCard(sign: QualitySign) {
             Spacer(Modifier.height(12.dp))
             NasalHint()
         }
-        Spacer(Modifier.height(6.dp))
-        ReplayControl { replay++ }
+        // Only offer «replay» when a card actually has an animated decomposition to re-run.
+        if (sign.examples.any { it.parts.isNotEmpty() }) {
+            Spacer(Modifier.height(6.dp))
+            ReplayControl { replay++ }
+        }
     }
 }
 
@@ -335,12 +341,20 @@ private fun ExampleRow(sign: QualitySign, example: QualityExample, sectionReplay
             )
         }
     }
+    val hasParts = partCount > 0
     val replayLabel = stringResource(R.string.quality_replay)
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
-            .clickable(onClickLabel = replayLabel) { localReplay++ }
+            .then(
+                // Combined-only rows have nothing to replay, so they don't advertise the action.
+                if (hasParts) {
+                    Modifier.clickable(role = Role.Button, onClickLabel = replayLabel) { localReplay++ }
+                } else {
+                    Modifier
+                },
+            )
             .padding(vertical = 8.dp),
     ) {
         if (example.tone != ExampleTone.NEUTRAL) {
@@ -386,8 +400,8 @@ private fun ExampleRow(sign: QualitySign, example: QualityExample, sectionReplay
 @Composable
 private fun TonePill(tone: ExampleTone) {
     val isDo = tone == ExampleTone.DO
-    val container = if (isDo) AccentGreenContainer else Color(0xFFF7E0E8)
-    val content = if (isDo) AccentGreenContent else LbmMeasureBar
+    val container = if (isDo) AccentGreenContainer else AccentCrimsonContainer
+    val content = if (isDo) AccentGreenContent else AccentCrimsonContent
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
@@ -411,10 +425,15 @@ private fun TonePill(tone: ExampleTone) {
     }
 }
 
-/** A single neume form on a white tile, sized to its widest glyph; vertically centred. */
+/**
+ * A single neume form on a white tile, vertically centred. The width is taken from each glyph's full
+ * horizontal span (a centered glyph offset by [NeumeGlyph.dx] needs `2·|dx| + w` of room), not just
+ * the widest glyph, so spread-out decompositions (e.g. three isons at dx = ±28) are never clipped.
+ */
 @Composable
 private fun NeumeTile(form: NeumeForm, highlight: Set<Neume>, modifier: Modifier = Modifier) {
-    val width = (form.glyphs.maxOf { it.w } + 28).coerceIn(TILE_MIN_W, TILE_MAX_W).dp
+    val span = form.glyphs.maxOf { kotlin.math.abs(it.dx) * 2 + it.w }
+    val width = (span + 28).coerceIn(TILE_MIN_W, TILE_MAX_W).dp
     val height = (form.frameHeight + 34).coerceIn(58, 96).dp
     Surface(
         modifier = modifier
@@ -471,21 +490,21 @@ private fun CounterExample(sign: QualitySign) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFF7E0E8))
+            .background(AccentCrimsonContainer)
             .padding(12.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Filled.WarningAmber,
                 contentDescription = null,
-                tint = LbmMeasureBar,
+                tint = AccentCrimsonContent,
                 modifier = Modifier.size(18.dp),
             )
             Spacer(Modifier.width(6.dp))
             Text(
                 text = stringResource(R.string.quality_dont_label),
                 style = MaterialTheme.typography.labelLarge,
-                color = LbmMeasureBar,
+                color = AccentCrimsonContent,
                 fontWeight = FontWeight.Bold,
             )
         }
@@ -544,7 +563,7 @@ private fun ReplayControl(onClick: () -> Unit) {
         modifier = Modifier
             .heightIn(min = 48.dp)
             .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
