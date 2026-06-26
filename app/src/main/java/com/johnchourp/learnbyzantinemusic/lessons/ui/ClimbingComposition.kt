@@ -168,7 +168,7 @@ object ClimbingCompositions {
                 ),
             ),
             parts = listOf(
-                form(18, ison()),
+                form(18, ison(dy = -4)),
                 form(36, embroideries(), gorgo(dx = 2, dy = 27)),
             ),
             readingRes = R.string.climbing_reading_gorgo_3,
@@ -209,7 +209,7 @@ object ClimbingCompositions {
         // Ίσον · (Ολίγον + κεντήματα + δίγοργον) ⇒ Ίσον · (Κεντήματα με δίγοργον) · Ολίγον
         Composition(
             combined = listOf(
-                form(18, ison()),
+                form(18, ison(dy = -4)),
                 form(
                     54,
                     oligon(),
@@ -218,7 +218,7 @@ object ClimbingCompositions {
                 ),
             ),
             parts = listOf(
-                form(18, ison()),
+                form(18, ison(dy = -4)),
                 form(54, embroideries(), digorgo(dx = 2, dy = 4)),
                 form(18, oligon()),
             ),
