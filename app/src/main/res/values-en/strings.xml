@@ -187,6 +187,33 @@
     <string name="title_activity_ascents">Ascents</string>
     <string name="embroidery">Embroidery</string>
     <string name="high">High</string>
+
+    <!-- «Ascents» page redesign (Compose) -->
+    <string name="ascents_subtitle">Quantity characters that raise the voice</string>
+    <string name="ascents_concept_title">What the ascending characters are</string>
+    <string name="ascents_concept_body">Quantity characters show how many voices (phthongs) the melody rises. The “stronger” the character, the bigger the rise of the voice.</string>
+    <string name="ascents_interactive_title">How much does the voice rise?</string>
+    <string name="ascents_interactive_hint">Pick a character and watch the voice climb the ladder.</string>
+    <string name="ascents_interactive_caption">“%1$s” raises the voice by %2$s.</string>
+    <string name="ascents_interactive_caption_zero">“%1$s” keeps the same voice.</string>
+    <string name="ascents_replay">Show again</string>
+    <string name="ascents_simple_title">Simple ascending characters</string>
+    <string name="ascents_simple_intro">Each character raises the voice by a set number of voices:</string>
+    <string name="ascents_leaping_intro">For bigger leaps we combine a base character (Oligon or Petasti) with embroideries and highs. Pick an interval to see how it is written.</string>
+    <string name="ascents_leaping_pick">Pick an interval</string>
+    <string name="ascents_leaping_forms_title">How it is written</string>
+    <string name="ascents_base_oligon">with Oligon</string>
+    <string name="ascents_base_petasti">with Petasti</string>
+    <string name="ascents_tip_title">Tip</string>
+    <string name="ascents_tip_body">Learn the simple characters first. The leaping ascents are just combinations of them — don’t be afraid of them!</string>
+    <string name="cd_ison">Neume: Ison</string>
+    <string name="cd_oligon">Neume: Oligon</string>
+    <string name="cd_flyer">Neume: Petasti</string>
+    <string name="cd_embroidery">Neume: Kentima</string>
+    <string name="cd_embroideries">Neume: Kentimata</string>
+    <string name="cd_high">Neume: Ypsili</string>
+    <string name="cd_leaping_neume">Neumes for a rise of %1$s</string>
+
     <string name="title_activity_descents">Descents</string>
     <string name="slight">Slightly</string>
     <string name="minus_two_voice">-2 voices</string>
