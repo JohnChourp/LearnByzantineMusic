@@ -56,7 +56,24 @@
     <string name="testimonials_definition">Οι Μαρτυρίες μας λένε σε ποιόν ήχο και φθόγγο είμαστε. Επίσης οι μαρτυρίες δεν ψέλνονται.</string>
     <string name="testimonials_examples">Παραδείγματα Μαρτυριών</string>
     <string name="matching_testimonials_definition">Μερικές από τις αντιστοιχίες των φθόγγων με τις μαρτυρίες φαίνονται παρακάτω:</string>
+    <!-- Testimonies (Μαρτυρίες) Compose redesign -->
+    <string name="testimonies_subtitle">Τι μας λένε οι μαρτυρίες των φθόγγων</string>
+    <string name="testimonies_definition_title">Τι είναι οι Μαρτυρίες</string>
+    <string name="testimonies_examples_title">Παραδείγματα Μαρτυριών</string>
+    <string name="testimonies_table_caption">Κάθε φθόγγος έχει τη δική του μαρτυρία. Πάτησε μια μαρτυρία για λεπτομέρειες.</string>
+    <string name="testimonies_not_sung_note">Οι μαρτυρίες δεν ψέλνονται· απλώς δείχνουν πού βρισκόμαστε.</string>
+    <string name="testimonies_modes_label">Ήχοι που τη χρησιμοποιούν</string>
+    <string name="testimonies_octave_note">Η σειρά ξεκινά και τελειώνει στον Νη: διανύει μία ολόκληρη οκτάβα (διαπασών). Ο τελευταίος Νη είναι ο ίδιος φθόγγος μία οκτάβα ψηλότερα.</string>
+    <string name="cd_testimonial_ni">Μαρτυρία του φθόγγου Νη.</string>
+    <string name="cd_testimonial_pa">Μαρτυρία του φθόγγου Πα.</string>
+    <string name="cd_testimonial_bou">Μαρτυρία του φθόγγου Βου.</string>
+    <string name="cd_testimonial_ga">Μαρτυρία του φθόγγου Γα.</string>
+    <string name="cd_testimonial_di">Μαρτυρία του φθόγγου Δι.</string>
+    <string name="cd_testimonial_ke">Μαρτυρία του φθόγγου Κε.</string>
+    <string name="cd_testimonial_zo">Μαρτυρία του φθόγγου Ζω.</string>
+    <string name="cd_testimonial_ni_high">Μαρτυρία του φθόγγου Νη στην επόμενη οκτάβα.</string>
     <string name="phthong_ni">Νη</string>
+    <string name="phthong_ni_high">Νη΄</string>
     <string name="phthong_pa">Πα</string>
     <string name="phthong_bou">Βου</string>
     <string name="phthong_ga">Γα</string>
