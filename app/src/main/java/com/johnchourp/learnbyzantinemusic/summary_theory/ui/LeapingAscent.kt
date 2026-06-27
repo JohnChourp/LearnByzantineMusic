@@ -20,9 +20,10 @@ package com.johnchourp.learnbyzantinemusic.summary_theory.ui
  *
  * The first five back the «Ανιόντες» leaping-ascent diagrams; the next batch was added for the
  * «Συνθέσεις ανάβασης» (ClimbingCompositions) page, which reuses this same model + [NeumeStack]
- * renderer to draw its ascending-composition equations. The final batch backs the «Ποιότητος»
- * (Quality) page — the eight quality signs plus the base glyphs its examples need. Adding values
- * here is additive — every existing form keeps rendering identically.
+ * renderer to draw its ascending-composition equations. The next batch backs the «Ποιότητος»
+ * (Quality) page — the eight quality signs plus the base glyphs its examples need. The final batch
+ * backs the «Χαρακτήρες Χρόνου» (Time) page — the dotted/double/triple gorgó and argó time-division
+ * characters. Adding values here is additive — every existing form keeps rendering identically.
  */
 enum class Neume {
     OLIGON, FLYER, EMBROIDERY, EMBROIDERIES, HIGH,
@@ -31,6 +32,9 @@ enum class Neume {
     HEAVY, HEAVY_SIMPLE_DOT, HEAVY_DOUBLE_DOTS, HEAVY_TRIPLE_DOTS,
     YFEN, SLIGHT_CONTINUOUS, DIGITAL, ALL_RIGHT, VACCUM, VACCUM_SIMPLE, LINK, INTERCOM,
     PRESENTED_GORGO, DOUBLE_DOTS, TRIPLE_DOTS, SLIGHT, ARGO, TRIGORGO,
+    // «Χαρακτήρες Χρόνου» (Time) — gorgó/argó time-division family.
+    GORGO_PRESENTED, PRESENTED_BOTTOM_DIGORGO, PRESENTED_MIDDLE_DIGORGO, PRESENTED_TOP_DIGORGO,
+    DIARGO, TRIARGO,
 }
 
 /** Where a glyph sits inside its form box; mirrors the original FrameLayout gravities. */
