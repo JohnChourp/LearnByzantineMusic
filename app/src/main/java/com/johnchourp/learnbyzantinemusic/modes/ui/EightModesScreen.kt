@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -213,6 +214,7 @@ fun EightModesScreen(
 
 /* ----------------------------- Genus legend ----------------------------- */
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GenusLegend(currentGenus: ModeScaleGenus) {
     LessonCard(title = stringResource(R.string.eight_modes_genus_legend_title)) {
