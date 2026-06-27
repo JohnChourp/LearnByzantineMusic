@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -61,7 +63,12 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
  * lesson screens (alongside [StaggeredAppear]) to keep the pages DRY and consistent.
  */
 
-/** Rounded gradient header with a pulsing brand badge, a back button, title and subtitle. */
+/**
+ * Rounded gradient header with a pulsing brand badge, a back button, title and subtitle.
+ *
+ * Pass [onMenuClick] to show a trailing menu (☰) action on the top-end — used by the 8 Ήχοι screen
+ * to open its catalog pages menu. When null the back button keeps its original solo placement.
+ */
 @Composable
 fun LessonHero(
     title: String,
@@ -69,6 +76,8 @@ fun LessonHero(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Filled.MusicNote,
+    onMenuClick: (() -> Unit)? = null,
+    menuContentDescription: String? = null,
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -82,12 +91,27 @@ fun LessonHero(
                 .padding(horizontal = 16.dp)
                 .padding(top = 10.dp, bottom = 24.dp),
         ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.action_back),
-                    tint = LbmBrown,
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.action_back),
+                        tint = LbmBrown,
+                    )
+                }
+                if (onMenuClick != null) {
+                    IconButton(onClick = onMenuClick) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = menuContentDescription,
+                            tint = LbmBrown,
+                        )
+                    }
+                }
             }
             Column(
                 modifier = Modifier.fillMaxWidth(),
