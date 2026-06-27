@@ -74,6 +74,7 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPrimaryContainer
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurface
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -369,6 +370,9 @@ private fun ScaleCard(
     val frequencies = remember(modeIndex, baseShiftMoria) {
         ModeScaleFrequencies.topToBottom(ascendingIntervals, referenceMoria, baseShiftMoria)
     }
+    // Tracks the in-flight TalkBack tone pulse so a newer activation cancels the older one's delayed
+    // release — otherwise an earlier pulse could stop a note that a later activation is still sounding.
+    val pulseJob = remember { mutableStateOf<Job?>(null) }
 
     LessonCard(title = stringResource(R.string.eight_modes_scale_card_title)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -420,7 +424,8 @@ private fun ScaleCard(
             },
             onAccessibilityPlay = { i ->
                 frequencies.getOrNull(i)?.let { freq ->
-                    scope.launch {
+                    pulseJob.value?.cancel()
+                    pulseJob.value = scope.launch {
                         onAccessibilityPulse(freq)
                         delay(650)
                         onAccessibilityRelease()

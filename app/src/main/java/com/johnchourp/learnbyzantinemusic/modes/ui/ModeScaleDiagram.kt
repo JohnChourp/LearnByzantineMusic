@@ -53,10 +53,13 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import kotlin.math.abs
 
 private val PILL_COLUMN_WIDTH = 96.dp
-private val PILL_HEIGHT = 40.dp
-private const val DP_PER_MORIA = 3.6f
-// Floor ≥ pill height + a gap so adjacent pills never overlap and every φθόγγος owns its own band.
-private const val MIN_SEGMENT_DP = 44f
+private val PILL_HEIGHT = 26.dp
+// Cell heights stay proportional to μόρια so the ladder visually teaches interval sizes; the floor is
+// only big enough to keep the number legible (a too-tall floor would draw a 4-μόρια step as tall as a
+// 12-μόρια one). Touch stays forgiving via the full-width, no-dead-zone nearest-boundary gesture, so
+// the small floor does not hurt usability even though the densest chromatic pills slightly overlap.
+private const val DP_PER_MORIA = 4.0f
+private const val MIN_SEGMENT_DP = 22f
 
 /**
  * The interactive 8 Ήχοι scale "ladder": a column of genus-tinted cells whose heights honestly
@@ -191,10 +194,16 @@ fun ModeScaleDiagram(
                     .fillMaxHeight()
                     .pointerInput(boundaries) {
                         val heightPx = size.height.toFloat()
+                        val widthPx = size.width.toFloat()
+                        // -1 when the finger is off the pill column (sideways) or past the top/bottom,
+                        // so the tone stops the moment the finger leaves the note controls.
+                        fun resolve(pos: Offset): Int =
+                            if (pos.x < 0f || pos.x > widthPx) -1
+                            else indexForY(pos.y, boundaries, this, heightPx)
                         awaitPointerEventScope {
                             while (true) {
                                 val down = awaitFirstDown(requireUnconsumed = false)
-                                var last = indexForY(down.position.y, boundaries, this, heightPx)
+                                var last = resolve(down.position)
                                 currentOnActive(last)
                                 down.consume()
                                 while (true) {
@@ -202,7 +211,7 @@ fun ModeScaleDiagram(
                                     val change = event.changes.firstOrNull { it.id == down.id }
                                         ?: break
                                     if (!change.pressed) break
-                                    val idx = indexForY(change.position.y, boundaries, this, heightPx)
+                                    val idx = resolve(change.position)
                                     if (idx != last) {
                                         last = idx
                                         currentOnActive(idx)
