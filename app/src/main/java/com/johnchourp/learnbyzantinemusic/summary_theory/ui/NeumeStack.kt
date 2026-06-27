@@ -54,6 +54,13 @@ internal fun Neume.drawableRes(): Int = when (this) {
     Neume.SLIGHT -> R.drawable.slight
     Neume.ARGO -> R.drawable.argo
     Neume.TRIGORGO -> R.drawable.trigorgo
+    // «Χαρακτήρες Χρόνου» (Time) — gorgó/argó time-division family.
+    Neume.GORGO_PRESENTED -> R.drawable.gorgo_presented
+    Neume.PRESENTED_BOTTOM_DIGORGO -> R.drawable.presented_bottom_digorgo
+    Neume.PRESENTED_MIDDLE_DIGORGO -> R.drawable.presented_middle_digorgo
+    Neume.PRESENTED_TOP_DIGORGO -> R.drawable.presented_top_digorgo
+    Neume.DIARGO -> R.drawable.diargo
+    Neume.TRIARGO -> R.drawable.triargo
 }
 
 /** Maps the model's [NeumeAlign] to a Compose [Alignment] inside the form box. */

@@ -102,6 +102,7 @@
     <string name="cd_trisimos">Trisimos: three phthongs between two red measure bars.</string>
     <string name="cd_tetrasimos">Tetrasimos: four phthongs between two red measure bars.</string>
     <string name="time_characters">Characters of Time</string>
+    <string name="time_characters_subtitle">The marks that show how long a note lasts or stays silent</string>
     <string name="time_characters_definition">Time characters include the marks, which indicate how much time a pause or note adds to a note:</string>
     <string name="time_1">1 year</string>
     <string name="add_time_1">Adds 1 time to the symbol</string>
