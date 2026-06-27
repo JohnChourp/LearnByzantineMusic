@@ -51,6 +51,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -465,6 +467,11 @@ private fun timbreLabelRes(timbre: ToneTimbre): Int = when (timbre) {
 
 @Composable
 private fun BaseShiftCard(moria: Int, onChange: (Int) -> Unit) {
+    val valueText = if (moria == 0) {
+        stringResource(R.string.eight_modes_base_shift_default_value)
+    } else {
+        stringResource(R.string.eight_modes_base_shift_value_template, moria)
+    }
     LessonCard(title = stringResource(R.string.eight_modes_base_shift_title)) {
         Text(
             text = stringResource(R.string.eight_modes_base_shift_hint),
@@ -480,11 +487,7 @@ private fun BaseShiftCard(moria: Int, onChange: (Int) -> Unit) {
                     .padding(horizontal = 10.dp, vertical = 4.dp),
             ) {
                 Text(
-                    text = if (moria == 0) {
-                        stringResource(R.string.eight_modes_base_shift_default_value)
-                    } else {
-                        stringResource(R.string.eight_modes_base_shift_value_template, moria)
-                    },
+                    text = valueText,
                     style = MaterialTheme.typography.labelLarge,
                     color = LbmBrown,
                     fontWeight = FontWeight.Bold,
@@ -509,6 +512,7 @@ private fun BaseShiftCard(moria: Int, onChange: (Int) -> Unit) {
         Slider(
             value = moria.toFloat(),
             onValueChange = { onChange(it.roundToInt()) },
+            modifier = Modifier.semantics { stateDescription = valueText },
             valueRange = BASE_SHIFT_MIN.toFloat()..BASE_SHIFT_MAX.toFloat(),
             steps = (BASE_SHIFT_MAX - BASE_SHIFT_MIN) - 1,
             colors = SliderDefaults.colors(

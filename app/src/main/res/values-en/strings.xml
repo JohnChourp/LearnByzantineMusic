@@ -356,14 +356,12 @@
     <string name="eight_modes_scale_card_title">The scale</string>
     <string name="eight_modes_scale_card_hint">Press and hold a phthong to hear its tone — drag up and down to glide between them.</string>
     <string name="eight_modes_scale_moria_legend">the numbers show the moria of each interval</string>
-    <string name="eight_modes_scale_base_tag">base</string>
     <string name="eight_modes_scale_now_playing">Now playing: %1$s</string>
     <string name="eight_modes_genus_legend_title">Genera</string>
     <string name="eight_modes_genus_diatonic">Diatonic</string>
     <string name="eight_modes_genus_soft_chromatic">Soft chromatic</string>
     <string name="eight_modes_genus_hard_chromatic">Hard chromatic</string>
     <string name="eight_modes_genus_enharmonic">Enharmonic</string>
-    <string name="eight_modes_mode_picker_title">Choose a mode</string>
     <string name="cd_eight_modes_note_pill">Phthong %1$s. Press and hold to hear the tone.</string>
     <string name="cd_eight_modes_base_note_pill">Phthong %1$s, the base of the mode. Press and hold to hear the tone.</string>
     <string name="mode_ascending_label">Ascent</string>
