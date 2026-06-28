@@ -801,7 +801,6 @@
     <string name="notes_page_title">My Notes</string>
     <string name="notes_page_subtitle">Write freely, save locally, and keep a full backup on every save.</string>
     <string name="notes_folder_not_selected">Backup folder not selected</string>
-    <string name="notes_folder_selected_template">Backup folder: %1$s</string>
     <string name="notes_last_sync_error_label">Last sync: failed (pending backups exist)</string>
     <string name="notes_last_sync_success_template">Last sync: %1$s</string>
     <string name="notes_last_sync_never">No sync completed yet</string>
@@ -849,6 +848,13 @@
     <string name="notes_status_import_invalid_json">Invalid backup file.</string>
     <string name="notes_status_import_read_failed">Failed to read backup file.</string>
     <string name="notes_status_folder_selected">Backup folder selected.</string>
+    <!-- Notes redesign (v1.14.0) — section titles, empty/a11y states -->
+    <string name="notes_section_backup_title">Backup &amp; sync folder</string>
+    <string name="notes_section_backup_actions_title">Backup actions</string>
+    <string name="notes_folder_status_ready">Backup folder is ready</string>
+    <string name="notes_list_empty_title">No notes yet</string>
+    <string name="notes_list_no_results">No notes match your search.</string>
+    <string name="notes_editor_no_note_hint">Create a new note to start writing.</string>
 
     <!-- Melody trainer -->
     <string name="title_activity_melody_trainer">Melody Trainer</string>
