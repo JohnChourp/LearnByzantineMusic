@@ -31,7 +31,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.NoteAdd
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Description
@@ -575,7 +575,7 @@ private fun EditorCard(
                 .height(52.dp),
             colors = ButtonDefaults.buttonColors(containerColor = LbmBrown, contentColor = Color.White),
         ) {
-            ButtonContent(Icons.AutoMirrored.Filled.NoteAdd, stringResource(R.string.notes_action_new_note))
+            ButtonContent(Icons.Filled.Add, stringResource(R.string.notes_action_new_note))
         }
 
         Spacer(Modifier.height(12.dp))
@@ -764,7 +764,7 @@ private fun NotesEmptyState(isSearching: Boolean, modifier: Modifier = Modifier)
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                imageVector = if (isSearching) Icons.Filled.Search else Icons.AutoMirrored.Filled.NoteAdd,
+                imageVector = if (isSearching) Icons.Filled.Search else Icons.Filled.Add,
                 contentDescription = null,
                 tint = LbmBrown,
                 modifier = Modifier.size(30.dp),
