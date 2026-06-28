@@ -4,8 +4,11 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -132,6 +135,31 @@ class NotesViewModel(
         autoSaveNow(SaveTrigger.MANUAL)
     }
 
+    /**
+     * Persist any unsaved editor edits on a process-lifetime scope so they survive the host
+     * Activity/ViewModel being torn down — e.g. the user taps the header Back button (or backgrounds
+     * the app) within the auto-save debounce window, which would otherwise cancel [viewModelScope]
+     * before the pending save reaches the repository. Idempotent and a no-op when nothing is dirty.
+     */
+    fun flushPendingEdits() {
+        val current = _uiState.value
+        val selectedId = current.selectedNoteId ?: return
+        if (!current.canInteractWithNotes) {
+            return
+        }
+        if (current.editorTitle == lastPersistedTitle && current.editorBody == lastPersistedBody) {
+            return
+        }
+        autoSaveJob?.cancel()
+        val title = current.editorTitle
+        val body = current.editorBody
+        lastPersistedTitle = title.trim()
+        lastPersistedBody = body.trimEnd()
+        flushScope.launch {
+            repository.saveNote(noteId = selectedId, title = title, body = body)
+        }
+    }
+
     fun exportNow() {
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
@@ -233,6 +261,10 @@ class NotesViewModel(
 
     companion object {
         private const val AUTO_SAVE_DELAY_MS = 1200L
+
+        // Process-lifetime scope for exit-time flushes; outlives any single Activity/ViewModel so a
+        // save triggered on the way out (Back/background) completes instead of being cancelled.
+        private val flushScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     }
 }
 

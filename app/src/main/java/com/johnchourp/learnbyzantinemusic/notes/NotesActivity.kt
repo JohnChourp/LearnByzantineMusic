@@ -95,6 +95,13 @@ class NotesActivity : BaseActivity() {
         }
     }
 
+    override fun onStop() {
+        // Persist any unsaved editor edits before the screen goes away (Back button, Home, app switch),
+        // since the 1.2s auto-save debounce may not have fired yet.
+        viewModel.flushPendingEdits()
+        super.onStop()
+    }
+
     private fun ensureBackupFolderConfigured() {
         val storedUri = notesPrefs.getFolderUri()
         if (storedUri != null && notesPrefs.hasPersistedReadWriteAccess(contentResolver, storedUri)) {

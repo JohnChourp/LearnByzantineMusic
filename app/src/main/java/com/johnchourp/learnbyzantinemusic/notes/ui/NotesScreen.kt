@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -248,7 +247,9 @@ fun NotesScreen(
                 )
             }
         } else {
-            items(uiState.notes, key = { it.id }) { note ->
+            // Prefix note keys so a note id from an imported backup can never collide with the
+            // static section keys ("hero", "editor", …) sharing this LazyColumn.
+            items(uiState.notes, key = { "note:${it.id}" }) { note ->
                 NoteRow(
                     note = note,
                     selected = uiState.selectedNoteId == note.id,
@@ -596,10 +597,11 @@ private fun EditorCard(
             onValueChange = onBodyChanged,
             enabled = enabled,
             label = { Text(text = stringResource(id = R.string.notes_editor_body_label)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 200.dp),
+            modifier = Modifier.fillMaxWidth(),
+            // Bounded so a long note scrolls inside the field instead of expanding the whole
+            // LazyColumn (and pushing the search/list far below the fold).
             minLines = 8,
+            maxLines = 14,
         )
 
         AnimatedVisibility(visible = enabled && !hasSelectedNote) {
