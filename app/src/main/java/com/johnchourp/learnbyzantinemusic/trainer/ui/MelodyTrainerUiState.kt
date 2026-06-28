@@ -25,7 +25,6 @@ data class MelodyTrainerUiState(
     val stopEnabled: Boolean = false,
     val clearEnabled: Boolean = false,
     val addEnabled: Boolean = true,
-    val isPlaybackActive: Boolean = false,
     /** Phthong currently sounding during Mode 1 playback, or null when not playing. */
     val nowPlayingLabel: String? = null,
     val voice: PracticeModeUi = PracticeModeUi(),
@@ -63,4 +62,6 @@ data class PracticeModeUi(
     val enabled: Boolean = true,
     /** Already-resolved status sentence (hint, listening/countdown, or result). */
     val status: String = "",
+    /** Live "correct so far" label while this mode is running, else null. */
+    val progress: String? = null,
 )

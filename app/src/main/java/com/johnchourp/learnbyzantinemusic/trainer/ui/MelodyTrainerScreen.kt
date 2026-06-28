@@ -60,6 +60,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,8 +69,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
@@ -460,7 +463,7 @@ private fun SequenceCard(
                     ValueChip(
                         text = stringResource(R.string.melody_trainer_now_playing, playing),
                         container = ActiveGlow,
-                        content = ActiveGlowBorder,
+                        content = LbmTextPrimary,
                     )
                 }
             }
@@ -472,13 +475,15 @@ private fun SequenceCard(
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     notes.forEach { note ->
-                        NoteTile(
-                            note = note,
-                            onDecrement = { onDecrementDuration(note.index) },
-                            onIncrement = { onIncrementDuration(note.index) },
-                            onToggleGorgo = { onToggleGorgo(note.index) },
-                            onRemove = { onRemoveNote(note.index) },
-                        )
+                        key(note.index) {
+                            NoteTile(
+                                note = note,
+                                onDecrement = { onDecrementDuration(note.index) },
+                                onIncrement = { onIncrementDuration(note.index) },
+                                onToggleGorgo = { onToggleGorgo(note.index) },
+                                onRemove = { onRemoveNote(note.index) },
+                            )
+                        }
                     }
                 }
             }
@@ -541,6 +546,12 @@ private fun NoteTile(
         note.phthongLabel,
         note.beatsLabel,
     )
+    // Don't leave match/active feedback to colour alone — expose it to TalkBack too.
+    val stateLabel = when {
+        note.matched -> stringResource(R.string.melody_trainer_note_state_correct)
+        note.active -> stringResource(R.string.melody_trainer_note_state_now)
+        else -> ""
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -566,7 +577,14 @@ private fun NoteTile(
                 )
             }
             Spacer(Modifier.width(10.dp))
-            Column(modifier = Modifier.weight(1f).semantics { contentDescription = rowDescription }) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics {
+                        contentDescription = rowDescription
+                        if (stateLabel.isNotEmpty()) stateDescription = stateLabel
+                    },
+            ) {
                 Text(
                     text = note.phthongLabel,
                     style = MaterialTheme.typography.titleLarge,
@@ -655,7 +673,7 @@ private fun GorgoChip(selected: Boolean, enabled: Boolean, onClick: () -> Unit) 
     }
     Row(
         modifier = Modifier
-            .heightIn(min = 40.dp)
+            .heightIn(min = 48.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(container)
             .border(1.dp, borderColor, RoundedCornerShape(10.dp))
@@ -876,12 +894,28 @@ private fun ModeCard(
             )
         }
         Spacer(Modifier.height(10.dp))
-        Crossfade(targetState = mode.status, label = "modeStatus") { status ->
+        val progress = mode.progress
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Text(
-                text = status,
+                text = mode.status,
                 style = MaterialTheme.typography.bodyMedium,
                 color = LbmTextSecondary,
+                // Announce countdown / "Go!" / listening / result updates to TalkBack.
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { liveRegion = LiveRegionMode.Polite },
             )
+            if (progress != null) {
+                Spacer(Modifier.width(10.dp))
+                ValueChip(
+                    text = progress,
+                    container = AccentGreenContainer,
+                    content = AccentGreenContent,
+                )
+            }
         }
     }
 }

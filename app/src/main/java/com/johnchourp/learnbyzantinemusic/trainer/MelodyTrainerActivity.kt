@@ -543,6 +543,7 @@ class MelodyTrainerActivity : BaseActivity() {
         } else {
             null
         }
+        val total = notes.size
         uiState = MelodyTrainerUiState(
             notes = noteUis,
             totalBeatsLabel = formatBeats(effective.sum()),
@@ -555,22 +556,24 @@ class MelodyTrainerActivity : BaseActivity() {
             stopEnabled = isPlaybackActive,
             clearEnabled = !isBusy && notes.isNotEmpty(),
             addEnabled = !isBusy,
-            isPlaybackActive = isPlaybackActive,
             nowPlayingLabel = nowPlaying,
             voice = PracticeModeUi(
                 checked = isVoiceActive,
                 enabled = !isPlaybackActive && !isRhythmActive,
                 status = voiceStatus,
+                progress = if (isVoiceActive) correctProgress(voiceCorrectCount, total) else null,
             ),
             rhythm = PracticeModeUi(
                 checked = isRhythmActive && !rhythmRequirePitch,
                 enabled = !isPlaybackActive && !isVoiceActive && !(isRhythmActive && rhythmRequirePitch),
                 status = rhythmStatus,
+                progress = if (isRhythmActive && !rhythmRequirePitch) correctProgress(rhythmCorrectCount, total) else null,
             ),
             combo = PracticeModeUi(
                 checked = isRhythmActive && rhythmRequirePitch,
                 enabled = !isPlaybackActive && !isVoiceActive && !(isRhythmActive && !rhythmRequirePitch),
                 status = comboStatus,
+                progress = if (isRhythmActive && rhythmRequirePitch) correctProgress(rhythmCorrectCount, total) else null,
             ),
         )
     }
@@ -587,6 +590,9 @@ class MelodyTrainerActivity : BaseActivity() {
     }
 
     private fun octaveLabel(shift: Int): String = if (shift > 0) "+$shift" else shift.toString()
+
+    private fun correctProgress(correct: Int, total: Int): String =
+        getString(R.string.melody_trainer_correct_progress, correct, total)
 
     private fun formatBeats(beats: Float): String {
         val halves = (beats * 2).roundToInt()

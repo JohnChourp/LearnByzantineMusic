@@ -879,6 +879,8 @@
     <string name="melody_trainer_practice_intro">Pick a practice mode, sing, and the correct phthongi turn green.</string>
     <string name="melody_trainer_correct_progress">Correct: %1$d/%2$d</string>
     <string name="melody_trainer_note_a11y">Phthong %1$d: %2$s, %3$s beats</string>
+    <string name="melody_trainer_note_state_correct">Correct</string>
+    <string name="melody_trainer_note_state_now">Now</string>
 
     <!-- Ascending compositions (ClimbingCompositions) — Compose redesign -->
     <string name="climbing_subtitle">How the compound ascending characters are written</string>
