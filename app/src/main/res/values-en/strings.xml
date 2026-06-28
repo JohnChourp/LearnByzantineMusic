@@ -860,6 +860,28 @@
     <string name="melody_trainer_combo_hint">Phthong AND timing: after a 5-second countdown, say each phthong correctly (right pitch) AND on time for it to turn green.</string>
     <string name="melody_trainer_combo_done">Done! Correct (phthong+timing): %1$d/%2$d</string>
 
+    <!-- Melody trainer redesign (v1.11.0) -->
+    <string name="melody_trainer_subtitle">Time &amp; Phthongi</string>
+    <string name="melody_trainer_add_note_hint">Tap phthongi to build your melody.</string>
+    <string name="melody_trainer_octave_hint">The octave places new phthongi higher (΄) or lower (,).</string>
+    <string name="melody_trainer_rule_default_title">Default</string>
+    <string name="melody_trainer_rule_default_body">Each phthong lasts 1 beat.</string>
+    <string name="melody_trainer_rule_gorgo_title">Gorgon</string>
+    <string name="melody_trainer_rule_gorgo_body">The phthong becomes half a beat (0.5) and takes 0.5 from the previous one — two phthongi in one beat.</string>
+    <string name="melody_trainer_rule_klasma_title">Klasma (apli)</string>
+    <string name="melody_trainer_rule_klasma_body">Adds one whole beat to the phthong.</string>
+    <string name="melody_trainer_rule_speed_title">Speed</string>
+    <string name="melody_trainer_rule_speed_body">Sets how fast the timer counts (beats per minute).</string>
+    <string name="melody_trainer_now_playing">Playing: %1$s</string>
+    <string name="melody_trainer_tempo_slow">Slow</string>
+    <string name="melody_trainer_tempo_fast">Fast</string>
+    <string name="melody_trainer_practice_title">Practice with your voice</string>
+    <string name="melody_trainer_practice_intro">Pick a practice mode, sing, and the correct phthongi turn green.</string>
+    <string name="melody_trainer_correct_progress">Correct: %1$d/%2$d</string>
+    <string name="melody_trainer_note_a11y">Phthong %1$d: %2$s, %3$s beats</string>
+    <string name="melody_trainer_note_state_correct">Correct</string>
+    <string name="melody_trainer_note_state_now">Now</string>
+
     <!-- Ascending compositions (ClimbingCompositions) — Compose redesign -->
     <string name="climbing_subtitle">How the compound ascending characters are written</string>
     <string name="climbing_concept_title">What is an ascending composition?</string>
