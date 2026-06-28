@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.activity.compose.setContent
@@ -66,6 +67,19 @@ class NotesActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         notesPrefs = NotesPrefs(this)
 
+        // Flush unsaved editor edits on the way out (header Back button and system back both route
+        // through here), so edits made within the 1.2s auto-save debounce aren't lost. Scoped to a
+        // real exit — NOT onStop — so it never fires while a SAF picker (folder/import) is open.
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    viewModel.flushPendingEdits()
+                    finish()
+                }
+            }
+        )
+
         ensureBackupFolderConfigured()
 
         setContent {
@@ -76,7 +90,7 @@ class NotesActivity : BaseActivity() {
                 NotesScreen(
                     uiState = uiState,
                     statusText = statusText,
-                    onBack = { finish() },
+                    onBack = { onBackPressedDispatcher.onBackPressed() },
                     onCreateNote = { viewModel.createNewNote() },
                     onDeleteSelected = { viewModel.deleteSelectedNote() },
                     onSaveNow = { viewModel.saveNow() },
@@ -93,13 +107,6 @@ class NotesActivity : BaseActivity() {
                 )
             }
         }
-    }
-
-    override fun onStop() {
-        // Persist any unsaved editor edits before the screen goes away (Back button, Home, app switch),
-        // since the 1.2s auto-save debounce may not have fired yet.
-        viewModel.flushPendingEdits()
-        super.onStop()
     }
 
     private fun ensureBackupFolderConfigured() {

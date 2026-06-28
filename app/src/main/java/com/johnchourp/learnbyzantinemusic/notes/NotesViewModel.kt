@@ -137,9 +137,10 @@ class NotesViewModel(
 
     /**
      * Persist any unsaved editor edits on a process-lifetime scope so they survive the host
-     * Activity/ViewModel being torn down — e.g. the user taps the header Back button (or backgrounds
-     * the app) within the auto-save debounce window, which would otherwise cancel [viewModelScope]
-     * before the pending save reaches the repository. Idempotent and a no-op when nothing is dirty.
+     * Activity/ViewModel being torn down — e.g. the user taps Back within the auto-save debounce
+     * window, which would otherwise cancel [viewModelScope] before the pending save reaches the
+     * repository. Invoked only from the real back-exit path (never while a SAF picker is open, so it
+     * cannot race an import). Idempotent and a no-op when nothing is dirty.
      */
     fun flushPendingEdits() {
         val current = _uiState.value

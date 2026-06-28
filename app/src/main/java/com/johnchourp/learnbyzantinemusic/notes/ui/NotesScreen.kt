@@ -169,7 +169,6 @@ fun NotesScreen(
             StaggeredAppear(delayMillis = 60, modifier = Modifier.padding(horizontal = 16.dp)) {
                 BackupSyncCard(
                     folderName = uiState.folderName,
-                    hasConfiguredFolder = uiState.hasConfiguredFolder,
                     pendingSyncCount = uiState.pendingSyncCount,
                     lastSyncEpochMs = uiState.lastSyncEpochMs,
                     lastSyncError = uiState.lastSyncError,
@@ -294,7 +293,6 @@ fun NotesScreen(
 @Composable
 private fun BackupSyncCard(
     folderName: String?,
-    hasConfiguredFolder: Boolean,
     pendingSyncCount: Int,
     lastSyncEpochMs: Long?,
     lastSyncError: String?,
@@ -328,7 +326,9 @@ private fun BackupSyncCard(
                     modifier = Modifier.weight(1f),
                 )
                 Spacer(Modifier.width(8.dp))
-                AccessDot(ready = hasConfiguredFolder)
+                // Ready only when the folder is actually resolvable (folderName != null), so the dot
+                // can't show green while the row text reads «not selected» for a deleted/lost folder.
+                AccessDot(ready = !folderName.isNullOrBlank())
             }
         }
 
