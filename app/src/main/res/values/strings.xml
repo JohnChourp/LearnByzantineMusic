@@ -800,7 +800,6 @@
     <string name="notes_page_title">Οι Σημειώσεις Μου</string>
     <string name="notes_page_subtitle">Γράφε ελεύθερα, σώζε τοπικά και κράτα πλήρες backup σε κάθε αποθήκευση.</string>
     <string name="notes_folder_not_selected">Δεν έχει οριστεί φάκελος backup</string>
-    <string name="notes_folder_selected_template">Φάκελος backup: %1$s</string>
     <string name="notes_last_sync_error_label">Τελευταίο sync: αποτυχία (υπάρχουν εκκρεμή backups)</string>
     <string name="notes_last_sync_success_template">Τελευταίο sync: %1$s</string>
     <string name="notes_last_sync_never">Δεν έχει ολοκληρωθεί sync ακόμη</string>
@@ -848,6 +847,13 @@
     <string name="notes_status_import_invalid_json">Μη έγκυρο backup αρχείο.</string>
     <string name="notes_status_import_read_failed">Αποτυχία ανάγνωσης backup αρχείου.</string>
     <string name="notes_status_folder_selected">Ο φάκελος backup επιλέχθηκε.</string>
+    <!-- Notes redesign (v1.14.0) — section titles, empty/a11y states -->
+    <string name="notes_section_backup_title">Φάκελος backup &amp; sync</string>
+    <string name="notes_section_backup_actions_title">Ενέργειες backup</string>
+    <string name="notes_folder_status_ready">Ο φάκελος backup είναι έτοιμος</string>
+    <string name="notes_list_empty_title">Καμία σημείωση ακόμη</string>
+    <string name="notes_list_no_results">Δεν βρέθηκαν σημειώσεις για την αναζήτηση.</string>
+    <string name="notes_editor_no_note_hint">Δημιούργησε μια νέα σημείωση για να ξεκινήσεις να γράφεις.</string>
 
     <!-- Melody trainer (Γυμναστής Μελωδίας) -->
     <string name="title_activity_melody_trainer">Γυμναστής Μελωδίας</string>

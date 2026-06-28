@@ -7,12 +7,12 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.notes.ui.NotesScreen
+import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 
 class NotesActivity : BaseActivity() {
     private lateinit var notesPrefs: NotesPrefs
@@ -69,13 +69,14 @@ class NotesActivity : BaseActivity() {
         ensureBackupFolderConfigured()
 
         setContent {
-            MaterialTheme {
+            LbmTheme {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val statusText = resolveStatusText(uiState.statusMessage)
 
                 NotesScreen(
                     uiState = uiState,
                     statusText = statusText,
+                    onBack = { finish() },
                     onCreateNote = { viewModel.createNewNote() },
                     onDeleteSelected = { viewModel.deleteSelectedNote() },
                     onSaveNow = { viewModel.saveNow() },
