@@ -12,10 +12,10 @@ import android.os.Bundle
 import android.provider.DocumentsContract
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
@@ -26,6 +26,7 @@ import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.recordings.index.RecordingsRepository
 import com.johnchourp.learnbyzantinemusic.recordings.ui.RecordingsScreen
+import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -131,14 +132,24 @@ class RecordingsActivity : BaseActivity() {
         restoreSavedFolder()
         viewModel.setRecordingState(RecordingStateUi.IDLE)
 
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    handleBackRequested()
+                }
+            }
+        )
+
         setContent {
-            MaterialTheme {
+            LbmTheme {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val recentItems = viewModel.recentItemsFlow.collectAsLazyPagingItems()
 
                 RecordingsScreen(
                     uiState = uiState,
                     recentItems = recentItems,
+                    onBack = { handleBackRequested() },
                     onChangeFolder = { showChangeFolderConfirmationDialog() },
                     onOpenFolder = { openFolderInExternalExplorer() },
                     onOpenManager = { openManagerPage() },
@@ -662,6 +673,32 @@ class RecordingsActivity : BaseActivity() {
         Toast.makeText(this, R.string.recordings_error_removed, Toast.LENGTH_SHORT).show()
         lifecycleScope.launch {
             recordingsRepository.removeOwnedRecording(item.uri)
+        }
+    }
+
+    /**
+     * Back handling (hero arrow + system back). A recording in progress would otherwise be silently
+     * discarded by onDestroy()'s temp-file cleanup, so while RECORDING/PAUSED we confirm: stop &
+     * save (persist via the normal flow), discard & exit, or cancel. Other states just finish.
+     */
+    private fun handleBackRequested() {
+        val state = viewModel.uiState.value.recordingState
+        if (state == RecordingStateUi.RECORDING || state == RecordingStateUi.PAUSED) {
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.recordings_exit_recording_title))
+                .setMessage(getString(R.string.recordings_exit_recording_message))
+                .setPositiveButton(getString(R.string.recordings_exit_stop_save)) { _, _ ->
+                    stopAndPersistRecording()
+                }
+                .setNegativeButton(getString(R.string.recordings_exit_discard)) { _, _ ->
+                    finish()
+                }
+                .setNeutralButton(getString(R.string.recordings_delete_cancel_button)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        } else {
+            finish()
         }
     }
 

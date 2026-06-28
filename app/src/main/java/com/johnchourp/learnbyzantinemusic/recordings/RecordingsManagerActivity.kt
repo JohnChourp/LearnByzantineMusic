@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +17,7 @@ import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.recordings.index.RecordingsRepository
 import com.johnchourp.learnbyzantinemusic.recordings.ui.RecordingsManagerScreen
+import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.launch
 
 class RecordingsManagerActivity : BaseActivity() {
@@ -49,13 +49,20 @@ class RecordingsManagerActivity : BaseActivity() {
         setupBackHandling()
 
         setContent {
-            MaterialTheme {
+            LbmTheme {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val entries = viewModel.entriesFlow.collectAsLazyPagingItems()
 
                 RecordingsManagerScreen(
                     uiState = uiState,
                     entries = entries,
+                    onBack = {
+                        viewModel.navigateUp { moved ->
+                            if (!moved) {
+                                finish()
+                            }
+                        }
+                    },
                     onNavigateUp = {
                         viewModel.navigateUp { moved ->
                             if (!moved) {
