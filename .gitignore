@@ -24,3 +24,6 @@ app/src/main/assets/editor_symbols_local_v1.json
 *.pfx
 *.pem
 key.properties
+
+# Kotlin compiler session artifacts
+.kotlin/

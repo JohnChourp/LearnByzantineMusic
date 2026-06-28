@@ -1,98 +1,67 @@
 package com.johnchourp.learnbyzantinemusic.calendar
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.johnchourp.learnbyzantinemusic.BaseActivity
-import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.calendar.ui.ReadingTextScreen
+import com.johnchourp.learnbyzantinemusic.calendar.ui.ReadingTextUiState
+import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import java.time.LocalDate
 
+/**
+ * Host for the redesigned «Κείμενο Αναγνώσματος» screen. Resolves the reading from the launching
+ * Intent once, then renders an immutable [ReadingTextUiState] through the Compose [ReadingTextScreen].
+ * The Αρχαία / Νεοελληνική toggle is the only mutable state; Ancient is the default mode.
+ */
 class ReadingTextActivity : BaseActivity() {
-    private lateinit var readingReferenceText: TextView
-    private lateinit var readingContentText: TextView
-    private lateinit var ancientButton: Button
-    private lateinit var modernButton: Button
-    private lateinit var repository: CalendarCelebrationsRepository
 
-    private var reading: CalendarReadingText? = null
-    private var currentMode: ReadingTextMode = ReadingTextMode.ANCIENT
+    private lateinit var repository: CalendarCelebrationsRepository
+    private var readingState: ReadingTextUiState = ReadingTextUiState()
+    private var ancientSelected by mutableStateOf(true)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_reading_text)
-
-        readingReferenceText = findViewById(R.id.reading_text_reference)
-        readingContentText = findViewById(R.id.reading_text_content)
-        ancientButton = findViewById(R.id.reading_text_mode_ancient_button)
-        modernButton = findViewById(R.id.reading_text_mode_modern_button)
         repository = CalendarCelebrationsRepository(this)
+        readingState = loadReadingFromIntent()
 
-        reading = loadReadingFromIntent()
-
-        ancientButton.setOnClickListener {
-            currentMode = ReadingTextMode.ANCIENT
-            renderReadingContent()
+        setContent {
+            LbmTheme {
+                ReadingTextScreen(
+                    state = readingState,
+                    ancientSelected = ancientSelected,
+                    onBack = ::finish,
+                    onSelectAncient = { ancientSelected = true },
+                    onSelectModern = { ancientSelected = false },
+                )
+            }
         }
-        modernButton.setOnClickListener {
-            currentMode = ReadingTextMode.MODERN
-            renderReadingContent()
-        }
-
-        renderReadingHeader()
-        renderReadingContent()
     }
 
-    private fun loadReadingFromIntent(): CalendarReadingText? {
+    private fun loadReadingFromIntent(): ReadingTextUiState {
         val readingId = intent.getStringExtra(EXTRA_READING_ID)?.trim().orEmpty()
         val rawDate = intent.getStringExtra(EXTRA_DATE)?.trim().orEmpty()
         if (readingId.isEmpty() || rawDate.isEmpty()) {
-            return null
+            return ReadingTextUiState(hasReading = false)
         }
 
         val date = try {
             LocalDate.parse(rawDate)
         } catch (_: Exception) {
-            return null
+            return ReadingTextUiState(hasReading = false)
         }
 
-        return repository.getReadingById(date, readingId)
-    }
+        val reading = repository.getReadingById(date, readingId)
+            ?: return ReadingTextUiState(hasReading = false)
 
-    private fun renderReadingHeader() {
-        val currentReading = reading
-        if (currentReading == null) {
-            readingReferenceText.text = getString(R.string.reading_text_missing_reference)
-            return
-        }
-        readingReferenceText.text = currentReading.reference
-    }
-
-    private fun renderReadingContent() {
-        val currentReading = reading
-        if (currentReading == null) {
-            readingContentText.text = getString(R.string.reading_text_missing_content)
-            updateModeButtons()
-            return
-        }
-
-        readingContentText.text = when (currentMode) {
-            ReadingTextMode.ANCIENT -> currentReading.textAncient
-            ReadingTextMode.MODERN -> currentReading.textModern
-        }
-        updateModeButtons()
-    }
-
-    private fun updateModeButtons() {
-        val isAncient = currentMode == ReadingTextMode.ANCIENT
-        ancientButton.isEnabled = !isAncient
-        modernButton.isEnabled = isAncient
-        ancientButton.alpha = if (isAncient) 0.65f else 1f
-        modernButton.alpha = if (isAncient) 1f else 0.65f
-    }
-
-    private enum class ReadingTextMode {
-        ANCIENT,
-        MODERN,
+        return ReadingTextUiState(
+            hasReading = true,
+            reference = reading.reference,
+            textAncient = reading.textAncient,
+            textModern = reading.textModern,
+        )
     }
 
     companion object {
