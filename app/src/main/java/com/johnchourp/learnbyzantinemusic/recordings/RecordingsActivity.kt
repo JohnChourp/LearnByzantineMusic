@@ -15,7 +15,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
@@ -26,6 +25,7 @@ import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.recordings.index.RecordingsRepository
 import com.johnchourp.learnbyzantinemusic.recordings.ui.RecordingsScreen
+import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -132,13 +132,14 @@ class RecordingsActivity : BaseActivity() {
         viewModel.setRecordingState(RecordingStateUi.IDLE)
 
         setContent {
-            MaterialTheme {
+            LbmTheme {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val recentItems = viewModel.recentItemsFlow.collectAsLazyPagingItems()
 
                 RecordingsScreen(
                     uiState = uiState,
                     recentItems = recentItems,
+                    onBack = { finish() },
                     onChangeFolder = { showChangeFolderConfirmationDialog() },
                     onOpenFolder = { openFolderInExternalExplorer() },
                     onOpenManager = { openManagerPage() },
