@@ -859,6 +859,26 @@
     <string name="melody_trainer_combo_hint">Φθόγγος ΚΑΙ χρόνος: μετά από αντίστροφη μέτρηση 5 δευτ., πες κάθε φθόγγο σωστά (σωστό ύψος) ΚΑΙ στον σωστό χρόνο για να πρασινίσει.</string>
     <string name="melody_trainer_combo_done">Ολοκληρώθηκε! Σωστά (φθόγγος+χρόνος): %1$d/%2$d</string>
 
+    <!-- Melody trainer redesign (v1.11.0) -->
+    <string name="melody_trainer_subtitle">Χρόνος &amp; Φθόγγοι</string>
+    <string name="melody_trainer_add_note_hint">Πάτησε φθόγγους για να χτίσεις τη μελωδία σου.</string>
+    <string name="melody_trainer_octave_hint">Η οκτάβα τοποθετεί τους νέους φθόγγους ψηλότερα (΄) ή χαμηλότερα (,).</string>
+    <string name="melody_trainer_rule_default_title">Προεπιλογή</string>
+    <string name="melody_trainer_rule_default_body">Κάθε φθόγγος κρατάει 1 χρόνο.</string>
+    <string name="melody_trainer_rule_gorgo_title">Γοργόν</string>
+    <string name="melody_trainer_rule_gorgo_body">Ο φθόγγος γίνεται μισός χρόνος (0,5) και «τραβάει» 0,5 από τον προηγούμενο — δύο φθόγγοι σε έναν χρόνο.</string>
+    <string name="melody_trainer_rule_klasma_title">Κλάσμα (απλή)</string>
+    <string name="melody_trainer_rule_klasma_body">Προσθέτει 1 ολόκληρο χρόνο στον φθόγγο.</string>
+    <string name="melody_trainer_rule_speed_title">Ταχύτητα</string>
+    <string name="melody_trainer_rule_speed_body">Ρυθμίζει πόσο γρήγορα μετράει ο χρόνος (χρόνοι ανά λεπτό).</string>
+    <string name="melody_trainer_now_playing">Παίζει: %1$s</string>
+    <string name="melody_trainer_tempo_slow">Αργά</string>
+    <string name="melody_trainer_tempo_fast">Γρήγορα</string>
+    <string name="melody_trainer_practice_title">Εξάσκηση με τη φωνή</string>
+    <string name="melody_trainer_practice_intro">Διάλεξε έναν τρόπο εξάσκησης, τραγούδησε, και οι σωστοί φθόγγοι πρασινίζουν.</string>
+    <string name="melody_trainer_correct_progress">Σωστά: %1$d/%2$d</string>
+    <string name="melody_trainer_note_a11y">Φθόγγος %1$d: %2$s, %3$s χρόνοι</string>
+
     <!-- Συνθέσεις ανάβασης (ClimbingCompositions) — Compose redesign -->
     <string name="climbing_subtitle">Πώς γράφονται οι σύνθετοι χαρακτήρες ανάβασης</string>
     <string name="climbing_concept_title">Τι είναι μια σύνθεση ανάβασης;</string>
