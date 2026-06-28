@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.recordings.ui
 
+import android.os.SystemClock
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -54,7 +55,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
@@ -334,13 +337,14 @@ private fun RecordSection(
                 RecordStateIndicator(recordingState)
                 if (showTimer) {
                     Spacer(Modifier.width(12.dp))
+                    val mmss = formatElapsed(elapsedMs)
                     Text(
-                        text = formatElapsed(elapsedMs),
+                        text = mmss,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = if (recordingState == RecordingStateUi.RECORDING) LbmMeasureBar else LbmTextSecondary,
                         modifier = Modifier.semantics {
-                            contentDescription = elapsedCd
+                            contentDescription = "$elapsedCd $mmss"
                         },
                     )
                 }
@@ -651,31 +655,53 @@ private fun ButtonContent(icon: ImageVector, label: String) {
 }
 
 /**
- * Pure Compose-side recording stopwatch: counts up only while [RecordingStateUi.RECORDING], holds
- * while PAUSED/SAVING, resets on IDLE/ERROR. Frame-clock based so it stays accurate without touching
- * the audio capture engine.
+ * Recording stopwatch derived from the monotonic clock ([SystemClock.elapsedRealtime]) so the
+ * displayed duration stays correct even though it lives in a virtualized lazy item: the anchors are
+ * kept in [rememberSaveable] (retained when the card scrolls off-screen) and the value is recomputed
+ * from the clock — which keeps advancing while the app is backgrounded and the capture thread runs —
+ * rather than accumulated from frame deltas. Counts up while [RecordingStateUi.RECORDING], holds the
+ * accumulated active time while PAUSED/SAVING, resets on IDLE/ERROR. Pure UI — no capture-engine change.
  */
 @Composable
 private fun rememberRecordingElapsed(recordingState: RecordingStateUi): Long {
-    var elapsedMs by remember { mutableLongStateOf(0L) }
+    var anchorRealtime by rememberSaveable { mutableStateOf(0L) }
+    var accumulatedMs by rememberSaveable { mutableStateOf(0L) }
+    var prevOrdinal by rememberSaveable { mutableStateOf(RecordingStateUi.IDLE.ordinal) }
+    var tick by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
+
     LaunchedEffect(recordingState) {
+        val now = SystemClock.elapsedRealtime()
+        val prev = RecordingStateUi.entries[prevOrdinal]
+        // Commit the active segment when leaving RECORDING (pause/stop), but not on a recomposition
+        // that re-enters with the same state (e.g. the lazy item scrolling back into view).
+        if (prev == RecordingStateUi.RECORDING && recordingState != RecordingStateUi.RECORDING) {
+            accumulatedMs += (now - anchorRealtime).coerceAtLeast(0L)
+        }
         when (recordingState) {
-            RecordingStateUi.IDLE, RecordingStateUi.ERROR -> elapsedMs = 0L
-            RecordingStateUi.RECORDING -> {
-                var last = 0L
-                var primed = false
-                while (true) {
-                    withFrameMillis { frame ->
-                        if (primed) elapsedMs += frame - last
-                        last = frame
-                        primed = true
-                    }
-                }
+            RecordingStateUi.IDLE, RecordingStateUi.ERROR -> {
+                accumulatedMs = 0L
+                anchorRealtime = 0L
             }
-            else -> Unit // PAUSED, SAVING — hold the current value
+            RecordingStateUi.RECORDING -> if (prev != RecordingStateUi.RECORDING) anchorRealtime = now
+            else -> Unit // PAUSED, SAVING — hold the accumulated value
+        }
+        prevOrdinal = recordingState.ordinal
+    }
+
+    LaunchedEffect(recordingState) {
+        if (recordingState == RecordingStateUi.RECORDING) {
+            while (true) {
+                withFrameMillis { }
+                tick = SystemClock.elapsedRealtime()
+            }
         }
     }
-    return elapsedMs
+
+    return if (recordingState == RecordingStateUi.RECORDING) {
+        accumulatedMs + (tick - anchorRealtime).coerceAtLeast(0L)
+    } else {
+        accumulatedMs
+    }
 }
 
 private fun formatElapsed(elapsedMs: Long): String {

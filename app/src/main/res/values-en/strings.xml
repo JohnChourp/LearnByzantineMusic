@@ -792,6 +792,10 @@
     <string name="recordings_recording_elapsed_content_description">Recording duration</string>
     <string name="recordings_recording_indicator_content_description">Active recording indicator</string>
     <string name="recordings_search_clear_content_description">Clear search</string>
+    <string name="recordings_exit_recording_title">Recording in progress</string>
+    <string name="recordings_exit_recording_message">A recording is in progress. What would you like to do?</string>
+    <string name="recordings_exit_stop_save">Stop &amp; save</string>
+    <string name="recordings_exit_discard">Discard &amp; exit</string>
     <string name="notes_open">Notes</string>
     <string name="title_activity_notes">Notes</string>
     <string name="notes_page_title">My Notes</string>
