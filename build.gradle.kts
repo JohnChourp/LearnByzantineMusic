@@ -33,9 +33,13 @@ buildscript {
         resolutionStrategy.force("org.bouncycastle:bcprov-jdk18on:1.84")
         resolutionStrategy.force("org.bouncycastle:bcutil-jdk18on:1.84")
     }
+    dependencies {
+        // AGP 9 built-in Kotlin ships KGP 2.2.10; this raises it to the catalog's Kotlin version.
+        classpath(libs.kotlin.gradle.plugin)
+    }
 }
 
 plugins {
     alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.jetbrainsKotlinAndroid) apply false
+    alias(libs.plugins.androidLegacyKapt) apply false
 }

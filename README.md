@@ -327,9 +327,10 @@
 - `compileSdk = 36`
 - `minSdk = 24`
 - `targetSdk = 34`
-- `Kotlin Gradle Plugin = 2.4.20`
+- `Kotlin Gradle Plugin = 2.4.20` (AGP 9 built-in Kotlin· το KGP μπαίνει στο root buildscript classpath)
 - `Kotlin Compose plugin = 2.4.20`
-- `AGP = 8.13.2`
+- `AGP = 9.3.1` (kapt μέσω `com.android.legacy-kapt`)
+- `Gradle = 9.6.1`
 - Buildscript classpath override:
 - `commons-io:commons-io = 2.22.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
 - `com.google.protobuf:protobuf-java = 4.35.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
@@ -505,11 +506,11 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Γιατί εμφανίστηκε Dependabot alert για `kotlin-gradle-plugin`;
 - Το advisory `GHSA-r937-wjx7-w2jp` (`CVE-2026-53914`, unsafe deserialization στο Kotlin build cache) αφορά κάθε `org.jetbrains.kotlin:kotlin-gradle-plugin` κάτω από `2.4.20-Beta1`.
 - Το project ανέβηκε από `2.1.20` στην πρώτη σταθερή patched έκδοση `2.4.20` (μαζί και τα `kotlin.plugin.compose`/`kapt`, που μοιράζονται το ίδιο version).
-- Από το Kotlin `2.2` και μετά το `kotlinOptions { jvmTarget = "..." }` είναι build error, οπότε το `app/build.gradle.kts` χρησιμοποιεί πλέον `kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }` με το ίδιο JVM target.
+- Από το Kotlin `2.2` και μετά το `kotlinOptions { jvmTarget = "..." }` είναι build error. Με το AGP 9 built-in Kotlin το `jvmTarget` ακολουθεί το `compileOptions.targetCompatibility` (`1.8`), οπότε δεν χρειάζεται ξεχωριστό block.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `commons-io`;
 - Το `commons-io` δεν υπάρχει ως direct dependency στο app module.
-- Έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`) και σχετικά UTP artifacts.
+- Έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`) και σχετικά UTP artifacts.
 - Το project κάνει forced resolve σε `commons-io:2.22.0` στο build classpath ώστε να καλύπτεται το patched range του advisory.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `protobuf-java`;
@@ -518,7 +519,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Το project κάνει forced resolve στα Protobuf runtime modules (`protobuf-java`, `protobuf-javalite`, `protobuf-kotlin`, `protobuf-kotlin-lite`) σε `4.35.1` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `jdom2`;
-- Το `jdom2` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
+- Το `jdom2` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `2.0.6` και το advisory ζητά patched έκδοση `>= 2.0.6.1`.
 - Το project κάνει forced resolve σε `org.jdom:jdom2:2.0.6.1` στο build classpath.
 
@@ -548,22 +549,22 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Το `app/build.gradle.kts` ευθυγραμμίζει κάθε `io.netty` `4.1.x` σε `4.1.138.Final` σε όλα τα configurations του `:app`, ώστε να μένει στη γραμμή 4.1 που περιμένει το `grpc-netty`.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `jose4j`;
-- Το `org.bitbucket.b_c:jose4j` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
+- Το `org.bitbucket.b_c:jose4j` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `0.9.5` και το advisory ζητά patched έκδοση `>= 0.9.6`.
 - Το project κάνει forced resolve σε `org.bitbucket.b_c:jose4j:0.9.6` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `commons-compress`;
-- Το `org.apache.commons:commons-compress` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
+- Το `org.apache.commons:commons-compress` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `1.21` και το advisory ζητά patched έκδοση `>= 1.26.0`.
 - Το project κάνει forced resolve σε `org.apache.commons:commons-compress:1.28.0` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `commons-lang3`;
-- Το `org.apache.commons:commons-lang3` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
+- Το `org.apache.commons:commons-lang3` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `3.14.0` και το advisory ζητά patched έκδοση `>= 3.18.0`.
 - Το project κάνει forced resolve σε `org.apache.commons:commons-lang3:3.20.0` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `bcpkix-jdk18on`;
-- Το `org.bouncycastle:bcpkix-jdk18on` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
+- Το `org.bouncycastle:bcpkix-jdk18on` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `1.77` και το advisory ζητά patched έκδοση `>= 1.79`.
 - Το project κάνει forced resolve σε `org.bouncycastle:bcpkix-jdk18on:1.84` στο build classpath και ευθυγραμμίζει `bcprov`/`bcutil` στην ίδια έκδοση.
 
