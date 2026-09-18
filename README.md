@@ -42,8 +42,9 @@
 Στο Core MVP v2 ο scanner engine χρησιμοποιεί primary OCR templates από core drawables και semantic parser `base+modifier` (π.χ. `πεταστή`, `απόστροφος`, `κλάσμα`, `γοργό`, `αντικένωμα+απλή`).
 Ο επιλεγμένος `Ήχος` επηρεάζει πλέον πραγματικά την καμπύλη πορείας μέσω mode profiles (`byzantine_mode_rules_v1.json`), ενώ η διάρκεια ανά event αποδίδεται με κανόνες χρόνου.
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
-Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.22.0`, Protobuf runtime modules σε `4.35.1`, `jdom2` σε `2.0.6.1`, Netty modules σε `4.2.15.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.28.0`, `commons-lang3` σε `3.20.0`, `bcpkix-jdk18on` σε `1.84`, `bcprov-jdk18on` σε `1.84` και `bcutil-jdk18on` σε `1.84`.
+Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.22.0`, Protobuf runtime modules σε `4.35.1`, `jdom2` σε `2.0.6.1`, Netty modules σε `4.2.18.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.28.0`, `commons-lang3` σε `3.20.0`, `bcpkix-jdk18on` σε `1.84`, `bcprov-jdk18on` σε `1.84` και `bcutil-jdk18on` σε `1.84`.
 Για το app dependency graph υπάρχει πλέον και explicit pin στο `com.google.guava:guava:32.1.3-jre` (catalog + `implementation` + `kapt`) ώστε το security graph να αναγνωρίζει deterministic patched version.
+Στα configurations του `:app` τα Netty `4.1.x` (που φέρνουν τα AGP/UTP test-platform artifacts μέσω `grpc-netty`) ευθυγραμμίζονται σε `4.1.138.Final`.
 
 ## Business flow
 - Ο χρήστης ανοίγει την αρχική οθόνη και επιλέγει θεωρητική ενότητα.
@@ -336,12 +337,12 @@
 - `com.google.protobuf:protobuf-kotlin = 4.35.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
 - `com.google.protobuf:protobuf-kotlin-lite = 4.35.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
 - `org.jdom:jdom2 = 2.0.6.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
-- `io.netty:netty-codec = 4.2.15.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
-- `io.netty:netty-codec-compression = 4.2.15.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
-- `io.netty:netty-codec-http = 4.2.15.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
-- `io.netty:netty-codec-http2 = 4.2.15.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
-- `io.netty:netty-handler = 4.2.15.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
-- `io.netty:netty-handler-proxy = 4.2.15.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `io.netty:netty-codec = 4.2.18.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `io.netty:netty-codec-compression = 4.2.18.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `io.netty:netty-codec-http = 4.2.18.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `io.netty:netty-codec-http2 = 4.2.18.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `io.netty:netty-handler = 4.2.18.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
+- `io.netty:netty-handler-proxy = 4.2.18.Final` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
 - `org.bitbucket.b_c:jose4j = 0.9.6` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.apache.commons:commons-compress = 1.28.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.apache.commons:commons-lang3 = 3.20.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
@@ -349,6 +350,7 @@
 - `org.bouncycastle:bcprov-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcutil-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `com.google.guava:guava = 32.1.3-jre` (explicit pin στο app dependency graph για mitigation του temporary-directory advisory)
+- `io.netty:* 4.1.x = 4.1.138.Final` (ευθυγράμμιση σε όλα τα configurations του `:app` μέσω `app/build.gradle.kts`, για τα AGP/UTP test-platform artifacts που φέρνουν Netty 4.1 μέσω `grpc-netty`)
 - `com.arthenica:ffmpeg-kit-full-gpl = 6.0-2` (για transcode ηχογραφήσεων σε `flac/mp3/aac/m4a/opus`)
 
 - Κύρια components:
@@ -517,23 +519,28 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 
 ### Γιατί εμφανίστηκε Dependabot alert για `netty-codec`;
 - Το `io.netty:netty-codec` έρχεται transitive από AGP/UTP dependencies.
-- Η προηγούμενη resolved έκδοση ήταν `4.1.93.Final` και τα τρέχοντα advisories καλύπτονται από `4.2.15.Final`.
-- Το project κάνει forced resolve σε `io.netty:netty-codec:4.2.15.Final` στο build classpath.
+- Η προηγούμενη resolved έκδοση ήταν `4.1.93.Final` και τα τρέχοντα advisories καλύπτονται από `4.2.18.Final`.
+- Το project κάνει forced resolve σε `io.netty:netty-codec:4.2.18.Final` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `netty-codec-http`;
 - Το `io.netty:netty-codec-http` έρχεται transitive από AGP/UTP dependencies.
-- Η προηγούμενη resolved έκδοση ήταν `4.1.93.Final` και τα τρέχοντα advisories καλύπτονται από `4.2.15.Final`.
-- Το project κάνει forced resolve σε `io.netty:netty-codec-http:4.2.15.Final` στο build classpath.
+- Η προηγούμενη resolved έκδοση ήταν `4.1.93.Final` και τα τρέχοντα advisories καλύπτονται από `4.2.18.Final`.
+- Το project κάνει forced resolve σε `io.netty:netty-codec-http:4.2.18.Final` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `netty-codec-http2`;
 - Το `io.netty:netty-codec-http2` έρχεται transitive από AGP/UTP dependencies.
-- Η προηγούμενη resolved έκδοση ήταν `4.1.93.Final` και τα τρέχοντα advisories καλύπτονται από patched έκδοση `4.2.15.Final`.
-- Το project κάνει forced resolve σε `io.netty:netty-codec-http2:4.2.15.Final`, που ανεβάζει και τα σχετικά Netty modules στο ίδιο resolved graph.
+- Η προηγούμενη resolved έκδοση ήταν `4.1.93.Final` και τα τρέχοντα advisories καλύπτονται από patched έκδοση `4.2.18.Final`.
+- Το project κάνει forced resolve σε `io.netty:netty-codec-http2:4.2.18.Final`, που ανεβάζει και τα σχετικά Netty modules στο ίδιο resolved graph.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `netty-handler`;
 - Το `io.netty:netty-handler` έρχεται transitive από AGP/UTP dependencies.
-- Τα τρέχοντα advisories καλύπτονται από `4.2.15.Final`.
-- Το project κάνει explicit forced resolve σε `io.netty:netty-handler:4.2.15.Final` και `io.netty:netty-handler-proxy:4.2.15.Final` στο build classpath.
+- Τα τρέχοντα advisories καλύπτονται από `4.2.18.Final`.
+- Το project κάνει explicit forced resolve σε `io.netty:netty-handler:4.2.18.Final` και `io.netty:netty-handler-proxy:4.2.18.Final` στο build classpath.
+
+### Γιατί εμφανίστηκαν Dependabot alerts για Netty `4.1.x` ενώ το build classpath είναι σε `4.2.x`;
+- Τα AGP/UTP test-platform artifacts του `:app` (`com.google.testing.platform:core` → `grpc-netty:1.57.2`, `com.android.tools.utp:android-test-plugin-result-listener-gradle` → `grpc-netty:1.69.1`) φέρνουν Netty `4.1.93.Final`/`4.1.110.Final` σε configurations του `:app`, όπου δεν εφαρμόζεται το force του root buildscript classpath.
+- Το dependency graph του GitHub τα καταγράφει κάτω από το `settings.gradle.kts`, οπότε τα alerts είναι πραγματικά (test tooling μόνο, όχι μέρος του APK).
+- Το `app/build.gradle.kts` ευθυγραμμίζει κάθε `io.netty` `4.1.x` σε `4.1.138.Final` σε όλα τα configurations του `:app`, ώστε να μένει στη γραμμή 4.1 που περιμένει το `grpc-netty`.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `jose4j`;
 - Το `org.bitbucket.b_c:jose4j` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).

@@ -7,6 +7,13 @@ plugins {
 
 configurations.configureEach {
     resolutionStrategy.force("com.google.guava:guava:32.1.3-jre")
+    // Force patched Netty 4.1.x due AGP/UTP test-platform transitive dependency vulnerabilities (via grpc-netty).
+    resolutionStrategy.eachDependency {
+        if (requested.group == "io.netty" && requested.version?.startsWith("4.1.") == true) {
+            useVersion("4.1.138.Final")
+            because("AGP/UTP test-platform Netty 4.1.x vulnerabilities")
+        }
+    }
 }
 
 android {
