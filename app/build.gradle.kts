@@ -108,6 +108,9 @@ dependencies {
     implementation(libs.androidx.room.paging)
     implementation(libs.guava)
     kapt(libs.androidx.room.compiler)
+    // Room's processor reads Kotlin metadata with kotlin-metadata-jvm 2.2.0, which stops at metadata 2.3;
+    // keep the reader on the compiler's Kotlin version so kapt can read what Kotlin 2.4+ writes.
+    kapt(libs.kotlin.metadata.jvm)
     kapt(libs.guava)
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
