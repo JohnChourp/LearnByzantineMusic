@@ -43,7 +43,8 @@
 Ο επιλεγμένος `Ήχος` επηρεάζει πλέον πραγματικά την καμπύλη πορείας μέσω mode profiles (`byzantine_mode_rules_v1.json`), ενώ η διάρκεια ανά event αποδίδεται με κανόνες χρόνου.
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
 Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.22.0`, Protobuf runtime modules σε `4.35.1`, `jdom2` σε `2.0.6.1`, Netty modules σε `4.2.18.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.28.0`, `commons-lang3` σε `3.20.0`, `bcpkix-jdk18on` σε `1.84`, `bcprov-jdk18on` σε `1.84` και `bcutil-jdk18on` σε `1.84`.
-Για το app dependency graph υπάρχει πλέον και explicit pin στο `com.google.guava:guava:32.1.3-jre` (catalog + `implementation` + `kapt`) ώστε το security graph να αναγνωρίζει deterministic patched version.
+Για το app dependency graph υπάρχει explicit δήλωση `com.google.guava:guava:32.1.3-jre` (catalog + `implementation` + `kapt`).
+Στα configurations του `:app` ισχύουν security floors (ελάχιστες patched εκδόσεις που μόνο ανεβάζουν, ποτέ δεν κατεβάζουν μια παλαιότερη requested έκδοση): Guava `32.1.3-jre`, BouncyCastle `1.84`, `commons-lang3` `3.20.0`, `httpclient` `4.5.14`. Εκεί το AGP 9 κάνει resolve τα lint και UTP tool classpaths.
 Στα configurations του `:app` τα Netty `4.1.x` (που φέρνουν τα AGP/UTP test-platform artifacts μέσω `grpc-netty`) ευθυγραμμίζονται σε `4.1.138.Final`.
 
 ## Business flow
@@ -350,7 +351,8 @@
 - `org.bouncycastle:bcpkix-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcprov-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcutil-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
-- `com.google.guava:guava = 32.1.3-jre` (explicit pin στο app dependency graph για mitigation του temporary-directory advisory)
+- `com.google.guava:guava >= 32.1.3-jre` (security floor σε όλα τα configurations του `:app` για mitigation του temporary-directory advisory· δεν κατεβάζει το Guava 33.x του lint)
+- `org.bouncycastle:bcprov/bcpkix/bcutil-jdk18on >= 1.84`, `org.apache.commons:commons-lang3 >= 3.20.0`, `org.apache.httpcomponents:httpclient >= 4.5.14` (security floors στα AGP 9 lint/UTP tool classpaths του `:app`, μέσω `app/build.gradle.kts`)
 - `io.netty:* 4.1.x = 4.1.138.Final` (ευθυγράμμιση σε όλα τα configurations του `:app` μέσω `app/build.gradle.kts`, για τα AGP/UTP test-platform artifacts που φέρνουν Netty 4.1 μέσω `grpc-netty`)
 - `com.arthenica:ffmpeg-kit-full-gpl = 6.0-2` (για transcode ηχογραφήσεων σε `flac/mp3/aac/m4a/opus`)
 
@@ -576,7 +578,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Γιατί εμφανίστηκε Dependabot alert για `guava`;
 - Το `com.google.guava:guava` έρχεται transitive από `androidx.room` και `androidx.work` dependencies.
 - Το advisory για insecure use of temporary directory καλύπτεται από patched γραμμή `>= 32.0.0-android`, με σύσταση απο maintainers να αποφεύγεται το `32.0.0`.
-- Το project κάνει explicit pin σε `com.google.guava:guava:32.1.3-jre` στο app dependency graph (`implementation` + `kapt`) και κρατά force fallback για πλήρη ευθυγράμμιση resolve.
+- Το project δηλώνει ρητά `com.google.guava:guava:32.1.3-jre` στο app dependency graph (`implementation` + `kapt`) και κρατά security floor `32.1.3-jre` σε όλα τα configurations του `:app`. Τα floors ανεβάζουν μόνο παλαιότερες εκδόσεις, ώστε να μην κατεβαίνει το Guava 33.x που χρειάζεται το lint του AGP 9.
 
 ### Γιατί αποτυγχάνει το login/auth;
 - Η εφαρμογή δεν χρησιμοποιεί login/auth ροή.
