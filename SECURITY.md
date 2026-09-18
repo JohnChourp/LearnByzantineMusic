@@ -55,16 +55,18 @@ Email: jonhiedarn@gmail.com
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.1.x   | :white_check_mark: |
+| Version | Supported |
+| ------- | --------- |
+| [Latest GitHub Release](https://github.com/JohnChourp/LearnByzantineMusic/releases/latest) | :white_check_mark: |
+| Older releases | :x: |
 
 ## Reporting a Vulnerability
 
-If you discover a vulnerability in our software, please report it to us as follows:
+If you discover a vulnerability in our software, please report it privately and do not open a public issue:
 
-Email: Send a detailed description of the vulnerability to [Insert Security Team Email].
-Subject Line: Use the subject line "Vulnerability Report - [Product Name]".
+Preferred: Use GitHub private vulnerability reporting via the "Report a vulnerability" button on the repository's Security tab (https://github.com/JohnChourp/LearnByzantineMusic/security/advisories/new).
+Email: Alternatively, send a detailed description of the vulnerability to jonhiedarn@gmail.com.
+Subject Line: Use the subject line "Vulnerability Report - LearnByzantineMusic".
 Information to Include: Provide as much detail as possible, including:
 A description of the issue
 Steps to reproduce the vulnerability
