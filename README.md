@@ -327,8 +327,8 @@
 - `compileSdk = 36`
 - `minSdk = 24`
 - `targetSdk = 34`
-- `Kotlin Gradle Plugin = 2.1.20`
-- `Kotlin Compose plugin = 2.1.20`
+- `Kotlin Gradle Plugin = 2.4.20`
+- `Kotlin Compose plugin = 2.4.20`
 - `AGP = 8.13.2`
 - Buildscript classpath override:
 - `commons-io:commons-io = 2.22.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
@@ -502,6 +502,12 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ```
 
 ## Συχνές ερωτήσεις (FAQ)
+### Γιατί εμφανίστηκε Dependabot alert για `kotlin-gradle-plugin`;
+- Το advisory `GHSA-r937-wjx7-w2jp` (`CVE-2026-53914`, unsafe deserialization στο Kotlin build cache) αφορά κάθε `org.jetbrains.kotlin:kotlin-gradle-plugin` κάτω από `2.4.20-Beta1`.
+- Το project ανέβηκε από `2.1.20` στην πρώτη σταθερή patched έκδοση `2.4.20` (μαζί και τα `kotlin.plugin.compose`/`kapt`, που μοιράζονται το ίδιο version).
+- Από το Kotlin `2.2` και μετά το `kotlinOptions { jvmTarget = "..." }` είναι build error, οπότε το `app/build.gradle.kts` χρησιμοποιεί πλέον `kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }` με το ίδιο JVM target.
+- Ο Room processor (kapt) διαβάζει Kotlin metadata με το `kotlin-metadata-jvm` `2.2.0`, που φτάνει μόνο ως metadata `2.3`. Γι’ αυτό το kapt classpath παίρνει `kotlin-metadata-jvm` στην ίδια έκδοση με το Kotlin (`libs.kotlin.metadata.jvm`), ώστε να διαβάζει ό,τι γράφει το Kotlin `2.4+`.
+
 ### Γιατί εμφανίστηκε Dependabot alert για `commons-io`;
 - Το `commons-io` δεν υπάρχει ως direct dependency στο app module.
 - Έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`) και σχετικά UTP artifacts.
