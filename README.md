@@ -509,6 +509,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Το advisory `GHSA-r937-wjx7-w2jp` (`CVE-2026-53914`, unsafe deserialization στο Kotlin build cache) αφορά κάθε `org.jetbrains.kotlin:kotlin-gradle-plugin` κάτω από `2.4.20-Beta1`.
 - Το project ανέβηκε από `2.1.20` στην πρώτη σταθερή patched έκδοση `2.4.20` (μαζί και τα `kotlin.plugin.compose`/`kapt`, που μοιράζονται το ίδιο version).
 - Από το Kotlin `2.2` και μετά το `kotlinOptions { jvmTarget = "..." }` είναι build error. Με το AGP 9 built-in Kotlin το `jvmTarget` ακολουθεί το `compileOptions.targetCompatibility` (`1.8`), οπότε δεν χρειάζεται ξεχωριστό block.
+- Ο Room processor (kapt) διαβάζει Kotlin metadata με το `kotlin-metadata-jvm` `2.2.0`, που φτάνει μόνο ως metadata `2.3`. Γι’ αυτό το kapt classpath παίρνει `kotlin-metadata-jvm` στην ίδια έκδοση με το Kotlin (`libs.kotlin.metadata.jvm`), ώστε να διαβάζει ό,τι γράφει το Kotlin `2.4+`.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `commons-io`;
 - Το `commons-io` δεν υπάρχει ως direct dependency στο app module.
