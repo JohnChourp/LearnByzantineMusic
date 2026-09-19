@@ -58,6 +58,11 @@
             android:label="@string/title_activity_recordings"
             android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
+            android:name=".recordings.analysis.RecordingAnalysisActivity"
+            android:exported="false"
+            android:label="@string/title_activity_recording_analysis"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
             android:name=".recordings.RecordingsManagerActivity"
             android:exported="false"
             android:label="@string/recordings_manage_open"

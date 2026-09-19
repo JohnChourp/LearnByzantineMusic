@@ -1096,4 +1096,35 @@
     <string name="anastasimatarion_no_recordings">You have no recordings for this hymn yet.</string>
     <string name="anastasimatarion_open_recording">Open</string>
     <string name="recordings_target_template">For the hymn: %1$s</string>
+
+    <!-- Ανάλυση φθόγγων ηχογράφησης -->
+    <string name="title_activity_recording_analysis">Recording analysis</string>
+    <string name="analysis_title">Phthong analysis</string>
+    <string name="analysis_scale_title">Scale</string>
+    <string name="analysis_mode_label">Mode</string>
+    <string name="analysis_start_label">First phthong you sang</string>
+    <string name="analysis_scale_hint">Recognition tunes itself to your voice: the first steady note of the recording is taken as the first phthong and every other note is placed on the scale of the mode.</string>
+    <string name="analysis_status_decoding">Opening the recording…</string>
+    <string name="analysis_status_analyzing">Analysing the pitch of your voice…</string>
+    <string name="analysis_status_failed">This recording could not be analysed.</string>
+    <string name="analysis_retry">Try again</string>
+    <string name="analysis_status_no_pitch">No steady phthong was recognised. Sing more clearly and closer to the microphone.</string>
+    <string name="analysis_sung_title">What you sang</string>
+    <string name="analysis_sung_summary">%1$d phthongs in %2$s · %3$d in tune (±4 moria)</string>
+    <string name="analysis_diagram_title">Diagram</string>
+    <string name="analysis_diagram_cd">Pitch-over-time diagram with %1$d phthongs</string>
+    <string name="analysis_diagram_legend">Dots: the pitch of your voice. Bars: the recognised phthongs — green in tune, orange off.</string>
+    <string name="analysis_compare_title">Compare with the melody</string>
+    <string name="analysis_compare_hint">Enter the phthongs you were meant to sing (from the book) to see how correct you were. For a hymn they are kept for all its recordings.</string>
+    <string name="analysis_compare_backspace">Delete the last phthong</string>
+    <string name="analysis_compare_empty">You have not entered the expected melody yet.</string>
+    <string name="analysis_compare_expected">Expected melody (%1$d phthongs)</string>
+    <string name="analysis_compare_clear">Clear</string>
+    <string name="analysis_compare_score">Correct phthongs: %1$d of %2$d (%3$d%%)</string>
+    <string name="analysis_compare_extras">Extra phthongs you sang: %1$d</string>
+    <string name="analysis_step_wrong">✗ %1$s → %2$s</string>
+    <string name="analysis_step_missing">– %1$s</string>
+    <string name="analysis_step_extra">+ %1$s</string>
+    <string name="recordings_action_analyze_short">Phthong analysis</string>
+    <string name="anastasimatarion_analyze_recording">Analyse</string>
 </resources>
