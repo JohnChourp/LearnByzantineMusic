@@ -63,6 +63,7 @@ fun RecordingListItemRow(
     onOpen: (RecordingListItem) -> Unit,
     onRename: (RecordingListItem) -> Unit,
     onDelete: (RecordingListItem) -> Unit,
+    onAnalyze: ((RecordingListItem) -> Unit)? = null,
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -133,6 +134,16 @@ fun RecordingListItemRow(
                             onOpen(item)
                         },
                     )
+                    if (onAnalyze != null) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.recordings_action_analyze_short)) },
+                            leadingIcon = { Icon(Icons.Filled.GraphicEq, contentDescription = null) },
+                            onClick = {
+                                menuExpanded = false
+                                onAnalyze(item)
+                            },
+                        )
+                    }
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.recordings_action_rename_short)) },
                         leadingIcon = { Icon(Icons.Filled.DriveFileRenameOutline, contentDescription = null) },

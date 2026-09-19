@@ -118,6 +118,7 @@ fun RecordingsScreen(
     onOpenRecording: (RecordingListItem) -> Unit,
     onRenameRecording: (RecordingListItem) -> Unit,
     onDeleteRecording: (RecordingListItem) -> Unit,
+    onAnalyzeRecording: (RecordingListItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val hasSelectedFolder = !uiState.folderName.isNullOrBlank()
@@ -208,6 +209,7 @@ fun RecordingsScreen(
                     onOpen = onOpenRecording,
                     onRename = onRenameRecording,
                     onDelete = onDeleteRecording,
+                    onAnalyze = onAnalyzeRecording,
                 )
             }
         }
