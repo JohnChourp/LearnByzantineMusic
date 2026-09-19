@@ -42,7 +42,7 @@
 Στο Core MVP v2 ο scanner engine χρησιμοποιεί primary OCR templates από core drawables και semantic parser `base+modifier` (π.χ. `πεταστή`, `απόστροφος`, `κλάσμα`, `γοργό`, `αντικένωμα+απλή`).
 Ο επιλεγμένος `Ήχος` επηρεάζει πλέον πραγματικά την καμπύλη πορείας μέσω mode profiles (`byzantine_mode_rules_v1.json`), ενώ η διάρκεια ανά event αποδίδεται με κανόνες χρόνου.
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
-Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.22.0`, Protobuf runtime modules σε `4.35.1`, `jdom2` σε `2.0.6.1`, Netty modules σε `4.2.18.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.28.0`, `commons-lang3` σε `3.20.0`, `bcpkix-jdk18on` σε `1.84`, `bcprov-jdk18on` σε `1.84` και `bcutil-jdk18on` σε `1.84`.
+Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.22.0`, Protobuf runtime modules σε `4.35.1`, `jdom2` σε `2.0.6.1`, Netty modules σε `4.2.18.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.28.0`, `commons-lang3` σε `3.20.0`, `bcpkix-jdk18on` σε `1.85`, `bcprov-jdk18on` σε `1.85` και `bcutil-jdk18on` σε `1.85`.
 Για το app dependency graph υπάρχει πλέον και explicit pin στο `com.google.guava:guava:32.1.3-jre` (catalog + `implementation` + `kapt`) ώστε το security graph να αναγνωρίζει deterministic patched version.
 Στα configurations του `:app` τα Netty `4.1.x` (που φέρνουν τα AGP/UTP test-platform artifacts μέσω `grpc-netty`) ευθυγραμμίζονται σε `4.1.138.Final`.
 
@@ -346,9 +346,9 @@
 - `org.bitbucket.b_c:jose4j = 0.9.6` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.apache.commons:commons-compress = 1.28.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.apache.commons:commons-lang3 = 3.20.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
-- `org.bouncycastle:bcpkix-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
-- `org.bouncycastle:bcprov-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
-- `org.bouncycastle:bcutil-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `org.bouncycastle:bcpkix-jdk18on = 1.85` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `org.bouncycastle:bcprov-jdk18on = 1.85` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `org.bouncycastle:bcutil-jdk18on = 1.85` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `com.google.guava:guava = 32.1.3-jre` (explicit pin στο app dependency graph για mitigation του temporary-directory advisory)
 - `io.netty:* 4.1.x = 4.1.138.Final` (ευθυγράμμιση σε όλα τα configurations του `:app` μέσω `app/build.gradle.kts`, για τα AGP/UTP test-platform artifacts που φέρνουν Netty 4.1 μέσω `grpc-netty`)
 - `com.arthenica:ffmpeg-kit-full-gpl = 6.0-2` (για transcode ηχογραφήσεων σε `flac/mp3/aac/m4a/opus`)
@@ -561,12 +561,12 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Γιατί εμφανίστηκε Dependabot alert για `bcpkix-jdk18on`;
 - Το `org.bouncycastle:bcpkix-jdk18on` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
 - Η προηγούμενη resolved έκδοση ήταν `1.77` και το advisory ζητά patched έκδοση `>= 1.79`.
-- Το project κάνει forced resolve σε `org.bouncycastle:bcpkix-jdk18on:1.84` στο build classpath και ευθυγραμμίζει `bcprov`/`bcutil` στην ίδια έκδοση.
+- Το project κάνει forced resolve σε `org.bouncycastle:bcpkix-jdk18on:1.85` στο build classpath και ευθυγραμμίζει `bcprov`/`bcutil` στην ίδια έκδοση.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `bcprov-jdk18on`;
 - Το `org.bouncycastle:bcprov-jdk18on` έρχεται transitive από AGP dependencies (`bcpkix-jdk18on`/`bcutil-jdk18on`).
-- Η προηγούμενη resolved έκδοση ήταν `1.77` και τα advisories καλύπτονται με έκδοση `1.84`.
-- Το project κάνει forced resolve σε `org.bouncycastle:bcprov-jdk18on:1.84` στο build classpath.
+- Η προηγούμενη resolved έκδοση ήταν `1.77`· τα αρχικά advisories καλύφθηκαν με την `1.84`, και τα CVE-2026-8763 και CVE-2026-13506 (Σεπτέμβριος 2026) διορθώνονται από την `1.85`.
+- Το project κάνει forced resolve σε `org.bouncycastle:bcprov-jdk18on:1.85` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `guava`;
 - Το `com.google.guava:guava` έρχεται transitive από `androidx.room` και `androidx.work` dependencies.
