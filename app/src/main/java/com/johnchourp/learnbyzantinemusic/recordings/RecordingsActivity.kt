@@ -50,6 +50,9 @@ class RecordingsActivity : BaseActivity() {
     }
 
     private var selectedFolderUri: Uri? = null
+    // Optional sub-folder of the picked folder to save into (e.g. a hymn's folder, see EXTRA_TARGET_FOLDER_PATH).
+    private var targetFolderSegments: List<String> = emptyList()
+    private var targetFolderMatchPrefix: String? = null
     private var hasAttemptedInitialFolderRequest = false
     private var folderPickMode: FolderPickMode = FolderPickMode.INITIAL_REQUIRED
     private var pendingFolderBeforeChange: Uri? = null
@@ -128,6 +131,13 @@ class RecordingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         recordingsPrefs = RecordingsPrefs(this)
+        targetFolderSegments = intent.getStringArrayListExtra(EXTRA_TARGET_FOLDER_PATH)
+            ?.filter { it.isNotBlank() }
+            .orEmpty()
+        targetFolderMatchPrefix = intent.getStringExtra(EXTRA_TARGET_FOLDER_MATCH_PREFIX)?.takeIf { it.isNotBlank() }
+        viewModel.setRecordingTarget(
+            intent.getStringExtra(EXTRA_TARGET_LABEL)?.takeIf { targetFolderSegments.isNotEmpty() }
+        )
 
         restoreSavedFolder()
         viewModel.setRecordingState(RecordingStateUi.IDLE)
@@ -553,7 +563,8 @@ class RecordingsActivity : BaseActivity() {
             val wavSource = tempWavFile ?: error("missing_temp_wav")
             writeWavHeader(wavSource, pcmBytesWritten)
 
-            val folder = currentFolderDocument() ?: error("folder_not_available")
+            val rootFolder = currentFolderDocument() ?: error("folder_not_available")
+            val (folder, folderSegments) = resolveTargetFolder(rootFolder) ?: error("target_folder_not_available")
             val selectedFormat = viewModel.uiState.value.selectedFormat
             val targetFileName = generateTargetFileName(selectedFormat)
             val targetDocument = folder.createFile(selectedFormat.mimeType, targetFileName)
@@ -595,17 +606,38 @@ class RecordingsActivity : BaseActivity() {
                 ?: System.currentTimeMillis()
             val createdTimestamp = RecordingDocumentOps.resolveCreationLikeTimestamp(resolvedName) ?: updatedTimestamp
 
+            val folderPath = folderSegments.joinToString("/")
             RecordingListItem(
                 name = resolvedName,
                 uri = targetDocument.uri,
                 mimeType = targetDocument.type ?: selectedFormat.mimeType,
-                relativePath = resolvedName,
-                parentRelativePath = "/",
+                relativePath = if (folderPath.isEmpty()) resolvedName else "$folderPath/$resolvedName",
+                parentRelativePath = if (folderPath.isEmpty()) "/" else "/$folderPath",
                 parentUri = folder.uri,
                 createdTimestamp = createdTimestamp,
                 updatedTimestamp = updatedTimestamp
             )
         }
+    }
+
+    /**
+     * The folder to save into and its path below the picked root: the root itself, or the
+     * EXTRA_TARGET_FOLDER_PATH sub-folders, created on first use. The last segment also matches an
+     * existing folder that starts with EXTRA_TARGET_FOLDER_MATCH_PREFIX, so a renamed hymn folder
+     * keeps receiving its recordings.
+     */
+    private fun resolveTargetFolder(root: DocumentFile): Pair<DocumentFile, List<String>>? {
+        var current = root
+        val actualNames = mutableListOf<String>()
+        targetFolderSegments.forEachIndexed { index, segment ->
+            val prefix = targetFolderMatchPrefix?.takeIf { index == targetFolderSegments.lastIndex }
+            val children = current.listFiles().filter { it.isDirectory }
+            val existing = children.firstOrNull { it.name == segment }
+                ?: prefix?.let { p -> children.firstOrNull { it.name?.startsWith(p) == true } }
+            current = existing ?: current.createDirectory(segment) ?: return null
+            actualNames += current.name ?: segment
+        }
+        return current to actualNames
     }
 
     private fun stopCaptureInfrastructure() {
@@ -712,6 +744,15 @@ class RecordingsActivity : BaseActivity() {
     }
 
     companion object {
+        /** ArrayList<String>: sub-folders of the picked recordings folder to save into, created if missing. */
+        const val EXTRA_TARGET_FOLDER_PATH = "com.johnchourp.learnbyzantinemusic.recordings.EXTRA_TARGET_FOLDER_PATH"
+
+        /** String: an existing last folder whose name starts with this prefix is reused (e.g. "03 "). */
+        const val EXTRA_TARGET_FOLDER_MATCH_PREFIX = "com.johnchourp.learnbyzantinemusic.recordings.EXTRA_TARGET_FOLDER_MATCH_PREFIX"
+
+        /** String: what the recording is for, shown on the record card. */
+        const val EXTRA_TARGET_LABEL = "com.johnchourp.learnbyzantinemusic.recordings.EXTRA_TARGET_LABEL"
+
         private const val SAMPLE_RATE = 44_100
         private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
         private const val AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT

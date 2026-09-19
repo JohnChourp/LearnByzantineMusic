@@ -1054,4 +1054,46 @@
     <string name="q_read_link_1">The syndesmos joins two isons into one syllable, without breaking the voice.</string>
     <string name="q_read_link_3">It likewise joins an oligon and an ison into one syllable.</string>
     <string name="q_read_intercom_1">A note with an endofono is sung with a closed mouth, weakly and through the nose.</string>
+
+    <!-- Αναστασιματάριο -->
+    <string name="home_tile_anastasimatarion_sub">The Sunday hymns and your recordings</string>
+    <string name="title_activity_anastasimatarion">Anastasimatarion</string>
+    <string name="title_activity_hymn">Hymn</string>
+    <string name="anastasimatarion_title">Anastasimatarion</string>
+    <string name="anastasimatarion_subtitle">The Sunday resurrection hymns in the 8 modes, with your recordings for each one</string>
+    <string name="anastasimatarion_week_mode_template">Mode of the week: %1$s</string>
+    <string name="anastasimatarion_service_vespers">Vespers</string>
+    <string name="anastasimatarion_service_orthros">Orthros (Matins)</string>
+    <string name="anastasimatarion_service_liturgy">Divine Liturgy</string>
+    <string name="anastasimatarion_group_kekragarion">Lord, I have cried</string>
+    <string name="anastasimatarion_group_stichera_anastasima">Resurrection stichera</string>
+    <string name="anastasimatarion_group_anatolika">Anatolika</string>
+    <string name="anastasimatarion_group_dogmatikon">Dogmatikon</string>
+    <string name="anastasimatarion_group_aposticha">Aposticha</string>
+    <string name="anastasimatarion_group_apolytikion">Apolytikion</string>
+    <string name="anastasimatarion_group_kathismata">Kathismata</string>
+    <string name="anastasimatarion_group_ypakoe">Hypakoe</string>
+    <string name="anastasimatarion_group_anavathmoi">Anavathmoi</string>
+    <string name="anastasimatarion_group_prokeimenon">Prokeimenon</string>
+    <string name="anastasimatarion_group_heirmoi">Heirmoi of the Resurrection canon</string>
+    <string name="anastasimatarion_group_kontakion">Kontakion</string>
+    <string name="anastasimatarion_group_ainoi_anastasima">Praises — resurrection stichera</string>
+    <string name="anastasimatarion_group_ainoi_anatolika">Praises — Anatolika</string>
+    <string name="anastasimatarion_group_makarismoi">Beatitudes</string>
+    <string name="anastasimatarion_note_theotokion">Theotokion</string>
+    <string name="anastasimatarion_note_psalm140">Psalm 140</string>
+    <string name="anastasimatarion_note_ode">Ode %1$s</string>
+    <string name="anastasimatarion_recordings_count_cd">Recordings: %1$d</string>
+    <string name="anastasimatarion_no_folder_hint">To keep recordings per hymn, first choose a folder on the Recordings page.</string>
+    <string name="anastasimatarion_load_failed">The hymn catalog could not be loaded.</string>
+    <string name="anastasimatarion_source">Texts: Octoechos, Greek Liturgical Texts of the Greek Orthodox Archdiocese of America (glt.goarch.org). Only the opening of each hymn is shown.</string>
+    <string name="anastasimatarion_hymn_missing">This hymn was not found in the catalog.</string>
+    <string name="anastasimatarion_record_title">Record</string>
+    <string name="anastasimatarion_record_folder_template">Recordings are saved in the folder: %1$s</string>
+    <string name="anastasimatarion_record_button">New recording</string>
+    <string name="anastasimatarion_recording_target_template">%1$s · %2$s</string>
+    <string name="anastasimatarion_my_recordings">My recordings</string>
+    <string name="anastasimatarion_no_recordings">You have no recordings for this hymn yet.</string>
+    <string name="anastasimatarion_open_recording">Open</string>
+    <string name="recordings_target_template">For the hymn: %1$s</string>
 </resources>

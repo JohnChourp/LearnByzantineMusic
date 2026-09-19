@@ -72,7 +72,9 @@ data class RecordingsUiState(
     val selectedFilter: RecordingTypeFilter = RecordingTypeFilter.default,
     val searchQuery: String = "",
     val isIndexing: Boolean = false,
-    val recordingState: RecordingStateUi = RecordingStateUi.IDLE
+    val recordingState: RecordingStateUi = RecordingStateUi.IDLE,
+    /** What the next recording is for (e.g. a hymn), when the page was opened for it; null otherwise. */
+    val targetLabel: String? = null
 )
 
 data class RecordingsManagerUiState(

@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stairs
 import androidx.compose.material.icons.filled.Timer
+import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionActivity
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyModeCalendarActivity
 import com.johnchourp.learnbyzantinemusic.home.HomeInfo
 import com.johnchourp.learnbyzantinemusic.home.HomeScreen
@@ -173,6 +174,14 @@ class MainActivity : BaseActivity() {
                     icon = Icons.Filled.Mic,
                     accent = TileAccent.Orange,
                     onClick = ::openRecordings,
+                ),
+                HomeTile(
+                    id = "anastasimatarion",
+                    titleRes = R.string.anastasimatarion_title,
+                    subtitleRes = R.string.home_tile_anastasimatarion_sub,
+                    icon = Icons.Filled.LibraryMusic,
+                    accent = TileAccent.Gold,
+                    onClick = ::openAnastasimatarion,
                 ),
                 HomeTile(
                     id = "notes",
@@ -332,6 +341,10 @@ class MainActivity : BaseActivity() {
     private fun openRecordings() {
         val intent = Intent(this, RecordingsActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun openAnastasimatarion() {
+        startActivity(Intent(this, AnastasimatarionActivity::class.java))
     }
 
     private fun openNotes() {
