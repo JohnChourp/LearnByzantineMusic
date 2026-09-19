@@ -17,6 +17,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BUMP_SCRIPT="$SCRIPT_DIR/bump-version.sh"
 SECRETS_GUARD_SCRIPT="$SCRIPT_DIR/check-no-secrets.sh"
+RELEASE_NOTES_SCRIPT="$SCRIPT_DIR/generate-release-notes.sh"
 
 if [[ ! -x "$BUMP_SCRIPT" ]]; then
     echo "ERROR: Δεν βρέθηκε εκτελέσιμο bump script στο $BUMP_SCRIPT" >&2
@@ -25,6 +26,11 @@ fi
 
 if [[ ! -x "$SECRETS_GUARD_SCRIPT" ]]; then
     echo "ERROR: Δεν βρέθηκε εκτελέσιμο secrets guard script στο $SECRETS_GUARD_SCRIPT" >&2
+    exit 1
+fi
+
+if [[ ! -f "$RELEASE_NOTES_SCRIPT" ]]; then
+    echo "ERROR: Δεν βρέθηκε το release notes script στο $RELEASE_NOTES_SCRIPT" >&2
     exit 1
 fi
 
@@ -136,23 +142,6 @@ ensure_gh_release() {
     echo "[release] GitHub Release URL: $release_url"
 }
 
-get_origin_repo_slug() {
-    local origin_url
-    origin_url="$(git remote get-url origin 2>/dev/null || true)"
-    if [[ -z "$origin_url" ]]; then
-        return 0
-    fi
-
-    origin_url="${origin_url#git@github.com:}"
-    origin_url="${origin_url#https://github.com/}"
-    origin_url="${origin_url#http://github.com/}"
-    origin_url="${origin_url%.git}"
-
-    if [[ "$origin_url" == */* ]]; then
-        echo "$origin_url"
-    fi
-}
-
 find_previous_tag() {
     local current_tag="$1"
     local old_version_name="$2"
@@ -212,85 +201,17 @@ write_release_notes() {
     local previous_tag="$1"
     local current_tag="$2"
     local notes_path="$3"
-    local range_spec="$current_tag"
+    local apk_path="$4"
+    local -a notes_args=(--tag "$current_tag" --out "$notes_path")
     if [[ -n "$previous_tag" ]]; then
-        range_spec="${previous_tag}..${current_tag}"
+        notes_args+=(--previous-tag "$previous_tag")
+    fi
+    if [[ -n "$apk_path" ]]; then
+        notes_args+=(--apk "$apk_path")
     fi
 
-    local -a commits=()
-    while IFS=$'\x1f' read -r sha subject; do
-        [[ -z "$sha" || -z "$subject" ]] && continue
-        if [[ "$subject" =~ ^release:\ v[0-9]+\.[0-9]+\.[0-9]+($|[[:space:]]-[[:space:]]) ]]; then
-            continue
-        fi
-        commits+=("${sha}"$'\x1f'"${subject}")
-    done < <(git log --reverse --pretty=format:'%H%x1f%s' "$range_spec")
-
-    local -a changed_files=()
-    mapfile -t changed_files < <(git log --pretty='' --name-only "$range_spec" | sed '/^$/d' | sort -u)
-
-    local commit_count="${#commits[@]}"
-    local file_count="${#changed_files[@]}"
-    local contributor_count
-    contributor_count="$(git log --pretty='%an' "$range_spec" | sed '/^$/d' | sort -u | wc -l | tr -d ' ')"
-
-    local -A area_counts=()
-    local file area
-    for file in "${changed_files[@]}"; do
-        area="${file%%/*}"
-        if [[ "$file" != */* ]]; then
-            area="(root)"
-        fi
-        area_counts["$area"]=$((area_counts["$area"] + 1))
-    done
-
-    local repo_slug
-    repo_slug="$(get_origin_repo_slug)"
-    local compare_url=""
-    if [[ -n "$previous_tag" && -n "$repo_slug" ]]; then
-        compare_url="https://github.com/${repo_slug}/compare/${previous_tag}...${current_tag}"
-    fi
-
-    {
-        echo "## Τι νέο περιλαμβάνει αυτή η έκδοση"
-        if [[ -n "$previous_tag" ]]; then
-            echo "- Συνοπτική εικόνα αλλαγών από \`${previous_tag}\` έως \`${current_tag}\`."
-        else
-            echo "- Πρώτη διαθέσιμη έκδοση με συνοπτική καταγραφή όλων των αλλαγών έως \`${current_tag}\`."
-        fi
-        echo "- Συνολικά commits: **${commit_count}**"
-        echo "- Επηρεασμένα αρχεία: **${file_count}**"
-        echo "- Συνεισφέροντες: **${contributor_count}**"
-        if [[ -n "$compare_url" ]]; then
-            echo "- Σύγκριση στο GitHub: [${previous_tag}...${current_tag}](${compare_url})"
-        fi
-        echo
-        echo "## Περιοχές που επηρεάστηκαν περισσότερο"
-        if [[ "${#area_counts[@]}" -eq 0 ]]; then
-            echo "- Δεν εντοπίστηκαν αλλαγές αρχείων για το συγκεκριμένο εύρος."
-        else
-            while IFS=$'\t' read -r count top_area; do
-                echo "- \`${top_area}\`: ${count} αρχείο(α)"
-            done < <(
-                for top_area in "${!area_counts[@]}"; do
-                    printf '%s\t%s\n' "${area_counts[$top_area]}" "$top_area"
-                done | sort -rn | head -n 8
-            )
-        fi
-        echo
-        echo "## Αναλυτική λίστα αλλαγών"
-        if [[ "$commit_count" -eq 0 ]]; then
-            echo "- Δεν βρέθηκαν επιπλέον λειτουργικές αλλαγές πέρα από το release bump."
-        else
-            local entry sha subject short_sha
-            for entry in "${commits[@]}"; do
-                sha="${entry%%$'\x1f'*}"
-                subject="${entry#*$'\x1f'}"
-                short_sha="${sha:0:7}"
-                echo "- ${subject} (\`${short_sha}\`)"
-            done
-        fi
-    } > "$notes_path"
+    # Same generator as the tag workflow, so both release paths publish the same report.
+    "$BASH" "$RELEASE_NOTES_SCRIPT" "${notes_args[@]}"
 }
 
 mapfile -t bump_output < <("$BUMP_SCRIPT" "${BUMP_ARGS[@]}")
@@ -367,7 +288,7 @@ git commit -m "$COMMIT_MESSAGE"
 git tag -a "$TAG" -m "Release $TAG"
 
 RELEASE_NOTES_PATH="$RELEASE_DIR/RELEASE_NOTES.md"
-write_release_notes "$PREVIOUS_TAG" "$TAG" "$RELEASE_NOTES_PATH"
+write_release_notes "$PREVIOUS_TAG" "$TAG" "$RELEASE_NOTES_PATH" "$APK_ALIAS_PATH"
 echo "[release] Δημιουργήθηκαν release notes: $RELEASE_NOTES_PATH"
 
 BRANCH="$(git branch --show-current)"

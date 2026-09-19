@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # Full history and tags: the release notes list the changes since the previous tag.
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v6
@@ -81,6 +84,21 @@ jobs:
           cp "$APK_PATH" "$APK_ALIAS_PATH"
           echo "apk_alias_path=$APK_ALIAS_PATH" >> "$GITHUB_OUTPUT"
 
+      # Same generator as scripts/release-and-tag.sh. If it fails, the release still
+      # publishes with GitHub's generated notes (see the fallback publish step below).
+      - name: Generate release notes
+        id: notes
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          NOTES_PATH="$RUNNER_TEMP/RELEASE_NOTES.md"
+          ./scripts/generate-release-notes.sh \
+            --tag "$GITHUB_REF_NAME" \
+            --apk "${{ steps.package.outputs.apk_alias_path }}" \
+            --out "$NOTES_PATH"
+          cat "$NOTES_PATH" >> "$GITHUB_STEP_SUMMARY"
+          echo "notes_path=$NOTES_PATH" >> "$GITHUB_OUTPUT"
+
       - name: Check existing custom APK asset
         id: release_guard
         uses: actions/github-script@v9
@@ -118,7 +136,17 @@ jobs:
           echo "Fallback publish skipped: release already contains apk-release.apk."
 
       - name: Publish GitHub Release
-        if: steps.release_guard.outputs.skip_publish != 'true'
+        if: steps.release_guard.outputs.skip_publish != 'true' && steps.notes.outcome == 'success'
+        uses: softprops/action-gh-release@v3
+        with:
+          name: LearnByzantineMusic ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          body_path: ${{ steps.notes.outputs.notes_path }}
+          files: |
+            ${{ steps.package.outputs.apk_alias_path }}
+
+      - name: Publish GitHub Release (fallback notes)
+        if: steps.release_guard.outputs.skip_publish != 'true' && steps.notes.outcome != 'success'
         uses: softprops/action-gh-release@v3
         with:
           name: LearnByzantineMusic ${{ github.ref_name }}
