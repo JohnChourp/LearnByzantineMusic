@@ -117,13 +117,13 @@
 - Το touch playback καλύπτει όλο το Πα-based ή Νη-based τριπλό εύρος του επιλεγμένου ήχου.
 - Με απελευθέρωση (`UP`) ή έξοδο του δαχτύλου εκτός label (`EXIT`), ο τόνος σταματά άμεσα.
 - Για νέα έκδοση app, ο maintainer τρέχει `scripts/release-and-tag.sh` (ή το skill wrapper), γίνεται bump έκδοσης, build release artifacts, ενιαίο commit με όλες τις αλλαγές του working tree, και tag push.
-- Το release script δημιουργεί αυτόματα συνοπτική, user-friendly περιγραφή αλλαγών από previous tag σε νέο tag (`RELEASE_NOTES.md`) με πλήρη λίστα commits, χωρίς να επαναλαμβάνει τον τίτλο του release.
+- Τα release notes (`RELEASE_NOTES.md`) τα παράγει το `scripts/generate-release-notes.sh`, κοινό για το release script και το tag workflow: οι αλλαγές από το προηγούμενο tag ανά pull request (first-parent history), ομαδοποιημένες ανά είδος (Νέα, Διορθώσεις, Ασφάλεια, Εξαρτήσεις, Build & CI, Τεκμηρίωση), οδηγίες εγκατάστασης του `apk-release.apk` (μέγεθος, SHA-256, ελάχιστη έκδοση Android) και τεχνικά στοιχεία έκδοσης, χωρίς να επαναλαμβάνεται ο τίτλος του release.
 - Το release script δημοσιεύει άμεσα GitHub Release με μόνο custom asset το `apk-release.apk` (για εύκολο mobile install download) και χρησιμοποιεί τα generated notes ως release description.
 - Τα `Source code (zip)` και `Source code (tar.gz)` εμφανίζονται αυτόματα από το GitHub σε κάθε tag release.
 - Το release script και το GitHub Action δημοσιεύουν μόνο signed APK· αν λείπουν signing credentials, το release μπλοκάρεται πριν το upload.
 - Πριν από release γίνεται αυτόματος έλεγχος ότι δεν υπάρχουν committed secrets/keystore αρχεία στο repository.
 - Σε κάθε push/pull request τρέχει αυτόματα ο έλεγχος `Security Guard` για ανίχνευση committed secrets.
-- Με push tag `vX.Y.Z`, το GitHub Actions workflow παραμένει ως επιπλέον fallback για release packaging και ανεβάζει μόνο alias `apk-release.apk`.
+- Με push tag `vX.Y.Z`, το GitHub Actions workflow παραμένει ως επιπλέον fallback για release packaging και ανεβάζει μόνο alias `apk-release.apk`, με τα ίδια release notes (αν ο generator αποτύχει, δημοσιεύει με τα αυτόματα notes του GitHub).
 - Αν στο ίδιο tag υπάρχει ήδη custom asset `apk-release.apk` από direct publish του script, το fallback workflow κάνει skip το publish για να μη δημιουργηθεί δεύτερο APK asset.
 
 Κύριες αμετάβλητες αρχές:
@@ -400,6 +400,7 @@
 - Release automation scripts:
 - `scripts/bump-version.sh`
 - `scripts/release-and-tag.sh`
+- `scripts/generate-release-notes.sh`
 - `scripts/generate-mk-symbol-dataset.py`
 - `scripts/check-no-secrets.sh`
 - `scripts/setup-release-signing.sh`
@@ -701,11 +702,12 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Πώς επηρεάζονται άλλα components;
 - `app/build.gradle.kts`: προστέθηκε conditional release signing από environment variables.
 - `scripts/bump-version.sh`: χειρίζεται `versionName/versionCode` bump.
-- `scripts/release-and-tag.sh`: χτίζει release artifacts, απαιτεί υποχρεωτικά signing env vars, μπλοκάρει unsigned APK outputs, κάνει commit/tag/push, κάνει stage+commit όλες τις αλλαγές του working tree σε ένα release commit με σύντομο summary, παράγει user-friendly `RELEASE_NOTES.md` (previous tag → νέο tag) χωρίς διπλό τίτλο, και δημιουργεί/ενημερώνει direct GitHub Release μόνο με custom asset `apk-release.apk`.
+- `scripts/release-and-tag.sh`: χτίζει release artifacts, απαιτεί υποχρεωτικά signing env vars, μπλοκάρει unsigned APK outputs, κάνει commit/tag/push, κάνει stage+commit όλες τις αλλαγές του working tree σε ένα release commit με σύντομο summary, παράγει το `RELEASE_NOTES.md` (previous tag → νέο tag) μέσω του `scripts/generate-release-notes.sh`, και δημιουργεί/ενημερώνει direct GitHub Release μόνο με custom asset `apk-release.apk`.
+- `scripts/generate-release-notes.sh`: γράφει την περιγραφή του GitHub Release για ένα tag — σύνοψη από το release PR, αλλαγές ανά pull request ομαδοποιημένες ανά είδος, εγκατάσταση (μέγεθος, SHA-256, ελάχιστο Android) και τεχνικά στοιχεία· το χρησιμοποιούν τόσο το release script όσο και το tag workflow.
 - `scripts/check-no-secrets.sh`: αποτρέπει commit/release όταν υπάρχουν tracked μυστικά ή υπογεγραμμένα κλειδιά μέσα στο repository.
 - `scripts/setup-release-signing.sh`: δημιουργεί release keystore εκτός repository, γράφει local env file signing και ενημερώνει προαιρετικά αυτόματα τα GitHub Actions secrets.
 - `.github/workflows/security-guard.yml`: τρέχει secrets guard σε κάθε push/PR.
-- `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, κάνει package signed APK σε σταθερό alias `apk-release.apk`, ελέγχει αν υπάρχει ήδη ίδιο custom asset στο release του tag και κάνει skip το fallback publish όταν υπάρχει ήδη.
+- `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, κάνει package signed APK σε σταθερό alias `apk-release.apk`, γράφει τα release notes με το `scripts/generate-release-notes.sh` (checkout με πλήρες history), ελέγχει αν υπάρχει ήδη ίδιο custom asset στο release του tag και κάνει skip το fallback publish όταν υπάρχει ήδη.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε και νέο entry button `Σημειώσεις` για μετάβαση στη `NotesActivity`.
 - `RecordingsActivity` και `RecordingsManagerActivity`: πλήρης μετάβαση σε Compose UI με ViewModel/StateFlow, με τη σελίδα ηχογραφήσεων να δείχνει μόνο 10 local own recordings και τη διαχείριση να διατηρεί search+filters+sort.
