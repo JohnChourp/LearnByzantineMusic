@@ -72,6 +72,10 @@ class RecordingsViewModel(
         _uiState.update { state -> state.copy(recordingState = value) }
     }
 
+    fun setRecordingTarget(label: String?) {
+        _uiState.update { state -> state.copy(targetLabel = label) }
+    }
+
     fun renameItem(item: RecordingListItem, targetName: String, onCompleted: (RenameOutcome) -> Unit) {
         viewModelScope.launch {
             val result = repository.renameEntry(item, targetName)
