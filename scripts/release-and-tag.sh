@@ -4,7 +4,10 @@ set -euo pipefail
 usage() {
     cat <<'USAGE'
 Usage:
-  release-and-tag.sh [--bump patch|minor|major] [--version X.Y.Z] [--code N] [--no-push] [--skip-gh-release]
+  release-and-tag.sh [--bump patch|minor|major] [--version X.Y.Z] [--code N] [--no-push] [--skip-gh-release] [--skip-smoke]
+
+  --skip-smoke  ΔΕΝ τρέχει το launch smoke test. Δεν το "αγνοεί αν αποτύχει":
+                αρνείται να το τρέξει και το δηλώνει στα release notes ως ΜΗ επαληθευμένο.
 
 Examples:
   release-and-tag.sh --bump patch
@@ -37,6 +40,7 @@ fi
 BUMP_ARGS=()
 PUSH_CHANGES=1
 PUBLISH_GH_RELEASE=1
+RUN_SMOKE_TEST=1
 
 while (($# > 0)); do
     case "$1" in
@@ -50,6 +54,10 @@ while (($# > 0)); do
             ;;
         --skip-gh-release)
             PUBLISH_GH_RELEASE=0
+            shift
+            ;;
+        --skip-smoke)
+            RUN_SMOKE_TEST=0
             shift
             ;;
         -h|--help)
@@ -76,6 +84,109 @@ if [[ -n "$(git status --porcelain)" ]]; then
 fi
 
 "$SECRETS_GUARD_SCRIPT"
+
+run_launch_smoke_test() {
+    local apk="$1"
+    local pkg serial pid
+
+    # Το applicationId είναι μία πηγή αλήθειας: διαβάζεται από το gradle, δεν ξαναγράφεται εδώ.
+    pkg="$(sed -n 's/^[[:space:]]*applicationId[[:space:]]*=[[:space:]]*"\(.*\)".*/\1/p' "$ROOT_DIR/app/build.gradle.kts" | head -n1)"
+    if [[ -z "$pkg" ]]; then
+        echo "ERROR: Δεν μπόρεσα να διαβάσω το applicationId από app/build.gradle.kts." >&2
+        exit 1
+    fi
+
+    if ! command -v adb >/dev/null 2>&1; then
+        echo "ERROR: Το adb δεν βρέθηκε στο PATH - το smoke test δεν μπορεί να τρέξει." >&2
+        echo "ERROR: Βάλε το platform-tools στο PATH ή τρέξε ρητά με --skip-smoke." >&2
+        exit 1
+    fi
+
+    mapfile -t devices < <(adb devices | awk 'NR>1 && $2=="device" {print $1}')
+    if [[ "${#devices[@]}" -eq 0 ]]; then
+        echo "ERROR: Καμία συνδεδεμένη συσκευή/emulator - το APK θα δημοσιευόταν ανεπιβεβαίωτο." >&2
+        echo "ERROR: Σύνδεσε συσκευή ή τρέξε ρητά με --skip-smoke." >&2
+        exit 1
+    fi
+    if [[ "${#devices[@]}" -gt 1 ]]; then
+        echo "ERROR: Βρέθηκαν ${#devices[@]} συσκευές (${devices[*]}). Άφησε μία συνδεδεμένη ώστε το αποτέλεσμα να είναι σαφές." >&2
+        exit 1
+    fi
+    serial="${devices[0]}"
+    echo "[release] Smoke test σε $serial για $pkg"
+
+    # Καθαρή αφετηρία: αν υπάρχει παλιά έκδοση, το install μπορεί να αποτύχει για άσχετο λόγο.
+    adb -s "$serial" uninstall "$pkg" >/dev/null 2>&1 || true
+
+    if ! adb -s "$serial" install -r "$apk"; then
+        echo "ERROR: Το signed APK ΔΕΝ εγκαθίσταται. Το release σταματάει." >&2
+        exit 1
+    fi
+
+    adb -s "$serial" logcat -c || true
+    if ! adb -s "$serial" shell monkey -p "$pkg" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1; then
+        echo "ERROR: Απέτυχε η εκκίνηση με launcher intent." >&2
+        exit 1
+    fi
+
+    sleep 5
+    pid="$(adb -s "$serial" shell pidof "$pkg" | tr -d '\r')"
+    if [[ -z "$pid" ]]; then
+        echo "ERROR: Το app δεν τρέχει 5 δευτερόλεπτα μετά την εκκίνηση - πιθανό crash στο launch." >&2
+        adb -s "$serial" logcat -d -t 200 | grep -E "FATAL EXCEPTION|AndroidRuntime" || true
+        exit 1
+    fi
+
+    if adb -s "$serial" logcat -d -t 400 | grep -q "FATAL EXCEPTION"; then
+        echo "ERROR: Βρέθηκε FATAL EXCEPTION στο logcat μετά την εκκίνηση." >&2
+        adb -s "$serial" logcat -d -t 400 | grep -A 15 "FATAL EXCEPTION" || true
+        exit 1
+    fi
+
+    echo "[release] Smoke test OK - εγκαταστάθηκε, ξεκίνησε, ζει (pid $pid), χωρίς fatal exception."
+    SMOKE_TEST_RESULT="verified on $serial"
+}
+
+ensure_branch_not_behind_remote() {
+    local branch local_sha remote_sha
+    branch="$(git branch --show-current)"
+    if [[ -z "$branch" ]]; then
+        echo "ERROR: Detached HEAD - το release απαιτεί branch." >&2
+        exit 1
+    fi
+
+    # Ρωτάμε τον SERVER. Το `git rev-parse origin/<branch>` απαντά από τοπικό cache που
+    # μπορεί να είναι stale ή να λείπει· σε shallow/single-branch clone το tracking ref
+    # απλώς δεν υπάρχει και η εντολή τυπώνει το ίδιο της το όρισμα, που μοιάζει με sha.
+    remote_sha="$(git ls-remote --heads origin "refs/heads/$branch" | awk '{print $1}')"
+
+    if [[ -z "$remote_sha" ]]; then
+        echo "[release] Το branch $branch δεν υπάρχει στο origin - πρώτο push, δεν υπάρχει τίποτα να μείνουμε πίσω από."
+        return 0
+    fi
+
+    local_sha="$(git rev-parse HEAD)"
+    [[ "$remote_sha" == "$local_sha" ]] && return 0
+
+    if ! git fetch --quiet origin "$branch"; then
+        echo "ERROR: Απέτυχε το fetch από origin/$branch - δεν μπορώ να αποδείξω ότι είμαστε up-to-date." >&2
+        exit 1
+    fi
+
+    # Είμαστε εντάξει μόνο όταν το remote tip περιέχεται ήδη στο ιστορικό μας.
+    if git merge-base --is-ancestor "$remote_sha" "$local_sha"; then
+        return 0
+    fi
+
+    # Καλύπτει και το "πίσω" και το "έχει αποκλίνει": και στις δύο περιπτώσεις το
+    # origin tip ΔΕΝ περιέχεται στο ιστορικό μας, άρα θα κάναμε release κώδικα
+    # που δεν έχει ό,τι υπάρχει ήδη στο remote.
+    echo "ERROR: Το branch $branch δεν περιέχει το origin/$branch (είναι πίσω ή έχει αποκλίνει)." >&2
+    echo "ERROR:   local HEAD     = $local_sha" >&2
+    echo "ERROR:   origin/$branch = $remote_sha" >&2
+    echo "ERROR: Κάνε pull/rebase και ξανατρέξε. Το release ΔΕΝ προχωράει." >&2
+    exit 1
+}
 
 ensure_release_signing_env() {
     local -a missing_vars=()
@@ -214,6 +325,9 @@ write_release_notes() {
     "$BASH" "$RELEASE_NOTES_SCRIPT" "${notes_args[@]}"
 }
 
+# Πριν από οτιδήποτε ακριβό ή μη αναστρέψιμο: bump, build, commit, tag.
+ensure_branch_not_behind_remote
+
 mapfile -t bump_output < <("$BUMP_SCRIPT" "${BUMP_ARGS[@]}")
 printf '%s\n' "${bump_output[@]}"
 
@@ -275,6 +389,17 @@ cp "$APK_PATH" "$RELEASE_DIR/apk-release.apk"
 
 APK_ALIAS_PATH="$RELEASE_DIR/apk-release.apk"
 
+SMOKE_TEST_RESULT="NOT VERIFIED (--skip-smoke)"
+if [[ "$RUN_SMOKE_TEST" -eq 1 ]]; then
+    run_launch_smoke_test "$APK_ALIAS_PATH"
+else
+    # Δεν τυλίγουμε τον έλεγχο σε try/catch: αρνούμαστε να τον τρέξουμε και το λέμε δυνατά.
+    echo "[release] ============================================================" >&2
+    echo "[release] ΠΡΟΣΟΧΗ: το launch smoke test ΠΑΡΑΚΑΜΦΘΗΚΕ με --skip-smoke." >&2
+    echo "[release] Το APK θα δημοσιευθεί ΧΩΡΙΣ να έχει αποδειχθεί ότι εγκαθίσταται και ανοίγει." >&2
+    echo "[release] ============================================================" >&2
+fi
+
 
 git add -A
 if git diff --cached --quiet; then
@@ -289,6 +414,17 @@ git tag -a "$TAG" -m "Release $TAG"
 
 RELEASE_NOTES_PATH="$RELEASE_DIR/RELEASE_NOTES.md"
 write_release_notes "$PREVIOUS_TAG" "$TAG" "$RELEASE_NOTES_PATH" "$APK_ALIAS_PATH"
+
+# Η κατάσταση του smoke test μπαίνει στα notes ΕΔΩ, όχι μέσα στον generator:
+# τον generator τον μοιράζεται και το tag workflow, που δεν τρέχει smoke test.
+{
+    printf '\n## Επαλήθευση\n\n'
+    if [[ "$SMOKE_TEST_RESULT" == NOT\ VERIFIED* ]]; then
+        printf -- '- ⚠️ Launch smoke test: **%s** - το APK δεν αποδείχθηκε ότι εγκαθίσταται και ανοίγει.\n' "$SMOKE_TEST_RESULT"
+    else
+        printf -- '- ✅ Launch smoke test: %s (install + launcher intent + process alive + κανένα fatal exception).\n' "$SMOKE_TEST_RESULT"
+    fi
+} >> "$RELEASE_NOTES_PATH"
 echo "[release] Δημιουργήθηκαν release notes: $RELEASE_NOTES_PATH"
 
 BRANCH="$(git branch --show-current)"
