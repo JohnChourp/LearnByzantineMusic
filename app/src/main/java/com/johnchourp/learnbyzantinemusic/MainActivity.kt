@@ -23,8 +23,12 @@ import androidx.compose.material.icons.filled.Timer
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyModeCalendarActivity
 import com.johnchourp.learnbyzantinemusic.home.HomeInfo
 import com.johnchourp.learnbyzantinemusic.home.HomeScreen
+import androidx.compose.runtime.mutableStateOf
+import com.johnchourp.learnbyzantinemusic.home.LearningPathUi
 import com.johnchourp.learnbyzantinemusic.home.HomeSection
 import com.johnchourp.learnbyzantinemusic.home.HomeTile
+import com.johnchourp.learnbyzantinemusic.learning.LearningPath
+import com.johnchourp.learnbyzantinemusic.learning.LearningProgress
 import com.johnchourp.learnbyzantinemusic.home.TileAccent
 import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
 import com.johnchourp.learnbyzantinemusic.notes.NotesActivity
@@ -32,20 +36,78 @@ import com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 
 class MainActivity : BaseActivity() {
+    /** Re-read in [onResume] so the card advances after the learner comes back from a lesson. */
+    private val completedSteps = mutableStateOf<Set<String>>(emptySet())
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        completedSteps.value = LearningProgress.completedSteps(this)
         setContent {
             LbmTheme {
+                val sections = remember { withProgressTracking(buildHomeSections()) }
                 HomeScreen(
                     title = getString(R.string.learn_byzantine_music),
                     subtitle = getString(R.string.home_subtitle),
                     version = BuildConfig.VERSION_NAME,
-                    sections = remember { buildHomeSections() },
+                    sections = sections,
+                    learningPath = learningPathUi(sections, completedSteps.value),
                 )
             }
         }
 
         maybeShowLanguageOnboarding()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        completedSteps.value = LearningProgress.completedSteps(this)
+    }
+
+    /**
+     * Wraps the click of every tile that is a path step so opening the lesson records it.
+     * Driven by the tile id, so no tile has to be edited by hand and a tile that leaves the
+     * path stops being tracked on its own.
+     */
+    private fun withProgressTracking(sections: List<HomeSection>): List<HomeSection> =
+        sections.map { section ->
+            section.copy(
+                tiles = section.tiles.map { tile ->
+                    if (!LearningPath.isStep(tile.id)) {
+                        tile
+                    } else {
+                        tile.copy(
+                            onClick = {
+                                LearningProgress.markCompleted(this, tile.id)
+                                completedSteps.value = LearningProgress.completedSteps(this)
+                                tile.onClick()
+                            },
+                        )
+                    }
+                },
+            )
+        }
+
+    /**
+     * Null once every step is done, or if a path id has no tile on the screen — in both cases the
+     * card disappears rather than rendering a dead or wrong state.
+     *
+     * [sections] must already be progress-tracked, so "Continue" records the step too.
+     */
+    private fun learningPathUi(
+        sections: List<HomeSection>,
+        completed: Set<String>,
+    ): LearningPathUi? {
+        val nextId = LearningPath.nextStepId(completed) ?: return null
+        val tile = sections.firstNotNullOfOrNull { section ->
+            section.tiles.firstOrNull { it.id == nextId }
+        } ?: return null
+        return LearningPathUi(
+            stepNumber = LearningPath.positionOf(nextId),
+            totalSteps = LearningPath.size,
+            completedCount = LearningPath.completedCount(completed),
+            nextTitleRes = tile.titleRes,
+            onContinue = tile.onClick,
+        )
     }
 
     private fun buildHomeSections(): List<HomeSection> = listOf(
