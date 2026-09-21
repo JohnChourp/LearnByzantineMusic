@@ -124,8 +124,33 @@ run_launch_smoke_test() {
     fi
 
     adb -s "$serial" logcat -c || true
-    if ! adb -s "$serial" shell monkey -p "$pkg" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1; then
-        echo "ERROR: Απέτυχε η εκκίνηση με launcher intent." >&2
+
+    # ΟΧΙ `monkey`: σε emulator μπορεί να μην εκκινήσει ΤΙΠΟΤΑ και να γυρίσει exit 251, με τον
+    # launcher να μένει στο προσκήνιο (μετρημένο σε Motorola_Edge_40_Neo_API_35 / Android 15).
+    # Ένα fail-closed gate που κόβει για λάθος λόγο είναι χειρότερο από καθόλου gate.
+    #
+    # Το script τρέχει με `set -euo pipefail`, οπότε κάθε κλήση που ΕΠΙΤΡΕΠΕΤΑΙ να αποτύχει
+    # τυλίγεται σε set +e/-e· αλλιώς το script πεθαίνει σιωπηλά πριν τυπωθεί το μήνυμα.
+    local component resolve_status
+    set +e
+    component="$(adb -s "$serial" shell cmd package resolve-activity --brief \
+        -c android.intent.category.LAUNCHER "$pkg" 2>/dev/null | tr -d '\r' | tail -n1)"
+    resolve_status=$?
+    set -e
+    if [[ $resolve_status -ne 0 || "$component" != "$pkg/"* ]]; then
+        echo "ERROR: Δεν βρέθηκε launcher activity για $pkg (πήρα: ${component:-<κενό>})." >&2
+        exit 1
+    fi
+
+    local launch_output launch_status
+    set +e
+    launch_output="$(adb -s "$serial" shell am start -n "$component" 2>&1)"
+    launch_status=$?
+    set -e
+    # Το `am start` γυρίζει 0 ακόμη και όταν τυπώνει "Error:", οπότε ελέγχουμε και το κείμενο.
+    if [[ $launch_status -ne 0 || "$launch_output" == *"Error"* ]]; then
+        echo "ERROR: Απέτυχε η εκκίνηση του $component." >&2
+        printf '%s\n' "$launch_output" >&2
         exit 1
     fi
 
