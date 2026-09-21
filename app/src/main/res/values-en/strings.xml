@@ -1054,4 +1054,8 @@
     <string name="q_read_link_1">The syndesmos joins two isons into one syllable, without breaking the voice.</string>
     <string name="q_read_link_3">It likewise joins an oligon and an ison into one syllable.</string>
     <string name="q_read_intercom_1">A note with an endofono is sung with a closed mouth, weakly and through the nose.</string>
+    <string name="learning_path_title">From scratch</string>
+    <string name="learning_path_step">Step %1$d of %2$d</string>
+    <string name="learning_path_start">Start</string>
+    <string name="learning_path_continue">Continue</string>
 </resources>

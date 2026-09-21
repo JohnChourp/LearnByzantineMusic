@@ -18,9 +18,12 @@ import com.johnchourp.learnbyzantinemusic.ui.components.StaggeredAppear
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPageBg
 
 /**
- * Redesigned home screen: an animated hero header followed by grouped, icon-led
- * navigation sections and a version footer. Pure UI — all navigation is supplied via
- * the [HomeTile.onClick] lambdas in [sections].
+ * Redesigned home screen: an animated hero header, the optional guided-path card, then grouped,
+ * icon-led navigation sections and a version footer. Pure UI — all navigation is supplied via
+ * the [HomeTile.onClick] lambdas in [sections] and [LearningPathUi.onContinue].
+ *
+ * [learningPath] is null once every step is done, and the screen then looks exactly as it did
+ * before the path existed.
  */
 @Composable
 fun HomeScreen(
@@ -29,6 +32,7 @@ fun HomeScreen(
     version: String,
     sections: List<HomeSection>,
     modifier: Modifier = Modifier,
+    learningPath: LearningPathUi? = null,
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -46,6 +50,11 @@ fun HomeScreen(
         ) {
             Spacer(Modifier.height(6.dp))
             var appearIndex = 0
+            if (learningPath != null) {
+                StaggeredAppear(delayMillis = appearDelay(appearIndex++)) {
+                    LearningPathCard(state = learningPath, modifier = Modifier.fillMaxWidth())
+                }
+            }
             sections.forEach { section ->
                 StaggeredAppear(delayMillis = appearDelay(appearIndex++)) {
                     SectionHeader(

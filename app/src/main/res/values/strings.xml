@@ -1053,4 +1053,8 @@
     <string name="q_read_link_1">Ο σύνδεσμος ενώνει δύο ίσα σε μία συλλαβή, χωρίς να κόβεται η φωνή.</string>
     <string name="q_read_link_3">Ενώνει επίσης έναν ολίγον με ίσον σε μία συλλαβή.</string>
     <string name="q_read_intercom_1">Ο φθόγγος με ενδόφωνο προφέρεται με κλειστό στόμα, ασθενώς και διά της ρινός.</string>
+    <string name="learning_path_title">Από το μηδέν</string>
+    <string name="learning_path_step">Βήμα %1$d από %2$d</string>
+    <string name="learning_path_start">Ξεκίνα</string>
+    <string name="learning_path_continue">Συνέχεια</string>
 </resources>
