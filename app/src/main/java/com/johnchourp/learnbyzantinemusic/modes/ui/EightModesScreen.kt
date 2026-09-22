@@ -52,6 +52,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
@@ -59,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.modes.IsonDrone
+import com.johnchourp.learnbyzantinemusic.modes.LadderPitchMirror
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleFrequencies
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleGenus
 import com.johnchourp.learnbyzantinemusic.modes.ModeTheoryCatalog
@@ -69,6 +71,7 @@ import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonChip
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
 import com.johnchourp.learnbyzantinemusic.ui.components.StaggeredAppear
+import com.johnchourp.learnbyzantinemusic.ui.theme.AccentGreenContent
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmBrown
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmOutline
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPageBg
@@ -111,6 +114,15 @@ fun EightModesScreen(
     onToneRelease: () -> Unit,
     /** Non-null starts (or retunes) the ison drone; null stops it. */
     onDroneChange: (Double?) -> Unit,
+    /**
+     * Asks the host to start listening (true) or stop (false). The host owns the microphone
+     * permission and the capture engine; the screen only says when it wants to hear.
+     */
+    onListenChange: (Boolean) -> Unit,
+    /** The pitch the host last heard, in Hz, or null when nothing usable is coming in. */
+    heardFrequencyHz: Double?,
+    /** True once the host has been refused the microphone, so the card can say so. */
+    micDenied: Boolean,
     onOpenMenu: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -124,6 +136,7 @@ fun EightModesScreen(
     }
     var activeIndex by remember { mutableStateOf(-1) }
     var droneOn by remember { mutableStateOf(false) }
+    var listening by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     // Switching modes never carries a held tone over.
@@ -143,6 +156,15 @@ fun EightModesScreen(
     DisposableEffect(Unit) {
         onDispose { onDroneChange(null) }
     }
+
+    // The microphone follows the same rule as the drone: derived from one flag, and released when
+    // the screen leaves. A capture thread outliving the composition is the bug this prevents.
+    LaunchedEffect(listening) { onListenChange(listening) }
+    DisposableEffect(Unit) {
+        onDispose { onListenChange(false) }
+    }
+    // A refusal turns the switch back off, so it cannot sit on while nothing is being heard.
+    LaunchedEffect(micDenied) { if (micDenied) listening = false }
 
     val currentGenus = EIGHT_MODES[selectedModeIndex].genus
     val scroll = rememberScrollState()
@@ -206,6 +228,18 @@ fun EightModesScreen(
                     enabled = droneOn,
                     baseLabel = droneBase?.label,
                     onToggle = { droneOn = it },
+                )
+            }
+            StaggeredAppear(delayMillis = 225) {
+                PitchMirrorCard(
+                    listening = listening,
+                    micDenied = micDenied,
+                    reading = rememberMirrorReading(
+                        modeIndex = selectedModeIndex,
+                        baseShiftMoria = baseShiftByMode[selectedModeIndex] ?: 0,
+                        heardFrequencyHz = if (listening) heardFrequencyHz else null,
+                    ),
+                    onToggle = { listening = it },
                 )
             }
             StaggeredAppear(delayMillis = 240) {
@@ -535,6 +569,73 @@ private fun IsonDroneCard(enabled: Boolean, baseLabel: String?, onToggle: (Boole
                 onCheckedChange = onToggle,
                 enabled = baseLabel != null,
             )
+        }
+    }
+}
+
+/* ----------------------------- Ζωντανός καθρέφτης φωνής ----------------------------- */
+
+/**
+ * Reads [heardFrequencyHz] against the **same ladder** the diagram, the drone and the απήχημα use,
+ * so the indicator cannot disagree with what the screen is showing and sounding.
+ *
+ * Re-reads on every new frequency; the ladder itself is only rebuilt when the mode or its base
+ * shift changes.
+ */
+@Composable
+private fun rememberMirrorReading(
+    modeIndex: Int,
+    baseShiftMoria: Int,
+    heardFrequencyHz: Double?,
+): LadderPitchMirror.Reading? {
+    val ladder = rememberLadder(modeIndex, baseShiftMoria)
+    return remember(ladder, heardFrequencyHz) {
+        heardFrequencyHz?.let { LadderPitchMirror.read(ladder, it) }
+    }
+}
+
+/**
+ * «Πού είμαι» — the other half of the ison (ClickUp `869f4tqad`, E1).
+ *
+ * The drone gives the singer something to chant against; this says whether they are on it, in
+ * **μόρια** rather than cents. Deliberately placed straight after [IsonDroneCard]: the two are one
+ * exercise, and the research that asked for this named "the student chanting alone does not know
+ * they have drifted" as the first obstacle.
+ *
+ * Everything is on-device — the existing YIN detector, no cloud, no upload.
+ */
+@Composable
+private fun PitchMirrorCard(
+    listening: Boolean,
+    micDenied: Boolean,
+    reading: LadderPitchMirror.Reading?,
+    onToggle: (Boolean) -> Unit,
+) {
+    val message: String = when {
+        micDenied -> stringResource(R.string.eight_modes_mirror_denied)
+        !listening -> stringResource(R.string.eight_modes_mirror_hint)
+        reading == null -> stringResource(R.string.eight_modes_mirror_listening)
+        reading.isInTune() -> stringResource(R.string.eight_modes_mirror_on_pitch, reading.label)
+        reading.deviationMoria > 0 ->
+            stringResource(R.string.eight_modes_mirror_sharp, reading.label, reading.deviationMoria.roundToInt())
+        else ->
+            stringResource(R.string.eight_modes_mirror_flat, reading.label, -reading.deviationMoria.roundToInt())
+    }
+    val onPitch = listening && reading != null && reading.isInTune()
+
+    LessonCard(title = stringResource(R.string.eight_modes_mirror_card_title)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (onPitch) AccentGreenContent else if (listening) LbmBrown else LbmTextSecondary,
+                fontWeight = if (listening) FontWeight.SemiBold else FontWeight.Normal,
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { contentDescription = message },
+            )
+            Spacer(Modifier.width(12.dp))
+            Switch(checked = listening, onCheckedChange = onToggle)
         }
     }
 }

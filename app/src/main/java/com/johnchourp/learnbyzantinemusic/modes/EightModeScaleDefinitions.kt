@@ -224,8 +224,12 @@ object EightModeScaleDefinitions {
      * would have been a display change smuggled in by a refactor, which ClickUp `869f4tpxj`
      * explicitly forbids. `PhthongRenderingParityTest` now pins it.
      *
-     * Whether `Νη΄` is the *better* label here is a real question, and a deliberate display decision
-     * for its own ticket — not something to settle inside a typing change.
+     * **Decided in ClickUp `869f5cnyx` on 2026-09-22: the table keeps the bare `Νη`.** The rule it
+     * codifies is that the octave mark here means **disambiguation, not register** — it is written
+     * where a name repeats inside the table (`Πα` appears twice, `Νη` once), which is why the last
+     * rung is `Πα΄` while the middle `Νη` stays bare. The ladder is the opposite by design: its
+     * φθόγγοι are *sounded*, so it marks register. `PhthongRenderingParityTest` pins both forms and
+     * their disagreement, so neither can be "simplified" into the other.
      */
     fun singleOctavePhthongs(base: ModeScaleBase): List<String> {
         val names = PhthongName.entries
