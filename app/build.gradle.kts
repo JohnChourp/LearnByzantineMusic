@@ -1,16 +1,42 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.jetbrainsKotlinCompose)
-    id("org.jetbrains.kotlin.kapt")
+    alias(libs.plugins.androidLegacyKapt)
+}
+
+// Minimum patched versions for vulnerable transitive dependencies. AGP 9 resolves its lint and
+// UTP tool classpaths in :app configurations, which the root buildscript forces do not reach, so
+// these are floors: they raise an older requested version but never lower a newer one (lint
+// needs Guava 33.x, which a plain force would downgrade).
+val securityFloors = mapOf(
+    "com.google.guava:guava" to "32.1.3-jre",
+    "org.bouncycastle:bcprov-jdk18on" to "1.85",
+    "org.bouncycastle:bcpkix-jdk18on" to "1.85",
+    "org.bouncycastle:bcutil-jdk18on" to "1.85",
+    "org.apache.commons:commons-lang3" to "3.20.0",
+    "org.apache.httpcomponents:httpclient" to "4.5.14",
+)
+
+fun isOlderThan(version: String, floor: String): Boolean {
+    val parts = version.substringBefore('-').split('.').map { it.toIntOrNull() ?: 0 }
+    val floorParts = floor.substringBefore('-').split('.').map { it.toIntOrNull() ?: 0 }
+    for (i in 0 until maxOf(parts.size, floorParts.size)) {
+        val a = parts.getOrElse(i) { 0 }
+        val b = floorParts.getOrElse(i) { 0 }
+        if (a != b) return a < b
+    }
+    return false
 }
 
 configurations.configureEach {
-    resolutionStrategy.force("com.google.guava:guava:32.1.3-jre")
-    // Force patched Netty 4.1.x due AGP/UTP test-platform transitive dependency vulnerabilities (via grpc-netty).
     resolutionStrategy.eachDependency {
+        val floor = securityFloors["${requested.group}:${requested.name}"]
+        val version = requested.version
+        if (floor != null && version != null && isOlderThan(version, floor)) {
+            useVersion(floor)
+            because("Security floor for a vulnerable transitive version")
+        }
+        // Force patched Netty 4.1.x due AGP/UTP test-platform transitive dependency vulnerabilities (via grpc-netty).
         if (requested.group == "io.netty" && requested.version?.startsWith("4.1.") == true) {
             useVersion("4.1.138.Final")
             because("AGP/UTP test-platform Netty 4.1.x vulnerabilities")
@@ -77,12 +103,6 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
-    }
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_1_8)
     }
 }
 

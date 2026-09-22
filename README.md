@@ -44,6 +44,7 @@
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
 Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.22.0`, Protobuf runtime modules σε `4.35.1`, `jdom2` σε `2.0.6.1`, Netty modules σε `4.2.18.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.28.0`, `commons-lang3` σε `3.20.0`, `bcpkix-jdk18on` σε `1.85`, `bcprov-jdk18on` σε `1.85` και `bcutil-jdk18on` σε `1.85`.
 Για το app dependency graph υπάρχει πλέον και explicit pin στο `com.google.guava:guava:32.1.3-jre` (catalog + `implementation` + `kapt`) ώστε το security graph να αναγνωρίζει deterministic patched version.
+Στα configurations του `:app` ισχύουν επιπλέον security floors (ελάχιστες patched εκδόσεις που μόνο ανεβάζουν, ποτέ δεν κατεβάζουν μια νεότερη requested έκδοση): Guava `32.1.3-jre`, BouncyCastle `1.85`, `commons-lang3` `3.20.0`, `httpclient` `4.5.14`. Εκεί το AGP 9 κάνει resolve τα lint και UTP tool classpaths, τα οποία τα root forces δεν φτάνουν.
 Στα configurations του `:app` τα Netty `4.1.x` (που φέρνουν τα AGP/UTP test-platform artifacts μέσω `grpc-netty`) ευθυγραμμίζονται σε `4.1.138.Final`.
 
 ## Business flow
@@ -327,9 +328,10 @@
 - `compileSdk = 36`
 - `minSdk = 24`
 - `targetSdk = 34`
-- `Kotlin Gradle Plugin = 2.4.20`
+- `Kotlin Gradle Plugin = 2.4.20` (AGP 9 built-in Kotlin· το KGP μπαίνει στο root buildscript classpath)
 - `Kotlin Compose plugin = 2.4.20`
-- `AGP = 8.13.2`
+- `AGP = 9.3.1` (kapt μέσω `com.android.legacy-kapt`)
+- `Gradle = 9.6.1`
 - Buildscript classpath override:
 - `commons-io:commons-io = 2.22.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
 - `com.google.protobuf:protobuf-java = 4.35.1` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP/UTP)
@@ -350,6 +352,7 @@
 - `org.bouncycastle:bcprov-jdk18on = 1.85` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.bouncycastle:bcutil-jdk18on = 1.85` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `com.google.guava:guava = 32.1.3-jre` (explicit pin στο app dependency graph για mitigation του temporary-directory advisory)
+- `com.google.guava:guava >= 32.1.3-jre`, `org.bouncycastle:bcprov/bcpkix/bcutil-jdk18on >= 1.85`, `org.apache.commons:commons-lang3 >= 3.20.0`, `org.apache.httpcomponents:httpclient >= 4.5.14` (security floors στα AGP 9 lint/UTP tool classpaths του `:app`, μέσω `app/build.gradle.kts`· δεν κατεβάζουν το Guava 33.x του lint)
 - `io.netty:* 4.1.x = 4.1.138.Final` (ευθυγράμμιση σε όλα τα configurations του `:app` μέσω `app/build.gradle.kts`, για τα AGP/UTP test-platform artifacts που φέρνουν Netty 4.1 μέσω `grpc-netty`)
 - `com.arthenica:ffmpeg-kit-full-gpl = 6.0-2` (για transcode ηχογραφήσεων σε `flac/mp3/aac/m4a/opus`)
 
@@ -506,12 +509,12 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Γιατί εμφανίστηκε Dependabot alert για `kotlin-gradle-plugin`;
 - Το advisory `GHSA-r937-wjx7-w2jp` (`CVE-2026-53914`, unsafe deserialization στο Kotlin build cache) αφορά κάθε `org.jetbrains.kotlin:kotlin-gradle-plugin` κάτω από `2.4.20-Beta1`.
 - Το project ανέβηκε από `2.1.20` στην πρώτη σταθερή patched έκδοση `2.4.20` (μαζί και τα `kotlin.plugin.compose`/`kapt`, που μοιράζονται το ίδιο version).
-- Από το Kotlin `2.2` και μετά το `kotlinOptions { jvmTarget = "..." }` είναι build error, οπότε το `app/build.gradle.kts` χρησιμοποιεί πλέον `kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }` με το ίδιο JVM target.
+- Από το Kotlin `2.2` και μετά το `kotlinOptions { jvmTarget = "..." }` είναι build error. Με το AGP 9 built-in Kotlin το `jvmTarget` ακολουθεί το `compileOptions.targetCompatibility` (`1.8`), οπότε δεν χρειάζεται ξεχωριστό block.
 - Ο Room processor (kapt) διαβάζει Kotlin metadata με το `kotlin-metadata-jvm` `2.2.0`, που φτάνει μόνο ως metadata `2.3`. Γι’ αυτό το kapt classpath παίρνει `kotlin-metadata-jvm` στην ίδια έκδοση με το Kotlin (`libs.kotlin.metadata.jvm`), ώστε να διαβάζει ό,τι γράφει το Kotlin `2.4+`.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `commons-io`;
 - Το `commons-io` δεν υπάρχει ως direct dependency στο app module.
-- Έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`) και σχετικά UTP artifacts.
+- Έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`) και σχετικά UTP artifacts.
 - Το project κάνει forced resolve σε `commons-io:2.22.0` στο build classpath ώστε να καλύπτεται το patched range του advisory.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `protobuf-java`;
@@ -520,7 +523,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Το project κάνει forced resolve στα Protobuf runtime modules (`protobuf-java`, `protobuf-javalite`, `protobuf-kotlin`, `protobuf-kotlin-lite`) σε `4.35.1` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `jdom2`;
-- Το `jdom2` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
+- Το `jdom2` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `2.0.6` και το advisory ζητά patched έκδοση `>= 2.0.6.1`.
 - Το project κάνει forced resolve σε `org.jdom:jdom2:2.0.6.1` στο build classpath.
 
@@ -550,22 +553,22 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - Το `app/build.gradle.kts` ευθυγραμμίζει κάθε `io.netty` `4.1.x` σε `4.1.138.Final` σε όλα τα configurations του `:app`, ώστε να μένει στη γραμμή 4.1 που περιμένει το `grpc-netty`.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `jose4j`;
-- Το `org.bitbucket.b_c:jose4j` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
+- Το `org.bitbucket.b_c:jose4j` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `0.9.5` και το advisory ζητά patched έκδοση `>= 0.9.6`.
 - Το project κάνει forced resolve σε `org.bitbucket.b_c:jose4j:0.9.6` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `commons-compress`;
-- Το `org.apache.commons:commons-compress` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
+- Το `org.apache.commons:commons-compress` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `1.21` και το advisory ζητά patched έκδοση `>= 1.26.0`.
 - Το project κάνει forced resolve σε `org.apache.commons:commons-compress:1.28.0` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `commons-lang3`;
-- Το `org.apache.commons:commons-lang3` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
+- Το `org.apache.commons:commons-lang3` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `3.14.0` και το advisory ζητά patched έκδοση `>= 3.18.0`.
 - Το project κάνει forced resolve σε `org.apache.commons:commons-lang3:3.20.0` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `bcpkix-jdk18on`;
-- Το `org.bouncycastle:bcpkix-jdk18on` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:8.13.2`).
+- Το `org.bouncycastle:bcpkix-jdk18on` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `1.77` και το advisory ζητά patched έκδοση `>= 1.79`.
 - Το project κάνει forced resolve σε `org.bouncycastle:bcpkix-jdk18on:1.85` στο build classpath και ευθυγραμμίζει `bcprov`/`bcutil` στην ίδια έκδοση.
 
@@ -577,7 +580,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Γιατί εμφανίστηκε Dependabot alert για `guava`;
 - Το `com.google.guava:guava` έρχεται transitive από `androidx.room` και `androidx.work` dependencies.
 - Το advisory για insecure use of temporary directory καλύπτεται από patched γραμμή `>= 32.0.0-android`, με σύσταση απο maintainers να αποφεύγεται το `32.0.0`.
-- Το project κάνει explicit pin σε `com.google.guava:guava:32.1.3-jre` στο app dependency graph (`implementation` + `kapt`) και κρατά force fallback για πλήρη ευθυγράμμιση resolve.
+- Το project δηλώνει ρητά `com.google.guava:guava:32.1.3-jre` στο app dependency graph (`implementation` + `kapt`) και κρατά security floor `32.1.3-jre` σε όλα τα configurations του `:app`. Τα floors ανεβάζουν μόνο παλαιότερες εκδόσεις, ώστε να μην κατεβαίνει το Guava 33.x που χρειάζεται το lint του AGP 9.
 
 ### Γιατί αποτυγχάνει το login/auth;
 - Η εφαρμογή δεν χρησιμοποιεί login/auth ροή.
