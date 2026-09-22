@@ -6,6 +6,20 @@ import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
  * Frequency math for the 8 Ήχοι scale diagram, extracted out of `EightModesActivity` so it can be
  * unit-tested.
  *
+ * ## Retained deliberately as the reference implementation
+ *
+ * Since ClickUp `869f4tpxj`, the screen builds a
+ * [com.johnchourp.learnbyzantinemusic.music.ModeLadder] instead of calling this, so nothing in the
+ * app reaches it any more. It is kept on purpose: `ModeLadderTest` asserts the ladder reproduces
+ * **this** function's output **exactly** (delta 0.0) for all four scales across the whole `-12..+12`
+ * base-shift range.
+ *
+ * That is a second implementation of the same arithmetic, which is normally the thing to avoid —
+ * `ByzantineTuning` exists precisely because two copies drift. The difference is that this copy is
+ * *pinned* to the other by an exact equality test over 100 combinations, so it cannot drift
+ * silently; it is an oracle, not a duplicate in use. Delete it only together with that test, and
+ * only knowingly.
+ *
  * This object only turns the diagram's *shape* — a run of μόρια intervals plus where Νη sits in it —
  * into μόρια-above-Νη. The pitch itself comes from [ByzantineTuning], which owns the reference
  * frequency and the size of the octave; see ClickUp `869f4tq0p` for why there is exactly one such

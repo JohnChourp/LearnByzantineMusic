@@ -1,5 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
+import com.johnchourp.learnbyzantinemusic.music.ModeLadder
+import com.johnchourp.learnbyzantinemusic.music.Phthong
+
 /**
  * Turns the απήχημα teaching string into a playable sequence (ClickUp `869f4tpkv`).
  *
@@ -18,8 +21,17 @@ package com.johnchourp.learnbyzantinemusic.modes
  */
 object ApichimaSequence {
 
-    /** One syllable of the απήχημα and the φθόγγος it is sung on. */
-    data class Step(val syllable: String, val phthongLabel: String)
+    /**
+     * One syllable of the απήχημα and the φθόγγος it is sung on.
+     *
+     * [phthongLabel] is the text exactly as the teaching string wrote it; [phthong] is that text
+     * parsed at the boundary, or null when it names no φθόγγος. Both are kept because the label is
+     * what the page displays and the type is what the pitch lookup uses — deriving one from the
+     * other at each call site is how they would drift.
+     */
+    data class Step(val syllable: String, val phthongLabel: String) {
+        val phthong: Phthong? get() = Phthong.parse(phthongLabel)
+    }
 
     private val STEP = Regex("""^\s*(.+?)\s*\(\s*([^)]+?)\s*\)\s*$""")
 
@@ -47,6 +59,20 @@ object ApichimaSequence {
      * a sequence with a silent hole in it teaches the απήχημα wrong, so the button should stay
      * disabled instead.
      */
+    /**
+     * Typed primary: the pitch for each step, taken from [ladder]. Null when any step's φθόγγος is
+     * absent from this mode's ladder — all-or-nothing, because a phrase with a silent hole teaches
+     * the απήχημα wrong.
+     */
+    fun frequencies(steps: List<Step>, ladder: ModeLadder): List<Double>? {
+        if (steps.isEmpty()) return null
+        return steps.map { step ->
+            val phthong = step.phthong ?: return null
+            ladder.stepFor(phthong)?.frequencyHz ?: return null
+        }
+    }
+
+    /** Boundary overload for callers holding parallel label/frequency lists. */
     fun frequencies(
         steps: List<Step>,
         phthongsTopToBottom: List<String>,

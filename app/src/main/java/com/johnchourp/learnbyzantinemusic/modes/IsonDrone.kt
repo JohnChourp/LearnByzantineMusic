@@ -1,5 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
+import com.johnchourp.learnbyzantinemusic.music.ModeLadder
+import com.johnchourp.learnbyzantinemusic.music.Phthong
+
 /**
  * Which φθόγγος the ισοκράτημα holds, and at what frequency (ClickUp `869f4tpeu`).
  *
@@ -21,6 +24,16 @@ package com.johnchourp.learnbyzantinemusic.modes
  * to sing against, high enough to hear under a voice.
  */
 object IsonDrone {
+
+    /**
+     * The rung the drone should hold: the mode's base φθόγγος on [ladder], or null when the ladder
+     * does not contain it — in which case the caller must not start a drone rather than guess.
+     *
+     * This is the typed primary. It matches **by φθόγγος value, octave included**, so it cannot pick
+     * the base an octave away; the label-based function below is the boundary for callers that still
+     * hold display text.
+     */
+    fun baseStep(ladder: ModeLadder, base: Phthong): ModeLadder.Step? = ladder.stepFor(base)
 
     /**
      * Index of the mode's base φθόγγος in a **top-to-bottom** label list, or `-1` when absent.
