@@ -7,6 +7,20 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeParseException
 
+/**
+ * Reads the offline εορτολόγιο dataset and answers per-day and per-month questions about it.
+ *
+ * **The dataset's schema is written down** in `CalendarDatasetSchema` (test sources), together with
+ * the `_vN` versioning rule and a validator that fails the build on a broken asset — ClickUp
+ * `869f4tpzk`.
+ *
+ * This parser is deliberately **more lenient** than that schema: an unknown celebration `type` falls
+ * back to `normal_day`, absent booleans default, and a missing `readings` section is simply empty.
+ * That split is intentional. A dataset mistake should be caught at build time, where someone can fix
+ * it; at runtime a user with a slightly odd asset should still get a working calendar rather than a
+ * crash. The one thing the runtime refuses outright is provenance
+ * ([FORBIDDEN_READING_KEYS]) — that is a policy violation, not a data quirk.
+ */
 class CalendarCelebrationsRepository private constructor(
     private val context: Context?,
     private val injectedCelebrations: Map<LocalDate, List<CalendarCelebration>>?,
