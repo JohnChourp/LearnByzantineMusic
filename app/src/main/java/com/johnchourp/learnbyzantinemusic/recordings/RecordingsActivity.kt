@@ -37,6 +37,26 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * The «Ηχογραφήσεις» screen: record from the microphone into a folder the user owns.
+ *
+ * **Flow.** Records raw PCM to a cache WAV, then, for every format other than WAV, transcodes with
+ * FFmpeg and writes the result into the chosen SAF folder. A failed transcode surfaces an error and
+ * produces no file, rather than leaving a half-written recording behind.
+ *
+ * **Why this list is "the last 10 of mine".** It is served from [OwnedRecordingsStore], a local
+ * history of what *this app* produced — not from a scan of the folder. That is deliberate: the main
+ * page must open instantly even when the folder holds thousands of files, and a full SAF walk cannot
+ * promise that. Browsing everything is [RecordingsManagerActivity]'s job.
+ *
+ * **Opening a file** goes through [RecordingExternalOpener], which copies into cache and hands out a
+ * `FileProvider` URI, because many external players cannot read a foreign SAF URI directly.
+ *
+ * **Requires** `RECORD_AUDIO` and a persisted SAF tree grant; changing the folder is confirmed first,
+ * so a mis-tap cannot silently orphan the current one.
+ *
+ * **Touches:** `recordings_folder_tree_uri`, `recordings_output_format`, `owned_recordings`.
+ */
 class RecordingsActivity : BaseActivity() {
     private lateinit var recordingsPrefs: RecordingsPrefs
     private val recordingsRepository by lazy { RecordingsRepository.getInstance(applicationContext) }

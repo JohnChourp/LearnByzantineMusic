@@ -15,6 +15,25 @@ import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.notes.ui.NotesScreen
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 
+/**
+ * The «Σημειώσεις» screen: local-first notes with a snapshot backup into a folder the user owns.
+ *
+ * **Flow.** Notes live in Room and are saved there *first*; every save then writes a full JSON
+ * snapshot into the SAF folder picked on first run. If that write fails, the snapshot is queued
+ * locally and retried on the next save or by the manual resync action — so a provider error shows as
+ * "sync failed" while the note itself is already safe.
+ *
+ * **The folder is mandatory on first run**, which is why a cancelled picker re-launches it instead of
+ * letting the user in without a backup target. The grant is persisted
+ * (`takePersistableUriPermission`), so it survives reboots.
+ *
+ * **Import is replace-all, not merge** — see [NotesImportPolicy]. An invalid snapshot is rejected
+ * whole, leaving existing notes untouched.
+ *
+ * **Inputs:** none.
+ * **Touches:** `notes_folder_tree_uri`, `notes_last_sync_epoch_ms`, `notes_last_sync_error` (read +
+ * write) and the `notes.db` Room database; pending snapshots sit in `filesDir/notes_pending_snapshots`.
+ */
 class NotesActivity : BaseActivity() {
     private lateinit var notesPrefs: NotesPrefs
     private val notesRepository by lazy { NotesRepository.getInstance(applicationContext) }

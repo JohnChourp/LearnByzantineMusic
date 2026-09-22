@@ -35,6 +35,28 @@ import com.johnchourp.learnbyzantinemusic.notes.NotesActivity
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 
+/**
+ * The home screen: the catalogue of everything the app offers, plus the "where was I" card.
+ *
+ * **Flow.** [buildHomeSections] declares the six sections — Φθόγγοι, Ανιόντες/Κατιόντες, Χαρακτήρες,
+ * Μαρτυρίες & Ήχοι, Εξάσκηση, Ρυθμίσεις — in pedagogical order; that order *is* the beginner's path,
+ * not a separate list. `withProgressTracking` wraps each tile's click so opening a lesson records it
+ * as done before the target activity starts, and `learningPathUi` turns the recorded ids into the
+ * card at the top. On first launch, `maybeShowLanguageOnboarding` asks for a language before anything
+ * else.
+ *
+ * **Why progress is re-read in `onResume`.** The learner finishes a lesson and presses back; the card
+ * has to have advanced by the time they see it again. Reading only in `onCreate` would leave it stale
+ * until the process restarted.
+ *
+ * **Inputs:** none — this is the launcher entry point.
+ * **Opens:** every other screen, by explicit Intent.
+ * **Touches:** `learning_completed_step_ids` (read + write), `app_language_code` and
+ * `app_language_onboarding_completed` (read + write, through the onboarding dialogs).
+ *
+ * The path never hides or reorders the sections below it: an experienced chanter ignores the card and
+ * taps straight through.
+ */
 class MainActivity : BaseActivity() {
     /** Re-read in [onResume] so the card advances after the learner comes back from a lesson. */
     private val completedSteps = mutableStateOf<Set<String>>(emptySet())

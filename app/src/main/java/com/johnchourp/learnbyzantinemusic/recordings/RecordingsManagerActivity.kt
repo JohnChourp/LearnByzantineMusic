@@ -20,6 +20,25 @@ import com.johnchourp.learnbyzantinemusic.recordings.ui.RecordingsManagerScreen
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.launch
 
+/**
+ * The «Διαχείριση ηχογραφήσεων» screen: browse, search, sort, rename, move and delete inside the
+ * recordings folder.
+ *
+ * **Flow.** Reads from the Room index rather than from SAF directly, paged with Paging3, so a folder
+ * with thousands of files scrolls smoothly. A BFS indexer fills that index in the background through
+ * WorkManager; the linear progress at the top is that reindex, not a page load.
+ *
+ * **Guards worth knowing about** (each exists because it was hit for real):
+ * - tree vs document URI normalisation, so a folder holding only sub-folders is not reported empty;
+ * - a move into the folder itself, into one of its own descendants, or into its current parent is
+ *   refused before it starts;
+ * - rename falls back to copy+delete when a provider's direct `renameTo` fails;
+ * - a document that has disappeared underneath the app resolves to «καταργήθηκε» and is dropped from
+ *   the list instead of lingering as a dead row.
+ *
+ * **Inputs:** none — it opens on the folder recorded in preferences.
+ * **Touches:** `recordings_folder_tree_uri` and the `recordings_index.db` Room index.
+ */
 class RecordingsManagerActivity : BaseActivity() {
     private lateinit var recordingsPrefs: RecordingsPrefs
     private val recordingsRepository by lazy { RecordingsRepository.getInstance(applicationContext) }
