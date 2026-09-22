@@ -58,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.modes.IsonDrone
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleFrequencies
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleGenus
 import com.johnchourp.learnbyzantinemusic.modes.ModeTheoryCatalog
@@ -79,6 +80,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import androidx.compose.material3.Switch
+import androidx.compose.runtime.DisposableEffect
 
 private const val SCALE_OCTAVES = 3
 private const val BASE_REFERENCE_PHTHONG = "Νη"
@@ -102,6 +105,8 @@ fun EightModesScreen(
     onBaseShiftChange: (modeIndex: Int, moria: Int) -> Unit,
     onTonePress: (Double) -> Unit,
     onToneRelease: () -> Unit,
+    /** Non-null starts (or retunes) the ison drone; null stops it. */
+    onDroneChange: (Double?) -> Unit,
     onOpenMenu: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -114,12 +119,25 @@ fun EightModesScreen(
         mutableStateMapOf<Int, Int>().apply { putAll(initialBaseShifts) }
     }
     var activeIndex by remember { mutableStateOf(-1) }
+    var droneOn by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     // Switching modes never carries a held tone over.
     LaunchedEffect(selectedModeIndex) {
         activeIndex = -1
         onToneRelease()
+    }
+
+    // The drone's pitch is derived, not stored: whenever the mode or its base shift changes it is
+    // recomputed and the drone retuned in place, so it can never keep sounding the previous mode's
+    // base. Switching off, or leaving the composition, stops it — that is what keeps the second
+    // AudioTrack from outliving the screen.
+    val droneBase = isonBaseFor(selectedModeIndex, baseShiftByMode[selectedModeIndex] ?: 0)
+    LaunchedEffect(droneOn, droneBase?.frequencyHz) {
+        onDroneChange(if (droneOn) droneBase?.frequencyHz else null)
+    }
+    DisposableEffect(Unit) {
+        onDispose { onDroneChange(null) }
     }
 
     val currentGenus = EIGHT_MODES[selectedModeIndex].genus
@@ -178,6 +196,13 @@ fun EightModesScreen(
                         scope = scope,
                     )
                 }
+            }
+            StaggeredAppear(delayMillis = 210) {
+                IsonDroneCard(
+                    enabled = droneOn,
+                    baseLabel = droneBase?.label,
+                    onToggle = { droneOn = it },
+                )
             }
             StaggeredAppear(delayMillis = 240) {
                 TimbreCard(
@@ -435,6 +460,59 @@ private fun ScaleCard(
                 }
             },
         )
+    }
+}
+
+/* ----------------------------- Ισοκράτημα (ison drone) ----------------------------- */
+
+/** The ison's label and pitch for a mode at a given base shift. */
+private data class IsonBase(val label: String, val frequencyHz: Double)
+
+/**
+ * Resolves the ison from the same scale data the diagram is drawn from, so the drone and the
+ * diagram's base key cannot disagree — including after the «Μεταφορά βάσης» slider moves them.
+ */
+@Composable
+private fun isonBaseFor(modeIndex: Int, baseShiftMoria: Int): IsonBase? {
+    val scale = EIGHT_MODES[modeIndex].scale
+    return remember(modeIndex, baseShiftMoria) {
+        val ascendingIntervals = scale.repeatedIntervals(SCALE_OCTAVES)
+        val phthongsTopToBottom = scale.ascendingPhthongs(SCALE_OCTAVES).reversed()
+        val referenceMoria = scale.referenceMoriaFromBottom(BASE_REFERENCE_PHTHONG, SCALE_OCTAVES)
+        val frequencies =
+            ModeScaleFrequencies.topToBottom(ascendingIntervals, referenceMoria, baseShiftMoria)
+        IsonDrone.frequencyHz(phthongsTopToBottom, frequencies, scale.base.phthong)
+            ?.let { IsonBase(scale.base.phthong, it) }
+    }
+}
+
+/**
+ * Toggle for the continuous drone, naming the φθόγγος it holds so the singer knows what they are
+ * chanting against.
+ */
+@Composable
+private fun IsonDroneCard(enabled: Boolean, baseLabel: String?, onToggle: (Boolean) -> Unit) {
+    LessonCard(title = stringResource(R.string.eight_modes_ison_card_title)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = if (enabled && baseLabel != null) {
+                        stringResource(R.string.eight_modes_ison_active, baseLabel)
+                    } else {
+                        stringResource(R.string.eight_modes_ison_hint)
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (enabled) LbmBrown else LbmTextSecondary,
+                    fontWeight = if (enabled) FontWeight.SemiBold else FontWeight.Normal,
+                )
+            }
+            Spacer(Modifier.width(12.dp))
+            Switch(
+                checked = enabled,
+                onCheckedChange = onToggle,
+                enabled = baseLabel != null,
+            )
+        }
     }
 }
 
