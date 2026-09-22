@@ -6,6 +6,7 @@
     <string name="learn_byzantine_music">LEARN BYZANTINE MUSIC</string>
 
     <!-- Home screen (redesigned Compose) -->
+    <string name="home_search_theory_hint">Search the theory…</string>
     <string name="home_subtitle">Learn Byzantine music step by step</string>
     <string name="home_section_phthongs">Notes &amp; Names</string>
     <string name="home_section_phthongs_sub">Start with the basics</string>

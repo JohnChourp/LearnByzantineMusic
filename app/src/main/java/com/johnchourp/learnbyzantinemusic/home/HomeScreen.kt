@@ -33,6 +33,8 @@ fun HomeScreen(
     sections: List<HomeSection>,
     modifier: Modifier = Modifier,
     learningPath: LearningPathUi? = null,
+    /** Opens the theory search. Null hides the row entirely rather than showing a dead control. */
+    onOpenSearch: (() -> Unit)? = null,
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -42,6 +44,9 @@ fun HomeScreen(
             .verticalScroll(scrollState),
     ) {
         HomeHeroHeader(title = title, subtitle = subtitle)
+        if (onOpenSearch != null) {
+            HomeSearchRow(onClick = onOpenSearch, modifier = Modifier.padding(horizontal = 16.dp))
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()

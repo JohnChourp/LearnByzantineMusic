@@ -31,6 +31,7 @@ import com.johnchourp.learnbyzantinemusic.learning.LearningPath
 import com.johnchourp.learnbyzantinemusic.learning.LearningProgress
 import com.johnchourp.learnbyzantinemusic.home.TileAccent
 import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
+import com.johnchourp.learnbyzantinemusic.modes.EightModesNavigation
 import com.johnchourp.learnbyzantinemusic.notes.NotesActivity
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
@@ -73,6 +74,15 @@ class MainActivity : BaseActivity() {
                     version = BuildConfig.VERSION_NAME,
                     sections = sections,
                     learningPath = learningPathUi(sections, completedSteps.value),
+                    // canOpenEightModesHome: from here the «8 Ήχοι» row must actually navigate.
+                    // Inside that screen it is where you already are, so it does nothing there.
+                    onOpenSearch = {
+                        EightModesNavigation.showMenu(
+                            activity = this,
+                            selectedTopicKey = null,
+                            canOpenEightModesHome = true,
+                        )
+                    },
                 )
             }
         }

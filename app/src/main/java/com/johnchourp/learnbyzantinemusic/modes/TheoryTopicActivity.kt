@@ -8,6 +8,10 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
+import androidx.core.graphics.ColorUtils
 
 /**
  * A single theory page under «8 Ήχοι» — one entry of [TheoryTopicCatalog], rendered generically.
@@ -37,6 +41,7 @@ class TheoryTopicActivity : BaseActivity() {
     private lateinit var bodyText: TextView
     private lateinit var currentTopic: TheoryTopic
     private var currentPathTopicKeys: List<String> = emptyList()
+    private var highlightQuery: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +58,7 @@ class TheoryTopicActivity : BaseActivity() {
         currentTopic = TheoryTopicCatalog.byKey(
             intent.getStringExtra(TheoryTopicCatalog.EXTRA_TOPIC_KEY)
         )
+        highlightQuery = intent.getStringExtra(EightModesNavigation.EXTRA_HIGHLIGHT_QUERY).orEmpty()
         currentPathTopicKeys = EightModesNavigation.resolveTopicPath(
             pathTopicKeys = intent.getStringArrayListExtra(
                 EightModesNavigation.EXTRA_NAV_PATH_TOPIC_KEYS
@@ -68,6 +74,35 @@ class TheoryTopicActivity : BaseActivity() {
             EightModesNavigation.showMenu(this, selectedTopicKey = currentTopic.key)
         }
         backButton.setOnClickListener { finish() }
+    }
+
+    /**
+     * Lights up the search term that led here (ClickUp `869f4tph0`).
+     *
+     * Applied **after** [TheoryTopicLinks.setLinkedText] has run, and with `SPAN_EXCLUSIVE_EXCLUSIVE`,
+     * so the existing tappable cross-links keep their own spans and behaviour — a highlight must not
+     * cost the reader a working link.
+     *
+     * Ranges come from [TheorySearch.matchRanges], the same matcher the menu used to decide this page
+     * was a result. Anything else would sometimes light nothing on a page the search had just found,
+     * which reads as a broken page rather than a near-miss.
+     */
+    private fun applyHighlight(textView: TextView) {
+        if (highlightQuery.isBlank()) return
+        val text = textView.text ?: return
+        val ranges = TheorySearch.matchRanges(text.toString(), highlightQuery)
+        if (ranges.isEmpty()) return
+        val spannable = SpannableString(text)
+        val color = ContextCompat.getColor(this, R.color.first_mode_theory_accent)
+        ranges.forEach { range ->
+            spannable.setSpan(
+                BackgroundColorSpan(ColorUtils.setAlphaComponent(color, HIGHLIGHT_ALPHA)),
+                range.first,
+                range.last + 1,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
+        textView.text = spannable
     }
 
     /** Star state is rendered from the value the store returns, never from a local toggle, so the
@@ -87,6 +122,7 @@ class TheoryTopicActivity : BaseActivity() {
         title = getString(topic.titleRes)
         breadcrumbText.text = EightModesNavigation.breadcrumbText(this, currentPathTopicKeys)
         titleText.setText(topic.titleRes)
+        applyHighlight(titleText)
         if (topic.bodyRes == 0) {
             bodyCard.visibility = View.GONE
             bodyText.text = ""
@@ -102,6 +138,12 @@ class TheoryTopicActivity : BaseActivity() {
             bodyText.setTextColor(
                 ContextCompat.getColor(this, R.color.first_mode_theory_text_primary)
             )
+            applyHighlight(bodyText)
         }
     }
+    private companion object {
+        /** Enough to find the word at a glance, light enough to keep the text readable. */
+        const val HIGHLIGHT_ALPHA = 64
+    }
+
 }

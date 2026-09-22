@@ -5,6 +5,7 @@
     <string name="learn_byzantine_music">ΜΑΘΕΤΕ ΒΥΖΑΝΤΙΝΗ ΜΟΥΣΙΚΗ</string>
 
     <!-- Home screen (redesigned Compose) -->
+    <string name="home_search_theory_hint">Αναζήτηση στη θεωρία…</string>
     <string name="home_subtitle">Μάθε βυζαντινή μουσική βήμα-βήμα</string>
     <string name="home_section_phthongs">Φθόγγοι &amp; Ονόματα</string>
     <string name="home_section_phthongs_sub">Ξεκίνα από τα βασικά</string>
