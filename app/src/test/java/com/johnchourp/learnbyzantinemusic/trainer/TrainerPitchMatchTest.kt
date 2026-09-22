@@ -1,5 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
+
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -27,7 +29,7 @@ class TrainerPitchMatchTest {
     @Test
     fun `a slightly sharp pitch reports positive moria deviation`() {
         // 2 moria above Νη.
-        val twoMoriaSharp = TrainerPitchTable.BASE_NI_FREQUENCY_HZ * Math.pow(2.0, 2.0 / 72.0)
+        val twoMoriaSharp = ByzantineTuning.frequencyHz(2.0)
         val match = TrainerPitchTable.nearestPhthong(twoMoriaSharp)
         assertEquals(TrainerPhthong.NI, match?.phthong)
         assertEquals(2.0, match!!.deviationMoria, 0.05)
