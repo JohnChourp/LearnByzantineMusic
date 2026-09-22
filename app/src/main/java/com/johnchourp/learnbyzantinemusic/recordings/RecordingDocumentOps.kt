@@ -46,8 +46,12 @@ object RecordingDocumentOps {
         parentFolderUri: Uri,
         targetName: String
     ): RenameOutcome {
-        val parentFolder = DocumentFile.fromTreeUri(context, parentFolderUri)
-            ?: DocumentFile.fromSingleUri(context, parentFolderUri)
+        // fromTreeUri THROWS IllegalArgumentException("Invalid URI") when handed a single-document
+        // URI — it does not return null, so the elvis below never saw it. A tree/document mix-up
+        // therefore crashed the rename instead of failing it. Found by the SAF instrumentation
+        // tests on 2026-09-22 (ClickUp 869f4tpt9).
+        val parentFolder = runCatching { DocumentFile.fromTreeUri(context, parentFolderUri) }.getOrNull()
+            ?: runCatching { DocumentFile.fromSingleUri(context, parentFolderUri) }.getOrNull()
             ?: return RenameOutcome.FAILED
         if (!parentFolder.exists() || !parentFolder.isDirectory) {
             return RenameOutcome.FAILED
