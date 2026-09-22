@@ -22,6 +22,7 @@ class AppPrefsRegistryTest {
                 "app_language_onboarding_completed",
                 "favorite_topic_ids",
                 "learning_completed_step_ids",
+                "metronome_bpm",
                 "mode_base_shift_moria_<modeKey>",
                 "notes_folder_tree_uri",
                 "notes_last_sync_epoch_ms",

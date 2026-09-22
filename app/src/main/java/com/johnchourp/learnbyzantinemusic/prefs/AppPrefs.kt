@@ -124,6 +124,16 @@ object AppPrefs {
         readBy = "the «8 Ήχοι» pages menu, which lists favourites first",
     )
 
+    val MetronomeBpm = Key(
+        name = "metronome_bpm",
+        store = Store.SETTINGS,
+        type = Type.INT,
+        default = "80",
+        allowed = "40..160 χρόνοι per minute; values outside are clamped on read and on write",
+        writtenBy = "the tempo slider on the «Δίσημος/Τρίσημος/Τετράσημος» page",
+        readBy = "the same page, which reopens at the tempo the learner was practising at",
+    )
+
     // ---- RECORDINGS ---------------------------------------------------------------------------
 
     val RecordingsFolderTreeUri = Key(
@@ -236,6 +246,7 @@ object AppPrefs {
         LanguageOnboardingCompleted,
         LearningCompletedStepIds,
         FavoriteTopicIds,
+        MetronomeBpm,
         RecordingsFolderTreeUri,
         RecordingsOutputFormat,
         NotesFolderTreeUri,
