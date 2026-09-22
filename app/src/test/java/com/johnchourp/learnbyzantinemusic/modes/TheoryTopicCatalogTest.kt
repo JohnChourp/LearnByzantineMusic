@@ -136,4 +136,69 @@ class TheoryTopicCatalogTest {
         TheoryTopicLinks.linkPatterns.any { pattern ->
             pattern.topicKey == topicKey && pattern.regex.containsMatchIn(textValue)
         }
+
+    /**
+     * ClickUp `869f4tph0` (A3): *«κάθε νέα σελίδα να είναι υποχρεωτικά searchable»*.
+     *
+     * A page becomes searchable by being in this catalog — `EightModesNavigation.entries()` builds
+     * every row from it, and the menu is generated, never hand-written. So the thing to guard is
+     * that nobody adds a page *around* the catalog, and that every catalog entry carries the text
+     * the search actually indexes.
+     */
+    @Test
+    fun everyCatalogTopicCanBeFoundByTheSearch() {
+        val topics = TheoryTopicCatalog.topics
+        assertTrue("the catalog must not be empty", topics.isNotEmpty())
+
+        topics.forEach { topic ->
+            // Titles are what the search indexes first; a topic without one could never be found.
+            assertNotEquals("topic ${topic.key} has no title resource", 0, topic.titleRes)
+            // Keys are stable identifiers, which is what makes a search hit addressable.
+            assertTrue(
+                "topic key '${topic.key}' must be an identifier",
+                Regex("^[a-z0-9_]+$").matches(topic.key),
+            )
+            assertEquals(
+                "byKey must round-trip ${topic.key}, otherwise a search result cannot open it",
+                topic,
+                TheoryTopicCatalog.byKey(topic.key),
+            )
+        }
+    }
+
+    @Test
+    fun theGeneratedMenuCoversTheWholeCatalogAndNothingElse() {
+        // navigationEntryKeys is the home entry plus every topic. If a page were ever added straight
+        // to the menu instead of to the catalog, these two would stop agreeing.
+        val expected = listOf(EightModesNavigation.HOME_ENTRY_KEY) + TheoryTopicCatalog.topics.map { it.key }
+        assertEquals(expected, EightModesNavigation.navigationEntryKeys())
+    }
+
+    @Test
+    fun searchableTextIsMatchedByTheSameRuleTheMenuUses() {
+        // The rows the menu filters are NavigationEntry values; filtering them must go through
+        // TheorySearch, so a title typed without accents finds its page.
+        val rows = TheoryTopicCatalog.topics.map { topic ->
+            EightModesNavigation.NavigationEntry(
+                key = topic.key,
+                title = topic.key,
+                searchableText = "πεταστή ${topic.key}",
+                topicKey = topic.key,
+            )
+        }
+        assertEquals(
+            "an unaccented query must still find every row",
+            rows.size,
+            EightModesNavigation.filterEntries(rows, "πεταστη").size,
+        )
+        assertEquals(
+            "a blank query keeps every row",
+            rows.size,
+            EightModesNavigation.filterEntries(rows, "").size,
+        )
+        assertTrue(
+            "an absent term finds nothing",
+            EightModesNavigation.filterEntries(rows, "δενυπαρχει").isEmpty(),
+        )
+    }
 }
