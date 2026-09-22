@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic
 
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import android.content.Context
 import android.content.res.Configuration
 import androidx.annotation.StringRes
@@ -9,9 +10,6 @@ object AppLanguage {
     const val languageGreek = "el"
     const val languageEnglish = "en"
 
-    private const val prefsName = "learn_byzantine_music_settings"
-    private const val prefsLanguageCodeKey = "app_language_code"
-    private const val prefsLanguageOnboardingCompletedKey = "app_language_onboarding_completed"
 
     private val supportedLanguages = setOf(languageGreek, languageEnglish)
 
@@ -19,24 +17,24 @@ object AppLanguage {
         if (rawCode in supportedLanguages) rawCode!! else languageGreek
 
     fun getSavedLanguageCode(context: Context): String {
-        val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-        val raw = prefs.getString(prefsLanguageCodeKey, languageGreek)
+        val prefs = AppPrefs.open(context, AppPrefs.Store.SETTINGS)
+        val raw = prefs.getString(AppPrefs.LanguageCode.name, languageGreek)
         return normalizeLanguageCode(raw)
     }
 
     fun saveLanguageCode(context: Context, languageCode: String) {
-        val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-        prefs.edit().putString(prefsLanguageCodeKey, normalizeLanguageCode(languageCode)).apply()
+        val prefs = AppPrefs.open(context, AppPrefs.Store.SETTINGS)
+        prefs.edit().putString(AppPrefs.LanguageCode.name, normalizeLanguageCode(languageCode)).apply()
     }
 
     fun isLanguageOnboardingCompleted(context: Context): Boolean {
-        val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-        return prefs.getBoolean(prefsLanguageOnboardingCompletedKey, false)
+        val prefs = AppPrefs.open(context, AppPrefs.Store.SETTINGS)
+        return prefs.getBoolean(AppPrefs.LanguageOnboardingCompleted.name, false)
     }
 
     fun setLanguageOnboardingCompleted(context: Context, completed: Boolean) {
-        val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-        prefs.edit().putBoolean(prefsLanguageOnboardingCompletedKey, completed).apply()
+        val prefs = AppPrefs.open(context, AppPrefs.Store.SETTINGS)
+        prefs.edit().putBoolean(AppPrefs.LanguageOnboardingCompleted.name, completed).apply()
     }
 
     fun getNativeLanguageName(languageCode: String): String =

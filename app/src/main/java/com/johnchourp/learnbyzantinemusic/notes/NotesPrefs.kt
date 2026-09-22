@@ -1,11 +1,12 @@
 package com.johnchourp.learnbyzantinemusic.notes
 
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 
 class NotesPrefs(context: Context) {
-    private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val prefs = AppPrefs.open(context, AppPrefs.Store.NOTES)
 
     fun getFolderUri(): Uri? {
         val raw = prefs.getString(KEY_NOTES_FOLDER_TREE_URI, null) ?: return null
@@ -45,9 +46,8 @@ class NotesPrefs(context: Context) {
     }
 
     companion object {
-        private const val PREFS_NAME = "learn_byzantine_music_notes"
-        const val KEY_NOTES_FOLDER_TREE_URI = "notes_folder_tree_uri"
-        const val KEY_NOTES_LAST_SYNC_EPOCH_MS = "notes_last_sync_epoch_ms"
-        const val KEY_NOTES_LAST_SYNC_ERROR = "notes_last_sync_error"
+        val KEY_NOTES_FOLDER_TREE_URI = AppPrefs.NotesFolderTreeUri.name
+        val KEY_NOTES_LAST_SYNC_EPOCH_MS = AppPrefs.NotesLastSyncEpochMs.name
+        val KEY_NOTES_LAST_SYNC_ERROR = AppPrefs.NotesLastSyncError.name
     }
 }

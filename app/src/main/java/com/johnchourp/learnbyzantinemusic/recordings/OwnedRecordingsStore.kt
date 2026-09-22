@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.recordings
 
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import android.content.Context
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow
@@ -35,7 +36,7 @@ fun OwnedRecordingEntry.toRecordingListItem(): RecordingListItem {
 }
 
 class OwnedRecordingsStore(context: Context) {
-    private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val prefs = AppPrefs.open(context, AppPrefs.Store.OWNED_RECORDINGS)
     private val entriesFlow = MutableStateFlow(loadEntries())
     private val lock = Any()
 
@@ -177,8 +178,7 @@ class OwnedRecordingsStore(context: Context) {
     }
 
     companion object {
-        private const val PREFS_NAME = "learn_byzantine_music_owned_recordings"
-        private const val KEY_OWNED_RECORDINGS = "owned_recordings"
+        private val KEY_OWNED_RECORDINGS = AppPrefs.OwnedRecordings.name
         private const val MAX_ENTRIES = 300
     }
 }

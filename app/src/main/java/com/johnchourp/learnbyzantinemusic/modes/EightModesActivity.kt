@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -21,7 +22,7 @@ class EightModesActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        prefs = getSharedPreferences(BASE_SHIFT_PREFS_NAME, MODE_PRIVATE)
+        prefs = AppPrefs.open(this, AppPrefs.Store.EIGHT_MODES)
         activeTimbre = loadSavedTimbre()
 
         setContent {
@@ -77,7 +78,7 @@ class EightModesActivity : BaseActivity() {
         prefs.edit().putInt(baseShiftPrefKey(key), bounded).apply()
     }
 
-    private fun baseShiftPrefKey(modeKey: String): String = "$BASE_SHIFT_PREF_KEY_PREFIX$modeKey"
+    private fun baseShiftPrefKey(modeKey: String): String = AppPrefs.baseShiftKeyName(modeKey)
 
     override fun onStop() {
         tonePlayer.stop()
@@ -93,9 +94,8 @@ class EightModesActivity : BaseActivity() {
         const val BASE_SHIFT_MORIA_MIN = -12
         const val BASE_SHIFT_MORIA_MAX = 12
         const val BASE_SHIFT_DEFAULT_MORIA = 0
-        const val BASE_SHIFT_PREFS_NAME = "eight_modes_base_shift_prefs"
-        const val BASE_SHIFT_PREF_KEY_PREFIX = "mode_base_shift_moria_"
-        const val TONE_TIMBRE_PREF_KEY = "selected_tone_timbre"
-        const val SELECTED_MODE_KEY_PREF_KEY = "selected_mode_key"
+        const val BASE_SHIFT_PREF_KEY_PREFIX = AppPrefs.BASE_SHIFT_KEY_PREFIX
+        val TONE_TIMBRE_PREF_KEY = AppPrefs.SelectedToneTimbre.name
+        val SELECTED_MODE_KEY_PREF_KEY = AppPrefs.SelectedModeKey.name
     }
 }
