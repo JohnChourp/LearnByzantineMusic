@@ -178,6 +178,7 @@ class RecordingsActivity : BaseActivity() {
                     onStopRecording = { stopAndPersistRecording() },
                     onFormatChanged = { viewModel.setSelectedFormat(it) },
                     onOpenRecording = { openRecordingInExternalPlayer(it) },
+                    onShareRecording = { shareRecording(it) },
                     onRenameRecording = { showRenameRecordingDialog(it) },
                     onDeleteRecording = { showDeleteRecordingDialog(it) }
                 )
@@ -380,6 +381,36 @@ class RecordingsActivity : BaseActivity() {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    /**
+     * Shares one recording through the system share sheet (ClickUp `869f4tpmq`).
+     *
+     * Checks the document still exists first, for the same reason opening does: a file moved or
+     * deleted outside the app would otherwise produce an opaque failure instead of the «καταργήθηκε»
+     * handling the rest of the screen uses.
+     */
+    private fun shareRecording(item: RecordingListItem) {
+        lifecycleScope.launch {
+            if (!recordingsRepository.checkRecordingExists(item.uri)) {
+                handleRemovedRecording(item)
+                return@launch
+            }
+            recordingExternalOpener.shareRecording(
+                sourceUri = item.uri,
+                fileName = item.name,
+                mimeType = resolvePlaybackMimeType(item),
+                chooserTitle = getString(R.string.recordings_share_chooser_title),
+                onFailure = {
+                    setStatus(getString(R.string.recordings_share_failed))
+                    Toast.makeText(
+                        this@RecordingsActivity,
+                        R.string.recordings_share_failed,
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                },
+            )
+        }
     }
 
     private fun openRecordingInExternalPlayer(item: RecordingListItem) {

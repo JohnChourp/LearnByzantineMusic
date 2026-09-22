@@ -29,6 +29,7 @@ import com.johnchourp.learnbyzantinemusic.R
  */
 class TheoryTopicActivity : BaseActivity() {
     private lateinit var navigationMenuButton: Button
+    private lateinit var favoriteButton: Button
     private lateinit var backButton: Button
     private lateinit var breadcrumbText: TextView
     private lateinit var titleText: TextView
@@ -42,6 +43,7 @@ class TheoryTopicActivity : BaseActivity() {
         setContentView(R.layout.layout_theory_topic)
 
         navigationMenuButton = findViewById(R.id.theory_topic_navigation_menu_button)
+        favoriteButton = findViewById(R.id.theory_topic_favorite_button)
         backButton = findViewById(R.id.theory_topic_back_button)
         breadcrumbText = findViewById(R.id.theory_topic_breadcrumb)
         titleText = findViewById(R.id.theory_topic_title)
@@ -58,10 +60,27 @@ class TheoryTopicActivity : BaseActivity() {
             currentTopicKey = currentTopic.key
         )
         bindTopic(currentTopic)
+        renderFavorite(TheoryTopicFavorites.isFavorite(this, currentTopic.key))
+        favoriteButton.setOnClickListener {
+            renderFavorite(TheoryTopicFavorites.toggle(this, currentTopic.key))
+        }
         navigationMenuButton.setOnClickListener {
             EightModesNavigation.showMenu(this, selectedTopicKey = currentTopic.key)
         }
         backButton.setOnClickListener { finish() }
+    }
+
+    /** Star state is rendered from the value the store returns, never from a local toggle, so the
+     *  button cannot end up showing a state that was refused (e.g. an unknown topic key). */
+    private fun renderFavorite(isFavorite: Boolean) {
+        favoriteButton.setText(
+            if (isFavorite) R.string.theory_topic_favorite_on_symbol
+            else R.string.theory_topic_favorite_off_symbol
+        )
+        favoriteButton.contentDescription = getString(
+            if (isFavorite) R.string.theory_topic_favorite_remove
+            else R.string.theory_topic_favorite_add
+        )
     }
 
     private fun bindTopic(topic: TheoryTopic) {

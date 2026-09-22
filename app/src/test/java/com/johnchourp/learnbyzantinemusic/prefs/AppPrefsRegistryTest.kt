@@ -20,6 +20,7 @@ class AppPrefsRegistryTest {
                 "app_font_step",
                 "app_language_code",
                 "app_language_onboarding_completed",
+                "favorite_topic_ids",
                 "learning_completed_step_ids",
                 "mode_base_shift_moria_<modeKey>",
                 "notes_folder_tree_uri",

@@ -427,6 +427,17 @@
     <string name="title_activity_mode_theory">Αναλυτική Θεωρία Ήχου</string>
     <string name="title_activity_theory_topic">Θεωρία Συστήματος</string>
     <string name="mode_theory_back_button">← Επιστροφή στους 8 Ήχους</string>
+    <string name="shortcut_new_recording_short">Νέα ηχογράφηση</string>
+    <string name="shortcut_new_recording_long">Νέα ηχογράφηση</string>
+    <string name="recordings_share_chooser_title">Κοινοποίηση ηχογράφησης</string>
+    <string name="recordings_share_failed">Αποτυχία κοινοποίησης ηχογράφησης.</string>
+    <string name="recordings_action_share">Κοινοποίηση</string>
+    <string name="notes_action_share">Κοινοποίηση σημείωσης</string>
+    <string name="notes_share_chooser_title">Κοινοποίηση σημείωσης</string>
+    <string name="theory_topic_favorite_off_symbol">☆</string>
+    <string name="theory_topic_favorite_on_symbol">★</string>
+    <string name="theory_topic_favorite_add">Προσθήκη στα αγαπημένα</string>
+    <string name="theory_topic_favorite_remove">Αφαίρεση από τα αγαπημένα</string>
     <string name="theory_topic_back_button">← Επιστροφή</string>
     <string name="mode_theory_badge">Θεωρία από τον πίνακα Οκτωηχείας</string>
     <string name="mode_theory_quick_facts_title">Γρήγορη εικόνα</string>

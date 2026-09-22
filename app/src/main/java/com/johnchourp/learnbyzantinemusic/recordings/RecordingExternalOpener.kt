@@ -50,6 +50,62 @@ class RecordingExternalOpener(
         return false
     }
 
+    /**
+     * Shares one recording through the Android share sheet (ClickUp `869f4tpmq`).
+     *
+     * **Unlike [openRecordingWithChooser], this never offers the original SAF URI.** Opening may fall
+     * back to it because some players cope better with the real document, and the chooser there is a
+     * short-lived view grant. Sharing hands the URI to an app the user picks, which may keep it,
+     * re-share it or upload it — so the only thing that leaves is a copy in our own cache, exposed
+     * through our own FileProvider. A SAF tree URI would carry a handle to the user's whole folder.
+     *
+     * Returns false when the copy fails, rather than silently falling back to the SAF URI: failing
+     * to share is a minor annoyance, leaking a folder grant is not.
+     */
+    suspend fun shareRecording(
+        sourceUri: Uri,
+        fileName: String,
+        mimeType: String?,
+        chooserTitle: String,
+        onFailure: (Throwable?) -> Unit
+    ): Boolean {
+        val cachedUri = runCatching {
+            withContext(Dispatchers.IO) {
+                val cachedFile = copyToOpenCache(sourceUri, fileName)
+                FileProvider.getUriForFile(
+                    activity,
+                    "${activity.packageName}.fileprovider",
+                    cachedFile
+                )
+            }
+        }.getOrElse { error ->
+            onFailure(error)
+            return false
+        }
+
+        val resolvedMime = resolveMimeType(fileName, mimeType) ?: "audio/*"
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = resolvedMime
+            putExtra(Intent.EXTRA_STREAM, cachedUri)
+            // The file name is the only metadata that travels; no absolute path, no SAF URI.
+            putExtra(Intent.EXTRA_SUBJECT, fileName)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            clipData = ClipData.newRawUri(fileName, cachedUri)
+        }
+
+        return runCatching {
+            activity.startActivity(
+                Intent.createChooser(sendIntent, chooserTitle).apply {
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            )
+            true
+        }.getOrElse { error ->
+            onFailure(error)
+            false
+        }
+    }
+
     private fun buildMimeCandidates(fileName: String, mimeType: String?): List<String> {
         return linkedSetOf<String>().apply {
             val resolvedMimeType = resolveMimeType(fileName, mimeType)

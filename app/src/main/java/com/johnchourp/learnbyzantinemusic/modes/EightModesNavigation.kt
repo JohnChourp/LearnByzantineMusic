@@ -90,7 +90,7 @@ object EightModesNavigation {
                 title = homeTitle,
                 searchableText = homeSearchText
             )
-        ) + TheoryTopicCatalog.topics.map { topic ->
+        ) + orderedTopics(context).map { topic ->
             val bodyText = if (topic.bodyRes == 0) "" else context.getString(topic.bodyRes)
             val title = context.getString(topic.titleRes)
             NavigationEntry(
@@ -100,6 +100,19 @@ object EightModesNavigation {
                 topicKey = topic.key
             )
         }
+    }
+
+    /**
+     * Catalog topics with the starred ones first (ClickUp `869f4tphx`). Ordering only — nothing is
+     * hidden, so a page is always reachable whether or not it is starred.
+     */
+    private fun orderedTopics(context: Context): List<TheoryTopic> {
+        val favorites = TheoryTopicFavorites.favorites(context).toSet()
+        if (favorites.isEmpty()) return TheoryTopicCatalog.topics
+        val byKey = TheoryTopicCatalog.topics.associateBy { it.key }
+        return TheoryTopicFavorites
+            .order(TheoryTopicCatalog.topics.map { it.key }, favorites)
+            .mapNotNull { byKey[it] }
     }
 
     fun filterEntries(entries: List<NavigationEntry>, query: String): List<NavigationEntry> {
