@@ -46,7 +46,7 @@ configurations.configureEach {
 
 android {
     namespace = "com.johnchourp.learnbyzantinemusic"
-    compileSdk = 36
+    compileSdk = 37
     val signingStoreFile = System.getenv("ANDROID_SIGNING_STORE_FILE")
     val signingStorePassword = System.getenv("ANDROID_SIGNING_STORE_PASSWORD")
     val signingKeyAlias = System.getenv("ANDROID_SIGNING_KEY_ALIAS")
@@ -92,8 +92,8 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
