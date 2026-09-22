@@ -113,6 +113,7 @@
     <string name="duotrio_tip_body">Tap a steady beat with your hand and say the phthongs inside each group: \"1-2\" for disimos, \"1-2-3\" for trisimos, \"1-2-3-4\" for tetrasimos. Keep the pulse even.</string>
     <string name="duotrio_play">Play</string>
     <string name="duotrio_pause">Pause</string>
+    <string name="duotrio_tempo_label">Tempo: %1$d beats per minute</string>
     <string name="duotrio_beat_counter">Beat %1$d of %2$d</string>
     <string name="duotrio_beat_cell_cd">Beat %1$d</string>
     <string name="cd_disimos">Disimos: two phthongs between two red measure bars.</string>

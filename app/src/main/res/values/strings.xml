@@ -112,6 +112,7 @@
     <string name="duotrio_tip_body">Χτύπα σταθερά με το χέρι σου και πες τους φθόγγους μέσα σε κάθε ομάδα: «1-2» για δίσημο, «1-2-3» για τρίσημο, «1-2-3-4» για τετράσημο. Κράτα τον παλμό σταθερό.</string>
     <string name="duotrio_play">Αναπαραγωγή</string>
     <string name="duotrio_pause">Παύση</string>
+    <string name="duotrio_tempo_label">Ταχύτητα: %1$d χτύποι/λεπτό</string>
     <string name="duotrio_beat_counter">Χρόνος %1$d από %2$d</string>
     <string name="duotrio_beat_cell_cd">Χρόνος %1$d</string>
     <string name="cd_disimos">Δίσημος: δύο φθόγγοι ανάμεσα σε δύο κόκκινες γραμμές μέτρου.</string>
