@@ -1114,4 +1114,14 @@
     <string name="learning_path_step">Step %1$d of %2$d</string>
     <string name="learning_path_start">Start</string>
     <string name="learning_path_continue">Continue</string>
+    <!-- Live voice mirror (E1) -->
+    <string name="eight_modes_mirror_card_title">Where am I</string>
+    <string name="eight_modes_mirror_hint">Turn the microphone on and chant: it tells you which phthong you are on, and how many moria away.</string>
+    <string name="eight_modes_mirror_listening">Listening…</string>
+    <string name="eight_modes_mirror_on_pitch">%1$s · you are on it</string>
+    <string name="eight_modes_mirror_sharp">%1$s · %2$d moria sharp</string>
+    <string name="eight_modes_mirror_flat">%1$s · %2$d moria flat</string>
+    <string name="eight_modes_mirror_denied">Without microphone permission I cannot hear you.</string>
+    <string name="eight_modes_mirror_unavailable">The microphone is not available right now.</string>
+    <string name="eight_modes_mirror_cd">Live voice indicator, in moria</string>
 </resources>

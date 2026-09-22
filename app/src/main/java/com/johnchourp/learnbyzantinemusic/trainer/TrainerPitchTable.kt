@@ -55,7 +55,7 @@ object TrainerPitchTable {
                 }
             }
         }
-        return PitchMatch(best, bestDeviation)
+        return PitchMatch(best, bestDeviation, frequencyHz)
     }
 }
 
@@ -63,7 +63,16 @@ object TrainerPitchTable {
 data class PitchMatch(
     val phthong: TrainerPhthong,
     /** Signed moria deviation from [phthong]: positive = sharp, negative = flat. */
-    val deviationMoria: Double
+    val deviationMoria: Double,
+    /**
+     * The frequency this match was made from, unrounded and **with its octave**.
+     *
+     * [phthong] and [deviationMoria] fold octaves away, which is what the trainer wants — a Δι is a
+     * Δι wherever it is sung. A caller matching against a ladder that spans several octaves needs
+     * the pitch itself, and reconstructing it from the folded pair silently lands an octave out.
+     * Defaulted so the existing test fixtures, which care only about the deviation, are unchanged.
+     */
+    val frequencyHz: Double = 0.0,
 ) {
     val deviationCents: Double get() = TrainerPitchTable.moriaToCents(deviationMoria)
 }

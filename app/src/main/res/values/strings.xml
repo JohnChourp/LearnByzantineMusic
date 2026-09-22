@@ -1113,4 +1113,14 @@
     <string name="learning_path_step">Βήμα %1$d από %2$d</string>
     <string name="learning_path_start">Ξεκίνα</string>
     <string name="learning_path_continue">Συνέχεια</string>
+    <!-- Ζωντανός καθρέφτης φωνής (E1) -->
+    <string name="eight_modes_mirror_card_title">Πού είμαι</string>
+    <string name="eight_modes_mirror_hint">Άνοιξε το μικρόφωνο και ψάλε: σου λέει σε ποιον φθόγγο είσαι και πόσα μόρια μακριά.</string>
+    <string name="eight_modes_mirror_listening">Ακούω…</string>
+    <string name="eight_modes_mirror_on_pitch">%1$s · είσαι μέσα</string>
+    <string name="eight_modes_mirror_sharp">%1$s · %2$d μόρια ψηλά</string>
+    <string name="eight_modes_mirror_flat">%1$s · %2$d μόρια χαμηλά</string>
+    <string name="eight_modes_mirror_denied">Χωρίς άδεια μικροφώνου δεν μπορώ να σε ακούσω.</string>
+    <string name="eight_modes_mirror_unavailable">Το μικρόφωνο δεν είναι διαθέσιμο τώρα.</string>
+    <string name="eight_modes_mirror_cd">Ζωντανή ένδειξη φωνής σε μόρια</string>
 </resources>
