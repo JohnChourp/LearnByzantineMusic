@@ -10,9 +10,9 @@ plugins {
 // needs Guava 33.x, which a plain force would downgrade).
 val securityFloors = mapOf(
     "com.google.guava:guava" to "32.1.3-jre",
-    "org.bouncycastle:bcprov-jdk18on" to "1.84",
-    "org.bouncycastle:bcpkix-jdk18on" to "1.84",
-    "org.bouncycastle:bcutil-jdk18on" to "1.84",
+    "org.bouncycastle:bcprov-jdk18on" to "1.85",
+    "org.bouncycastle:bcpkix-jdk18on" to "1.85",
+    "org.bouncycastle:bcutil-jdk18on" to "1.85",
     "org.apache.commons:commons-lang3" to "3.20.0",
     "org.apache.httpcomponents:httpclient" to "4.5.14",
 )
@@ -61,8 +61,8 @@ android {
         applicationId = "com.johnchourp.learnbyzantinemusic"
         minSdk = 24
         targetSdk = 34
-        versionCode = 52
-        versionName = "1.15.0"
+        versionCode = 53
+        versionName = "1.15.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -126,10 +126,6 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.appcompat)
     implementation("androidx.documentfile:documentfile:1.1.0")
-    implementation(libs.androidx.camera.core)
-    implementation(libs.androidx.camera.camera2)
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.view)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.paging)

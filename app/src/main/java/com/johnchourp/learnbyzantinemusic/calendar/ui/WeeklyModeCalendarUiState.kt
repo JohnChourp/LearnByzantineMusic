@@ -40,6 +40,12 @@ data class WeeklyModeCalendarUiState(
     val apostleReadings: List<ReadingRefUi> = emptyList(),
     val gospelReadings: List<ReadingRefUi> = emptyList(),
     val readingsEmpty: Boolean = false,
+    /**
+     * Set when the visible month is not fully covered by the dataset. Non-null means the panel must
+     * say "we do not have data for this month yet" instead of letting an empty list read as
+     * "nothing happens today" (ClickUp `869f4tprf`).
+     */
+    val coverageNoticeRes: Int? = null,
 )
 
 /** The visible month's grid, used as the [AnimatedContent] target so month changes slide cleanly. */

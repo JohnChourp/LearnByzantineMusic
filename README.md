@@ -42,9 +42,9 @@
 Στο Core MVP v2 ο scanner engine χρησιμοποιεί primary OCR templates από core drawables και semantic parser `base+modifier` (π.χ. `πεταστή`, `απόστροφος`, `κλάσμα`, `γοργό`, `αντικένωμα+απλή`).
 Ο επιλεγμένος `Ήχος` επηρεάζει πλέον πραγματικά την καμπύλη πορείας μέσω mode profiles (`byzantine_mode_rules_v1.json`), ενώ η διάρκεια ανά event αποδίδεται με κανόνες χρόνου.
 Πλέον υποστηρίζεται και αυτοματοποιημένη διαδικασία release στο GitHub με tag-based publish, user-friendly release notes και ένα custom release asset (`apk-release.apk`).
-Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.22.0`, Protobuf runtime modules σε `4.35.1`, `jdom2` σε `2.0.6.1`, Netty modules σε `4.2.18.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.28.0`, `commons-lang3` σε `3.20.0`, `bcpkix-jdk18on` σε `1.84`, `bcprov-jdk18on` σε `1.84` και `bcutil-jdk18on` σε `1.84`.
-Για το app dependency graph υπάρχει explicit δήλωση `com.google.guava:guava:32.1.3-jre` (catalog + `implementation` + `kapt`).
-Στα configurations του `:app` ισχύουν security floors (ελάχιστες patched εκδόσεις που μόνο ανεβάζουν, ποτέ δεν κατεβάζουν μια παλαιότερη requested έκδοση): Guava `32.1.3-jre`, BouncyCastle `1.84`, `commons-lang3` `3.20.0`, `httpclient` `4.5.14`. Εκεί το AGP 9 κάνει resolve τα lint και UTP tool classpaths.
+Το build classpath κάνει forced resolve transitive εξαρτήσεις ασφαλείας: `commons-io` σε `2.22.0`, Protobuf runtime modules σε `4.35.1`, `jdom2` σε `2.0.6.1`, Netty modules σε `4.2.18.Final`, `jose4j` σε `0.9.6`, `commons-compress` σε `1.28.0`, `commons-lang3` σε `3.20.0`, `bcpkix-jdk18on` σε `1.85`, `bcprov-jdk18on` σε `1.85` και `bcutil-jdk18on` σε `1.85`.
+Για το app dependency graph υπάρχει πλέον και explicit pin στο `com.google.guava:guava:32.1.3-jre` (catalog + `implementation` + `kapt`) ώστε το security graph να αναγνωρίζει deterministic patched version.
+Στα configurations του `:app` ισχύουν επιπλέον security floors (ελάχιστες patched εκδόσεις που μόνο ανεβάζουν, ποτέ δεν κατεβάζουν μια νεότερη requested έκδοση): Guava `32.1.3-jre`, BouncyCastle `1.85`, `commons-lang3` `3.20.0`, `httpclient` `4.5.14`. Εκεί το AGP 9 κάνει resolve τα lint και UTP tool classpaths, τα οποία τα root forces δεν φτάνουν.
 Στα configurations του `:app` τα Netty `4.1.x` (που φέρνουν τα AGP/UTP test-platform artifacts μέσω `grpc-netty`) ευθυγραμμίζονται σε `4.1.138.Final`.
 
 ## Business flow
@@ -118,13 +118,13 @@
 - Το touch playback καλύπτει όλο το Πα-based ή Νη-based τριπλό εύρος του επιλεγμένου ήχου.
 - Με απελευθέρωση (`UP`) ή έξοδο του δαχτύλου εκτός label (`EXIT`), ο τόνος σταματά άμεσα.
 - Για νέα έκδοση app, ο maintainer τρέχει `scripts/release-and-tag.sh` (ή το skill wrapper), γίνεται bump έκδοσης, build release artifacts, ενιαίο commit με όλες τις αλλαγές του working tree, και tag push.
-- Το release script δημιουργεί αυτόματα συνοπτική, user-friendly περιγραφή αλλαγών από previous tag σε νέο tag (`RELEASE_NOTES.md`) με πλήρη λίστα commits, χωρίς να επαναλαμβάνει τον τίτλο του release.
+- Τα release notes (`RELEASE_NOTES.md`) τα παράγει το `scripts/generate-release-notes.sh`, κοινό για το release script και το tag workflow: οι αλλαγές από το προηγούμενο tag ανά pull request (first-parent history), ομαδοποιημένες ανά είδος (Νέα, Διορθώσεις, Ασφάλεια, Εξαρτήσεις, Build & CI, Τεκμηρίωση), οδηγίες εγκατάστασης του `apk-release.apk` (μέγεθος, SHA-256, ελάχιστη έκδοση Android) και τεχνικά στοιχεία έκδοσης, χωρίς να επαναλαμβάνεται ο τίτλος του release.
 - Το release script δημοσιεύει άμεσα GitHub Release με μόνο custom asset το `apk-release.apk` (για εύκολο mobile install download) και χρησιμοποιεί τα generated notes ως release description.
 - Τα `Source code (zip)` και `Source code (tar.gz)` εμφανίζονται αυτόματα από το GitHub σε κάθε tag release.
 - Το release script και το GitHub Action δημοσιεύουν μόνο signed APK· αν λείπουν signing credentials, το release μπλοκάρεται πριν το upload.
 - Πριν από release γίνεται αυτόματος έλεγχος ότι δεν υπάρχουν committed secrets/keystore αρχεία στο repository.
 - Σε κάθε push/pull request τρέχει αυτόματα ο έλεγχος `Security Guard` για ανίχνευση committed secrets.
-- Με push tag `vX.Y.Z`, το GitHub Actions workflow παραμένει ως επιπλέον fallback για release packaging και ανεβάζει μόνο alias `apk-release.apk`.
+- Με push tag `vX.Y.Z`, το GitHub Actions workflow παραμένει ως επιπλέον fallback για release packaging και ανεβάζει μόνο alias `apk-release.apk`, με τα ίδια release notes (αν ο generator αποτύχει, δημοσιεύει με τα αυτόματα notes του GitHub).
 - Αν στο ίδιο tag υπάρχει ήδη custom asset `apk-release.apk` από direct publish του script, το fallback workflow κάνει skip το publish για να μη δημιουργηθεί δεύτερο APK asset.
 
 Κύριες αμετάβλητες αρχές:
@@ -348,11 +348,11 @@
 - `org.bitbucket.b_c:jose4j = 0.9.6` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.apache.commons:commons-compress = 1.28.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
 - `org.apache.commons:commons-lang3 = 3.20.0` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
-- `org.bouncycastle:bcpkix-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
-- `org.bouncycastle:bcprov-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
-- `org.bouncycastle:bcutil-jdk18on = 1.84` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
-- `com.google.guava:guava >= 32.1.3-jre` (security floor σε όλα τα configurations του `:app` για mitigation του temporary-directory advisory· δεν κατεβάζει το Guava 33.x του lint)
-- `org.bouncycastle:bcprov/bcpkix/bcutil-jdk18on >= 1.84`, `org.apache.commons:commons-lang3 >= 3.20.0`, `org.apache.httpcomponents:httpclient >= 4.5.14` (security floors στα AGP 9 lint/UTP tool classpaths του `:app`, μέσω `app/build.gradle.kts`)
+- `org.bouncycastle:bcpkix-jdk18on = 1.85` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `org.bouncycastle:bcprov-jdk18on = 1.85` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `org.bouncycastle:bcutil-jdk18on = 1.85` (forced μέσω root `build.gradle.kts` για transitive hardening από AGP)
+- `com.google.guava:guava = 32.1.3-jre` (explicit pin στο app dependency graph για mitigation του temporary-directory advisory)
+- `com.google.guava:guava >= 32.1.3-jre`, `org.bouncycastle:bcprov/bcpkix/bcutil-jdk18on >= 1.85`, `org.apache.commons:commons-lang3 >= 3.20.0`, `org.apache.httpcomponents:httpclient >= 4.5.14` (security floors στα AGP 9 lint/UTP tool classpaths του `:app`, μέσω `app/build.gradle.kts`· δεν κατεβάζουν το Guava 33.x του lint)
 - `io.netty:* 4.1.x = 4.1.138.Final` (ευθυγράμμιση σε όλα τα configurations του `:app` μέσω `app/build.gradle.kts`, για τα AGP/UTP test-platform artifacts που φέρνουν Netty 4.1 μέσω `grpc-netty`)
 - `com.arthenica:ffmpeg-kit-full-gpl = 6.0-2` (για transcode ηχογραφήσεων σε `flac/mp3/aac/m4a/opus`)
 
@@ -403,6 +403,7 @@
 - Release automation scripts:
 - `scripts/bump-version.sh`
 - `scripts/release-and-tag.sh`
+- `scripts/generate-release-notes.sh`
 - `scripts/generate-mk-symbol-dataset.py`
 - `scripts/check-no-secrets.sh`
 - `scripts/setup-release-signing.sh`
@@ -569,12 +570,12 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Γιατί εμφανίστηκε Dependabot alert για `bcpkix-jdk18on`;
 - Το `org.bouncycastle:bcpkix-jdk18on` έρχεται transitive από το Android Gradle Plugin (`com.android.tools.build:gradle:9.3.1`).
 - Η προηγούμενη resolved έκδοση ήταν `1.77` και το advisory ζητά patched έκδοση `>= 1.79`.
-- Το project κάνει forced resolve σε `org.bouncycastle:bcpkix-jdk18on:1.84` στο build classpath και ευθυγραμμίζει `bcprov`/`bcutil` στην ίδια έκδοση.
+- Το project κάνει forced resolve σε `org.bouncycastle:bcpkix-jdk18on:1.85` στο build classpath και ευθυγραμμίζει `bcprov`/`bcutil` στην ίδια έκδοση.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `bcprov-jdk18on`;
 - Το `org.bouncycastle:bcprov-jdk18on` έρχεται transitive από AGP dependencies (`bcpkix-jdk18on`/`bcutil-jdk18on`).
-- Η προηγούμενη resolved έκδοση ήταν `1.77` και τα advisories καλύπτονται με έκδοση `1.84`.
-- Το project κάνει forced resolve σε `org.bouncycastle:bcprov-jdk18on:1.84` στο build classpath.
+- Η προηγούμενη resolved έκδοση ήταν `1.77`· τα αρχικά advisories καλύφθηκαν με την `1.84`, και τα CVE-2026-8763 και CVE-2026-13506 (Σεπτέμβριος 2026) διορθώνονται από την `1.85`.
+- Το project κάνει forced resolve σε `org.bouncycastle:bcprov-jdk18on:1.85` στο build classpath.
 
 ### Γιατί εμφανίστηκε Dependabot alert για `guava`;
 - Το `com.google.guava:guava` έρχεται transitive από `androidx.room` και `androidx.work` dependencies.
@@ -710,11 +711,12 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 ### Πώς επηρεάζονται άλλα components;
 - `app/build.gradle.kts`: προστέθηκε conditional release signing από environment variables.
 - `scripts/bump-version.sh`: χειρίζεται `versionName/versionCode` bump.
-- `scripts/release-and-tag.sh`: χτίζει release artifacts, απαιτεί υποχρεωτικά signing env vars, μπλοκάρει unsigned APK outputs, κάνει commit/tag/push, κάνει stage+commit όλες τις αλλαγές του working tree σε ένα release commit με σύντομο summary, παράγει user-friendly `RELEASE_NOTES.md` (previous tag → νέο tag) χωρίς διπλό τίτλο, και δημιουργεί/ενημερώνει direct GitHub Release μόνο με custom asset `apk-release.apk`.
+- `scripts/release-and-tag.sh`: χτίζει release artifacts, απαιτεί υποχρεωτικά signing env vars, μπλοκάρει unsigned APK outputs, κάνει commit/tag/push, κάνει stage+commit όλες τις αλλαγές του working tree σε ένα release commit με σύντομο summary, παράγει το `RELEASE_NOTES.md` (previous tag → νέο tag) μέσω του `scripts/generate-release-notes.sh`, και δημιουργεί/ενημερώνει direct GitHub Release μόνο με custom asset `apk-release.apk`.
+- `scripts/generate-release-notes.sh`: γράφει την περιγραφή του GitHub Release για ένα tag — σύνοψη από το release PR, αλλαγές ανά pull request ομαδοποιημένες ανά είδος, εγκατάσταση (μέγεθος, SHA-256, ελάχιστο Android) και τεχνικά στοιχεία· το χρησιμοποιούν τόσο το release script όσο και το tag workflow.
 - `scripts/check-no-secrets.sh`: αποτρέπει commit/release όταν υπάρχουν tracked μυστικά ή υπογεγραμμένα κλειδιά μέσα στο repository.
 - `scripts/setup-release-signing.sh`: δημιουργεί release keystore εκτός repository, γράφει local env file signing και ενημερώνει προαιρετικά αυτόματα τα GitHub Actions secrets.
 - `.github/workflows/security-guard.yml`: τρέχει secrets guard σε κάθε push/PR.
-- `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, κάνει package signed APK σε σταθερό alias `apk-release.apk`, ελέγχει αν υπάρχει ήδη ίδιο custom asset στο release του tag και κάνει skip το fallback publish όταν υπάρχει ήδη.
+- `.github/workflows/android-release.yml`: τρέχει secrets guard, απαιτεί υποχρεωτικά signing secrets, κάνει package signed APK σε σταθερό alias `apk-release.apk`, γράφει τα release notes με το `scripts/generate-release-notes.sh` (checkout με πλήρες history), ελέγχει αν υπάρχει ήδη ίδιο custom asset στο release του tag και κάνει skip το fallback publish όταν υπάρχει ήδη.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε footer `poweredby JohnChourp v.<version>` με τιμή από `BuildConfig.VERSION_NAME`.
 - `MainActivity` και `layout_main_activity.xml`: προστέθηκε και νέο entry button `Σημειώσεις` για μετάβαση στη `NotesActivity`.
 - `RecordingsActivity` και `RecordingsManagerActivity`: πλήρης μετάβαση σε Compose UI με ViewModel/StateFlow, με τη σελίδα ηχογραφήσεων να δείχνει μόνο 10 local own recordings και τη διαχείριση να διατηρεί search+filters+sort.
