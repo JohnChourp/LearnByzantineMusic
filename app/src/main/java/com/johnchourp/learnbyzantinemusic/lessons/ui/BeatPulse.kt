@@ -51,7 +51,14 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmMeasureBar
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmOutline
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurface
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
+import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
 import kotlinx.coroutines.delay
+import android.view.HapticFeedbackConstants
+import androidx.compose.material3.Slider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.semantics.stateDescription
 
 private const val BEAT_INTERVAL_MS = 620L
 private val CELL_SIZE = 48.dp
@@ -65,14 +72,33 @@ private val MEASURE_BAR_HEIGHT = 60.dp
  */
 @Composable
 fun BeatPulse(grouping: BeatGrouping, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val view = LocalView.current
     var playing by remember { mutableStateOf(false) }
+    var bpm by remember { mutableIntStateOf(MetronomePrefs.savedBpm(context)) }
     // The highlighted beat resets to the downbeat whenever the grouping changes.
     var activeBeat by remember(grouping) { mutableIntStateOf(1) }
 
-    LaunchedEffect(playing, grouping) {
+    val clicker = remember { MetronomeClicker() }
+    DisposableEffect(Unit) { onDispose { clicker.release() } }
+
+    // Every beat is scheduled at an ABSOLUTE offset from the moment playback started, so rounding
+    // error and scheduler jitter cannot accumulate and the click cannot drift away from the flash.
+    // See MetronomeSchedule for the measurement behind that choice.
+    LaunchedEffect(playing, grouping, bpm) {
+        if (!playing) return@LaunchedEffect
+        val start = System.currentTimeMillis()
+        var index = 0
         while (playing) {
-            delay(BEAT_INTERVAL_MS)
-            activeBeat = grouping.nextBeat(activeBeat)
+            val wait = MetronomeSchedule.delayUntilMillis(start, bpm, index, System.currentTimeMillis())
+            if (wait > 0) delay(wait)
+            val downbeat = MetronomeSchedule.isDownbeat(index, grouping.beats)
+            activeBeat = MetronomeSchedule.beatInGrouping(index, grouping.beats)
+            clicker.click(downbeat)
+            view.performHapticFeedback(
+                if (downbeat) HapticFeedbackConstants.LONG_PRESS else HapticFeedbackConstants.KEYBOARD_TAP
+            )
+            index++
         }
     }
 
@@ -87,7 +113,22 @@ fun BeatPulse(grouping: BeatGrouping, modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.SemiBold,
             )
         }
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = stringResource(R.string.duotrio_tempo_label, bpm),
+            style = MaterialTheme.typography.bodyMedium,
+            color = LbmTextSecondary,
+        )
+        Slider(
+            value = bpm.toFloat(),
+            onValueChange = { bpm = it.toInt() },
+            onValueChangeFinished = { MetronomePrefs.saveBpm(context, bpm) },
+            valueRange = MetronomeSchedule.MIN_BPM.toFloat()..MetronomeSchedule.MAX_BPM.toFloat(),
+            modifier = Modifier.semantics {
+                stateDescription = "$bpm"
+            },
+        )
+        Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),

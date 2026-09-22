@@ -1,6 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.modes.ui
 
 import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleGenus
@@ -22,6 +24,13 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.AccentPurpleContent
 data class GenusAccent(val container: Color, val content: Color, @StringRes val nameRes: Int)
 
 object ModeGenusPalette {
+    /**
+     * The accent for a γένος **in the current theme**. `@Composable` because the colours are now
+     * theme-dependent: the γένος code is information, and its dark values are not the light ones
+     * dimmed — each was lightened until it clears contrast on a dark surface.
+     */
+    @Composable
+    @ReadOnlyComposable
     fun accent(genus: ModeScaleGenus): GenusAccent = when (genus) {
         ModeScaleGenus.DIATONIC -> GenusAccent(
             AccentGoldContainer, AccentGoldContent, R.string.eight_modes_genus_diatonic,

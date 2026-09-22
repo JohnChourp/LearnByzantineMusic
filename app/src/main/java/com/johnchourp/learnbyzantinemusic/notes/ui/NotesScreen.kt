@@ -56,6 +56,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -540,6 +541,8 @@ private fun StatusBanner(statusKey: String, statusText: String) {
 
 private data class StatusVisual(val container: Color, val content: Color, val icon: ImageVector)
 
+@Composable
+@ReadOnlyComposable
 private fun statusVisual(statusKey: String): StatusVisual = when (statusKey) {
     "notes_status_resync_failed",
     "notes_status_sync_failed_local_saved",

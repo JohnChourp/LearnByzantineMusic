@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.anastasimatarion
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -106,9 +107,15 @@ class AnastasimatarionCatalogTest {
         assertNull(catalog.mode("first")!!.find("99"))
     }
 
+    /**
+     * The catalog must not carry a source or a URL — the same confidential policy the εορτολόγιο
+     * dataset follows (ClickUp `869dbkkwf`, decided 2026-09-22). This is the parsed-side check;
+     * `AnastasimatarionAssetSchemaTest` guards the raw asset text.
+     */
     @Test
-    fun sourceIsAttributed() {
-        assertTrue(catalog.sourceUrl.startsWith("https://glt.goarch.org/"))
-        assertTrue(catalog.sourceTitle.isNotBlank())
+    fun theParsedCatalogExposesNoSource() {
+        val fields = HymnCatalog::class.java.declaredFields.map { it.name }
+        assertFalse("sourceUrl" in fields)
+        assertFalse("sourceTitle" in fields)
     }
 }

@@ -116,9 +116,6 @@ fun AnastasimatarionScreen(
             uiState.loadFailed -> item(key = "error") { HintText(stringResource(R.string.anastasimatarion_load_failed)) }
         }
 
-        item(key = "source") {
-            HintText(stringResource(R.string.anastasimatarion_source))
-        }
     }
 }
 

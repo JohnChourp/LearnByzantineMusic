@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Long-press shortcut on the launcher icon (ClickUp 869f4tpmq).
+
+  It opens «Ηχογραφήσεις» ready to record. It deliberately does NOT start recording on its own:
+  a shortcut that begins capturing audio from a long-press would be a surprising side effect, and
+  the microphone permission and folder grant may still need asking for.
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/_0"
+        android:shortcutId="new_recording"
+        android:shortcutLongLabel="@string/shortcut_new_recording_long"
+        android:shortcutShortLabel="@string/shortcut_new_recording_short">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity"
+            android:targetPackage="com.johnchourp.learnbyzantinemusic" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>

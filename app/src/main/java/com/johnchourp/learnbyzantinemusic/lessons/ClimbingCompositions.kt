@@ -10,7 +10,7 @@ class ClimbingCompositions : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 ClimbingCompositionsScreen(onBack = ::finish)
             }
         }

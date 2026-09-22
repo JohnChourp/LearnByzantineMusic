@@ -1,8 +1,16 @@
 #!/usr/bin/env node
 /**
  * Builds app/src/main/assets/anastasimatarion_v1.json — the hymn catalog behind the
- * «Αναστασιματάριο» page — from the Greek liturgical texts of the Octoechos Sunday services
- * published by the Greek Orthodox Archdiocese of America (https://glt.goarch.org/texts/Och/).
+ * «Αναστασιματάριο» page — from the Greek liturgical texts of the Octoechos Sunday services.
+ *
+ * The source is NOT named here and is NOT written into the asset. This repository is public, and
+ * the liturgical texts follow the same confidential policy as the εορτολόγιο dataset (ClickUp
+ * `869dbkkwf`, decided 2026-09-22). Pass the base URL at generation time:
+ *
+ *   ANASTASIMATARION_SOURCE_URL=<base-url> node scripts/generate-anastasimatarion-catalog.mjs
+ *
+ * The value is recorded in the private brain, not here. Without it the script refuses to run
+ * rather than silently emitting an empty catalog.
  *
  * Only the INCIPIT (opening words) of each hymn is stored, never the full text: the page lists
  * the hymns so recordings can be kept per hymn; the chanter sings from the book.
@@ -31,7 +39,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const SOURCE_URL = 'https://glt.goarch.org/texts/Och/';
+const SOURCE_URL = process.env.ANASTASIMATARION_SOURCE_URL ?? '';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 const MODES = [
@@ -325,7 +333,13 @@ export function selectHymns(blocks, mode) {
 async function loadPage(mode, cacheDir) {
   const cached = cacheDir ? path.join(cacheDir, mode.page) : null;
   if (cached && fs.existsSync(cached)) return fs.readFileSync(cached, 'utf8');
-  const response = await fetch(SOURCE_URL + mode.page);
+  if (!SOURCE_URL) {
+    throw new Error(
+      'ANASTASIMATARION_SOURCE_URL is not set, and no cached page was found for ' + mode.page +
+      '. The source is deliberately not stored in this repository — see the file header.',
+    );
+  }
+  const response = await fetch(SOURCE_URL.replace(/\/?$/, '/') + mode.page);
   if (!response.ok) throw new Error(`${mode.page}: HTTP ${response.status}`);
   const html = await response.text();
   if (cached) { fs.mkdirSync(cacheDir, { recursive: true }); fs.writeFileSync(cached, html); }
@@ -334,12 +348,9 @@ async function loadPage(mode, cacheDir) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  // No `source` block: the asset must carry no source and no URL (see the file header).
   const catalog = {
     version: 1,
-    source: {
-      title: 'Οκτώηχος — Ελληνικά Λειτουργικά Κείμενα, Ιερά Αρχιεπισκοπή Αμερικής',
-      url: SOURCE_URL,
-    },
     modes: [],
   };
   for (const mode of MODES) {

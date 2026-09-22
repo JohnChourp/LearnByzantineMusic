@@ -28,7 +28,7 @@ class ReadingTextActivity : BaseActivity() {
         readingState = loadReadingFromIntent()
 
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 ReadingTextScreen(
                     state = readingState,
                     ancientSelected = ancientSelected,

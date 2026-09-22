@@ -1,11 +1,12 @@
 package com.johnchourp.learnbyzantinemusic.recordings
 
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 
 class RecordingsPrefs(context: Context) {
-    private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val prefs = AppPrefs.open(context, AppPrefs.Store.RECORDINGS)
 
     fun getFolderUri(): Uri? {
         val raw = prefs.getString(KEY_RECORDINGS_FOLDER_TREE_URI, null) ?: return null
@@ -29,8 +30,7 @@ class RecordingsPrefs(context: Context) {
         }
 
     companion object {
-        private const val PREFS_NAME = "learn_byzantine_music_recordings"
-        const val KEY_RECORDINGS_FOLDER_TREE_URI = "recordings_folder_tree_uri"
-        const val KEY_RECORDINGS_OUTPUT_FORMAT = "recordings_output_format"
+        val KEY_RECORDINGS_FOLDER_TREE_URI = AppPrefs.RecordingsFolderTreeUri.name
+        val KEY_RECORDINGS_OUTPUT_FORMAT = AppPrefs.RecordingsOutputFormat.name
     }
 }

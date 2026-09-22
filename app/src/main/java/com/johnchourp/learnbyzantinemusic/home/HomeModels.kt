@@ -26,3 +26,18 @@ data class HomeSection(
     val tiles: List<HomeTile>,
     val info: HomeInfo? = null,
 )
+
+/**
+ * State of the "from scratch" guided path card.
+ *
+ * [stepNumber] is the position of the next unfinished step, while [completedCount] counts every
+ * finished step. They differ when the learner jumped ahead and came back — both are shown, because
+ * claiming one when the other is true would be a lie about their own progress.
+ */
+data class LearningPathUi(
+    val stepNumber: Int,
+    val totalSteps: Int,
+    val completedCount: Int,
+    @param:StringRes val nextTitleRes: Int,
+    val onContinue: () -> Unit,
+)

@@ -28,8 +28,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * One hymn of the Anastasimatarion: record it (RecordingsActivity saves into the hymn's folder,
- * see [HymnFolders]) and list / open the recordings kept for it.
+ * One hymn of the Anastasimatarion: record it, and list or open the recordings kept for it.
+ *
+ * **In:** `EXTRA_MODE_KEY` + `EXTRA_HYMN_CODE`, resolved against [AnastasimatarionCatalog]. An
+ * unknown pair is not a crash — the screen says the hymn was not found and offers nothing else.
+ *
+ * **Stores:** nothing of its own. Recordings go to the user's chosen recordings folder, under the
+ * per-hymn subfolder [HymnFolders] names (`Αναστασιματάριο/<mode>/<code> <incipit>/`), so they
+ * survive a reinstall and stay visible in «Διαχείριση». There is no database row for a hymn, which
+ * is why the two-digit [Hymn.code] must never be reused for a different hymn.
+ *
+ * **Needs:** a recordings folder to have been chosen already. Without one, recording is disabled
+ * and the screen points the user at the «Ηχογραφήσεις» page rather than failing at save time.
  */
 class HymnActivity : BaseActivity() {
     private val viewModel: HymnViewModel by viewModels()

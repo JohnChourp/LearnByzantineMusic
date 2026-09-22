@@ -116,6 +116,7 @@ fun RecordingsScreen(
     onStopRecording: () -> Unit,
     onFormatChanged: (RecordingFormatOption) -> Unit,
     onOpenRecording: (RecordingListItem) -> Unit,
+    onShareRecording: (RecordingListItem) -> Unit,
     onRenameRecording: (RecordingListItem) -> Unit,
     onDeleteRecording: (RecordingListItem) -> Unit,
     modifier: Modifier = Modifier,
@@ -207,6 +208,7 @@ fun RecordingsScreen(
                     item = item,
                     onOpen = onOpenRecording,
                     onRename = onRenameRecording,
+                    onShare = onShareRecording,
                     onDelete = onDeleteRecording,
                 )
             }

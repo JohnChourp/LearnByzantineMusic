@@ -1,12 +1,11 @@
 package com.johnchourp.learnbyzantinemusic
 
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import android.content.Context
 import android.content.res.Configuration
 import kotlin.math.abs
 
 object AppFontScale {
-    private const val PREFS_NAME = "learn_byzantine_music_settings"
-    private const val PREF_FONT_STEP_KEY = "app_font_step"
 
     private val allowedSteps = intArrayOf(20, 40, 60, 80, 100)
     const val defaultStep = 60
@@ -15,14 +14,14 @@ object AppFontScale {
         allowedSteps.minByOrNull { abs(it - rawStep) } ?: defaultStep
 
     fun getSavedStep(context: Context): Int {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val raw = prefs.getInt(PREF_FONT_STEP_KEY, defaultStep)
+        val prefs = AppPrefs.open(context, AppPrefs.Store.SETTINGS)
+        val raw = prefs.getInt(AppPrefs.FontStep.name, defaultStep)
         return normalizeStep(raw)
     }
 
     fun saveStep(context: Context, step: Int) {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putInt(PREF_FONT_STEP_KEY, normalizeStep(step)).apply()
+        val prefs = AppPrefs.open(context, AppPrefs.Store.SETTINGS)
+        prefs.edit().putInt(AppPrefs.FontStep.name, normalizeStep(step)).apply()
     }
 
     fun stepToFontScale(step: Int): Float =
