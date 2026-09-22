@@ -58,7 +58,7 @@ class HymnActivity : BaseActivity() {
         viewModel.load(modeKey, hymnCode)
 
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 HymnScreen(
                     uiState = uiState,

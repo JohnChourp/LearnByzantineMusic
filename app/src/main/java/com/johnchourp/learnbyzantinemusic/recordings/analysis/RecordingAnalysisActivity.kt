@@ -51,7 +51,7 @@ class RecordingAnalysisActivity : BaseActivity() {
         viewModel.start(uri, name, contextKey, intent.getStringExtra(EXTRA_MODE_KEY))
 
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 RecordingAnalysisScreen(
                     uiState = uiState,
