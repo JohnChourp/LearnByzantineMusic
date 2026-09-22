@@ -41,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,8 +78,11 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPrimaryContainer
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurface
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
+import androidx.compose.material.icons.filled.Search
 
 /** Resolves a [TileAccent] to its (container, content) color pair. */
+@Composable
+@ReadOnlyComposable
 private fun accentColors(accent: TileAccent): Pair<Color, Color> = when (accent) {
     TileAccent.Gold -> AccentGoldContainer to AccentGoldContent
     TileAccent.Blue -> AccentBlueContainer to AccentBlueContent
@@ -86,6 +90,47 @@ private fun accentColors(accent: TileAccent): Pair<Color, Color> = when (accent)
     TileAccent.Orange -> AccentOrangeContainer to AccentOrangeContent
     TileAccent.Green -> AccentGreenContainer to AccentGreenContent
     TileAccent.Brown -> AccentBrownContainer to AccentBrownContent
+}
+
+/**
+ * Entry to the theory search from the home screen (ClickUp `869f4tph0`).
+ *
+ * The search itself already existed, but only inside the «8 Ήχοι» pages menu — so finding a term
+ * meant already knowing it lived under 8 Ήχοι, which is precisely what someone searching does not
+ * know. This makes the same search reachable from where the app starts.
+ *
+ * It looks like a search field but is a button: the dialog it opens owns the real input, and two
+ * text fields for one query would be a needless second place for the text to live.
+ */
+@Composable
+fun HomeSearchRow(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 14.dp),
+        shape = RoundedCornerShape(14.dp),
+        color = LbmSurface,
+        shadowElevation = 1.dp,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = null,
+                tint = LbmBrown,
+                modifier = Modifier.size(20.dp),
+            )
+            Spacer(Modifier.width(10.dp))
+            Text(
+                text = stringResource(R.string.home_search_theory_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                color = LbmTextSecondary,
+            )
+        }
+    }
 }
 
 /** Gradient hero header with an animated music-note badge, app title and subtitle. */

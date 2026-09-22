@@ -12,6 +12,20 @@ import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 
+/**
+ * The theory page of one ήχος: its απήχημα, ethos, dominant phthongi, styles and notes.
+ *
+ * **Input:** `ModeTheoryCatalog.EXTRA_MODE_KEY` — the mode's `theoryKey`. An absent or unknown key is
+ * not an error: [ModeTheoryCatalog.byKey] falls back to a valid mode, so the page cannot open blank.
+ *
+ * **Flow.** Purely declarative: read the key, look the [ModeTheory] up in the catalog, bind it into a
+ * View-based layout. All content comes from string/drawable resources, so it is bilingual for free.
+ *
+ * **Stores nothing.** No preferences, no database — reopening it shows exactly what the catalog says.
+ *
+ * The per-row style views are rebuilt on every bind (`removeAllViews` first), because the number of
+ * rows differs per mode.
+ */
 class ModeTheoryActivity : BaseActivity() {
     private lateinit var backButton: Button
     private lateinit var titleText: TextView

@@ -10,7 +10,7 @@ class PhthongsNames : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 PhthongsNamesScreen(onBack = ::finish)
             }
         }

@@ -588,6 +588,12 @@ private fun CelebrationsCard(state: WeeklyModeCalendarUiState) {
             }
             CelebrationBlock(state.primaryCelebration)
 
+            // Without this the panel is ambiguous: an empty day in an unfilled month looks exactly
+            // like an ordinary day in a filled one. Say which of the two it is.
+            state.coverageNoticeRes?.let { noticeRes ->
+                CoverageNotice(noticeRes)
+            }
+
             if (state.extraCelebrations.isNotEmpty()) {
                 var expanded by remember(state.selectedDateLabel) { mutableStateOf(false) }
                 TextButton(
@@ -656,6 +662,27 @@ private fun CelebrationBlock(celebration: CelebrationUi) {
                 )
             }
         }
+    }
+}
+
+/**
+ * Tells the reader that the visible month is not fully covered, so an absent celebration or reading
+ * here means "not filled in yet" rather than "nothing today" (ClickUp `869f4tprf`).
+ */
+@Composable
+private fun CoverageNotice(noticeRes: Int) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(LbmBrown.copy(alpha = 0.10f))
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+    ) {
+        Text(
+            text = stringResource(noticeRes),
+            style = MaterialTheme.typography.bodyMedium,
+            color = LbmTextSecondary,
+        )
     }
 }
 

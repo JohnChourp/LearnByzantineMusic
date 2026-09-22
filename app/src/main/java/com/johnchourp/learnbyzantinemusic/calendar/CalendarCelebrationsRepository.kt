@@ -4,8 +4,23 @@ import android.content.Context
 import org.json.JSONArray
 import org.json.JSONObject
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeParseException
 
+/**
+ * Reads the offline εορτολόγιο dataset and answers per-day and per-month questions about it.
+ *
+ * **The dataset's schema is written down** in `CalendarDatasetSchema` (test sources), together with
+ * the `_vN` versioning rule and a validator that fails the build on a broken asset — ClickUp
+ * `869f4tpzk`.
+ *
+ * This parser is deliberately **more lenient** than that schema: an unknown celebration `type` falls
+ * back to `normal_day`, absent booleans default, and a missing `readings` section is simply empty.
+ * That split is intentional. A dataset mistake should be caught at build time, where someone can fix
+ * it; at runtime a user with a slightly odd asset should still get a working calendar rather than a
+ * crash. The one thing the runtime refuses outright is provenance
+ * ([FORBIDDEN_READING_KEYS]) — that is a policy violation, not a data quirk.
+ */
 class CalendarCelebrationsRepository private constructor(
     private val context: Context?,
     private val injectedCelebrations: Map<LocalDate, List<CalendarCelebration>>?,
@@ -45,6 +60,44 @@ class CalendarCelebrationsRepository private constructor(
             gospel = emptyList(),
         )
     }
+
+    /**
+     * How much of [yearMonth] the dataset covers, derived from the dataset itself by counting the
+     * days of that month that carry an entry — never from a hard-coded list of filled months.
+     *
+     * The caller needs this before it can claim a day is ordinary: outside the filled range the
+     * dataset still holds the seeded immovable feasts, so a day with no entry there means "unknown",
+     * not "nothing happens".
+     */
+    fun getMonthCoverage(yearMonth: YearMonth): CalendarMonthCoverage {
+        val daysInMonth = yearMonth.lengthOfMonth()
+        val covered = (1..daysInMonth).count { day ->
+            celebrationsByDate.containsKey(yearMonth.atDay(day))
+        }
+        return when {
+            covered == 0 -> CalendarMonthCoverage.NONE
+            covered >= daysInMonth -> CalendarMonthCoverage.COMPLETE
+            else -> CalendarMonthCoverage.PARTIAL
+        }
+    }
+
+    /** Coverage of the daily readings, which are filled separately from the celebrations. */
+    fun getReadingsCoverage(yearMonth: YearMonth): CalendarMonthCoverage {
+        val daysInMonth = yearMonth.lengthOfMonth()
+        val covered = (1..daysInMonth).count { day -> readingsByDate.containsKey(yearMonth.atDay(day)) }
+        return when {
+            covered == 0 -> CalendarMonthCoverage.NONE
+            covered >= daysInMonth -> CalendarMonthCoverage.COMPLETE
+            else -> CalendarMonthCoverage.PARTIAL
+        }
+    }
+
+    /**
+     * True when an absent celebration for [date] may be reported to the user as an ordinary day.
+     * False when the month is only partially filled, because then absence is missing data.
+     */
+    fun isOrdinaryDayKnown(date: LocalDate): Boolean =
+        getMonthCoverage(YearMonth.from(date)) == CalendarMonthCoverage.COMPLETE
 
     fun getReadingById(date: LocalDate, readingId: String): CalendarReadingText? {
         val dayReadings = getDayReadings(date)

@@ -68,6 +68,15 @@ fun PitchDiagram(
     val labelStyle = TextStyle(fontSize = 11.sp, color = LbmBrown)
     val timeStyle = TextStyle(fontSize = 10.sp, color = LbmTextSecondary)
 
+    // Read the palette HERE, in composable scope. These are @Composable @ReadOnlyComposable getters
+    // over LocalLbmPalette (dark mode, PR #110), and a Canvas DrawScope is not a composable scope —
+    // reading them inside the lambdas stopped compiling under Kotlin 2.4. Hoisting is also what makes
+    // the diagram follow a theme change: the colours are captured on recomposition, not once.
+    val gridColor = LbmOutline
+    val traceColor = LbmTextSecondary.copy(alpha = 0.45f)
+    val inTuneColor = AccentGreenContent
+    val offTuneColor = AccentOrangeContent
+
     Row(modifier = modifier.fillMaxWidth().semantics { contentDescription = description }) {
         Canvas(modifier = Modifier.width(LABEL_WIDTH).height(DIAGRAM_HEIGHT)) {
             for (degree in lowDegree..highDegree) {
@@ -90,7 +99,7 @@ fun PitchDiagram(
                 for (degree in lowDegree..highDegree) {
                     val y = yOf(degreeMoria(degree), bottomMoria, topMoria, size.height)
                     drawLine(
-                        color = LbmOutline,
+                        color = gridColor,
                         start = Offset(0f, y),
                         end = Offset(size.width, y),
                         strokeWidth = if (Math.floorMod(degree, 7) == 0) 2.dp.toPx() else 1.dp.toPx(),
@@ -113,13 +122,13 @@ fun PitchDiagram(
                         Offset(track.frames[index].timeMs * pxPerMs, yOf(value, bottomMoria, topMoria, size.height))
                     }
                 }
-                drawPoints(points, PointMode.Points, LbmTextSecondary.copy(alpha = 0.45f), strokeWidth = 3.dp.toPx(), cap = StrokeCap.Round)
+                drawPoints(points, PointMode.Points, traceColor, strokeWidth = 3.dp.toPx(), cap = StrokeCap.Round)
                 // Notes.
                 val barHeight = 7.dp.toPx()
                 for (note in notes) {
                     val y = yOf(note.moria, bottomMoria, topMoria, size.height)
                     drawRoundRect(
-                        color = if (abs(note.deviationMoria) <= IN_TUNE_MORIA) AccentGreenContent else AccentOrangeContent,
+                        color = if (abs(note.deviationMoria) <= IN_TUNE_MORIA) inTuneColor else offTuneColor,
                         topLeft = Offset(note.startMs * pxPerMs, y - barHeight / 2f),
                         size = Size(max(barHeight, (note.endMs - note.startMs) * pxPerMs), barHeight),
                         cornerRadius = CornerRadius(barHeight / 2f),

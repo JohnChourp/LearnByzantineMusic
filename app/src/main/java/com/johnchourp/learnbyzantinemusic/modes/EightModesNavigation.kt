@@ -18,11 +18,12 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.R
-import java.text.Normalizer
-import java.util.Locale
 
 object EightModesNavigation {
     const val EXTRA_NAV_PATH_TOPIC_KEYS = "theory_nav_path_topic_keys"
+
+    /** The search term that led here, so the opened page can light it up. Absent when browsing. */
+    const val EXTRA_HIGHLIGHT_QUERY = "theory_highlight_query"
     const val HOME_ENTRY_KEY = "eight_modes_home"
 
     data class NavigationEntry(
@@ -65,10 +66,16 @@ object EightModesNavigation {
         return labels.joinToString(context.getString(R.string.eight_modes_breadcrumb_separator))
     }
 
-    fun topicIntent(context: Context, topicKey: String, pathTopicKeys: ArrayList<String>): Intent =
+    fun topicIntent(
+        context: Context,
+        topicKey: String,
+        pathTopicKeys: ArrayList<String>,
+        highlightQuery: String? = null,
+    ): Intent =
         Intent(context, TheoryTopicActivity::class.java).apply {
             putExtra(TheoryTopicCatalog.EXTRA_TOPIC_KEY, topicKey)
             putStringArrayListExtra(EXTRA_NAV_PATH_TOPIC_KEYS, pathTopicKeys)
+            highlightQuery?.takeIf { it.isNotBlank() }?.let { putExtra(EXTRA_HIGHLIGHT_QUERY, it) }
         }
 
     fun homeIntent(context: Context): Intent =
@@ -90,7 +97,7 @@ object EightModesNavigation {
                 title = homeTitle,
                 searchableText = homeSearchText
             )
-        ) + TheoryTopicCatalog.topics.map { topic ->
+        ) + orderedTopics(context).map { topic ->
             val bodyText = if (topic.bodyRes == 0) "" else context.getString(topic.bodyRes)
             val title = context.getString(topic.titleRes)
             NavigationEntry(
@@ -102,20 +109,38 @@ object EightModesNavigation {
         }
     }
 
-    fun filterEntries(entries: List<NavigationEntry>, query: String): List<NavigationEntry> {
-        val normalizedQuery = normalizeSearch(query)
-        return if (normalizedQuery.isBlank()) {
-            entries
-        } else {
-            entries.filter { entry ->
-                normalizeSearch(entry.searchableText).contains(normalizedQuery)
-            }
-        }
+    /**
+     * Catalog topics with the starred ones first (ClickUp `869f4tphx`). Ordering only — nothing is
+     * hidden, so a page is always reachable whether or not it is starred.
+     */
+    private fun orderedTopics(context: Context): List<TheoryTopic> {
+        val favorites = TheoryTopicFavorites.favorites(context).toSet()
+        if (favorites.isEmpty()) return TheoryTopicCatalog.topics
+        val byKey = TheoryTopicCatalog.topics.associateBy { it.key }
+        return TheoryTopicFavorites
+            .order(TheoryTopicCatalog.topics.map { it.key }, favorites)
+            .mapNotNull { byKey[it] }
     }
 
+    /**
+     * Rows matching [query]. Matching goes through [TheorySearch] so the menu and the highlight on
+     * the page it opens can never disagree about what counts as a match.
+     */
+    fun filterEntries(entries: List<NavigationEntry>, query: String): List<NavigationEntry> =
+        entries.filter { entry -> TheorySearch.matches(entry.searchableText, query) }
+
+    /**
+     * The pages menu, with search over titles and bodies.
+     *
+     * [canOpenEightModesHome] exists because the menu is now opened from the home screen too
+     * (ClickUp `869f4tph0`). From inside «8 Ήχοι» the home row is where you already are, so tapping
+     * it should do nothing; from anywhere else it has to actually navigate. The default keeps the
+     * two original call sites behaving exactly as before.
+     */
     fun showMenu(
         activity: Activity,
-        selectedTopicKey: String?
+        selectedTopicKey: String?,
+        canOpenEightModesHome: Boolean = selectedTopicKey != null,
     ) {
         val dialog = Dialog(activity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -199,7 +224,13 @@ object EightModesNavigation {
                         isSelected = isSelected
                     ) {
                         dialog.dismiss()
-                        navigateToEntry(activity, entry, selectedTopicKey)
+                        navigateToEntry(
+                            activity = activity,
+                            entry = entry,
+                            selectedTopicKey = selectedTopicKey,
+                            canOpenEightModesHome = canOpenEightModesHome,
+                            highlightQuery = searchInput.text?.toString(),
+                        )
                     }
                 )
             }
@@ -279,11 +310,13 @@ object EightModesNavigation {
     private fun navigateToEntry(
         activity: Activity,
         entry: NavigationEntry,
-        selectedTopicKey: String?
+        selectedTopicKey: String?,
+        canOpenEightModesHome: Boolean,
+        highlightQuery: String?,
     ) {
         val topicKey = entry.topicKey
         if (topicKey == null) {
-            if (selectedTopicKey != null) {
+            if (canOpenEightModesHome) {
                 activity.startActivity(homeIntent(activity))
             }
             return
@@ -291,14 +324,9 @@ object EightModesNavigation {
         if (topicKey == selectedTopicKey) {
             return
         }
-        activity.startActivity(topicIntent(activity, topicKey, pathForMenuTopic(topicKey)))
-    }
-
-    private fun normalizeSearch(value: String): String {
-        val lowercaseValue = value.lowercase(Locale.getDefault())
-        return Normalizer.normalize(lowercaseValue, Normalizer.Form.NFD)
-            .replace("\\p{Mn}+".toRegex(), "")
-            .trim()
+        activity.startActivity(
+            topicIntent(activity, topicKey, pathForMenuTopic(topicKey), highlightQuery)
+        )
     }
 
     private fun roundedBackground(

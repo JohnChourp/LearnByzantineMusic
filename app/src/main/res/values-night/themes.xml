@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The dark counterpart of the app theme (ClickUp 869f4tpju).
+
+  Without this the window background stays light even in dark mode, and the gap shows during the
+  moment before Compose draws — a white flash on every screen open, which is exactly what someone
+  reading off a stand in a dark church does not want.
+-->
+<resources>
+    <style name="Theme.LearnByzantineMusic" parent="android:Theme.Material.NoActionBar" />
+</resources>

@@ -51,6 +51,7 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmMeasureBar
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurface
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
+import androidx.compose.material.icons.filled.Share
 
 /**
  * Redesigned recording row: an [ElevatedCard] with a circular audio badge, the recording name +
@@ -62,6 +63,7 @@ fun RecordingListItemRow(
     item: RecordingListItem,
     onOpen: (RecordingListItem) -> Unit,
     onRename: (RecordingListItem) -> Unit,
+    onShare: (RecordingListItem) -> Unit,
     onDelete: (RecordingListItem) -> Unit,
     onAnalyze: ((RecordingListItem) -> Unit)? = null,
 ) {
@@ -150,6 +152,14 @@ fun RecordingListItemRow(
                         onClick = {
                             menuExpanded = false
                             onRename(item)
+                        },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.recordings_action_share)) },
+                        leadingIcon = { Icon(Icons.Filled.Share, contentDescription = null) },
+                        onClick = {
+                            menuExpanded = false
+                            onShare(item)
                         },
                     )
                     DropdownMenuItem(

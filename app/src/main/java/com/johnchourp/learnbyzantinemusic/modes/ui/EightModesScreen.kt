@@ -58,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.modes.IsonDrone
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleFrequencies
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleGenus
 import com.johnchourp.learnbyzantinemusic.modes.ModeTheoryCatalog
@@ -79,9 +80,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import androidx.compose.material3.Switch
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
+import com.johnchourp.learnbyzantinemusic.modes.ApichimaSequence
+import com.johnchourp.learnbyzantinemusic.music.ModeLadder
+import com.johnchourp.learnbyzantinemusic.music.Moria
 
 private const val SCALE_OCTAVES = 3
-private const val BASE_REFERENCE_PHTHONG = "Νη"
 private const val BASE_SHIFT_MIN = -12
 private const val BASE_SHIFT_MAX = 12
 
@@ -102,6 +109,8 @@ fun EightModesScreen(
     onBaseShiftChange: (modeIndex: Int, moria: Int) -> Unit,
     onTonePress: (Double) -> Unit,
     onToneRelease: () -> Unit,
+    /** Non-null starts (or retunes) the ison drone; null stops it. */
+    onDroneChange: (Double?) -> Unit,
     onOpenMenu: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -114,12 +123,25 @@ fun EightModesScreen(
         mutableStateMapOf<Int, Int>().apply { putAll(initialBaseShifts) }
     }
     var activeIndex by remember { mutableStateOf(-1) }
+    var droneOn by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     // Switching modes never carries a held tone over.
     LaunchedEffect(selectedModeIndex) {
         activeIndex = -1
         onToneRelease()
+    }
+
+    // The drone's pitch is derived, not stored: whenever the mode or its base shift changes it is
+    // recomputed and the drone retuned in place, so it can never keep sounding the previous mode's
+    // base. Switching off, or leaving the composition, stops it — that is what keeps the second
+    // AudioTrack from outliving the screen.
+    val droneBase = isonBaseFor(selectedModeIndex, baseShiftByMode[selectedModeIndex] ?: 0)
+    LaunchedEffect(droneOn, droneBase?.frequencyHz) {
+        onDroneChange(if (droneOn) droneBase?.frequencyHz else null)
+    }
+    DisposableEffect(Unit) {
+        onDispose { onDroneChange(null) }
     }
 
     val currentGenus = EIGHT_MODES[selectedModeIndex].genus
@@ -179,6 +201,13 @@ fun EightModesScreen(
                     )
                 }
             }
+            StaggeredAppear(delayMillis = 210) {
+                IsonDroneCard(
+                    enabled = droneOn,
+                    baseLabel = droneBase?.label,
+                    onToggle = { droneOn = it },
+                )
+            }
             StaggeredAppear(delayMillis = 240) {
                 TimbreCard(
                     selected = timbre,
@@ -205,7 +234,15 @@ fun EightModesScreen(
                     targetState = selectedModeIndex,
                     animationSpec = tween(280),
                     label = "detailsCrossfade",
-                ) { idx -> ModeDetailsCard(modeIndex = idx) }
+                ) { idx ->
+                    ModeDetailsCard(
+                        modeIndex = idx,
+                        baseShiftMoria = baseShiftByMode[idx] ?: 0,
+                        onTonePress = onTonePress,
+                        onToneRelease = onToneRelease,
+                        scope = scope,
+                    )
+                }
             }
             Spacer(Modifier.height(8.dp))
         }
@@ -356,22 +393,21 @@ private fun ScaleCard(
 ) {
     val mode = EIGHT_MODES[modeIndex]
     val scale = mode.scale
-    val ascendingIntervals = remember(modeIndex) { scale.repeatedIntervals(SCALE_OCTAVES) }
-    val ascendingPhthongs = remember(modeIndex) { scale.ascendingPhthongs(SCALE_OCTAVES) }
-    val referenceMoria = remember(modeIndex) {
-        scale.referenceMoriaFromBottom(BASE_REFERENCE_PHTHONG, SCALE_OCTAVES)
+    // One ladder, built once: φθόγγοι and their pitches together, highest first. Before this, the
+    // diagram, the drone and the απήχημα each rebuilt the same thing and could drift apart.
+    val ladder = rememberLadder(modeIndex, baseShiftMoria)
+    val phthongsTopToBottom = ladder.labels
+    val intervalsTopToBottom = remember(modeIndex) {
+        scale.repeatedIntervals(SCALE_OCTAVES).reversed()
     }
-    val phthongsTopToBottom = remember(modeIndex) { ascendingPhthongs.reversed() }
-    val intervalsTopToBottom = remember(modeIndex) { ascendingIntervals.reversed() }
-    val tonicBare = scale.base.phthong
+    // Tonic rungs are found by φθόγγος NAME across every octave — that is what the diagram marks.
+    // Matching the typed name, rather than trimming suffixes off a label, is the difference between
+    // "the same note in any octave" and "any label that happens to start the same way".
+    val tonicName = scale.base.base.name
     val tonicIndices = remember(modeIndex) {
-        phthongsTopToBottom.indices.filter { i ->
-            phthongsTopToBottom[i].trimEnd('΄', ',') == tonicBare
-        }.toSet()
+        ladder.steps.indices.filter { i -> ladder.steps[i].phthong.name == tonicName }.toSet()
     }
-    val frequencies = remember(modeIndex, baseShiftMoria) {
-        ModeScaleFrequencies.topToBottom(ascendingIntervals, referenceMoria, baseShiftMoria)
-    }
+    val frequencies = ladder.frequencies
     // Tracks the in-flight TalkBack tone pulse so a newer activation cancels the older one's delayed
     // release — otherwise an earlier pulse could stop a note that a later activation is still sounding.
     val pulseJob = remember { mutableStateOf<Job?>(null) }
@@ -435,6 +471,71 @@ private fun ScaleCard(
                 }
             },
         )
+    }
+}
+
+/**
+ * The ladder for a mode at a given base shift, memoised.
+ *
+ * Every pitch on this screen comes from here: the diagram, the ison and the απήχημα. Keeping it in
+ * one place is what makes "the drone follows the μεταφορά βάσης" and "the απήχημα plays the notes
+ * the diagram shows" structurally true rather than three independent implementations that happen to
+ * agree today.
+ */
+@Composable
+private fun rememberLadder(modeIndex: Int, baseShiftMoria: Int): ModeLadder {
+    val scale = EIGHT_MODES[modeIndex].scale
+    return remember(modeIndex, baseShiftMoria) {
+        scale.ladder(octaves = SCALE_OCTAVES, baseShift = Moria(baseShiftMoria))
+    }
+}
+
+/* ----------------------------- Ισοκράτημα (ison drone) ----------------------------- */
+
+/** The ison's label and pitch for a mode at a given base shift. */
+private data class IsonBase(val label: String, val frequencyHz: Double)
+
+/**
+ * Resolves the ison from the same scale data the diagram is drawn from, so the drone and the
+ * diagram's base key cannot disagree — including after the «Μεταφορά βάσης» slider moves them.
+ */
+@Composable
+private fun isonBaseFor(modeIndex: Int, baseShiftMoria: Int): IsonBase? {
+    val scale = EIGHT_MODES[modeIndex].scale
+    val ladder = rememberLadder(modeIndex, baseShiftMoria)
+    return remember(ladder, modeIndex) {
+        IsonDrone.baseStep(ladder, scale.base.base)
+            ?.let { step -> IsonBase(step.phthong.label, step.frequencyHz) }
+    }
+}
+
+/**
+ * Toggle for the continuous drone, naming the φθόγγος it holds so the singer knows what they are
+ * chanting against.
+ */
+@Composable
+private fun IsonDroneCard(enabled: Boolean, baseLabel: String?, onToggle: (Boolean) -> Unit) {
+    LessonCard(title = stringResource(R.string.eight_modes_ison_card_title)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = if (enabled && baseLabel != null) {
+                        stringResource(R.string.eight_modes_ison_active, baseLabel)
+                    } else {
+                        stringResource(R.string.eight_modes_ison_hint)
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (enabled) LbmBrown else LbmTextSecondary,
+                    fontWeight = if (enabled) FontWeight.SemiBold else FontWeight.Normal,
+                )
+            }
+            Spacer(Modifier.width(12.dp))
+            Switch(
+                checked = enabled,
+                onCheckedChange = onToggle,
+                enabled = baseLabel != null,
+            )
+        }
     }
 }
 
@@ -547,7 +648,13 @@ private fun BaseShiftCard(moria: Int, onChange: (Int) -> Unit) {
 /* ----------------------------- Mode details ----------------------------- */
 
 @Composable
-private fun ModeDetailsCard(modeIndex: Int) {
+private fun ModeDetailsCard(
+    modeIndex: Int,
+    baseShiftMoria: Int,
+    onTonePress: (Double) -> Unit,
+    onToneRelease: () -> Unit,
+    scope: kotlinx.coroutines.CoroutineScope,
+) {
     val mode = EIGHT_MODES[modeIndex]
     val theory = ModeTheoryCatalog.byKey(mode.theoryKey)
     LessonCard(title = stringResource(R.string.eight_modes_current_mode_title)) {
@@ -564,6 +671,13 @@ private fun ModeDetailsCard(modeIndex: Int) {
         Spacer(Modifier.height(8.dp))
 
         TextSection(1, stringResource(R.string.mode_theory_section_apichima), formatApichima(mode))
+        ApichimaPlayer(
+            modeIndex = modeIndex,
+            baseShiftMoria = baseShiftMoria,
+            onTonePress = onTonePress,
+            onToneRelease = onToneRelease,
+            scope = scope,
+        )
         TextSection(
             2,
             stringResource(R.string.mode_theory_section_syllables_phthongs),
@@ -699,6 +813,113 @@ private fun LinkedTheoryText(text: String, textSizeSp: Float, modifier: Modifier
         },
         update = { tv -> TheoryTopicLinks.setLinkedText(tv.context, tv, text) },
     )
+}
+
+/* ----------------------------- Apichima playback ----------------------------- */
+
+/**
+ * «Άκου το απήχημα» — plays the whole intonation formula on one tap, highlighting the syllable
+ * currently sounding (ClickUp `869f4tpkv`).
+ *
+ * The sequence is parsed out of the same teaching string the section below renders, so text and
+ * sound cannot disagree. Pitches are looked up in the diagram's own frequency list, which is why the
+ * playback transposes with «Μεταφορά βάσης» for free.
+ *
+ * Stopping is handled in three places on purpose, because each is a real way to leave: the button
+ * itself, a mode change (the effect key), and disposal (leaving the screen or backgrounding it).
+ */
+@Composable
+private fun ApichimaPlayer(
+    modeIndex: Int,
+    baseShiftMoria: Int,
+    onTonePress: (Double) -> Unit,
+    onToneRelease: () -> Unit,
+    scope: kotlinx.coroutines.CoroutineScope,
+) {
+    val mode = EIGHT_MODES[modeIndex]
+    val teachingText = stringResource(mode.apichimaSyllablesRes)
+
+    val steps = remember(teachingText) { ApichimaSequence.parse(teachingText) }
+    val ladder = rememberLadder(modeIndex, baseShiftMoria)
+    val tones = remember(ladder, teachingText) { ApichimaSequence.frequencies(steps, ladder) }
+
+    var playingIndex by remember { mutableStateOf(-1) }
+    val job = remember { mutableStateOf<Job?>(null) }
+
+    fun stop() {
+        job.value?.cancel()
+        job.value = null
+        playingIndex = -1
+        onToneRelease()
+    }
+
+    fun play(speed: ApichimaSequence.Speed) {
+        val frequencies = tones ?: return
+        job.value?.cancel()
+        job.value = scope.launch {
+            try {
+                frequencies.forEachIndexed { index, hz ->
+                    playingIndex = index
+                    onTonePress(hz)
+                    delay(speed.millisPerStep)
+                }
+            } finally {
+                // Runs on normal completion AND on cancellation, so a stop mid-phrase never leaves
+                // a tone sounding.
+                playingIndex = -1
+                onToneRelease()
+            }
+        }
+    }
+
+    // A mode change must not leave the previous mode's απήχημα playing.
+    LaunchedEffect(modeIndex) { stop() }
+    DisposableEffect(Unit) { onDispose { stop() } }
+
+    if (steps.isEmpty()) return
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = { if (playingIndex >= 0) stop() else play(ApichimaSequence.Speed.SHORT) }) {
+                Icon(
+                    imageVector = if (playingIndex >= 0) Icons.Filled.Stop else Icons.Filled.PlayArrow,
+                    contentDescription = null,
+                    tint = LbmBrown,
+                )
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    text = stringResource(
+                        if (playingIndex >= 0) R.string.eight_modes_apichima_stop
+                        else R.string.eight_modes_apichima_play_short
+                    ),
+                    color = LbmBrown,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+            Spacer(Modifier.width(4.dp))
+            TextButton(
+                onClick = { play(ApichimaSequence.Speed.SLOW) },
+                enabled = tones != null,
+            ) {
+                Text(stringResource(R.string.eight_modes_apichima_play_slow), color = LbmTextSecondary)
+            }
+        }
+        // The syllables, with the sounding one lit. Same steps as the sequence, so the highlight
+        // cannot point at a different syllable than the one being heard.
+        Row(modifier = Modifier.fillMaxWidth()) {
+            steps.forEachIndexed { index, step ->
+                val active = index == playingIndex
+                Text(
+                    text = step.syllable,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (active) LbmBrown else LbmTextSecondary,
+                    fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
+                    modifier = Modifier.padding(end = 10.dp),
+                )
+            }
+        }
+    }
+    Spacer(Modifier.height(4.dp))
 }
 
 /* ----------------------------- Apichima formatting ----------------------------- */

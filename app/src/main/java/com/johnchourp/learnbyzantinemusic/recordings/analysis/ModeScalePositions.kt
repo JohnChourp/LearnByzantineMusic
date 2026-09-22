@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
 import com.johnchourp.learnbyzantinemusic.modes.EightModeScaleDefinitions
+import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleBase
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleDefinition
 import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
@@ -12,7 +13,8 @@ import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
  * [TrainerPhthong.diatonicMoriaFromNi].
  */
 object ModeScalePositions {
-    const val MORIA_PER_OCTAVE = 72
+    /** The octave size is declared once, in ByzantineTuning — never re-stated here. */
+    const val MORIA_PER_OCTAVE = ByzantineTuning.MORIA_PER_OCTAVE
 
     fun forMode(modeKey: String): IntArray =
         forDefinition(EightModeScaleDefinitions.MODE_SCALES[modeKey] ?: EightModeScaleDefinitions.DIATONIC)

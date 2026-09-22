@@ -43,6 +43,20 @@
                 android:text="@string/theory_topic_back_button"
                 android:textAllCaps="false"
                 android:textColor="@color/first_mode_theory_accent" />
+
+            <Button
+                android:id="@+id/theory_topic_favorite_button"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/first_mode_theory_callout_bg"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:text="@string/theory_topic_favorite_off_symbol"
+                android:textAllCaps="false"
+                android:textColor="@color/first_mode_theory_accent"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout

@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
@@ -15,18 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LearnByzantineMusic"
         tools:targetApi="31">
-        <activity
-            android:name=".scan.ByzantineScanActivity"
-            android:exported="false"
-            android:label="@string/title_activity_byzantine_scan"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.LearnByzantineMusic" />
-        <activity
-            android:name=".scan.InAppCameraActivity"
-            android:exported="false"
-            android:label="@string/title_activity_byzantine_camera"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
             android:name=".modes.EightModesActivity"
             android:exported="false"
@@ -141,6 +128,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
         <provider
@@ -150,7 +141,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/byzantine_scan_file_paths" />
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
 

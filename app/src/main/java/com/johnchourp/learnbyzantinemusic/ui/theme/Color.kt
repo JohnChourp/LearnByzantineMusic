@@ -1,37 +1,53 @@
 package com.johnchourp.learnbyzantinemusic.ui.theme
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 
-// Brand palette — Byzantine warm gold/brown, aligned with the first_mode_theory_* tokens in colors.xml.
-val LbmBrown = Color(0xFF7A4E24)
-val LbmBrownSoft = Color(0xFFA16839)
-val LbmPageBg = Color(0xFFF6F2EA)
-val LbmSurface = Color(0xFFFFFCF7)
-val LbmSurfaceVariant = Color(0xFFF2E8D8)
-val LbmOutline = Color(0xFFE1D2B8)
-val LbmTextPrimary = Color(0xFF2F251A)
-val LbmTextSecondary = Color(0xFF655644)
-val LbmPrimaryContainer = Color(0xFFF7E8D3)
-val LbmHeroStart = Color(0xFFEADCC5)
-val LbmHeroEnd = Color(0xFFF7EFE1)
+/**
+ * The colour tokens the screens draw with (ClickUp `869f4tpju`).
+ *
+ * These used to be top-level constants. They are now **read from [LocalLbmPalette]**, which is what
+ * makes dark mode possible without touching the 45 files that use them: every existing `LbmBrown`
+ * reference already sits inside a `@Composable`, so it keeps compiling and starts following the
+ * theme.
+ *
+ * `@ReadOnlyComposable` keeps them as cheap as the constants were — no recomposition scope is
+ * created for reading one.
+ *
+ * The literal values live in [LbmPalette], one set per theme, so a colour is still defined exactly
+ * once per theme and never spelled at a call site.
+ */
 
-// Crimson measure-bar accent, echoing the red χρόνος boundary bars in the neume diagrams.
-val LbmMeasureBar = Color(0xFFA0003C)
+val LbmBrown: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.brown
+val LbmBrownSoft: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.brownSoft
+val LbmPageBg: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.pageBg
+val LbmSurface: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.surface
+val LbmSurfaceVariant: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.surfaceVariant
+val LbmOutline: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.outline
+val LbmTextPrimary: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.textPrimary
+val LbmTextSecondary: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.textSecondary
+val LbmPrimaryContainer: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.primaryContainer
+val LbmHeroStart: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.heroStart
+val LbmHeroEnd: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.heroEnd
+
+/** Crimson measure-bar accent, echoing the red χρόνος boundary bars in the neume diagrams. */
+val LbmMeasureBar: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.measureBar
 
 // Tile accent families (container background / icon-and-content tint).
-val AccentGoldContainer = Color(0xFFF7E8D3)
-val AccentGoldContent = Color(0xFF7A4E24)
-val AccentBlueContainer = Color(0xFFE6F0FF)
-val AccentBlueContent = Color(0xFF0D47A1)
-val AccentPurpleContainer = Color(0xFFF0E6F7)
-val AccentPurpleContent = Color(0xFF6A1B9A)
-val AccentOrangeContainer = Color(0xFFFFF1E0)
-val AccentOrangeContent = Color(0xFFE65100)
-val AccentGreenContainer = Color(0xFFE6F4EA)
-val AccentGreenContent = Color(0xFF2E7D32)
-val AccentBrownContainer = Color(0xFFEFE3D2)
-val AccentBrownContent = Color(0xFF5D4037)
+val AccentGoldContainer: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentGoldContainer
+val AccentGoldContent: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentGoldContent
+val AccentBlueContainer: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentBlueContainer
+val AccentBlueContent: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentBlueContent
+val AccentPurpleContainer: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentPurpleContainer
+val AccentPurpleContent: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentPurpleContent
+val AccentOrangeContainer: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentOrangeContainer
+val AccentOrangeContent: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentOrangeContent
+val AccentGreenContainer: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentGreenContainer
+val AccentGreenContent: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentGreenContent
+val AccentBrownContainer: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentBrownContainer
+val AccentBrownContent: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentBrownContent
 
-// Crimson «watch out» accent (pairs with the LbmMeasureBar content tint), for do/don't surfaces.
-val AccentCrimsonContainer = Color(0xFFF7E0E8)
-val AccentCrimsonContent = LbmMeasureBar
+/** Crimson «watch out» accent, for do/don't surfaces. */
+val AccentCrimsonContainer: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentCrimsonContainer
+val AccentCrimsonContent: Color @Composable @ReadOnlyComposable get() = LocalLbmPalette.current.accentCrimsonContent
