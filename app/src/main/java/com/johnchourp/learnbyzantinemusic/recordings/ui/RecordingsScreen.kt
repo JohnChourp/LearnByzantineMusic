@@ -172,6 +172,7 @@ fun RecordingsScreen(
                 RecordSection(
                     recordingState = uiState.recordingState,
                     statusMessage = uiState.statusMessage,
+                    targetLabel = uiState.targetLabel,
                     onStartRecording = onStartRecording,
                     onPauseResume = onPauseResume,
                     onStopRecording = onStopRecording,
@@ -318,6 +319,7 @@ private fun FolderSection(
 private fun RecordSection(
     recordingState: RecordingStateUi,
     statusMessage: String,
+    targetLabel: String?,
     onStartRecording: () -> Unit,
     onPauseResume: () -> Unit,
     onStopRecording: () -> Unit,
@@ -335,6 +337,22 @@ private fun RecordSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            if (!targetLabel.isNullOrBlank()) {
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = AccentGoldContainer,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        text = stringResource(R.string.recordings_target_template, targetLabel),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = AccentGoldContent,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
+            }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RecordStateIndicator(recordingState)
                 if (showTimer) {

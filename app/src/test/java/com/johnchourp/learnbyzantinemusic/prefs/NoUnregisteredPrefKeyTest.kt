@@ -42,19 +42,60 @@ class NoUnregisteredPrefKeyTest {
         )
     }
 
+    /**
+     * `getString("x", …)` / `putInt("x", …)` / `remove("x")` / `contains("x")` with a literal first
+     * argument.
+     *
+     * Scoped to files that could actually be holding a `SharedPreferences`. The pattern is purely
+     * textual and `JSONObject` has the very same accessor names, so an unscoped version flags every
+     * JSON parser in the app: `AnastasimatarionCatalog.kt` doing `modeJson.getString("key")` turned
+     * it red while breaking nothing (measured 2026-09-22, ClickUp `869dbkkwf`).
+     *
+     * The narrowing does **not** open a hole. [onlyTheRegistryOpensAPreferencesFile] already proves
+     * only `AppPrefs.kt` calls `getSharedPreferences`, so any other file holding one must name
+     * `SharedPreferences` (as a type) or `AppPrefs` (to obtain it) somewhere in its text — there is
+     * no third way to get the instance. [theScopeStillCatchesARealOffender] pins that.
+     */
+    private val literalKey = Regex(
+        """\.(get|put)(String|StringSet|Int|Long|Boolean|Float)\(\s*"|""" +
+            """\.(remove|contains)\(\s*""""
+    )
+
+    private fun couldHoldPreferences(text: String): Boolean =
+        "SharedPreferences" in text || "AppPrefs" in text
+
     @Test
     fun noPreferenceAccessorTakesALiteralKey() {
-        // getString("x", …) / putInt("x", …) / remove("x") / contains("x") with a literal first arg.
-        val literalKey = Regex(
-            """\.(get|put)(String|StringSet|Int|Long|Boolean|Float)\(\s*"|""" +
-                """\.(remove|contains)\(\s*""""
-        )
         val offenders = mainSources
             .filter { it.name != registryFile }
-            .filter { literalKey.containsMatchIn(it.readText()) }
+            .filter { couldHoldPreferences(it.readText()) && literalKey.containsMatchIn(it.readText()) }
             .map { it.name }
             .sorted()
         assertEquals("these pass a literal preference key instead of an AppPrefs entry", emptyList<String>(), offenders)
+    }
+
+    /**
+     * The negative control for the scoping above: a file that really does bypass the registry is
+     * still caught, and a JSON parser really is let through. Without this, narrowing the scope could
+     * silently turn the whole check into a no-op.
+     */
+    @Test
+    fun theScopeStillCatchesARealOffender() {
+        val offender = """
+            import android.content.SharedPreferences
+            fun load(p: SharedPreferences) = p.getString("font_step", null)
+        """.trimIndent()
+        assertTrue("a real bypass must still be flagged",
+            couldHoldPreferences(offender) && literalKey.containsMatchIn(offender))
+
+        val jsonParser = """
+            import org.json.JSONObject
+            fun parse(o: JSONObject) = o.getString("key")
+        """.trimIndent()
+        assertTrue("a JSON parser must not be flagged", !couldHoldPreferences(jsonParser))
+
+        // And the scoping must not be what does the work on its own: the regex still has to match.
+        assertTrue(literalKey.containsMatchIn(jsonParser))
     }
 
     @Test
