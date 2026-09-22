@@ -618,6 +618,9 @@
     <string name="weekly_mode_calendar_readings_section_title">Αναγνώσματα ημέρας</string>
     <string name="weekly_mode_calendar_apostle_label">Απόστολος</string>
     <string name="weekly_mode_calendar_gospel_label">Ευαγγέλιο</string>
+    <string name="weekly_mode_calendar_coverage_partial">Για αυτόν τον μήνα έχουμε καταγράψει μόνο τις σταθερές γιορτές. Αν μια ημέρα δεν δείχνει γιορτή, σημαίνει ότι δεν έχει συμπληρωθεί ακόμη — όχι απαραίτητα ότι δεν γιορτάζεται κάτι. Ο ήχος της εβδομάδας υπολογίζεται πάντα σωστά.</string>
+    <string name="weekly_mode_calendar_coverage_none">Δεν υπάρχουν ακόμη δεδομένα εορτολογίου για αυτόν τον μήνα. Ο ήχος της εβδομάδας υπολογίζεται πάντα σωστά.</string>
+    <string name="weekly_mode_calendar_coverage_readings_missing">Το εορτολόγιο αυτού του μήνα είναι πλήρες, αλλά τα αναγνώσματα δεν έχουν συμπληρωθεί ακόμη για όλες τις ημέρες.</string>
     <string name="weekly_mode_calendar_readings_empty">Δεν βρέθηκαν αναγνώσματα για την ημέρα.</string>
     <string name="weekly_mode_calendar_readings_none_for_kind">Δεν υπάρχει καταχώρηση.</string>
     <string name="title_activity_reading_text">Κείμενο Αναγνώσματος</string>

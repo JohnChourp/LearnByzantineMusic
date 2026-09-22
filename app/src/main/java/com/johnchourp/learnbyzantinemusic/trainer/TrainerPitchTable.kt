@@ -1,31 +1,30 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
 import kotlin.math.abs
-import kotlin.math.log2
-import kotlin.math.pow
 
 /**
- * Converts between [TrainerPhthong]s and concrete frequencies in Hz using the natural
- * diatonic scale anchored at Νη = 220 Hz over a 72-moria octave. This mirrors the
- * moria→frequency formula the 8 Ήχοι screen uses for its scale diagram so the trainer
- * sounds — and listens for — the same pitches.
+ * Converts between [TrainerPhthong]s and concrete frequencies in Hz on the natural diatonic scale.
+ *
+ * It does not carry its own tuning: both directions go through [ByzantineTuning], the one place that
+ * knows where Νη sounds and how many μόρια an octave holds. That is what guarantees the trainer
+ * listens for exactly the pitches the 8 Ήχοι diagram plays — a second copy of the formula would let
+ * the two drift apart silently.
  */
 object TrainerPitchTable {
-    const val BASE_NI_FREQUENCY_HZ = 220.0
-    const val MORIA_PER_OCTAVE = 72.0
-    private const val CENTS_PER_OCTAVE = 1200.0
+    /** μόρια in an octave, re-exported so trainer code reads one name for the octave's size. */
+    const val MORIA_PER_OCTAVE = ByzantineTuning.MORIA_PER_OCTAVE
 
     /** Absolute frequency of [phthong], raised/lowered by [octaveShift] whole octaves. */
     fun frequencyHz(phthong: TrainerPhthong, octaveShift: Int = 0): Double {
         val moriaFromNi = phthong.diatonicMoriaFromNi + octaveShift * MORIA_PER_OCTAVE
-        return BASE_NI_FREQUENCY_HZ * 2.0.pow(moriaFromNi / MORIA_PER_OCTAVE)
+        return ByzantineTuning.frequencyHz(moriaFromNi)
     }
 
     /** Moria above base Νη for a detected frequency (can be negative or exceed 72). */
-    fun moriaFromNi(frequencyHz: Double): Double =
-        MORIA_PER_OCTAVE * log2(frequencyHz / BASE_NI_FREQUENCY_HZ)
+    fun moriaFromNi(frequencyHz: Double): Double = ByzantineTuning.moriaFromNi(frequencyHz)
 
-    fun moriaToCents(moria: Double): Double = moria * (CENTS_PER_OCTAVE / MORIA_PER_OCTAVE)
+    fun moriaToCents(moria: Double): Double = ByzantineTuning.moriaToCents(moria)
 
     /**
      * Nearest phthong (folding octaves away) to a detected frequency, with the signed
@@ -37,7 +36,8 @@ object TrainerPitchTable {
             return null
         }
         val moria = moriaFromNi(frequencyHz)
-        val withinOctave = ((moria % MORIA_PER_OCTAVE) + MORIA_PER_OCTAVE) % MORIA_PER_OCTAVE
+        val octaveMoria = MORIA_PER_OCTAVE.toDouble()
+        val withinOctave = ((moria % octaveMoria) + octaveMoria) % octaveMoria
         var best = TrainerPhthong.NI
         var bestDeviation = Double.MAX_VALUE
         for (phthong in TrainerPhthong.ascending) {
@@ -45,7 +45,7 @@ object TrainerPitchTable {
             // octave seam (Ζω ↔ Νη') resolve to the genuinely closest phthong.
             val candidates = doubleArrayOf(
                 phthong.diatonicMoriaFromNi.toDouble(),
-                phthong.diatonicMoriaFromNi + MORIA_PER_OCTAVE
+                phthong.diatonicMoriaFromNi + octaveMoria
             )
             for (candidateMoria in candidates) {
                 val deviation = withinOctave - candidateMoria

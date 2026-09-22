@@ -4,6 +4,7 @@ import android.content.Context
 import org.json.JSONArray
 import org.json.JSONObject
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeParseException
 
 class CalendarCelebrationsRepository private constructor(
@@ -45,6 +46,44 @@ class CalendarCelebrationsRepository private constructor(
             gospel = emptyList(),
         )
     }
+
+    /**
+     * How much of [yearMonth] the dataset covers, derived from the dataset itself by counting the
+     * days of that month that carry an entry — never from a hard-coded list of filled months.
+     *
+     * The caller needs this before it can claim a day is ordinary: outside the filled range the
+     * dataset still holds the seeded immovable feasts, so a day with no entry there means "unknown",
+     * not "nothing happens".
+     */
+    fun getMonthCoverage(yearMonth: YearMonth): CalendarMonthCoverage {
+        val daysInMonth = yearMonth.lengthOfMonth()
+        val covered = (1..daysInMonth).count { day ->
+            celebrationsByDate.containsKey(yearMonth.atDay(day))
+        }
+        return when {
+            covered == 0 -> CalendarMonthCoverage.NONE
+            covered >= daysInMonth -> CalendarMonthCoverage.COMPLETE
+            else -> CalendarMonthCoverage.PARTIAL
+        }
+    }
+
+    /** Coverage of the daily readings, which are filled separately from the celebrations. */
+    fun getReadingsCoverage(yearMonth: YearMonth): CalendarMonthCoverage {
+        val daysInMonth = yearMonth.lengthOfMonth()
+        val covered = (1..daysInMonth).count { day -> readingsByDate.containsKey(yearMonth.atDay(day)) }
+        return when {
+            covered == 0 -> CalendarMonthCoverage.NONE
+            covered >= daysInMonth -> CalendarMonthCoverage.COMPLETE
+            else -> CalendarMonthCoverage.PARTIAL
+        }
+    }
+
+    /**
+     * True when an absent celebration for [date] may be reported to the user as an ordinary day.
+     * False when the month is only partially filled, because then absence is missing data.
+     */
+    fun isOrdinaryDayKnown(date: LocalDate): Boolean =
+        getMonthCoverage(YearMonth.from(date)) == CalendarMonthCoverage.COMPLETE
 
     fun getReadingById(date: LocalDate, readingId: String): CalendarReadingText? {
         val dayReadings = getDayReadings(date)

@@ -9,6 +9,24 @@ import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 
+/**
+ * A single theory page under «8 Ήχοι» — one entry of [TheoryTopicCatalog], rendered generically.
+ *
+ * **Why generic.** Every navigable theory page goes through the catalog, and the pages menu is
+ * *generated* from it. That is what keeps the menu, the navigation and the page set from drifting: a
+ * new page is a catalog entry, never a new activity and never a hand-written menu row.
+ *
+ * **Inputs:**
+ * - `TheoryTopicCatalog.EXTRA_TOPIC_KEY` — which topic to show; an unknown key falls back to a valid one.
+ * - `EightModesNavigation.EXTRA_NAV_PATH_TOPIC_KEYS` — the trail walked to get here, used for the
+ *   breadcrumb. [EightModesNavigation.resolveTopicPath] repairs a missing or inconsistent trail, so a
+ *   deep link with no path still renders a sensible breadcrumb.
+ *
+ * **Body may be empty by design:** a topic whose `bodyRes` is 0 is a navigation hub, and the body card
+ * is hidden rather than shown blank.
+ *
+ * **Stores nothing.**
+ */
 class TheoryTopicActivity : BaseActivity() {
     private lateinit var navigationMenuButton: Button
     private lateinit var backButton: Button
