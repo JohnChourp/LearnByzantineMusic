@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Dark values for the two remaining View-based screens: ModeTheoryActivity and TheoryTopicActivity
+  (ClickUp 869f4tpju).
+
+  These mirror LbmPalette.dark so a theory page opened from a Compose screen does not change
+  character halfway. They are kept as a second copy only because XML layouts cannot read a Compose
+  CompositionLocal; ThemeXmlParityTest asserts the two stay in step.
+
+  Which values-night is used is driven by BaseActivity, not only by the device: it forces the night
+  flag to match the user's own choice before anything inflates.
+-->
+<resources>
+    <color name="first_mode_theory_page_bg">#FF17120D</color>
+    <color name="first_mode_theory_card_bg">#FF211A13</color>
+    <color name="first_mode_theory_card_border">#FF4A3C2C</color>
+    <color name="first_mode_theory_callout_bg">#FF3A2C1C</color>
+    <color name="first_mode_theory_callout_border">#FF6B563C</color>
+    <color name="first_mode_theory_hero_start">#FF2A2017</color>
+    <color name="first_mode_theory_hero_end">#FF1C1610</color>
+    <color name="first_mode_theory_accent">#FFE8B981</color>
+    <color name="first_mode_theory_accent_soft">#FFCFA070</color>
+    <color name="first_mode_theory_text_primary">#FFF3EADC</color>
+    <color name="first_mode_theory_text_secondary">#FFC3B5A1</color>
+</resources>

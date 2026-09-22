@@ -41,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -80,6 +81,8 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
 import androidx.compose.material.icons.filled.Search
 
 /** Resolves a [TileAccent] to its (container, content) color pair. */
+@Composable
+@ReadOnlyComposable
 private fun accentColors(accent: TileAccent): Pair<Color, Color> = when (accent) {
     TileAccent.Gold -> AccentGoldContainer to AccentGoldContent
     TileAccent.Blue -> AccentBlueContainer to AccentBlueContent

@@ -72,6 +72,9 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurfaceVariant
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
 import kotlin.math.roundToInt
+import androidx.compose.material3.RadioButton
+import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
+import androidx.annotation.StringRes
 
 /**
  * Strings for the language-confirmation dialog, pre-resolved by the host Activity in the
@@ -109,9 +112,11 @@ private val LanguageOptions = listOf(
 @Composable
 fun SettingsScreen(
     appliedFontStep: Int,
+    currentThemeMode: AppThemeMode,
     currentLanguageCode: String,
     languagePrompt: LanguagePrompt?,
     onApplyFontStep: (Int) -> Unit,
+    onThemeModeSelected: (AppThemeMode) -> Unit,
     onLanguageSelected: (String) -> Unit,
     onConfirmLanguage: () -> Unit,
     onDismissLanguagePrompt: () -> Unit,
@@ -142,6 +147,12 @@ fun SettingsScreen(
                 FontSizeCard(
                     appliedFontStep = appliedFontStep,
                     onApplyFontStep = onApplyFontStep,
+                )
+            }
+            StaggeredAppear(delayMillis = 100) {
+                ThemeCard(
+                    currentThemeMode = currentThemeMode,
+                    onThemeModeSelected = onThemeModeSelected,
                 )
             }
             StaggeredAppear(delayMillis = 140) {
@@ -361,6 +372,63 @@ private fun FontSizePreview(selectedStep: Int, appliedStep: Int) {
 }
 
 /* ----------------------------- Language ----------------------------- */
+
+/**
+ * Theme choice (ClickUp `869f4tpju`).
+ *
+ * Applying it restarts the screen, because the night flag is resolved in `attachBaseContext` —
+ * before anything inflates — and an already-attached Activity cannot be re-attached. That is the
+ * same reason a language change restarts, so the behaviour is at least consistent.
+ */
+@Composable
+private fun ThemeCard(
+    currentThemeMode: AppThemeMode,
+    onThemeModeSelected: (AppThemeMode) -> Unit,
+) {
+    LessonCard(title = stringResource(R.string.settings_theme_label)) {
+        Text(
+            text = stringResource(R.string.settings_theme_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = LbmTextSecondary,
+        )
+        Spacer(Modifier.height(10.dp))
+        THEME_OPTIONS.forEach { option ->
+            val selected = option.mode == currentThemeMode
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .selectable(
+                        selected = selected,
+                        role = Role.RadioButton,
+                        onClick = { if (!selected) onThemeModeSelected(option.mode) },
+                    )
+                    .background(if (selected) LbmPrimaryContainer else LbmSurface)
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RadioButton(selected = selected, onClick = null)
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = stringResource(option.labelRes),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (selected) LbmBrown else LbmTextPrimary,
+                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                )
+            }
+            Spacer(Modifier.height(6.dp))
+        }
+    }
+}
+
+private data class ThemeOption(val mode: AppThemeMode, @StringRes val labelRes: Int)
+
+private val THEME_OPTIONS = listOf(
+    ThemeOption(AppThemeMode.SYSTEM, R.string.settings_theme_option_system),
+    ThemeOption(AppThemeMode.LIGHT, R.string.settings_theme_option_light),
+    ThemeOption(AppThemeMode.DARK, R.string.settings_theme_option_dark),
+    ThemeOption(AppThemeMode.HIGH_CONTRAST, R.string.settings_theme_option_high_contrast),
+)
 
 @Composable
 private fun LanguageCard(

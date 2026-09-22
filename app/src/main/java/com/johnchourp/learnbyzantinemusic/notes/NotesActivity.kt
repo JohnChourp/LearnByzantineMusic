@@ -102,7 +102,7 @@ class NotesActivity : BaseActivity() {
         ensureBackupFolderConfigured()
 
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val statusText = resolveStatusText(uiState.statusMessage)
 

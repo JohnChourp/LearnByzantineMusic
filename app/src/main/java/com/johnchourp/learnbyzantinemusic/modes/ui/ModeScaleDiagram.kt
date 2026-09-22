@@ -51,6 +51,7 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmOutline
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurface
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import kotlin.math.abs
+import androidx.compose.material3.minimumInteractiveComponentSize
 
 private val PILL_COLUMN_WIDTH = 96.dp
 private val PILL_HEIGHT = 26.dp
@@ -89,6 +90,15 @@ fun ModeScaleDiagram(
     val accent = ModeGenusPalette.accent(genus)
     val cellFill = accent.container
     val cellInk = accent.content
+    // Hoisted: a Canvas DrawScope is not a composable scope, so theme colours must be read here.
+    val activeLineColor = LbmBrown
+
+    // Distance of each φθόγγος from the mode's base, top → bottom, for the spoken description.
+    // Derived from the very intervals the cells are drawn from, so what TalkBack says and what the
+    // diagram shows cannot disagree.
+    val moriaFromBase = remember(intervalsTopToBottom, tonicIndices) {
+        moriaFromNearestBaseBelow(intervalsTopToBottom, tonicIndices)
+    }
     val pillHalf = PILL_HEIGHT.value / 2f
 
     // Segment heights (dp) encode μόρια directly, with a floor so tiny intervals stay legible.
@@ -179,7 +189,7 @@ fun ModeScaleDiagram(
                 if (activeIndex in boundaries.indices) {
                     val y = boundaries[activeIndex].dp.toPx()
                     drawLine(
-                        color = LbmBrown,
+                        color = activeLineColor,
                         start = Offset(0f, y),
                         end = Offset(chartW, y),
                         strokeWidth = 2.4.dp.toPx(),
@@ -229,13 +239,14 @@ fun ModeScaleDiagram(
                         isTonic = i in tonicIndices,
                         isActive = i == activeIndex,
                         accentInk = cellInk,
-                        contentDescription = stringResource(
-                            if (i in tonicIndices) {
-                                R.string.cd_eight_modes_base_note_pill
-                            } else {
-                                R.string.cd_eight_modes_note_pill
-                            },
-                            phthongsTopToBottom[i],
+                        // TalkBack must say the φθόγγος AND how far it sits from the base, because
+                        // the μόρια are the information the diagram exists to convey — a sighted
+                        // user reads them off the cell heights, and a screen-reader user otherwise
+                        // gets only a list of names (ClickUp 869f4tpju).
+                        contentDescription = phthongDescription(
+                            label = phthongsTopToBottom[i],
+                            moriaFromBase = moriaFromBase.getOrNull(i),
+                            isTonic = i in tonicIndices,
                         ),
                         onAccessibilityPlay = { onAccessibilityPlay(i) },
                         modifier = Modifier
@@ -283,6 +294,11 @@ private fun NotePill(
     Box(
         modifier = modifier
             .height(PILL_HEIGHT)
+            // The pill is 26dp because the ladder packs 22 of them into one screen; growing it
+            // would break the diagram. The TOUCH target is widened instead — Material's minimum
+            // interactive size gives the accessibility services a 48dp box around a smaller visual,
+            // which is exactly the case it exists for.
+            .minimumInteractiveComponentSize()
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
@@ -308,6 +324,52 @@ private fun NotePill(
             maxLines = 1,
         )
     }
+}
+
+/**
+ * Spoken description of one φθόγγος: its name, whether it is the base, and how many μόρια above the
+ * base it sits (ClickUp `869f4tpju`).
+ *
+ * Null [moriaFromBase] means the distance could not be derived — the base itself, or a ladder with
+ * no marked tonic. The description then falls back to the name alone rather than announcing a
+ * number that might be wrong.
+ */
+@Composable
+private fun phthongDescription(label: String, moriaFromBase: Int?, isTonic: Boolean): String = when {
+    isTonic -> stringResource(R.string.cd_eight_modes_base_note_pill, label)
+    moriaFromBase != null -> stringResource(R.string.cd_eight_modes_note_pill_moria, label, moriaFromBase)
+    else -> stringResource(R.string.cd_eight_modes_note_pill, label)
+}
+
+/**
+ * For each φθόγγος (top → bottom), its distance in μόρια above the nearest base **below** it, or
+ * null when there is none below.
+ *
+ * Measuring from the base below rather than from the bottom of the ladder is what makes the number
+ * useful: «Δι, 30 μόρια πάνω από τη βάση» locates the φθόγγος inside its own octave, which is how
+ * the interval is taught. A distance from the very bottom would grow past 72 and mean little.
+ *
+ * [intervalsTopToBottom] has one fewer entry than the φθόγγοι, and index `i` is the gap between
+ * φθόγγος `i` and φθόγγος `i + 1` — i.e. the μόρια *below* φθόγγος `i`.
+ */
+internal fun moriaFromNearestBaseBelow(
+    intervalsTopToBottom: List<Int>,
+    tonicIndices: Set<Int>,
+): List<Int?> {
+    val count = intervalsTopToBottom.size + 1
+    val result = arrayOfNulls<Int>(count)
+    // Walk upward (from the bottom index to the top) accumulating the gaps since the last base.
+    var sinceBase: Int? = null
+    for (i in count - 1 downTo 0) {
+        if (i in tonicIndices) {
+            result[i] = 0
+            sinceBase = 0
+        } else if (sinceBase != null) {
+            sinceBase += intervalsTopToBottom[i]
+            result[i] = sinceBase
+        }
+    }
+    return result.toList()
 }
 
 /**

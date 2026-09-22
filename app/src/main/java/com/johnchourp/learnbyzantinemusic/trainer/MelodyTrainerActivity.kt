@@ -107,7 +107,7 @@ class MelodyTrainerActivity : BaseActivity() {
         rebuildState()
 
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 MelodyTrainerScreen(
                     state = uiState,
                     phthongLabels = phthongLabels,

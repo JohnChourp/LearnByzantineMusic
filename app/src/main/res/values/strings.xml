@@ -370,6 +370,7 @@
     <string name="eight_modes_genus_hard_chromatic">Σκληρό χρωματικό</string>
     <string name="eight_modes_genus_enharmonic">Εναρμόνιο</string>
     <string name="cd_eight_modes_note_pill">Φθόγγος %1$s. Κράτα πατημένο για να ακούσεις τον τόνο.</string>
+    <string name="cd_eight_modes_note_pill_moria">Φθόγγος %1$s, %2$d μόρια πάνω από τη βάση. Κράτα πατημένο για να ακούσεις τον τόνο.</string>
     <string name="cd_eight_modes_base_note_pill">Φθόγγος %1$s, βάση του ήχου. Κράτα πατημένο για να ακούσεις τον τόνο.</string>
     <string name="mode_ascending_label">Άνοδος</string>
     <string name="mode_scale_notes">Φθόγγοι: %1$s</string>
@@ -569,6 +570,12 @@
     <string name="settings_font_size_label">Μέγεθος γραμμάτων</string>
     <string name="settings_font_size_value">%1$d%%</string>
     <string name="settings_font_size_hint">Σύρε για προεπισκόπηση και πάτησε «Εφαρμογή» για να ισχύσει σε όλη την εφαρμογή. Διαθέσιμα μεγέθη: 20, 40, 60, 80, 100.</string>
+    <string name="settings_theme_label">Θέμα εμφάνισης</string>
+    <string name="settings_theme_hint">Διάλεξε φωτεινό ή σκούρο. Το σκούρο βοηθά όταν ψάλλεις σε χαμηλό φωτισμό.</string>
+    <string name="settings_theme_option_system">Όπως η συσκευή</string>
+    <string name="settings_theme_option_light">Φωτεινό</string>
+    <string name="settings_theme_option_dark">Σκούρο</string>
+    <string name="settings_theme_option_high_contrast">Σκούρο με υψηλή αντίθεση</string>
     <string name="settings_language_label">Γλώσσα εφαρμογής</string>
     <string name="settings_language_hint">Επίλεξε τη γλώσσα που θέλεις να χρησιμοποιείται σε όλη την εφαρμογή.</string>
     <string name="settings_language_current_value">Τρέχουσα γλώσσα: %1$s</string>

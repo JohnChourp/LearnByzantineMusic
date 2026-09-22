@@ -162,7 +162,7 @@ class RecordingsActivity : BaseActivity() {
         )
 
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val recentItems = viewModel.recentItemsFlow.collectAsLazyPagingItems()
 

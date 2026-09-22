@@ -20,6 +20,7 @@ class AppPrefsRegistryTest {
                 "app_font_step",
                 "app_language_code",
                 "app_language_onboarding_completed",
+                "app_theme_mode",
                 "favorite_topic_ids",
                 "learning_completed_step_ids",
                 "metronome_bpm",
