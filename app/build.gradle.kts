@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -67,9 +69,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
     buildFeatures {
         compose = true
         buildConfig = true
@@ -78,6 +77,12 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
     }
 }
 
@@ -106,6 +111,9 @@ dependencies {
     implementation(libs.androidx.room.paging)
     implementation(libs.guava)
     kapt(libs.androidx.room.compiler)
+    // Room's processor reads Kotlin metadata with kotlin-metadata-jvm 2.2.0, which stops at metadata 2.3;
+    // keep the reader on the compiler's Kotlin version so kapt can read what Kotlin 2.4+ writes.
+    kapt(libs.kotlin.metadata.jvm)
     kapt(libs.guava)
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
