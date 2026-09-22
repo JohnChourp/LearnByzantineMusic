@@ -353,6 +353,9 @@
     <string name="eight_modes_base_shift_lower">Lower base</string>
     <string name="eight_modes_base_shift_higher">Higher base</string>
     <string name="eight_modes_current_mode_title">Selected mode details</string>
+    <string name="eight_modes_apichima_play_short">Hear the apichima</string>
+    <string name="eight_modes_apichima_play_slow">Slowly</string>
+    <string name="eight_modes_apichima_stop">Stop</string>
     <string name="eight_modes_ison_card_title">Ison (drone)</string>
     <string name="eight_modes_ison_hint">Turn the drone on to chant over a steady base.</string>
     <string name="eight_modes_ison_active">Drone on %1$s</string>

@@ -82,6 +82,9 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
+import com.johnchourp.learnbyzantinemusic.modes.ApichimaSequence
 
 private const val SCALE_OCTAVES = 3
 private const val BASE_REFERENCE_PHTHONG = "Νη"
@@ -230,7 +233,15 @@ fun EightModesScreen(
                     targetState = selectedModeIndex,
                     animationSpec = tween(280),
                     label = "detailsCrossfade",
-                ) { idx -> ModeDetailsCard(modeIndex = idx) }
+                ) { idx ->
+                    ModeDetailsCard(
+                        modeIndex = idx,
+                        baseShiftMoria = baseShiftByMode[idx] ?: 0,
+                        onTonePress = onTonePress,
+                        onToneRelease = onToneRelease,
+                        scope = scope,
+                    )
+                }
             }
             Spacer(Modifier.height(8.dp))
         }
@@ -625,7 +636,13 @@ private fun BaseShiftCard(moria: Int, onChange: (Int) -> Unit) {
 /* ----------------------------- Mode details ----------------------------- */
 
 @Composable
-private fun ModeDetailsCard(modeIndex: Int) {
+private fun ModeDetailsCard(
+    modeIndex: Int,
+    baseShiftMoria: Int,
+    onTonePress: (Double) -> Unit,
+    onToneRelease: () -> Unit,
+    scope: kotlinx.coroutines.CoroutineScope,
+) {
     val mode = EIGHT_MODES[modeIndex]
     val theory = ModeTheoryCatalog.byKey(mode.theoryKey)
     LessonCard(title = stringResource(R.string.eight_modes_current_mode_title)) {
@@ -642,6 +659,13 @@ private fun ModeDetailsCard(modeIndex: Int) {
         Spacer(Modifier.height(8.dp))
 
         TextSection(1, stringResource(R.string.mode_theory_section_apichima), formatApichima(mode))
+        ApichimaPlayer(
+            modeIndex = modeIndex,
+            baseShiftMoria = baseShiftMoria,
+            onTonePress = onTonePress,
+            onToneRelease = onToneRelease,
+            scope = scope,
+        )
         TextSection(
             2,
             stringResource(R.string.mode_theory_section_syllables_phthongs),
@@ -777,6 +801,121 @@ private fun LinkedTheoryText(text: String, textSizeSp: Float, modifier: Modifier
         },
         update = { tv -> TheoryTopicLinks.setLinkedText(tv.context, tv, text) },
     )
+}
+
+/* ----------------------------- Apichima playback ----------------------------- */
+
+/**
+ * «Άκου το απήχημα» — plays the whole intonation formula on one tap, highlighting the syllable
+ * currently sounding (ClickUp `869f4tpkv`).
+ *
+ * The sequence is parsed out of the same teaching string the section below renders, so text and
+ * sound cannot disagree. Pitches are looked up in the diagram's own frequency list, which is why the
+ * playback transposes with «Μεταφορά βάσης» for free.
+ *
+ * Stopping is handled in three places on purpose, because each is a real way to leave: the button
+ * itself, a mode change (the effect key), and disposal (leaving the screen or backgrounding it).
+ */
+@Composable
+private fun ApichimaPlayer(
+    modeIndex: Int,
+    baseShiftMoria: Int,
+    onTonePress: (Double) -> Unit,
+    onToneRelease: () -> Unit,
+    scope: kotlinx.coroutines.CoroutineScope,
+) {
+    val mode = EIGHT_MODES[modeIndex]
+    val teachingText = stringResource(mode.apichimaSyllablesRes)
+
+    val steps = remember(teachingText) { ApichimaSequence.parse(teachingText) }
+    val tones = remember(modeIndex, baseShiftMoria, teachingText) {
+        val scale = mode.scale
+        val labels = scale.ascendingPhthongs(SCALE_OCTAVES).reversed()
+        val freqs = ModeScaleFrequencies.topToBottom(
+            scale.repeatedIntervals(SCALE_OCTAVES),
+            scale.referenceMoriaFromBottom(BASE_REFERENCE_PHTHONG, SCALE_OCTAVES),
+            baseShiftMoria,
+        )
+        ApichimaSequence.frequencies(steps, labels, freqs)
+    }
+
+    var playingIndex by remember { mutableStateOf(-1) }
+    val job = remember { mutableStateOf<Job?>(null) }
+
+    fun stop() {
+        job.value?.cancel()
+        job.value = null
+        playingIndex = -1
+        onToneRelease()
+    }
+
+    fun play(speed: ApichimaSequence.Speed) {
+        val frequencies = tones ?: return
+        job.value?.cancel()
+        job.value = scope.launch {
+            try {
+                frequencies.forEachIndexed { index, hz ->
+                    playingIndex = index
+                    onTonePress(hz)
+                    delay(speed.millisPerStep)
+                }
+            } finally {
+                // Runs on normal completion AND on cancellation, so a stop mid-phrase never leaves
+                // a tone sounding.
+                playingIndex = -1
+                onToneRelease()
+            }
+        }
+    }
+
+    // A mode change must not leave the previous mode's απήχημα playing.
+    LaunchedEffect(modeIndex) { stop() }
+    DisposableEffect(Unit) { onDispose { stop() } }
+
+    if (steps.isEmpty()) return
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = { if (playingIndex >= 0) stop() else play(ApichimaSequence.Speed.SHORT) }) {
+                Icon(
+                    imageVector = if (playingIndex >= 0) Icons.Filled.Stop else Icons.Filled.PlayArrow,
+                    contentDescription = null,
+                    tint = LbmBrown,
+                )
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    text = stringResource(
+                        if (playingIndex >= 0) R.string.eight_modes_apichima_stop
+                        else R.string.eight_modes_apichima_play_short
+                    ),
+                    color = LbmBrown,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+            Spacer(Modifier.width(4.dp))
+            TextButton(
+                onClick = { play(ApichimaSequence.Speed.SLOW) },
+                enabled = tones != null,
+            ) {
+                Text(stringResource(R.string.eight_modes_apichima_play_slow), color = LbmTextSecondary)
+            }
+        }
+        // The syllables, with the sounding one lit. Same steps as the sequence, so the highlight
+        // cannot point at a different syllable than the one being heard.
+        Row(modifier = Modifier.fillMaxWidth()) {
+            steps.forEachIndexed { index, step ->
+                val active = index == playingIndex
+                Text(
+                    text = step.syllable,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (active) LbmBrown else LbmTextSecondary,
+                    fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
+                    modifier = Modifier.padding(end = 10.dp),
+                )
+            }
+        }
+    }
+    Spacer(Modifier.height(4.dp))
 }
 
 /* ----------------------------- Apichima formatting ----------------------------- */

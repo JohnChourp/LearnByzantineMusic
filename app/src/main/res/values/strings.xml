@@ -352,6 +352,9 @@
     <string name="eight_modes_base_shift_lower">Πιο χαμηλή βάση</string>
     <string name="eight_modes_base_shift_higher">Πιο υψηλή βάση</string>
     <string name="eight_modes_current_mode_title">Στοιχεία επιλεγμένου ήχου</string>
+    <string name="eight_modes_apichima_play_short">Άκου το απήχημα</string>
+    <string name="eight_modes_apichima_play_slow">Αργά</string>
+    <string name="eight_modes_apichima_stop">Σταμάτα</string>
     <string name="eight_modes_ison_card_title">Ισοκράτημα</string>
     <string name="eight_modes_ison_hint">Άναψε το ισοκράτημα για να ψάλλεις πάνω σε σταθερή βάση.</string>
     <string name="eight_modes_ison_active">Ισοκράτημα στον φθόγγο %1$s</string>
