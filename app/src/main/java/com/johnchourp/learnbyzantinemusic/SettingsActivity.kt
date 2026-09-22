@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import com.johnchourp.learnbyzantinemusic.settings.ui.LanguagePrompt
 import com.johnchourp.learnbyzantinemusic.settings.ui.SettingsScreen
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
+import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
 
 /**
  * App settings page. State holder for the redesigned Compose [SettingsScreen]: it owns the
@@ -30,12 +31,14 @@ class SettingsActivity : BaseActivity() {
         languageCode = AppLanguage.getSavedLanguageCode(this)
 
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 SettingsScreen(
                     appliedFontStep = appliedFontStep,
                     currentLanguageCode = languageCode,
                     languagePrompt = languagePrompt,
                     onApplyFontStep = ::applyFontStep,
+                    currentThemeMode = AppThemeMode.saved(this),
+                    onThemeModeSelected = ::applyThemeMode,
                     onLanguageSelected = ::requestLanguageChange,
                     onConfirmLanguage = ::confirmLanguageChange,
                     onDismissLanguagePrompt = { languagePrompt = null },
@@ -60,6 +63,19 @@ class SettingsActivity : BaseActivity() {
      * in the *target* language (so picking «English» shows it in English, and vice-versa),
      * matching the previous behaviour. Selecting the already-current language is a no-op.
      */
+    /**
+     * Saves the theme and restarts this screen so it takes effect immediately.
+     *
+     * The restart is not laziness: the night flag is resolved in `BaseActivity.attachBaseContext`,
+     * before any resource is inflated, and an Activity that is already attached cannot be
+     * re-attached. A language change restarts for exactly the same reason.
+     */
+    private fun applyThemeMode(mode: AppThemeMode) {
+        if (mode == AppThemeMode.saved(this)) return
+        AppThemeMode.save(this, mode)
+        recreate()
+    }
+
     private fun requestLanguageChange(targetLanguageCode: String) {
         val currentLanguageCode = AppLanguage.getSavedLanguageCode(this)
         if (targetLanguageCode == currentLanguageCode) {

@@ -66,7 +66,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         completedSteps.value = LearningProgress.completedSteps(this)
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 val sections = remember { withProgressTracking(buildHomeSections()) }
                 HomeScreen(
                     title = getString(R.string.learn_byzantine_music),

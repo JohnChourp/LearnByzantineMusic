@@ -68,7 +68,7 @@ class RecordingsManagerActivity : BaseActivity() {
         setupBackHandling()
 
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val entries = viewModel.entriesFlow.collectAsLazyPagingItems()
 

@@ -134,6 +134,16 @@ object AppPrefs {
         readBy = "the same page, which reopens at the tempo the learner was practising at",
     )
 
+    val ThemeMode = Key(
+        name = "app_theme_mode",
+        store = Store.SETTINGS,
+        type = Type.STRING,
+        default = "system",
+        allowed = "system, light, dark, high_contrast — an unknown value falls back to system",
+        writtenBy = "the theme selector in Ρυθμίσεις",
+        readBy = "BaseActivity, which applies it before any screen inflates",
+    )
+
     // ---- RECORDINGS ---------------------------------------------------------------------------
 
     val RecordingsFolderTreeUri = Key(
@@ -247,6 +257,7 @@ object AppPrefs {
         LearningCompletedStepIds,
         FavoriteTopicIds,
         MetronomeBpm,
+        ThemeMode,
         RecordingsFolderTreeUri,
         RecordingsOutputFormat,
         NotesFolderTreeUri,

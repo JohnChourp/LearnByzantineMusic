@@ -58,7 +58,7 @@ class WeeklyModeCalendarActivity : BaseActivity() {
         rebuildState()
 
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 WeeklyModeCalendarScreen(
                     state = uiState,
                     onBack = ::finish,

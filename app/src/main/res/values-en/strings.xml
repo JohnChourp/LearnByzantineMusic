@@ -371,6 +371,7 @@
     <string name="eight_modes_genus_hard_chromatic">Hard chromatic</string>
     <string name="eight_modes_genus_enharmonic">Enharmonic</string>
     <string name="cd_eight_modes_note_pill">Phthong %1$s. Press and hold to hear the tone.</string>
+    <string name="cd_eight_modes_note_pill_moria">Phthong %1$s, %2$d moria above the base. Press and hold to hear the tone.</string>
     <string name="cd_eight_modes_base_note_pill">Phthong %1$s, the base of the mode. Press and hold to hear the tone.</string>
     <string name="mode_ascending_label">Ascent</string>
     <string name="mode_scale_notes">Phthongs: %1$s</string>
@@ -570,6 +571,12 @@
     <string name="settings_font_size_label">Font size</string>
     <string name="settings_font_size_value">%1$d%%</string>
     <string name="settings_font_size_hint">Drag to preview, then tap “Apply” to use it across the whole app. Available sizes: 20, 40, 60, 80, 100.</string>
+    <string name="settings_theme_label">Appearance</string>
+    <string name="settings_theme_hint">Choose light or dark. Dark helps when you chant in low light.</string>
+    <string name="settings_theme_option_system">Follow the device</string>
+    <string name="settings_theme_option_light">Light</string>
+    <string name="settings_theme_option_dark">Dark</string>
+    <string name="settings_theme_option_high_contrast">Dark, high contrast</string>
     <string name="settings_language_label">App language</string>
     <string name="settings_language_hint">Choose the language used across the whole app.</string>
     <string name="settings_language_current_value">Current language: %1$s</string>

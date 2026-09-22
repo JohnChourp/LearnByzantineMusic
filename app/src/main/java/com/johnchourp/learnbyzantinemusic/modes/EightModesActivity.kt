@@ -37,7 +37,7 @@ class EightModesActivity : BaseActivity() {
         activeTimbre = loadSavedTimbre()
 
         setContent {
-            LbmTheme {
+            LbmTheme(palette = currentPalette()) {
                 EightModesScreen(
                     initialModeIndex = loadSavedModeIndex(),
                     initialTimbre = activeTimbre,
