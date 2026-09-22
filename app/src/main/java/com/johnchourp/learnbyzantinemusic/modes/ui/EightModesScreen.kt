@@ -85,9 +85,10 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import com.johnchourp.learnbyzantinemusic.modes.ApichimaSequence
+import com.johnchourp.learnbyzantinemusic.music.ModeLadder
+import com.johnchourp.learnbyzantinemusic.music.Moria
 
 private const val SCALE_OCTAVES = 3
-private const val BASE_REFERENCE_PHTHONG = "Νη"
 private const val BASE_SHIFT_MIN = -12
 private const val BASE_SHIFT_MAX = 12
 
@@ -392,22 +393,21 @@ private fun ScaleCard(
 ) {
     val mode = EIGHT_MODES[modeIndex]
     val scale = mode.scale
-    val ascendingIntervals = remember(modeIndex) { scale.repeatedIntervals(SCALE_OCTAVES) }
-    val ascendingPhthongs = remember(modeIndex) { scale.ascendingPhthongs(SCALE_OCTAVES) }
-    val referenceMoria = remember(modeIndex) {
-        scale.referenceMoriaFromBottom(BASE_REFERENCE_PHTHONG, SCALE_OCTAVES)
+    // One ladder, built once: φθόγγοι and their pitches together, highest first. Before this, the
+    // diagram, the drone and the απήχημα each rebuilt the same thing and could drift apart.
+    val ladder = rememberLadder(modeIndex, baseShiftMoria)
+    val phthongsTopToBottom = ladder.labels
+    val intervalsTopToBottom = remember(modeIndex) {
+        scale.repeatedIntervals(SCALE_OCTAVES).reversed()
     }
-    val phthongsTopToBottom = remember(modeIndex) { ascendingPhthongs.reversed() }
-    val intervalsTopToBottom = remember(modeIndex) { ascendingIntervals.reversed() }
-    val tonicBare = scale.base.phthong
+    // Tonic rungs are found by φθόγγος NAME across every octave — that is what the diagram marks.
+    // Matching the typed name, rather than trimming suffixes off a label, is the difference between
+    // "the same note in any octave" and "any label that happens to start the same way".
+    val tonicName = scale.base.base.name
     val tonicIndices = remember(modeIndex) {
-        phthongsTopToBottom.indices.filter { i ->
-            phthongsTopToBottom[i].trimEnd('΄', ',') == tonicBare
-        }.toSet()
+        ladder.steps.indices.filter { i -> ladder.steps[i].phthong.name == tonicName }.toSet()
     }
-    val frequencies = remember(modeIndex, baseShiftMoria) {
-        ModeScaleFrequencies.topToBottom(ascendingIntervals, referenceMoria, baseShiftMoria)
-    }
+    val frequencies = ladder.frequencies
     // Tracks the in-flight TalkBack tone pulse so a newer activation cancels the older one's delayed
     // release — otherwise an earlier pulse could stop a note that a later activation is still sounding.
     val pulseJob = remember { mutableStateOf<Job?>(null) }
@@ -474,6 +474,22 @@ private fun ScaleCard(
     }
 }
 
+/**
+ * The ladder for a mode at a given base shift, memoised.
+ *
+ * Every pitch on this screen comes from here: the diagram, the ison and the απήχημα. Keeping it in
+ * one place is what makes "the drone follows the μεταφορά βάσης" and "the απήχημα plays the notes
+ * the diagram shows" structurally true rather than three independent implementations that happen to
+ * agree today.
+ */
+@Composable
+private fun rememberLadder(modeIndex: Int, baseShiftMoria: Int): ModeLadder {
+    val scale = EIGHT_MODES[modeIndex].scale
+    return remember(modeIndex, baseShiftMoria) {
+        scale.ladder(octaves = SCALE_OCTAVES, baseShift = Moria(baseShiftMoria))
+    }
+}
+
 /* ----------------------------- Ισοκράτημα (ison drone) ----------------------------- */
 
 /** The ison's label and pitch for a mode at a given base shift. */
@@ -486,14 +502,10 @@ private data class IsonBase(val label: String, val frequencyHz: Double)
 @Composable
 private fun isonBaseFor(modeIndex: Int, baseShiftMoria: Int): IsonBase? {
     val scale = EIGHT_MODES[modeIndex].scale
-    return remember(modeIndex, baseShiftMoria) {
-        val ascendingIntervals = scale.repeatedIntervals(SCALE_OCTAVES)
-        val phthongsTopToBottom = scale.ascendingPhthongs(SCALE_OCTAVES).reversed()
-        val referenceMoria = scale.referenceMoriaFromBottom(BASE_REFERENCE_PHTHONG, SCALE_OCTAVES)
-        val frequencies =
-            ModeScaleFrequencies.topToBottom(ascendingIntervals, referenceMoria, baseShiftMoria)
-        IsonDrone.frequencyHz(phthongsTopToBottom, frequencies, scale.base.phthong)
-            ?.let { IsonBase(scale.base.phthong, it) }
+    val ladder = rememberLadder(modeIndex, baseShiftMoria)
+    return remember(ladder, modeIndex) {
+        IsonDrone.baseStep(ladder, scale.base.base)
+            ?.let { step -> IsonBase(step.phthong.label, step.frequencyHz) }
     }
 }
 
@@ -828,16 +840,8 @@ private fun ApichimaPlayer(
     val teachingText = stringResource(mode.apichimaSyllablesRes)
 
     val steps = remember(teachingText) { ApichimaSequence.parse(teachingText) }
-    val tones = remember(modeIndex, baseShiftMoria, teachingText) {
-        val scale = mode.scale
-        val labels = scale.ascendingPhthongs(SCALE_OCTAVES).reversed()
-        val freqs = ModeScaleFrequencies.topToBottom(
-            scale.repeatedIntervals(SCALE_OCTAVES),
-            scale.referenceMoriaFromBottom(BASE_REFERENCE_PHTHONG, SCALE_OCTAVES),
-            baseShiftMoria,
-        )
-        ApichimaSequence.frequencies(steps, labels, freqs)
-    }
+    val ladder = rememberLadder(modeIndex, baseShiftMoria)
+    val tones = remember(ladder, teachingText) { ApichimaSequence.frequencies(steps, ladder) }
 
     var playingIndex by remember { mutableStateOf(-1) }
     val job = remember { mutableStateOf<Job?>(null) }

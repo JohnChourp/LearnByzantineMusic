@@ -6,6 +6,7 @@ import com.johnchourp.learnbyzantinemusic.modes.EightModeScaleDefinitions
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleDefinition
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleGenus
 import com.johnchourp.learnbyzantinemusic.modes.ModeTheoryCatalog
+import com.johnchourp.learnbyzantinemusic.music.Mode
 
 /**
  * A single ήχος as the 8 Ήχοι screen presents it: the display/selector names, the απήχημα (with its
@@ -25,6 +26,18 @@ data class EightModeUiModel(
     val scale: ModeScaleDefinition,
 ) {
     val genus: ModeScaleGenus get() = scale.genus
+
+    /**
+     * The ήχος this row is, as a value rather than a string (ClickUp `869f4tpxj`).
+     *
+     * Derived from [theoryKey] rather than declared beside it, so the two cannot disagree. The key
+     * itself stays a String because it is the **stored** spelling — it appears in the preference
+     * `mode_base_shift_moria_<key>`, and renaming one would silently reset a user's «Μεταφορά βάσης».
+     *
+     * Null would mean the UI table and [Mode] had drifted apart; `EightModeUiModelsTest` proves all
+     * eight resolve, and that each row's scale is the one the canonical table assigns that ήχος.
+     */
+    val mode: Mode? get() = Mode.fromKey(theoryKey)
 }
 
 /** The eight ήχοι in screen order, identical to the legacy `EightModesActivity.modes` list. */

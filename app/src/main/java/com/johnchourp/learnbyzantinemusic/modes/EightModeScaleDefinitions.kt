@@ -1,15 +1,31 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
-enum class ModeScaleGenus {
-    DIATONIC,
-    SOFT_CHROMATIC,
-    HARD_CHROMATIC,
-    ENHARMONIC
-}
+import com.johnchourp.learnbyzantinemusic.music.Genus
+import com.johnchourp.learnbyzantinemusic.music.Mode
+import com.johnchourp.learnbyzantinemusic.music.ModeLadder
+import com.johnchourp.learnbyzantinemusic.music.Moria
+import com.johnchourp.learnbyzantinemusic.music.Phthong
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 
-enum class ModeScaleBase(val phthong: String) {
-    PA("Πα"),
-    NI("Νη")
+/**
+ * The γένος of a scale. Kept as an alias so the name this package has always used still resolves,
+ * while there is only ever one enum — see [Genus] (ClickUp `869f4tpxj`).
+ */
+typealias ModeScaleGenus = Genus
+
+/**
+ * The φθόγγος a scale is built from.
+ *
+ * [phthong] stays a String because it is what call sites compare against labels; [base] is the typed
+ * value the arithmetic uses. Both describe the same note, and `ModeScaleBaseTest` pins them together
+ * so they cannot drift.
+ */
+enum class ModeScaleBase(val base: Phthong) {
+    PA(Phthong(PhthongName.PA)),
+    NI(Phthong(PhthongName.NI));
+
+    /** Display text of the base. The rendering boundary, derived — never a second spelling. */
+    val phthong: String get() = base.label
 }
 
 data class ModeScaleInterval(
@@ -18,13 +34,47 @@ data class ModeScaleInterval(
     val moria: Int
 )
 
+/**
+ * One of the four scale shapes: a γένος, a base φθόγγος, and the μόρια between successive φθόγγοι.
+ *
+ * ## What changed with the typed model
+ *
+ * The ladder is now built as [Phthong] values and [Moria] distances, and the String labels are
+ * produced from them at the edge. Before, the labels *were* the model: the code decorated names with
+ * `,` and `΄` and then compared those strings, so the octave lived in text that anything could strip.
+ *
+ * The String-returning members below are kept deliberately — they are the **rendering boundary**,
+ * and several are exactly what the UI and the existing tests consume. Each now delegates to the
+ * typed computation rather than re-deriving anything.
+ */
 data class ModeScaleDefinition(
     val genus: ModeScaleGenus,
     val base: ModeScaleBase,
     val intervals: List<Int>
 ) {
+    /** μόρια between successive φθόγγοι, typed. [intervals] is the same list at the boundary. */
+    val stepMoria: List<Moria> get() = intervals.map(::Moria)
+
+    /**
+     * The mode's φθόγγοι with the pitch each sounds, spanning [octaves] octaves and transposed by
+     * [baseShift] μόρια.
+     *
+     * This is the single entry point for anything that needs pitches: the diagram, the ison drone
+     * and the απήχημα playback all take the same ladder, so they cannot disagree about a φθόγγος.
+     */
+    fun ladder(
+        octaves: Int,
+        reference: Phthong = Phthong(PhthongName.NI),
+        baseShift: Moria = Moria.ZERO,
+    ): ModeLadder = ModeLadder.build(
+        ascendingPhthongi = ascendingPhthongi(octaves),
+        ascendingIntervals = repeatedIntervals(octaves).map(::Moria),
+        referenceMoria = referenceMoria(reference, octaves),
+        baseShift = baseShift,
+    )
+
     val upperBase: String
-        get() = "${base.phthong}΄"
+        get() = Phthong(base.base.name, base.base.octave + 1).label
 
     fun repeatedIntervals(octaves: Int): List<Int> {
         require(octaves > 0) { "octaves must be positive" }
@@ -35,8 +85,16 @@ data class ModeScaleDefinition(
         }
     }
 
+    /**
+     * The ladder as **typed φθόγγοι**, ascending. This is the primary form; [ascendingPhthongs] is
+     * its rendering.
+     */
+    fun ascendingPhthongi(octaves: Int): List<Phthong> =
+        EightModeScaleDefinitions.ascendingPhthongi(base, octaves)
+
+    /** Rendering boundary: the same ladder as display labels. */
     fun ascendingPhthongs(octaves: Int): List<String> =
-        EightModeScaleDefinitions.ascendingPhthongs(base, octaves)
+        ascendingPhthongi(octaves).map { it.label }
 
     fun intervalPairs(): List<ModeScaleInterval> {
         val phthongs = EightModeScaleDefinitions.singleOctavePhthongs(base)
@@ -52,20 +110,37 @@ data class ModeScaleDefinition(
     fun intervalSummary(): String =
         intervalPairs().joinToString(separator = ", ") { "${it.from}-${it.to} ${it.moria}" }
 
-    fun referenceMoriaFromBottom(referencePhthong: String, octaves: Int): Int {
-        val labels = ascendingPhthongs(octaves)
-        val referenceIndex = labels.indexOf(referencePhthong)
+    /**
+     * How far [reference] sits above the bottom of the ladder, in μόρια.
+     *
+     * Typed throughout: the φθόγγος is matched **by value, octave included**, so it cannot be
+     * confused with the same name an octave away — which a label comparison would do the moment
+     * anything trimmed the suffix.
+     */
+    fun referenceMoria(reference: Phthong, octaves: Int): Moria {
+        val ladder = ascendingPhthongi(octaves)
+        val referenceIndex = ladder.indexOf(reference)
         require(referenceIndex >= 0) {
-            "reference phthong $referencePhthong is not present in ${labels.joinToString()}"
+            "reference phthong ${reference.label} is not present in ${ladder.joinToString { it.label }}"
         }
         return cumulativeMoria(octaves)[referenceIndex]
     }
 
-    private fun cumulativeMoria(octaves: Int): List<Int> {
-        val cumulative = mutableListOf(0)
-        var current = 0
+    /**
+     * Boundary overload taking display text. Kept because the UI and the existing tests address the
+     * reference by its written name; it parses and delegates rather than doing its own matching.
+     */
+    fun referenceMoriaFromBottom(referencePhthong: String, octaves: Int): Int {
+        val reference = Phthong.parse(referencePhthong)
+        require(reference != null) { "reference phthong $referencePhthong is not a φθόγγος" }
+        return referenceMoria(reference, octaves).value
+    }
+
+    private fun cumulativeMoria(octaves: Int): List<Moria> {
+        val cumulative = mutableListOf(Moria.ZERO)
+        var current = Moria.ZERO
         for (interval in repeatedIntervals(octaves)) {
-            current += interval
+            current += Moria(interval)
             cumulative.add(current)
         }
         return cumulative
@@ -97,57 +172,68 @@ object EightModeScaleDefinitions {
         intervals = listOf(12, 12, 6, 12, 12, 6, 12)
     )
 
-    val MODE_SCALES: Map<String, ModeScaleDefinition> = linkedMapOf(
-        "first" to DIATONIC,
-        "second" to SOFT_CHROMATIC,
-        "third" to ENHARMONIC,
-        "fourth" to DIATONIC,
-        "plagal_first" to DIATONIC,
-        "plagal_second" to HARD_CHROMATIC,
-        "varys" to ENHARMONIC,
-        "plagal_fourth" to DIATONIC
+    /** The scale of every ήχος, typed. [MODE_SCALES] is the same table addressed by stored key. */
+    val SCALE_BY_MODE: Map<Mode, ModeScaleDefinition> = linkedMapOf(
+        Mode.FIRST to DIATONIC,
+        Mode.SECOND to SOFT_CHROMATIC,
+        Mode.THIRD to ENHARMONIC,
+        Mode.FOURTH to DIATONIC,
+        Mode.PLAGAL_FIRST to DIATONIC,
+        Mode.PLAGAL_SECOND to HARD_CHROMATIC,
+        Mode.VARYS to ENHARMONIC,
+        Mode.PLAGAL_FOURTH to DIATONIC
     )
 
-    fun ascendingPhthongs(base: ModeScaleBase, octaves: Int): List<String> {
+    /** Boundary view of [SCALE_BY_MODE], keyed by the stored mode key. */
+    val MODE_SCALES: Map<String, ModeScaleDefinition> =
+        SCALE_BY_MODE.entries.associate { (mode, scale) -> mode.key to scale }
+
+    /**
+     * The ascending ladder as typed φθόγγοι, spanning [octaves] octaves.
+     *
+     * It starts one octave **below** the middle register, which is why the first φθόγγος renders
+     * with `,`: the diagram is meant to reach comfortably under a singer's base as well as above it.
+     * The octave advances when the run crosses Νη, because Νη is where a Byzantine octave begins —
+     * that is the rule this used to express by incrementing a suffix counter.
+     */
+    fun ascendingPhthongi(base: ModeScaleBase, octaves: Int): List<Phthong> {
         require(octaves > 0) { "octaves must be positive" }
-        val startIndex = PHTHONGS_ORDER.indexOf(base.phthong)
-        require(startIndex >= 0) { "Unknown base phthong ${base.phthong}" }
-
-        var suffixLevel = LOW_OCTAVE_SUFFIX_LEVEL
-        var currentIndex = startIndex
-        val labels = mutableListOf(decoratePhthong(PHTHONGS_ORDER[currentIndex], suffixLevel))
-        repeat(PHTHONGS_ORDER.size * octaves) {
-            currentIndex = (currentIndex + 1) % PHTHONGS_ORDER.size
-            val phthong = PHTHONGS_ORDER[currentIndex]
-            if (phthong == NI) {
-                suffixLevel += 1
-            }
-            labels.add(decoratePhthong(phthong, suffixLevel))
+        var current = Phthong(base.base.name, LOW_OCTAVE)
+        val ladder = mutableListOf(current)
+        repeat(PhthongName.entries.size * octaves) {
+            current = current.next()
+            ladder.add(current)
         }
-        return labels
+        return ladder
     }
 
+    /** Rendering boundary for [ascendingPhthongi]. */
+    fun ascendingPhthongs(base: ModeScaleBase, octaves: Int): List<String> =
+        ascendingPhthongi(base, octaves).map { it.label }
+
+    /**
+     * Column labels for the interval table: one octave from [base] to [base]΄.
+     *
+     * **This is not [ascendingPhthongi] and must not be implemented from it.** The ladder assigns a
+     * real octave to every φθόγγος, so a Πα-based run crossing Νη yields `Νη΄`. This table has always
+     * rendered the intermediate φθόγγοι **undecorated** — `Πα Βου Γα Δι Κε Ζω Νη Πα΄` — because it
+     * labels the *steps between intervals*, not pitches to sound.
+     *
+     * The distinction was invisible while both were Strings, and a straight port to the typed ladder
+     * silently turned that `Νη` into `Νη΄`. Nothing consumes these today, so nothing broke — but it
+     * would have been a display change smuggled in by a refactor, which ClickUp `869f4tpxj`
+     * explicitly forbids. `PhthongRenderingParityTest` now pins it.
+     *
+     * Whether `Νη΄` is the *better* label here is a real question, and a deliberate display decision
+     * for its own ticket — not something to settle inside a typing change.
+     */
     fun singleOctavePhthongs(base: ModeScaleBase): List<String> {
-        val rotated = phthongsFrom(base.phthong)
-        return rotated + "${base.phthong}΄"
+        val names = PhthongName.entries
+        val startIndex = names.indexOf(base.base.name)
+        val rotated = names.drop(startIndex) + names.take(startIndex)
+        return rotated.map { it.displayName } + Phthong(base.base.name, 1).label
     }
 
-    private fun phthongsFrom(basePhthong: String): List<String> {
-        val startIndex = PHTHONGS_ORDER.indexOf(basePhthong)
-        require(startIndex >= 0) { "Unknown base phthong $basePhthong" }
-        return PHTHONGS_ORDER.drop(startIndex) + PHTHONGS_ORDER.take(startIndex)
-    }
-
-    private fun decoratePhthong(phthong: String, suffixLevel: Int): String {
-        val suffix = when {
-            suffixLevel < 0 -> ","
-            suffixLevel == 0 -> ""
-            else -> "΄".repeat(suffixLevel)
-        }
-        return phthong + suffix
-    }
-
-    private const val NI = "Νη"
-    private const val LOW_OCTAVE_SUFFIX_LEVEL = -1
-    private val PHTHONGS_ORDER = listOf("Νη", "Πα", "Βου", "Γα", "Δι", "Κε", "Ζω")
+    /** The ladder opens an octave below the middle register — see [ascendingPhthongi]. */
+    private const val LOW_OCTAVE = -1
 }
