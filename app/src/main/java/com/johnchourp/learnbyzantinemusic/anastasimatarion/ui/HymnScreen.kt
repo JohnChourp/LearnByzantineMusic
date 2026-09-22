@@ -58,6 +58,7 @@ fun HymnScreen(
     onBack: () -> Unit,
     onRecord: () -> Unit,
     onOpenRecording: (HymnRecording) -> Unit,
+    onAnalyzeRecording: (HymnRecording) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val ref = uiState.ref
@@ -136,7 +137,11 @@ fun HymnScreen(
                         else -> Column(modifier = Modifier.fillMaxWidth()) {
                             uiState.recordings.forEachIndexed { index, recording ->
                                 if (index > 0) HorizontalDivider(color = LbmOutline)
-                                RecordingRow(recording = recording, onOpen = { onOpenRecording(recording) })
+                                RecordingRow(
+                                    recording = recording,
+                                    onOpen = { onOpenRecording(recording) },
+                                    onAnalyze = { onAnalyzeRecording(recording) },
+                                )
                             }
                         }
                     }
@@ -147,7 +152,7 @@ fun HymnScreen(
 }
 
 @Composable
-private fun RecordingRow(recording: HymnRecording, onOpen: () -> Unit) {
+private fun RecordingRow(recording: HymnRecording, onOpen: () -> Unit, onAnalyze: () -> Unit) {
     val formatter = remember { DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT) }
     Row(
         modifier = Modifier
@@ -173,6 +178,9 @@ private fun RecordingRow(recording: HymnRecording, onOpen: () -> Unit) {
                     color = LbmTextSecondary,
                 )
             }
+        }
+        TextButton(onClick = onAnalyze) {
+            Text(stringResource(R.string.anastasimatarion_analyze_recording))
         }
         TextButton(onClick = onOpen) {
             Text(stringResource(R.string.anastasimatarion_open_recording))

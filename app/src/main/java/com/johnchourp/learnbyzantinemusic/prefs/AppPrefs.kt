@@ -46,6 +46,9 @@ object AppPrefs {
 
         /** The 8 Ήχοι page: per-mode base shift, last selected mode, chosen timbre. */
         EIGHT_MODES("eight_modes_base_shift_prefs"),
+
+        /** «Ανάλυση φθόγγων»: what the user expects to have chanted, per hymn or per recording. */
+        RECORDING_ANALYSIS("recording_analysis_settings"),
     }
 
     /** What a key holds, so a reader cannot ask for the wrong accessor. */
@@ -249,6 +252,55 @@ object AppPrefs {
     /** Stored name of the base-shift key for [modeKey]. */
     fun baseShiftKeyName(modeKey: String): String = BASE_SHIFT_KEY_PREFIX + modeKey
 
+    /**
+     * The analysis settings are three **families** of keys, one set per analysis context. The
+     * context is a hymn (`hymn:<modeKey>:<code>`, shared by every recording of it) or a single
+     * recording (`recording:<uri>`); the stored name is that context followed by the suffix below.
+     * Use the helpers; never build the name inline.
+     */
+    const val ANALYSIS_EXPECTED_SUFFIX = "|expected"
+    const val ANALYSIS_MODE_SUFFIX = "|mode"
+    const val ANALYSIS_START_SUFFIX = "|start"
+
+    val AnalysisExpectedMelody = Key(
+        name = "<analysisContext>$ANALYSIS_EXPECTED_SUFFIX",
+        store = Store.RECORDING_ANALYSIS,
+        type = Type.STRING,
+        default = "empty — no expected melody has been typed for this context",
+        allowed = "comma-separated TrainerPhthong names; unknown names are dropped on read",
+        writtenBy = "the «αναμενόμενη μελωδία» field on the analysis screen",
+        readBy = "SequenceAligner, to score what was chanted against what was expected",
+    )
+
+    val AnalysisModeKey = Key(
+        name = "<analysisContext>$ANALYSIS_MODE_SUFFIX",
+        store = Store.RECORDING_ANALYSIS,
+        type = Type.STRING,
+        default = "unset — the screen falls back to its own default mode",
+        allowed = "a mode theoryKey",
+        writtenBy = "the mode picker on the analysis screen",
+        readBy = "ModeScalePositions, to place the phthongs of that mode",
+    )
+
+    val AnalysisStartPhthong = Key(
+        name = "<analysisContext>$ANALYSIS_START_SUFFIX",
+        store = Store.RECORDING_ANALYSIS,
+        type = Type.STRING,
+        default = "unset — calibration falls back to the first steady note",
+        allowed = "a TrainerPhthong name",
+        writtenBy = "the starting-phthong picker on the analysis screen",
+        readBy = "the analysis, to calibrate the singer's voice from a declared phthong",
+    )
+
+    /** Stored name of the expected-melody key for [analysisContext]. */
+    fun analysisExpectedKeyName(analysisContext: String): String = analysisContext + ANALYSIS_EXPECTED_SUFFIX
+
+    /** Stored name of the mode key for [analysisContext]. */
+    fun analysisModeKeyName(analysisContext: String): String = analysisContext + ANALYSIS_MODE_SUFFIX
+
+    /** Stored name of the starting-phthong key for [analysisContext]. */
+    fun analysisStartKeyName(analysisContext: String): String = analysisContext + ANALYSIS_START_SUFFIX
+
     /** Every registered key. A new key must appear here, or `AppPrefsRegistryTest` fails. */
     val all: List<Key> = listOf(
         FontStep,
@@ -267,6 +319,9 @@ object AppPrefs {
         SelectedModeKey,
         SelectedToneTimbre,
         BaseShiftMoria,
+        AnalysisExpectedMelody,
+        AnalysisModeKey,
+        AnalysisStartPhthong,
     )
 
     /** Opens [store]. The only place the app names a preferences file. */

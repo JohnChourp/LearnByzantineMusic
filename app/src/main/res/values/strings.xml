@@ -1078,6 +1078,37 @@
     <string name="anastasimatarion_no_recordings">Δεν έχεις ακόμη ηχογραφήσεις για αυτόν τον ύμνο.</string>
     <string name="anastasimatarion_open_recording">Άνοιγμα</string>
     <string name="recordings_target_template">Για τον ύμνο: %1$s</string>
+
+    <!-- Ανάλυση φθόγγων ηχογράφησης -->
+    <string name="title_activity_recording_analysis">Ανάλυση ηχογράφησης</string>
+    <string name="analysis_title">Ανάλυση φθόγγων</string>
+    <string name="analysis_scale_title">Κλίμακα</string>
+    <string name="analysis_mode_label">Ήχος</string>
+    <string name="analysis_start_label">Πρώτος φθόγγος που έψαλες</string>
+    <string name="analysis_scale_hint">Η αναγνώριση κουρδίζεται στη φωνή σου: η πρώτη σταθερή νότα της ηχογράφησης θεωρείται ο πρώτος φθόγγος και όλες οι άλλες μετριούνται πάνω στην κλίμακα του ήχου.</string>
+    <string name="analysis_status_decoding">Άνοιγμα της ηχογράφησης…</string>
+    <string name="analysis_status_analyzing">Ανάλυση του ύψους της φωνής…</string>
+    <string name="analysis_status_failed">Δεν ήταν δυνατή η ανάλυση αυτής της ηχογράφησης.</string>
+    <string name="analysis_retry">Δοκίμασε ξανά</string>
+    <string name="analysis_status_no_pitch">Δεν αναγνωρίστηκε κανένας σταθερός φθόγγος. Ψάλε πιο καθαρά και πιο κοντά στο μικρόφωνο.</string>
+    <string name="analysis_sung_title">Τι έψαλες</string>
+    <string name="analysis_sung_summary">%1$d φθόγγοι σε %2$s · %3$d εντός τόνου (±4 μόρια)</string>
+    <string name="analysis_diagram_title">Διάγραμμα</string>
+    <string name="analysis_diagram_cd">Διάγραμμα του ύψους στον χρόνο με %1$d φθόγγους</string>
+    <string name="analysis_diagram_legend">Κουκκίδες: το ύψος της φωνής σου. Μπάρες: οι φθόγγοι που αναγνωρίστηκαν — πράσινες εντός τόνου, πορτοκαλί εκτός.</string>
+    <string name="analysis_compare_title">Σύγκριση με τη μελωδία</string>
+    <string name="analysis_compare_hint">Γράψε τους φθόγγους που έπρεπε να ψάλεις (από το βιβλίο) για να δεις πόσο σωστός ήσουν. Για έναν ύμνο κρατιούνται για όλες τις ηχογραφήσεις του.</string>
+    <string name="analysis_compare_backspace">Διαγραφή του τελευταίου φθόγγου</string>
+    <string name="analysis_compare_empty">Δεν έχεις γράψει ακόμη την αναμενόμενη μελωδία.</string>
+    <string name="analysis_compare_expected">Αναμενόμενη μελωδία (%1$d φθόγγοι)</string>
+    <string name="analysis_compare_clear">Καθαρισμός</string>
+    <string name="analysis_compare_score">Σωστοί φθόγγοι: %1$d από %2$d (%3$d%%)</string>
+    <string name="analysis_compare_extras">Επιπλέον φθόγγοι που έψαλες: %1$d</string>
+    <string name="analysis_step_wrong">✗ %1$s → %2$s</string>
+    <string name="analysis_step_missing">– %1$s</string>
+    <string name="analysis_step_extra">+ %1$s</string>
+    <string name="recordings_action_analyze_short">Ανάλυση φθόγγων</string>
+    <string name="anastasimatarion_analyze_recording">Ανάλυση</string>
     <string name="learning_path_title">Από το μηδέν</string>
     <string name="learning_path_step">Βήμα %1$d από %2$d</string>
     <string name="learning_path_start">Ξεκίνα</string>

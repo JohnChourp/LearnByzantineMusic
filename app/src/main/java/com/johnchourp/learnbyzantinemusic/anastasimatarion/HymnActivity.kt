@@ -18,6 +18,8 @@ import com.johnchourp.learnbyzantinemusic.anastasimatarion.ui.HymnScreen
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingExternalOpener
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingFormatOption
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity
+import com.johnchourp.learnbyzantinemusic.recordings.analysis.AnalysisSettingsStore
+import com.johnchourp.learnbyzantinemusic.recordings.analysis.RecordingAnalysisActivity
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,6 +65,7 @@ class HymnActivity : BaseActivity() {
                     onBack = ::finish,
                     onRecord = ::startHymnRecording,
                     onOpenRecording = ::openRecording,
+                    onAnalyzeRecording = ::analyzeRecording,
                 )
             }
         }
@@ -88,6 +91,20 @@ class HymnActivity : BaseActivity() {
                 )
                 .putExtra(RecordingsActivity.EXTRA_TARGET_FOLDER_MATCH_PREFIX, HymnFolders.hymnFolderPrefix(ref.hymn))
                 .putExtra(RecordingsActivity.EXTRA_TARGET_LABEL, label),
+        )
+    }
+
+    /** The hymn's mode preselects the scale; the expected melody is shared by all its recordings. */
+    private fun analyzeRecording(recording: HymnRecording) {
+        val ref = viewModel.uiState.value.ref ?: return
+        startActivity(
+            RecordingAnalysisActivity.intent(
+                context = this,
+                uri = recording.uri,
+                name = recording.name,
+                contextKey = AnalysisSettingsStore.hymnKey(ref.modeKey, ref.hymn.code),
+                modeKey = ref.modeKey,
+            ),
         )
     }
 

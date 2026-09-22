@@ -17,6 +17,9 @@ class AppPrefsRegistryTest {
     fun everyStoredKeyNameIsFrozen() {
         assertEquals(
             listOf(
+                "<analysisContext>|expected",
+                "<analysisContext>|mode",
+                "<analysisContext>|start",
                 "app_font_step",
                 "app_language_code",
                 "app_language_onboarding_completed",
@@ -47,6 +50,7 @@ class AppPrefsRegistryTest {
                 "learn_byzantine_music_owned_recordings",
                 "learn_byzantine_music_recordings",
                 "learn_byzantine_music_settings",
+                "recording_analysis_settings",
             ),
             AppPrefs.Store.entries.map { it.fileName }.sorted()
         )
@@ -73,5 +77,17 @@ class AppPrefsRegistryTest {
     fun theBaseShiftFamilyBuildsItsNameFromTheRegisteredPrefix() {
         assertEquals("mode_base_shift_moria_first_mode", AppPrefs.baseShiftKeyName("first_mode"))
         assertTrue(AppPrefs.BaseShiftMoria.name.startsWith(AppPrefs.BASE_SHIFT_KEY_PREFIX))
+    }
+
+    @Test
+    fun theAnalysisFamiliesBuildTheirNamesFromTheRegisteredSuffixes() {
+        // The stored names are frozen the same way the others are: these keys are already written
+        // on devices that ran the analysis screen, so a suffix change silently loses the setting.
+        assertEquals("hymn:first_mode:02|expected", AppPrefs.analysisExpectedKeyName("hymn:first_mode:02"))
+        assertEquals("recording:content://x|mode", AppPrefs.analysisModeKeyName("recording:content://x"))
+        assertEquals("recording:content://x|start", AppPrefs.analysisStartKeyName("recording:content://x"))
+        assertTrue(AppPrefs.AnalysisExpectedMelody.name.endsWith(AppPrefs.ANALYSIS_EXPECTED_SUFFIX))
+        assertTrue(AppPrefs.AnalysisModeKey.name.endsWith(AppPrefs.ANALYSIS_MODE_SUFFIX))
+        assertTrue(AppPrefs.AnalysisStartPhthong.name.endsWith(AppPrefs.ANALYSIS_START_SUFFIX))
     }
 }

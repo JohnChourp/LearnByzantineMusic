@@ -25,6 +25,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.recordings.index.RecordingsRepository
+import com.johnchourp.learnbyzantinemusic.recordings.analysis.AnalysisSettingsStore
+import com.johnchourp.learnbyzantinemusic.recordings.analysis.RecordingAnalysisActivity
 import com.johnchourp.learnbyzantinemusic.recordings.ui.RecordingsScreen
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.Dispatchers
@@ -190,7 +192,17 @@ class RecordingsActivity : BaseActivity() {
                     onOpenRecording = { openRecordingInExternalPlayer(it) },
                     onShareRecording = { shareRecording(it) },
                     onRenameRecording = { showRenameRecordingDialog(it) },
-                    onDeleteRecording = { showDeleteRecordingDialog(it) }
+                    onDeleteRecording = { showDeleteRecordingDialog(it) },
+                    onAnalyzeRecording = { item ->
+                        startActivity(
+                            RecordingAnalysisActivity.intent(
+                                context = this,
+                                uri = item.uri,
+                                name = item.name,
+                                contextKey = AnalysisSettingsStore.recordingKey(item.uri.toString()),
+                            )
+                        )
+                    }
                 )
             }
         }

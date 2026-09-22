@@ -9,8 +9,10 @@
  *
  *   ANASTASIMATARION_SOURCE_URL=<base-url> node scripts/generate-anastasimatarion-catalog.mjs
  *
- * The value is recorded in the private brain, not here. Without it the script refuses to run
- * rather than silently emitting an empty catalog.
+ * The value is supplied by the operator at generation time and is deliberately stored in NEITHER
+ * repository — not here, and not in the brain. Without it the script refuses to run rather than
+ * silently emitting an empty catalog. The catalog is regenerated rarely; carrying the source in a
+ * file would defeat the point of removing it from the asset.
  *
  * Only the INCIPIT (opening words) of each hymn is stored, never the full text: the page lists
  * the hymns so recordings can be kept per hymn; the chanter sings from the book.
