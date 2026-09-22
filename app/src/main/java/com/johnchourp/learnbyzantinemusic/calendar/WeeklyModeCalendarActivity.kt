@@ -140,8 +140,27 @@ class WeeklyModeCalendarActivity : BaseActivity() {
             apostleReadings = readings.apostle.map { ReadingRefUi(it.id, it.reference) },
             gospelReadings = readings.gospel.map { ReadingRefUi(it.id, it.reference) },
             readingsEmpty = readings.apostle.isEmpty() && readings.gospel.isEmpty(),
+            coverageNoticeRes = coverageNoticeRes(),
         )
     }
+
+    /**
+     * The notice for the visible month, or null when the dataset covers it fully.
+     *
+     * Read from the dataset every time rather than cached: filling a month is an asset change, and a
+     * cached answer would keep claiming the old coverage until the process restarted.
+     */
+    private fun coverageNoticeRes(): Int? =
+        when (celebrationsRepository.getMonthCoverage(visibleMonth)) {
+            CalendarMonthCoverage.COMPLETE ->
+                if (celebrationsRepository.getReadingsCoverage(visibleMonth) == CalendarMonthCoverage.COMPLETE) {
+                    null
+                } else {
+                    R.string.weekly_mode_calendar_coverage_readings_missing
+                }
+            CalendarMonthCoverage.PARTIAL -> R.string.weekly_mode_calendar_coverage_partial
+            CalendarMonthCoverage.NONE -> R.string.weekly_mode_calendar_coverage_none
+        }
 
     private fun buildMonthGrid(): MonthGridUi {
         val today = LocalDate.now()

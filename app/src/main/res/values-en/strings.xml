@@ -619,6 +619,9 @@
     <string name="weekly_mode_calendar_readings_section_title">Daily readings</string>
     <string name="weekly_mode_calendar_apostle_label">Apostle</string>
     <string name="weekly_mode_calendar_gospel_label">Gospel</string>
+    <string name="weekly_mode_calendar_coverage_partial">For this month we have recorded only the fixed feasts. If a day shows no feast, it has not been filled in yet — it does not necessarily mean nothing is celebrated. The tone of the week is always calculated correctly.</string>
+    <string name="weekly_mode_calendar_coverage_none">There is no feast-calendar data for this month yet. The tone of the week is always calculated correctly.</string>
+    <string name="weekly_mode_calendar_coverage_readings_missing">This month\'s feast calendar is complete, but the readings have not been filled in for every day yet.</string>
     <string name="weekly_mode_calendar_readings_empty">No readings found for this day.</string>
     <string name="weekly_mode_calendar_readings_none_for_kind">No entry available.</string>
     <string name="title_activity_reading_text">Reading Text</string>
