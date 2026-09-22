@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      DEBUG ONLY. This provider exists so the SAF edge-case instrumentation tests run through the
+      real Storage Access Framework (ClickUp 869f4tpt9, B5).
+
+      Why it lives in the debug variant rather than in androidTest: instrumentation runs inside the
+      TARGET application's process and under its UID. A provider declared in the androidTest
+      manifest belongs to the test package, so it is neither started in that process nor reachable
+      across the UID boundary — measured on 2026-09-22, every call came back FAILED and the test
+      app's own cache directory was not even writable.
+
+      exported="true" and the MANAGE_DOCUMENTS permission are not a loosening: DocumentsProvider
+      .attachInfo REFUSES to start otherwise ("Provider must be exported"), and MANAGE_DOCUMENTS is
+      a system-signature permission no ordinary app can hold, so nothing outside the platform can
+      reach it. The tests can, because a same-UID caller skips the permission check — which is the
+      other reason this had to move out of androidTest.
+
+      It is in src/debug, so it is absent from the release manifest, and a unit test asserts that
+      rather than trusting it.
+    -->
+    <application>
+        <provider
+            android:name="com.johnchourp.learnbyzantinemusic.recordings.saf.FakeSafProvider"
+            android:authorities="com.johnchourp.learnbyzantinemusic.test.saf"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+    </application>
+</manifest>
