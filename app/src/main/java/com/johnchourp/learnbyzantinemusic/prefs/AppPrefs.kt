@@ -113,6 +113,17 @@ object AppPrefs {
         readBy = "the home LearningPathCard, via LearningProgress.completedSteps",
     )
 
+    val FavoriteTopicIds = Key(
+        name = "favorite_topic_ids",
+        store = Store.SETTINGS,
+        type = Type.STRING_SET,
+        default = "empty set",
+        allowed = "TheoryTopicCatalog keys; unknown ids are dropped on read, not on write, so a " +
+            "topic that is temporarily absent does not lose its star",
+        writtenBy = "the star on a theory page, via TheoryTopicFavorites.toggle",
+        readBy = "the «8 Ήχοι» pages menu, which lists favourites first",
+    )
+
     // ---- RECORDINGS ---------------------------------------------------------------------------
 
     val RecordingsFolderTreeUri = Key(
@@ -224,6 +235,7 @@ object AppPrefs {
         LanguageCode,
         LanguageOnboardingCompleted,
         LearningCompletedStepIds,
+        FavoriteTopicIds,
         RecordingsFolderTreeUri,
         RecordingsOutputFormat,
         NotesFolderTreeUri,

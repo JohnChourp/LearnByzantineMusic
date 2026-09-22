@@ -428,6 +428,17 @@
     <string name="title_activity_mode_theory">Detailed Mode Theory</string>
     <string name="title_activity_theory_topic">System Theory</string>
     <string name="mode_theory_back_button">← Back to the 8 Modes</string>
+    <string name="shortcut_new_recording_short">New recording</string>
+    <string name="shortcut_new_recording_long">New recording</string>
+    <string name="recordings_share_chooser_title">Share recording</string>
+    <string name="recordings_share_failed">Could not share the recording.</string>
+    <string name="recordings_action_share">Share</string>
+    <string name="notes_action_share">Share note</string>
+    <string name="notes_share_chooser_title">Share note</string>
+    <string name="theory_topic_favorite_off_symbol">☆</string>
+    <string name="theory_topic_favorite_on_symbol">★</string>
+    <string name="theory_topic_favorite_add">Add to favourites</string>
+    <string name="theory_topic_favorite_remove">Remove from favourites</string>
     <string name="theory_topic_back_button">← Back</string>
     <string name="mode_theory_badge">Theory from the Octoechos table</string>
     <string name="mode_theory_quick_facts_title">Quick view</string>
