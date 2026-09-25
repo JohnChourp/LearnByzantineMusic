@@ -16,8 +16,10 @@
     - A backup over 25 MB is not made at all, the notes included: bulky or redundant files stay out.
     Cached files are never backed up by Android, so they need no rule.
 
-    A manual export of settings (ClickUp 869f5x25w, «Δεδομένα μάθησης») follows the same line: it
-    carries no folder URIs either.
+    Next to a manual export of settings (ClickUp 869f5x25w, «Δεδομένα μάθησης»): Android restores
+    these files once, when the app is installed; importing that export later writes only the keys
+    the file carries, so the two never fight over the same data at the same moment. Neither carries
+    folder URIs.
 -->
 <data-extraction-rules>
     <cloud-backup>
