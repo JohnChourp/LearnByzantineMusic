@@ -40,6 +40,8 @@ class AppPrefsRegistryTest {
                 "recordings_output_format",
                 "selected_mode_key",
                 "selected_tone_timbre",
+                "trainer_exercises",
+                "trainer_last_melody",
             ),
             AppPrefs.all.map { it.name }.sorted()
         )
@@ -54,6 +56,7 @@ class AppPrefsRegistryTest {
                 "learn_byzantine_music_owned_recordings",
                 "learn_byzantine_music_recordings",
                 "learn_byzantine_music_settings",
+                "learn_byzantine_music_trainer",
                 "recording_analysis_settings",
             ),
             AppPrefs.Store.entries.map { it.fileName }.sorted()

@@ -20,10 +20,14 @@ import com.johnchourp.learnbyzantinemusic.music.Beats
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
+import com.johnchourp.learnbyzantinemusic.trainer.ui.ExerciseDialogUi
+import com.johnchourp.learnbyzantinemusic.trainer.ui.ExerciseItemUi
+import com.johnchourp.learnbyzantinemusic.trainer.ui.ExerciseNameError
 import com.johnchourp.learnbyzantinemusic.trainer.ui.MelodyTrainerScreen
 import com.johnchourp.learnbyzantinemusic.trainer.ui.MelodyTrainerUiState
 import com.johnchourp.learnbyzantinemusic.trainer.ui.PracticeModeUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TimingRuleNumbersUi
+import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerExercisesUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerNoteUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerScaleUi
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
@@ -49,6 +53,12 @@ import java.util.Locale
  * [TrainerScale] (ClickUp `869f5x24v`): «Διατονικός», the default and the Trainer as it always was,
  * or a ήχος on the same ladder the 8 Ήχοι page uses, with that ήχος's own «Μεταφορά βάσης», read
  * from and written to the key the 8 Ήχοι page keeps for it.
+ *
+ * The melody is no longer lost when the screen closes (ClickUp `869f5x261`): every edit writes it
+ * as the last melody, onStop does too, and onCreate puts it back — after a close, a recreation or a
+ * process death alike. «Οι ασκήσεις μου» keeps named melodies. Both live in [TrainerExerciseStore];
+ * the formats, and what is done with a value that cannot be read, are [TrainerMelodyCodec]'s and
+ * [ExerciseBook]'s.
  */
 class MelodyTrainerActivity : BaseActivity() {
 
@@ -61,6 +71,16 @@ class MelodyTrainerActivity : BaseActivity() {
 
     /** The 8 Ήχοι store: the per-mode «Μεταφορά βάσης» lives there, shared with that page. */
     private val modePrefs: SharedPreferences by lazy { AppPrefs.open(this, AppPrefs.Store.EIGHT_MODES) }
+
+    /** The last melody and «Οι ασκήσεις μου» (ClickUp `869f5x261`). */
+    private val exerciseStore by lazy {
+        TrainerExerciseStore(TrainerExerciseStore.forPrefs(AppPrefs.open(this, AppPrefs.Store.TRAINER)))
+    }
+    private var exercises = ExerciseBook.EMPTY
+    private var exerciseDialog: ExerciseDialogUi? = null
+
+    /** What the autosave last wrote (or restored), so an unchanged melody is not written again. */
+    private var lastSavedMelody: TrainerMelody? = null
 
     private var isPlaybackActive = false
     private var isVoiceActive = false
@@ -123,6 +143,7 @@ class MelodyTrainerActivity : BaseActivity() {
         voiceStatus = getString(R.string.melody_trainer_voice_hint)
         rhythmStatus = getString(R.string.melody_trainer_rhythm_hint)
         comboStatus = getString(R.string.melody_trainer_combo_hint)
+        restoreSaved()
         rebuildState()
 
         setContent {
@@ -140,6 +161,15 @@ class MelodyTrainerActivity : BaseActivity() {
                     onRemoveNote = ::removeNote,
                     onSelectScale = ::selectScale,
                     onBaseShiftChange = ::changeBaseShift,
+                    onRequestSaveExercise = ::requestSaveExercise,
+                    onSaveExercise = ::saveExercise,
+                    onRequestOpenExercise = ::requestOpenExercise,
+                    onOpenExercise = ::openExercise,
+                    onRequestRenameExercise = ::requestRenameExercise,
+                    onRenameExercise = ::renameExercise,
+                    onRequestDeleteExercise = ::requestDeleteExercise,
+                    onDeleteExercise = ::deleteExercise,
+                    onDismissExerciseDialog = ::dismissExerciseDialog,
                     onTempoChange = ::changeTempo,
                     onPlay = ::startPlayback,
                     onStop = ::stopPlayback,
@@ -164,7 +194,9 @@ class MelodyTrainerActivity : BaseActivity() {
 
     private fun addNote(phthong: PhthongName) {
         if (isBusy) return
+        if (!MelodySequence(notes.toList()).canAddNote()) return
         notes.add(TrainerNote(phthong = phthong, octaveShift = currentOctaveShift))
+        autosave()
         rebuildState()
     }
 
@@ -183,6 +215,7 @@ class MelodyTrainerActivity : BaseActivity() {
     private fun changeTempo(newBpm: Int) {
         if (isBusy) return
         bpm = MelodyTempo.clampBpm(newBpm)
+        autosave()
         rebuildState()
     }
 
@@ -198,6 +231,7 @@ class MelodyTrainerActivity : BaseActivity() {
             BaseShift.clamp(modePrefs.getInt(AppPrefs.baseShiftKeyName(mode.key), BaseShift.DEFAULT_MORIA))
         }
         scale = TrainerScale(mode, shift)
+        autosave()
         rebuildState()
     }
 
@@ -209,6 +243,7 @@ class MelodyTrainerActivity : BaseActivity() {
         if (bounded == scale.baseShiftMoria) return
         scale = scale.copy(baseShiftMoria = bounded)
         modePrefs.edit().putInt(AppPrefs.baseShiftKeyName(mode.key), bounded).apply()
+        autosave()
         rebuildState()
     }
 
@@ -219,6 +254,7 @@ class MelodyTrainerActivity : BaseActivity() {
         val updated = (note.baseDurationBeats + delta)
             .coerceIn(MelodySequence.MIN_LENGTH_BEATS, MelodySequence.MAX_LENGTH_BEATS)
         notes[index] = note.copy(baseDurationBeats = updated)
+        autosave()
         rebuildState()
     }
 
@@ -227,6 +263,7 @@ class MelodyTrainerActivity : BaseActivity() {
         if (!MelodySequence(notes.toList()).canToggleGorgon(index)) return
         val note = notes[index]
         notes[index] = note.withGorgo(!note.hasGorgo)
+        autosave()
         rebuildState()
     }
 
@@ -239,6 +276,7 @@ class MelodyTrainerActivity : BaseActivity() {
         notes.clear()
         notes.addAll(kept)
         matchedIndices.clear()
+        autosave()
         rebuildState()
     }
 
@@ -246,6 +284,125 @@ class MelodyTrainerActivity : BaseActivity() {
         if (isBusy) return
         notes.clear()
         matchedIndices.clear()
+        autosave()
+        rebuildState()
+    }
+
+    // endregion
+
+    // region saved melodies: the last one, and «Οι ασκήσεις μου» (ClickUp 869f5x261)
+
+    private fun currentMelody(): TrainerMelody = TrainerMelody(notes.toList(), bpm, scale)
+
+    /**
+     * Puts back the last melody — after the screen was closed, or the process killed — and reads the
+     * saved exercises. A melody that cannot be read is simply not restored: the Trainer opens empty.
+     */
+    private fun restoreSaved() {
+        exercises = exerciseStore.loadExercises()
+        exerciseStore.loadLastMelody()?.let(::showMelody)
+        lastSavedMelody = currentMelody()
+    }
+
+    /** Writes the melody as the last one, when it changed since the last write. */
+    private fun autosave() {
+        val melody = currentMelody()
+        if (melody == lastSavedMelody) return
+        exerciseStore.saveLastMelody(melody)
+        lastSavedMelody = melody
+    }
+
+    /** Replaces the melody on screen with [melody], at the «Μεταφορά βάσης» its ήχος has now. */
+    private fun showMelody(melody: TrainerMelody) {
+        val live = melody.withLiveShift(liveShiftOf(melody.scale.mode))
+        notes.clear()
+        notes.addAll(live.notes)
+        bpm = live.bpm
+        scale = live.scale
+        matchedIndices.clear()
+    }
+
+    /** The shift the shared key holds for [mode], or null when that ήχος has none stored yet. */
+    private fun liveShiftOf(mode: Mode?): Int? {
+        mode ?: return null
+        val key = AppPrefs.baseShiftKeyName(mode.key)
+        return if (modePrefs.contains(key)) modePrefs.getInt(key, BaseShift.DEFAULT_MORIA) else null
+    }
+
+    private fun requestSaveExercise() {
+        if (isBusy || notes.isEmpty()) return
+        exerciseDialog = ExerciseDialogUi.SaveAs()
+        rebuildState()
+    }
+
+    private fun saveExercise(name: String) {
+        if (isBusy) return
+        applyExerciseChange(exercises.saveAs(name, currentMelody(), System.currentTimeMillis())) { error ->
+            ExerciseDialogUi.SaveAs(error)
+        }
+    }
+
+    /** Opening replaces the melody on screen, so a melody in progress is asked about first. */
+    private fun requestOpenExercise(name: String) {
+        if (isBusy) return
+        if (notes.isEmpty()) {
+            openExercise(name)
+        } else {
+            exerciseDialog = ExerciseDialogUi.ConfirmOpen(name)
+            rebuildState()
+        }
+    }
+
+    private fun openExercise(name: String) {
+        if (isBusy) return
+        exerciseDialog = null
+        exercises.find(name)?.let { showMelody(it.melody) }
+        autosave()
+        rebuildState()
+    }
+
+    private fun requestRenameExercise(name: String) {
+        if (isBusy) return
+        exerciseDialog = ExerciseDialogUi.Rename(name)
+        rebuildState()
+    }
+
+    private fun renameExercise(from: String, to: String) {
+        if (isBusy) return
+        applyExerciseChange(exercises.rename(from, to)) { error -> ExerciseDialogUi.Rename(from, error) }
+    }
+
+    private fun requestDeleteExercise(name: String) {
+        if (isBusy) return
+        exerciseDialog = ExerciseDialogUi.ConfirmDelete(name)
+        rebuildState()
+    }
+
+    private fun deleteExercise(name: String) {
+        if (isBusy) return
+        applyExerciseChange(exercises.delete(name)) { null }
+    }
+
+    private fun dismissExerciseDialog() {
+        exerciseDialog = null
+        rebuildState()
+    }
+
+    /** Stores a done change and closes the dialog; a refused one keeps it open with the reason. */
+    private fun applyExerciseChange(change: ExerciseChange, reopen: (ExerciseNameError) -> ExerciseDialogUi?) {
+        exerciseDialog = when (change) {
+            is ExerciseChange.Done -> {
+                exercises = change.book
+                exerciseStore.saveExercises(change.book)
+                null
+            }
+            ExerciseChange.NotFound -> null
+            ExerciseChange.NameBlank -> reopen(ExerciseNameError.BLANK)
+            ExerciseChange.NameTooLong -> reopen(ExerciseNameError.TOO_LONG)
+            ExerciseChange.NameTaken -> reopen(ExerciseNameError.TAKEN)
+            ExerciseChange.Full -> reopen(ExerciseNameError.FULL)
+            ExerciseChange.NewerFormat -> reopen(ExerciseNameError.NEWER_FORMAT)
+        }
         rebuildState()
     }
 
@@ -612,12 +769,27 @@ class MelodyTrainerActivity : BaseActivity() {
             playEnabled = !isBusy && notes.isNotEmpty(),
             stopEnabled = isPlaybackActive,
             clearEnabled = !isBusy && notes.isNotEmpty(),
-            addEnabled = !isBusy,
+            addEnabled = !isBusy && sequence.canAddNote(),
+            noteLimitReached = !sequence.canAddNote(),
             nowPlayingLabel = nowPlaying,
             scale = TrainerScaleUi(
                 mode = scale.mode,
                 baseShiftMoria = scale.baseShiftMoria,
                 enabled = !isBusy,
+            ),
+            exercises = TrainerExercisesUi(
+                items = exercises.exercises.map { exercise ->
+                    ExerciseItemUi(
+                        name = exercise.name,
+                        noteCount = exercise.melody.notes.size,
+                        mode = exercise.melody.scale.mode,
+                        bpm = exercise.melody.bpm,
+                    )
+                },
+                saveEnabled = !isBusy && notes.isNotEmpty() && !exercises.isNewerFormat,
+                enabled = !isBusy,
+                newerFormat = exercises.isNewerFormat,
+                dialog = exerciseDialog,
             ),
             voice = PracticeModeUi(
                 checked = isVoiceActive,
@@ -670,6 +842,12 @@ class MelodyTrainerActivity : BaseActivity() {
         if (isRhythmActive) {
             stopRhythmSession(clearGreens = false)
         }
+    }
+
+    /** The autosave's safety net: every edit already wrote the melody, so this is usually a no-op. */
+    override fun onStop() {
+        super.onStop()
+        autosave()
     }
 
     override fun onDestroy() {
