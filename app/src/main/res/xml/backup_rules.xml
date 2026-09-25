@@ -10,4 +10,7 @@
    <include domain="sharedpref" path="."/>
    <exclude domain="sharedpref" path="device.xml"/>
 -->
+    <!-- Raw recording audio stays on the device; see data_extraction_rules.xml (ClickUp 869f5x26x). -->
+    <exclude domain="file" path="recordings_capture" />
+    <exclude domain="file" path="recordings_pending" />
 </full-backup-content>

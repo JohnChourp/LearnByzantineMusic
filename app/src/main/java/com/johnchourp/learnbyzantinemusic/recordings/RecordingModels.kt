@@ -2,6 +2,7 @@ package com.johnchourp.learnbyzantinemusic.recordings
 
 import android.net.Uri
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.recordings.session.PendingRecording
 
 data class RecordingListItem(
     val name: String,
@@ -74,7 +75,14 @@ data class RecordingsUiState(
     val isIndexing: Boolean = false,
     val recordingState: RecordingStateUi = RecordingStateUi.IDLE,
     /** What the next recording is for (e.g. a hymn), when the page was opened for it; null otherwise. */
-    val targetLabel: String? = null
+    val targetLabel: String? = null,
+    /** The session's timer anchors (see RecordingSessionState): recorded time before the current stretch… */
+    val recordingElapsedBeforeMs: Long = 0L,
+    /** …and the `elapsedRealtime` it began at, while recording. */
+    val recordingSince: Long? = null,
+    /** Recordings kept in the app because the folder could not take them, newest first. */
+    val pendingRecordings: List<PendingRecording> = emptyList(),
+    val pendingBusyIds: Set<String> = emptySet()
 )
 
 data class RecordingsManagerUiState(
