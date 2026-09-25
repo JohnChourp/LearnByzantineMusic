@@ -150,7 +150,7 @@ fun MelodyTrainerScreen(
         ) {
             Spacer(Modifier.height(2.dp))
             StaggeredAppear(delayMillis = 60) { IntroCard() }
-            StaggeredAppear(delayMillis = 120) { RulesCard() }
+            StaggeredAppear(delayMillis = 120) { RulesCard(state.ruleNumbers) }
             StaggeredAppear(delayMillis = 180) {
                 AddPhthongCard(
                     phthongLabels = phthongLabels,
@@ -227,22 +227,27 @@ private data class RuleEntry(
     val content: Color,
     val titleRes: Int,
     val bodyRes: Int,
+    /** The body's numbers, in placeholder order — read from the time rules, never typed into the text. */
+    val bodyArgs: List<String> = emptyList(),
 )
 
 @Composable
-private fun RulesCard() {
+private fun RulesCard(numbers: TimingRuleNumbersUi) {
     val rules = listOf(
         RuleEntry(
             Icons.Filled.MusicNote, LbmPrimaryContainer, LbmBrown,
             R.string.melody_trainer_rule_default_title, R.string.melody_trainer_rule_default_body,
+            listOf(numbers.defaultLength),
         ),
         RuleEntry(
             Icons.Filled.Bolt, AccentPurpleContainer, AccentPurpleContent,
             R.string.melody_trainer_rule_gorgo_title, R.string.melody_trainer_rule_gorgo_body,
+            listOf(numbers.gorgonNote, numbers.gorgonTakes),
         ),
         RuleEntry(
             Icons.Filled.Add, AccentGreenContainer, AccentGreenContent,
             R.string.melody_trainer_rule_klasma_title, R.string.melody_trainer_rule_klasma_body,
+            listOf(numbers.klasmaAdds),
         ),
         RuleEntry(
             Icons.Filled.Speed, AccentBlueContainer, AccentBlueContent,
@@ -283,7 +288,11 @@ private fun RuleRow(rule: RuleEntry) {
             )
             Spacer(Modifier.height(2.dp))
             Text(
-                text = stringResource(rule.bodyRes),
+                text = if (rule.bodyArgs.isEmpty()) {
+                    stringResource(rule.bodyRes)
+                } else {
+                    stringResource(rule.bodyRes, *rule.bodyArgs.toTypedArray())
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 color = LbmTextSecondary,
             )

@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.Beats
 import kotlin.math.roundToLong
 
 /**
@@ -11,8 +12,9 @@ data class MelodyTempo(val beatsPerMinute: Int) {
 
     val millisPerBeat: Double get() = MILLIS_PER_MINUTE / beatsPerMinute.coerceAtLeast(1)
 
-    /** Milliseconds a span of [beats] χρόνοι lasts at this tempo. */
-    fun beatsToMillis(beats: Float): Long = (beats.coerceAtLeast(0f) * millisPerBeat).roundToLong()
+    /** Milliseconds a span of [beats] χρόνοι lasts at this tempo, rounded once from the exact length. */
+    fun beatsToMillis(beats: Beats): Long =
+        (beats.ticks.coerceAtLeast(0) * millisPerBeat / Beats.TICKS_PER_BEAT).roundToLong()
 
     companion object {
         const val MIN_BPM = 30

@@ -30,6 +30,8 @@ data class MelodyTrainerUiState(
     val voice: PracticeModeUi = PracticeModeUi(),
     val rhythm: PracticeModeUi = PracticeModeUi(),
     val combo: PracticeModeUi = PracticeModeUi(),
+    /** The numbers of the «Κανόνες χρόνου» card, already printed. */
+    val ruleNumbers: TimingRuleNumbersUi = TimingRuleNumbersUi(),
 )
 
 /** One note row as the screen needs to draw it. */
@@ -47,13 +49,29 @@ data class TrainerNoteUi(
     val matched: Boolean,
     /** Currently playing or expected — the row glows amber. */
     val active: Boolean,
+    /** `MelodySequence.canChangeLength` for this row: the rule lives there, not here. */
+    val lengthChangeable: Boolean,
+    /** `MelodySequence.canToggleGorgon` for this row: never the first note, and that rule lives there too. */
+    val gorgoToggleable: Boolean,
 ) {
-    /** Duration ±  only when editable and not turned into a γοργόν (which fixes the length). */
-    val durationEditable: Boolean get() = editable && !hasGorgo
+    /** Duration ± only while no mode is running and the melody's rules allow it. */
+    val durationEditable: Boolean get() = editable && lengthChangeable
 
-    /** γοργόν shortens the *previous* note, so it is invalid on the first row. */
-    val gorgoEnabled: Boolean get() = editable && index > 0
+    /** The γοργόν chip only while no mode is running and the melody's rules allow it. */
+    val gorgoEnabled: Boolean get() = editable && gorgoToggleable
 }
+
+/**
+ * The numbers the «Κανόνες χρόνου» card prints, already formatted like the note rows. They come from
+ * `TimingRulesHelp` — the time rules — and never from the card's text.
+ */
+@Immutable
+data class TimingRuleNumbersUi(
+    val defaultLength: String = "",
+    val gorgonNote: String = "",
+    val gorgonTakes: String = "",
+    val klasmaAdds: String = "",
+)
 
 /** State of one of the three mutually-exclusive practice modes. */
 @Immutable
