@@ -1,6 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.modes.ui
 
+import android.content.res.Configuration
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -29,6 +31,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.TouchApp
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -51,6 +54,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -58,6 +63,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.johnchourp.learnbyzantinemusic.AppLanguage
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.modes.IsonDrone
 import com.johnchourp.learnbyzantinemusic.modes.LadderPitchMirror
@@ -90,8 +96,13 @@ import androidx.compose.material.icons.filled.Stop
 import com.johnchourp.learnbyzantinemusic.modes.ApichimaSequence
 import com.johnchourp.learnbyzantinemusic.music.ModeLadder
 import com.johnchourp.learnbyzantinemusic.music.Moria
+import java.util.Locale
 
-private const val SCALE_OCTAVES = 3
+/**
+ * Internal rather than private so `ApichimaInEveryLanguageTest` resolves the απήχημα on the very
+ * ladder this screen builds.
+ */
+internal const val SCALE_OCTAVES = 3
 private const val BASE_SHIFT_MIN = -12
 private const val BASE_SHIFT_MAX = 12
 
@@ -926,6 +937,10 @@ private fun LinkedTheoryText(text: String, textSizeSp: Float, modifier: Modifier
  * sound cannot disagree. Pitches are looked up in the diagram's own frequency list, which is why the
  * playback transposes with «Μεταφορά βάσης» for free.
  *
+ * The pitches are read from the **Greek** copy of that string in every language, and only the
+ * syllables from the user's own (ClickUp `869f5x281`). Reading the displayed string made the English
+ * page silent: it spells the φθόγγοι in Latin letters, which name no φθόγγος.
+ *
  * Stopping is handled in three places on purpose, because each is a real way to leave: the button
  * itself, a mode change (the effect key), and disposal (leaving the screen or backgrounding it).
  */
@@ -938,11 +953,12 @@ private fun ApichimaPlayer(
     scope: kotlinx.coroutines.CoroutineScope,
 ) {
     val mode = EIGHT_MODES[modeIndex]
-    val teachingText = stringResource(mode.apichimaSyllablesRes)
+    val greekText = greekStringResource(mode.apichimaSyllablesRes)
+    val shownText = stringResource(mode.apichimaSyllablesRes)
 
-    val steps = remember(teachingText) { ApichimaSequence.parse(teachingText) }
+    val steps = remember(greekText, shownText) { ApichimaSequence.playable(greekText, shownText) }
     val ladder = rememberLadder(modeIndex, baseShiftMoria)
-    val tones = remember(ladder, teachingText) { ApichimaSequence.frequencies(steps, ladder) }
+    val tones = remember(ladder, steps) { ApichimaSequence.frequencies(steps, ladder) }
 
     var playingIndex by remember { mutableStateOf(-1) }
     val job = remember { mutableStateOf<Job?>(null) }
@@ -981,11 +997,17 @@ private fun ApichimaPlayer(
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            TextButton(onClick = { if (playingIndex >= 0) stop() else play(ApichimaSequence.Speed.SHORT) }) {
+            // Both buttons share one `enabled`, and their colours go through the button, never onto
+            // the Icon or Text: a colour set there overrides the disabled look, which is how a button
+            // that could not play used to look ready to.
+            TextButton(
+                onClick = { if (playingIndex >= 0) stop() else play(ApichimaSequence.Speed.SHORT) },
+                enabled = tones != null,
+                colors = ButtonDefaults.textButtonColors(contentColor = LbmBrown),
+            ) {
                 Icon(
                     imageVector = if (playingIndex >= 0) Icons.Filled.Stop else Icons.Filled.PlayArrow,
                     contentDescription = null,
-                    tint = LbmBrown,
                 )
                 Spacer(Modifier.width(6.dp))
                 Text(
@@ -993,7 +1015,6 @@ private fun ApichimaPlayer(
                         if (playingIndex >= 0) R.string.eight_modes_apichima_stop
                         else R.string.eight_modes_apichima_play_short
                     ),
-                    color = LbmBrown,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
@@ -1001,8 +1022,9 @@ private fun ApichimaPlayer(
             TextButton(
                 onClick = { play(ApichimaSequence.Speed.SLOW) },
                 enabled = tones != null,
+                colors = ButtonDefaults.textButtonColors(contentColor = LbmTextSecondary),
             ) {
-                Text(stringResource(R.string.eight_modes_apichima_play_slow), color = LbmTextSecondary)
+                Text(stringResource(R.string.eight_modes_apichima_play_slow))
             }
         }
         // The syllables, with the sounding one lit. Same steps as the sequence, so the highlight
@@ -1021,6 +1043,24 @@ private fun ApichimaPlayer(
         }
     }
     Spacer(Modifier.height(4.dp))
+}
+
+/**
+ * [id] as the Greek resources spell it, whatever language the UI is in (ClickUp `869f5x281`).
+ *
+ * For a string the screen computes with rather than only shows — the απήχημα's φθόγγοι, which a
+ * translation spells in its own alphabet. Unlike [AppLanguage.wrapContextWithLocale] this leaves the
+ * process-wide default locale alone: it reads one string, it does not switch the UI's language.
+ */
+@Composable
+private fun greekStringResource(@StringRes id: Int): String {
+    val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    return remember(context, configuration, id) {
+        val greek = Configuration(configuration)
+        greek.setLocale(Locale.forLanguageTag(AppLanguage.languageGreek))
+        context.createConfigurationContext(greek).getString(id)
+    }
 }
 
 /* ----------------------------- Apichima formatting ----------------------------- */
