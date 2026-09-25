@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +21,9 @@ import com.johnchourp.learnbyzantinemusic.recordings.RecordingFormatOption
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AnalysisSettingsStore
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.RecordingAnalysisActivity
+import com.johnchourp.learnbyzantinemusic.recordings.player.InAppPlayerViewModel
+import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerItem
+import com.johnchourp.learnbyzantinemusic.recordings.player.cardActions
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,9 +53,14 @@ import kotlinx.coroutines.withContext
  *
  * **Needs:** a recordings folder to have been chosen already. Without one, recording is disabled
  * and the screen points the user at the «Ηχογραφήσεις» page rather than failing at save time.
+ *
+ * **Listening** happens here, in the in-app player ([InAppPlayerViewModel], ClickUp `869f5x268`):
+ * loop a passage, slow it down without moving the pitch, shift it in μόρια to one's own voice. Another
+ * app stays one tap away on the player card. The player is released in `onStop`.
  */
 class HymnActivity : BaseActivity() {
     private val viewModel: HymnViewModel by viewModels()
+    private val player: InAppPlayerViewModel by viewModels()
     private val recordingOpener by lazy { RecordingExternalOpener(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,8 +76,11 @@ class HymnActivity : BaseActivity() {
         setContent {
             LbmTheme(palette = currentPalette()) {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                val playerState by player.state.collectAsStateWithLifecycle()
                 HymnScreen(
                     uiState = uiState,
+                    player = playerState,
+                    playerActions = remember { player.cardActions(this@HymnActivity, ::openRecordingExternally) },
                     onBack = ::finish,
                     onRecord = ::startHymnRecording,
                     onOpenRecording = ::openRecording,
@@ -81,6 +93,12 @@ class HymnActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.refresh()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // No sound in the background: released here, prepared again on the next play.
+        player.onScreenStopped()
     }
 
     private fun startHymnRecording() {
@@ -116,6 +134,12 @@ class HymnActivity : BaseActivity() {
     }
 
     private fun openRecording(recording: HymnRecording) {
+        player.open(PlayerItem(recording.uri, recording.name, recording.mimeType))
+    }
+
+    /** «Άνοιγμα σε άλλη εφαρμογή» on the player card — the only way out when the device cannot play the file. */
+    private fun openRecordingExternally() {
+        val recording = player.current ?: return
         val mimeType = recording.mimeType
             ?.takeIf { it.isNotBlank() && it != "application/octet-stream" }
             ?: RecordingFormatOption.resolveMimeTypeByFileName(recording.name)

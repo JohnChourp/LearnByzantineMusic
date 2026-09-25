@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -57,6 +58,11 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerPhase
+import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerState
+import com.johnchourp.learnbyzantinemusic.recordings.ui.components.RecordingPlayerActions
+import com.johnchourp.learnbyzantinemusic.recordings.ui.components.RecordingPlayerCard
+import com.johnchourp.learnbyzantinemusic.recordings.ui.components.ScrollToPlayerOnOpen
 import com.johnchourp.learnbyzantinemusic.recordings.ManagerListItem
 import com.johnchourp.learnbyzantinemusic.recordings.MoveTargetFolder
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingsManagerUiState
@@ -86,6 +92,8 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
 fun RecordingsManagerScreen(
     uiState: RecordingsManagerUiState,
     entries: LazyPagingItems<ManagerListItem>,
+    player: PlayerState,
+    playerActions: RecordingPlayerActions,
     onBack: () -> Unit,
     onNavigateUp: () -> Unit,
     onCreateFolder: () -> Unit,
@@ -118,7 +126,11 @@ fun RecordingsManagerScreen(
     val showEmptyState = entries.itemCount == 0 && entries.loadState.refresh is LoadState.NotLoading
     val showLoading = entries.loadState.append is LoadState.Loading || entries.loadState.refresh is LoadState.Loading
 
+    val listState = rememberLazyListState()
+    ScrollToPlayerOnOpen(player.openCount, listState)
+
     LazyColumn(
+        state = listState,
         modifier = modifier
             .fillMaxSize()
             .background(LbmPageBg),
@@ -140,6 +152,12 @@ fun RecordingsManagerScreen(
                         trackColor = LbmSurfaceVariant,
                     )
                 }
+            }
+        }
+
+        if (player.phase != PlayerPhase.EMPTY) {
+            item(key = "player") {
+                RecordingPlayerCard(player, playerActions, modifier = Modifier.padding(horizontal = 16.dp))
             }
         }
 
