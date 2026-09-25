@@ -6,14 +6,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
 import com.johnchourp.learnbyzantinemusic.BaseActivity
+import com.johnchourp.learnbyzantinemusic.music.Phthong
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
+import com.johnchourp.learnbyzantinemusic.notifications.AppNotifications
 import com.johnchourp.learnbyzantinemusic.trainer.TrainerPitchEngine
 import com.johnchourp.learnbyzantinemusic.modes.ui.EIGHT_MODES
 import com.johnchourp.learnbyzantinemusic.modes.ui.EightModesScreen
@@ -39,6 +48,12 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
  * last mode and its «Μεταφορά βάσης», with the ison already sounding. It only ever plays — it never
  * records — and it is honoured on a fresh start only, so a recreation after the user switched the
  * ison off does not switch it back on.
+ *
+ * **Who plays the ison.** With «Συνέχισε στο παρασκήνιο» off — the default — this page plays it and
+ * silences it in onStop, as it always has. With it on, [IsonPlaybackService] plays it from the first
+ * moment and this page only sends it requests, so leaving the page hands nothing over and nothing
+ * clicks. A page opened over a background ison shows that ison's mode and φθόγγος. If the system
+ * refuses the service, this page plays the ison itself.
  */
 class EightModesActivity : BaseActivity() {
 
@@ -91,17 +106,43 @@ class EightModesActivity : BaseActivity() {
     /** The mode on screen: kept across a recreation, and saved to prefs only by a tap. */
     private var shownModeKey: String? = null
 
+    /** «Συνέχισε στο παρασκήνιο»: the background service plays the ison, not this page. */
+    private var inBackground: Boolean by mutableStateOf(false)
+
+    /** What the screen last asked the ison to hold; null when it is off. */
+    private var isonRequest: IsonDrone.Request? = null
+
+    /** The answer does not matter: without the permission the ison still plays, only unannounced. */
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefs = AppPrefs.open(this, AppPrefs.Store.EIGHT_MODES)
         activeTimbre = loadSavedTimbre()
+        inBackground = prefs.getBoolean(IN_BACKGROUND_PREF_KEY, false)
+        val sounding = if (inBackground) IsonPlaybackService.playing.value else null
         // What was on screen before a recreation; else the mode this opening asked for; else the
-        // last one the user picked here.
+        // mode the background ison is playing; else the last one the user picked here.
         shownModeKey = savedInstanceState?.getString(STATE_SHOWN_MODE_KEY)
             ?: intent.getStringExtra(EXTRA_MODE_KEY)
+            ?: sounding?.mode?.key
             ?: prefs.getString(SELECTED_MODE_KEY_PREF_KEY, null)
+        val startIson = savedInstanceState == null && intent.getBooleanExtra(EXTRA_START_ISON, false)
+        // «Αναπαραγωγή» of a stopped background ison names the φθόγγος it had moved to.
+        val startChoice = if (startIson) intent.readIsonChoice() else null
+
+        // The system would not let the service play: this page plays the ison instead.
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                IsonPlaybackService.refused.collect { refused ->
+                    if (inBackground && refused == isonRequest) playLocally(refused)
+                }
+            }
+        }
 
         setContent {
+            val backgroundIson by IsonPlaybackService.playing.collectAsState()
             LbmTheme(palette = currentPalette()) {
                 EightModesScreen(
                     initialModeIndex = eightModesIndexOf(shownModeKey) ?: 0,
@@ -115,18 +156,22 @@ class EightModesActivity : BaseActivity() {
                         // Re-voice a sounding drone, otherwise it keeps the old timbre until toggled.
                         // A restart, not a retune: a glide keeps the timbre it started with.
                         droneFrequencyHz?.let { dronePlayer.start(it, activeTimbre) }
+                        if (inBackground) isonRequest?.let { playInBackground(it) }
                     },
                     onBaseShiftChange = ::persistBaseShift,
                     onTonePress = { frequencyHz -> tonePlayer.start(frequencyHz, activeTimbre) },
                     onToneRelease = { tonePlayer.stop() },
-                    onDroneChange = ::setDroneFrequency,
+                    onIsonChange = ::setIson,
                     onListenChange = ::setListening,
                     heardFrequencyHz = heardFrequencyHz,
                     micDenied = micDenied,
                     onOpenMenu = { EightModesNavigation.showMenu(this, selectedTopicKey = null) },
                     onBack = ::finish,
-                    initialDroneOn = savedInstanceState == null &&
-                        intent.getBooleanExtra(EXTRA_START_ISON, false),
+                    initialDroneOn = startIson || sounding != null,
+                    initialIsonChoice = sounding?.takeIf { it.mode.key == shownModeKey }?.choice ?: startChoice,
+                    inBackground = inBackground,
+                    onInBackgroundChange = ::switchInBackground,
+                    backgroundIson = backgroundIson,
                 )
             }
         }
@@ -165,6 +210,59 @@ class EightModesActivity : BaseActivity() {
     }
 
     private fun baseShiftPrefKey(modeKey: String): String = AppPrefs.baseShiftKeyName(modeKey)
+
+    /**
+     * The screen's ison, to whoever plays it (ClickUp `869f5x2dq`): this page, or — with «Συνέχισε
+     * στο παρασκήνιο» — the background service, which then owns it from the first moment.
+     */
+    private fun setIson(request: IsonDrone.Request?) {
+        isonRequest = request
+        if (!inBackground) {
+            playLocally(request)
+            return
+        }
+        setDroneFrequency(null)
+        if (request == null) IsonPlaybackService.stop(this) else playInBackground(request)
+    }
+
+    private fun playInBackground(request: IsonDrone.Request) {
+        // Refused at once: today's behaviour, played by this page.
+        if (!IsonPlaybackService.play(this, request, activeTimbre)) playLocally(request)
+    }
+
+    /** The page's own drone, at the pitch of the one lookup ([IsonDrone.held]). */
+    private fun playLocally(request: IsonDrone.Request?) {
+        setDroneFrequency(request?.let { IsonDrone.held(it)?.frequencyHz })
+    }
+
+    /** Turns «Συνέχισε στο παρασκήνιο» on or off, handing a sounding ison to its new owner. */
+    private fun switchInBackground(on: Boolean) {
+        if (on == inBackground) return
+        inBackground = on
+        prefs.edit().putBoolean(IN_BACKGROUND_PREF_KEY, on).apply()
+        val request = isonRequest
+        if (on) {
+            askForNotifications()
+            if (request != null) {
+                setDroneFrequency(null)
+                playInBackground(request)
+            }
+        } else {
+            IsonPlaybackService.forget(this)
+            playLocally(request)
+        }
+    }
+
+    /**
+     * Android 13+, when the option is turned on: ask to show the ison's notification — once per
+     * install, shared with the recording's ([AppNotifications.shouldAskPermission]). Marked as asked
+     * before the prompt, so it is never asked twice. A «no» only hides the notification.
+     */
+    private fun askForNotifications() {
+        if (!AppNotifications.shouldAskPermission(this)) return
+        AppNotifications.markPermissionAsked(this)
+        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
 
     /**
      * Starts, moves or stops the ison. A sounding drone is **moved** — to another φθόγγος, by a base
@@ -226,8 +324,9 @@ class EightModesActivity : BaseActivity() {
 
     override fun onStop() {
         tonePlayer.stop()
-        // Silence the drone in the background - a held AudioTrack would keep sounding over other
-        // apps - but keep droneFrequencyHz so onStart can restore it.
+        // Silence this page's drone in the background - a held AudioTrack would keep sounding over
+        // other apps - but keep droneFrequencyHz so onStart can restore it. A background ison is the
+        // service's, not this page's, and plays on.
         dronePlayer.stop()
         // The microphone is RELEASED, not paused: holding it in the background would deny it to
         // every other app. listenRequested remembers that the user wanted it, so onStart resumes.
@@ -249,6 +348,7 @@ class EightModesActivity : BaseActivity() {
         private const val BASE_SHIFT_PREF_KEY_PREFIX = AppPrefs.BASE_SHIFT_KEY_PREFIX
         private val TONE_TIMBRE_PREF_KEY = AppPrefs.SelectedToneTimbre.name
         private val SELECTED_MODE_KEY_PREF_KEY = AppPrefs.SelectedModeKey.name
+        private val IN_BACKGROUND_PREF_KEY = AppPrefs.IsonInBackground.name
         private const val EXTRA_MODE_KEY = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_MODE_KEY"
         private const val STATE_SHOWN_MODE_KEY = "shown_mode_key"
 
@@ -258,8 +358,30 @@ class EightModesActivity : BaseActivity() {
          */
         internal const val EXTRA_START_ISON = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_START_ISON"
 
+        /** The φθόγγος [startIsonIntent] asks for: its name and octave. */
+        private const val EXTRA_ISON_CHOICE = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_ISON_CHOICE"
+        private const val EXTRA_ISON_CHOICE_OCTAVE = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_ISON_CHOICE_OCTAVE"
+
         /** Opens the page on [modeKey] for this opening only; see the class KDoc. */
         fun intent(context: Context, modeKey: String): Intent =
             Intent(context, EightModesActivity::class.java).putExtra(EXTRA_MODE_KEY, modeKey)
+
+        /**
+         * Opens the page on [request]'s mode with that ison already sounding, on its φθόγγος — the
+         * «Αναπαραγωγή» of a stopped background ison, which only a visible page may start again.
+         */
+        fun startIsonIntent(context: Context, request: IsonDrone.Request): Intent {
+            val intent = intent(context, request.mode.key).putExtra(EXTRA_START_ISON, true)
+            request.choice?.let { choice ->
+                intent.putExtra(EXTRA_ISON_CHOICE, choice.name.name)
+                intent.putExtra(EXTRA_ISON_CHOICE_OCTAVE, choice.octave)
+            }
+            return intent
+        }
+
+        private fun Intent.readIsonChoice(): Phthong? =
+            getStringExtra(EXTRA_ISON_CHOICE)
+                ?.let { stored -> PhthongName.entries.firstOrNull { it.name == stored } }
+                ?.let { name -> Phthong(name, getIntExtra(EXTRA_ISON_CHOICE_OCTAVE, 0)) }
     }
 }

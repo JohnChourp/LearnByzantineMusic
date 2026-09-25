@@ -25,7 +25,7 @@ class IsonOffThePageTest {
     fun theIsonOffThePageIsThePagesPitchForEveryModeChoiceAndShift() {
         var compared = 0
         EIGHT_MODES.forEach { row ->
-            val mode = row.mode!!
+            val mode = row.mode
             (BASE_SHIFT_MIN..BASE_SHIFT_MAX).forEach { shift ->
                 // Exactly what the page does: its ladder, its choices, its lookup.
                 val pageLadder = ModeLadders.ladder(row.scale, shift)
@@ -63,7 +63,7 @@ class IsonOffThePageTest {
         // ModeLadders took over the page's private builder; the page's octave count is its own.
         assertEquals(SCALE_OCTAVES, ModeLadders.OCTAVES)
         EIGHT_MODES.forEach { row ->
-            val mode = row.mode!!
+            val mode = row.mode
             listOf(BASE_SHIFT_MIN, 0, BASE_SHIFT_MAX).forEach { shift ->
                 assertEquals(
                     "${mode.key} shift=$shift",
