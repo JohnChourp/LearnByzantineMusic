@@ -80,7 +80,9 @@ class NotesViewModel(
     }
 
     fun onSearchQueryChanged(value: String) {
-        _uiState.update { it.copy(searchQuery = value) }
+        // The search may hide the open note: its unsaved text is saved now, not by the pending autosave.
+        autoSaveJob?.cancel()
+        runStep(NotesEditorSync.onSearchChanged(_uiState.value, value), SaveTrigger.AUTO)
         searchQueryFlow.value = value
     }
 
@@ -202,10 +204,17 @@ class NotesViewModel(
     }
 
     private fun autoSaveNow(trigger: SaveTrigger) {
-        val request = NotesEditorSync.saveRequest(_uiState.value) ?: return
-        // Recorded before the save runs: a second trigger meanwhile does not repeat it, and typing that
-        // continues is compared against it and saved next.
-        _uiState.update { NotesEditorSync.onSaveStarted(it, request) }
+        runStep(NotesEditorSync.saveOpenNote(_uiState.value), trigger)
+    }
+
+    /**
+     * Applies [step] and runs the save it asks for, if any. The save is already recorded as running
+     * in [step]: a second trigger meanwhile does not repeat it, and typing that continues is compared
+     * against it and saved next.
+     */
+    private fun runStep(step: NotesEditorSync.Step, trigger: SaveTrigger) {
+        _uiState.value = step.state
+        val request = step.save ?: return
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = trigger == SaveTrigger.MANUAL) }

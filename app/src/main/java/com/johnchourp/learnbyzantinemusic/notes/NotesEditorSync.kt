@@ -72,6 +72,26 @@ object NotesEditorSync {
         return state.load(note).copy(noteToOpen = null, editorFollowsDatabase = true)
     }
 
+    /** A state change, and the save it asks the ViewModel to run, if any. */
+    data class Step(val state: NotesUiState, val save: NoteSaveRequest? = null)
+
+    /**
+     * The open note's unsaved text, handed to a save now and recorded as running — or no save, when
+     * the database holds that text already or a running save is writing it ([saveRequest]).
+     */
+    fun saveOpenNote(state: NotesUiState): Step {
+        val request = saveRequest(state) ?: return Step(state)
+        return Step(onSaveStarted(state, request), request)
+    }
+
+    /**
+     * A new search. It can hide the open note, which then leaves the list (b) and the editor with it,
+     * and its pending autosave, running later, would find another note open. So the open note's
+     * unsaved text is saved first: the save that autosave would have made, only sooner.
+     */
+    fun onSearchChanged(state: NotesUiState, query: String): Step =
+        saveOpenNote(state.copy(searchQuery = query))
+
     fun onTitleEdited(state: NotesUiState, title: String): NotesUiState =
         state.copy(editorTitle = title, editorFollowsDatabase = false)
 

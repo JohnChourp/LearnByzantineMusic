@@ -186,4 +186,25 @@ class NotesEditorSyncTest {
         state = NotesEditorSync.onNotesChanged(state, listOf(imported))
         assertEquals("κείμενο του backup, διορθωμένο", state.editorBody)
     }
+
+    @Test
+    fun `a new search saves the open note first, so a search that hides it loses nothing`() {
+        val a = note("a", title = "Κύριε ἐκέκραξα", body = "στίχοι", updated = 2L)
+        val b = note("b", title = "Δόξα", body = "δοξαστικό", updated = 1L)
+        assertNull("nothing typed, nothing saved", NotesEditorSync.onSearchChanged(screenWith(a, b), "Δ").save)
+        var state = screenWith(a, b)
+        // Typed less than 1.2 s ago: the autosave is still pending.
+        state = NotesEditorSync.onBodyEdited(state, "στίχοι και ψαλμοί")
+
+        val step = NotesEditorSync.onSearchChanged(state, "Δόξα")
+        assertEquals("Δόξα", step.state.searchQuery)
+        assertEquals(NoteSaveRequest("a", "Κύριε ἐκέκραξα", "στίχοι και ψαλμοί"), step.save)
+        // The next letter in the search box, while that save runs, does not repeat it.
+        assertNull(NotesEditorSync.onSearchChanged(step.state, "Δόξα Π").save)
+
+        // The search hides A: the editor moves to B, and A's text is already on its way to the database.
+        state = NotesEditorSync.onNotesChanged(step.state, listOf(b))
+        assertEquals("b", state.selectedNoteId)
+        assertNull(NotesEditorSync.onSearchChanged(state, "Δόξα Πατρί").save)
+    }
 }
