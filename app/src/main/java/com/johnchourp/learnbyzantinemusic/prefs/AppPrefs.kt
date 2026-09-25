@@ -32,7 +32,7 @@ object AppPrefs {
 
     /** A `SharedPreferences` file. */
     enum class Store(val fileName: String) {
-        /** Global app settings: font scale, language, learning-path progress. */
+        /** Global app settings: font scale, language, learning-path progress, the notifications prompt. */
         SETTINGS("learn_byzantine_music_settings"),
 
         /** The recordings page: SAF folder grant and chosen output format. */
@@ -176,6 +176,15 @@ object AppPrefs {
         allowed = "system, light, dark, high_contrast — an unknown value falls back to system",
         writtenBy = "the theme selector in Ρυθμίσεις",
         readBy = "BaseActivity, which applies it before any screen inflates",
+    )
+
+    val NotificationsPermissionAsked = Key(
+        name = "notifications_permission_asked",
+        store = Store.SETTINGS,
+        type = Type.BOOLEAN,
+        default = "false",
+        writtenBy = "AppNotifications, just before the Android 13+ notifications prompt is first shown",
+        readBy = "AppNotifications, so that prompt is shown at most once per install",
     )
 
     // ---- RECORDINGS ---------------------------------------------------------------------------
@@ -345,6 +354,7 @@ object AppPrefs {
         MetronomeSilent,
         MetronomeFootMode,
         ThemeMode,
+        NotificationsPermissionAsked,
         RecordingsFolderTreeUri,
         RecordingsOutputFormat,
         NotesFolderTreeUri,

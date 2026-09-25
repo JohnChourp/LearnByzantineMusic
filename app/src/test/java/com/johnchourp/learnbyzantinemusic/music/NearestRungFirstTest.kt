@@ -67,7 +67,7 @@ class NearestRungFirstTest {
     @Test
     fun theAnalysisCallsItOutOnADiatonicMode() {
         // Half a second held 3.5 μόρια above Βου of the first mode, calibrated to the app's own Νη.
-        val positions = ModeScalePositions.forMode("first")
+        val positions = ModeScalePositions.forMode(Mode.FIRST)
         val hz = ByzantineTuning.frequencyHz(positions[PhthongName.VOU.ordinal] + OFF).toFloat()
         val hopMs = IntonationProfile.OFFLINE_HOP_MS
         val frames = List(22) { PitchFrame((it * hopMs).toLong(), hz) }

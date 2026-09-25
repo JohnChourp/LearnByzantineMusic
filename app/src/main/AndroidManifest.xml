@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- A recording keeps going with the screen off (ClickUp 869f5x273): RecordingService, a
+         foreground service of type microphone, with its «Ηχογράφηση…» notification. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- The metronome's vibration (ClickUp 869f5x2d7). A normal permission: granted at install,
          no prompt. -->
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -136,6 +141,12 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
+
+        <!-- Not stopWithTask: swiping the app away must reach onTaskRemoved, which stops and saves. -->
+        <service
+            android:name=".recordings.session.RecordingService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

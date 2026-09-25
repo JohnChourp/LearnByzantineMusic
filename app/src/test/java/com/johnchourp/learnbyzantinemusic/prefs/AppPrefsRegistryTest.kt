@@ -34,6 +34,7 @@ class AppPrefsRegistryTest {
                 "notes_folder_tree_uri",
                 "notes_last_sync_epoch_ms",
                 "notes_last_sync_error",
+                "notifications_permission_asked",
                 "owned_recordings",
                 "recordings_folder_tree_uri",
                 "recordings_output_format",
