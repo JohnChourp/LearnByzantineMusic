@@ -75,6 +75,13 @@ import kotlin.math.roundToInt
 import androidx.compose.material3.RadioButton
 import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
 import androidx.annotation.StringRes
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.RestartAlt
+import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
+import com.johnchourp.learnbyzantinemusic.ui.theme.AccentCrimsonContent
 
 /**
  * Strings for the language-confirmation dialog, pre-resolved by the host Activity in the
@@ -87,6 +94,18 @@ data class LanguagePrompt(
     val message: String,
     val confirmLabel: String,
     val dismissLabel: String,
+)
+
+/**
+ * A confirmation or a notice about the «Δεδομένα μάθησης», pre-resolved by the host Activity, which
+ * also keeps what confirming does. Null hides the dialog.
+ */
+data class LearningDataPrompt(
+    val title: String,
+    val message: String,
+    val confirmLabel: String,
+    /** Null for a notice with a single button. */
+    val dismissLabel: String?,
 )
 
 /** The discrete font-size stops the slider snaps to, shown as tick labels under the track. */
@@ -120,6 +139,12 @@ fun SettingsScreen(
     onLanguageSelected: (String) -> Unit,
     onConfirmLanguage: () -> Unit,
     onDismissLanguagePrompt: () -> Unit,
+    learningDataPrompt: LearningDataPrompt?,
+    onExportLearningData: () -> Unit,
+    onImportLearningData: () -> Unit,
+    onResetProgress: () -> Unit,
+    onConfirmLearningData: () -> Unit,
+    onDismissLearningData: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -161,6 +186,13 @@ fun SettingsScreen(
                     onLanguageSelected = onLanguageSelected,
                 )
             }
+            StaggeredAppear(delayMillis = 180) {
+                LearningDataCard(
+                    onExport = onExportLearningData,
+                    onImport = onImportLearningData,
+                    onResetProgress = onResetProgress,
+                )
+            }
             Spacer(Modifier.height(8.dp))
         }
     }
@@ -172,6 +204,124 @@ fun SettingsScreen(
             onDismiss = onDismissLanguagePrompt,
         )
     }
+
+    if (learningDataPrompt != null) {
+        LearningDataDialog(
+            prompt = learningDataPrompt,
+            onConfirm = onConfirmLearningData,
+            onDismiss = onDismissLearningData,
+        )
+    }
+}
+
+/* ----------------------------- Learning data ----------------------------- */
+
+/**
+ * «Δεδομένα μάθησης» (ClickUp `869f5x25w`): take the favourites, the progress and the settings to
+ * another phone in one file, and start the «Από το μηδέν» path over. Everything that touches files
+ * or preferences happens in the host Activity; this only renders and reports taps.
+ */
+@Composable
+private fun LearningDataCard(
+    onExport: () -> Unit,
+    onImport: () -> Unit,
+    onResetProgress: () -> Unit,
+) {
+    LessonCard(title = stringResource(R.string.settings_learning_data_label)) {
+        Text(
+            text = stringResource(R.string.settings_learning_data_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = LbmTextSecondary,
+        )
+        Spacer(Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            LearningDataButton(
+                icon = Icons.Filled.Upload,
+                label = stringResource(R.string.settings_learning_data_export),
+                onClick = onExport,
+                modifier = Modifier.weight(1f),
+            )
+            LearningDataButton(
+                icon = Icons.Filled.Download,
+                label = stringResource(R.string.settings_learning_data_import),
+                onClick = onImport,
+                modifier = Modifier.weight(1f),
+            )
+        }
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.settings_learning_data_reset_hint),
+            style = MaterialTheme.typography.bodySmall,
+            color = LbmTextSecondary,
+        )
+        Spacer(Modifier.height(8.dp))
+        LearningDataButton(
+            icon = Icons.Filled.RestartAlt,
+            label = stringResource(R.string.settings_learning_data_reset),
+            onClick = onResetProgress,
+            modifier = Modifier.fillMaxWidth(),
+            contentColor = AccentCrimsonContent,
+        )
+    }
+}
+
+@Composable
+private fun LearningDataButton(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentColor: Color = LbmBrown,
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.heightIn(min = 50.dp),
+        shape = RoundedCornerShape(14.dp),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = contentColor),
+    ) {
+        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(8.dp))
+        Text(text = label, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
+}
+
+@Composable
+private fun LearningDataDialog(
+    prompt: LearningDataPrompt,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(text = prompt.confirmLabel, color = LbmBrown, fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = prompt.dismissLabel?.let { label ->
+            {
+                TextButton(onClick = onDismiss) {
+                    Text(text = label, color = LbmTextSecondary)
+                }
+            }
+        },
+        title = {
+            Text(text = prompt.title, color = LbmTextPrimary, fontWeight = FontWeight.Bold)
+        },
+        text = {
+            // The import's list of changes can be long on a small screen: it scrolls inside the dialog.
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                Text(text = prompt.message, color = LbmTextSecondary)
+            }
+        },
+        containerColor = LbmSurface,
+        titleContentColor = LbmTextPrimary,
+        textContentColor = LbmTextSecondary,
+        shape = RoundedCornerShape(20.dp),
+    )
 }
 
 /* ----------------------------- Font size ----------------------------- */

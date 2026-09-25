@@ -4,11 +4,14 @@ import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import android.content.Context
 
 /**
- * Local, per-device record of which [LearningPath] steps have been opened.
+ * Local, per-device record of which [LearningPath] steps have been opened — opening a step is what
+ * counts it as done.
  *
  * Stored in the app's existing settings preferences file so no new storage surface appears.
- * There is no account and no backend: progress never leaves the device, and uninstalling
- * the app clears it.
+ * There is no account and no backend. Progress leaves the device only in the two ways the user
+ * controls: Android Auto Backup of the settings file (see the backup rules in `res/xml`), and the
+ * «Δεδομένα μάθησης» file exported from Ρυθμίσεις (`settings/LearningDataFile`). [reset] is what
+ * «Μηδενισμός προόδου» there calls.
  */
 object LearningProgress {
 
