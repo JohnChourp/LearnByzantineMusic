@@ -18,6 +18,10 @@ import com.johnchourp.learnbyzantinemusic.music.Phthong
  * The φθόγγος labels carry their octave decoration (`Νη΄`, `Πα,`) exactly as the scale diagram's
  * labels do, so resolving a step to a pitch is a lookup in the diagram's own label list — the same
  * discipline as [IsonDrone].
+ *
+ * **Which language (ClickUp `869f5x281`).** The pitches always come from the **Greek** string, and
+ * only the syllables from the user's language — see [playable]. A translation spells the φθόγγοι in
+ * its own alphabet, and a φθόγγος is never parsed out of translated text.
  */
 object ApichimaSequence {
 
@@ -50,6 +54,28 @@ object ApichimaSequence {
                     if (syllable.isEmpty() || phthong.isEmpty()) null else Step(syllable, phthong)
                 }
             }
+
+    /**
+     * The steps «Άκου το απήχημα» plays and lights: the φθόγγοι of [greekText], sung on the syllables
+     * of [shownText].
+     *
+     * [greekText] is the teaching string as the Greek resources spell it, whatever language the UI
+     * is in, and it is the only text the pitches are read from. [shownText] is the same string in
+     * the user's language and supplies the syllables alone, so an English page lights «A na nes»
+     * while it sounds Πα Βου Πα. Parsing the displayed string for pitches is what left the English
+     * page silent: `A(Pa)` names no φθόγγος, so every απήχημα resolved to nothing.
+     *
+     * The two are paired by position. When the translation does not split into the same number of
+     * steps, the Greek syllables are kept instead — pairing lists of different lengths would light a
+     * syllable other than the one sounding. `ApichimaInEveryLanguageTest` keeps every shipped
+     * translation in step with the Greek.
+     */
+    fun playable(greekText: String, shownText: String): List<Step> {
+        val sung = parse(greekText)
+        val shown = parse(shownText)
+        if (shown.size != sung.size) return sung
+        return sung.zip(shown) { greek, translated -> greek.copy(syllable = translated.syllable) }
+    }
 
     /**
      * Frequencies for [steps], looked up in [frequenciesTopToBottom] through

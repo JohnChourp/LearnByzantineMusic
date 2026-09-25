@@ -545,9 +545,9 @@ private fun ToneCard(state: WeeklyModeCalendarUiState) {
                     )
                 }
                 Column {
-                    Crossfade(targetState = state.toneNameRes, label = "toneName") { res ->
+                    Crossfade(targetState = state.toneLabel, label = "toneName") { label ->
                         Text(
-                            text = if (res != 0) stringResource(res) else "",
+                            text = label,
                             style = MaterialTheme.typography.titleLarge,
                             color = LbmTextPrimary,
                             fontWeight = FontWeight.Bold,
