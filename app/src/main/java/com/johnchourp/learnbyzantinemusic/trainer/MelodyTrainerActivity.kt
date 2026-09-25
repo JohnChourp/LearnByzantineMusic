@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
 import android.Manifest
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
@@ -14,13 +15,17 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.Beats
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import com.johnchourp.learnbyzantinemusic.trainer.ui.MelodyTrainerScreen
 import com.johnchourp.learnbyzantinemusic.trainer.ui.MelodyTrainerUiState
 import com.johnchourp.learnbyzantinemusic.trainer.ui.PracticeModeUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TimingRuleNumbersUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerNoteUi
+import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerScaleUi
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import java.text.DecimalFormatSymbols
 import java.util.Locale
@@ -39,12 +44,23 @@ import java.util.Locale
  * [MelodyTrainerUiState] that the screen renders. The time rules (γοργόν, κλάσμα …) are applied
  * through [MelodySequence], which also holds the Trainer's input rules — where a γοργόν may go,
  * which lengths the ± buttons write — so this class and the screen only ask it.
+ *
+ * Every pitch — what playback sounds and what the voice is judged against — comes from one
+ * [TrainerScale] (ClickUp `869f5x24v`): «Διατονικός», the default and the Trainer as it always was,
+ * or a ήχος on the same ladder the 8 Ήχοι page uses, with that ήχος's own «Μεταφορά βάσης», read
+ * from and written to the key the 8 Ήχοι page keeps for it.
  */
 class MelodyTrainerActivity : BaseActivity() {
 
     private val notes = mutableListOf<TrainerNote>()
     private var currentOctaveShift = 0
     private var bpm = MelodyTempo.DEFAULT_BPM
+
+    /** Where every pitch comes from. [TrainerScale.DIATONIC] reproduces the Trainer before F2. */
+    private var scale = TrainerScale.DIATONIC
+
+    /** The 8 Ήχοι store: the per-mode «Μεταφορά βάσης» lives there, shared with that page. */
+    private val modePrefs: SharedPreferences by lazy { AppPrefs.open(this, AppPrefs.Store.EIGHT_MODES) }
 
     private var isPlaybackActive = false
     private var isVoiceActive = false
@@ -122,6 +138,8 @@ class MelodyTrainerActivity : BaseActivity() {
                     onIncrementDuration = { index -> changeDuration(index, MelodySequence.LENGTH_STEP_BEATS) },
                     onToggleGorgo = ::toggleGorgo,
                     onRemoveNote = ::removeNote,
+                    onSelectScale = ::selectScale,
+                    onBaseShiftChange = ::changeBaseShift,
                     onTempoChange = ::changeTempo,
                     onPlay = ::startPlayback,
                     onStop = ::stopPlayback,
@@ -165,6 +183,32 @@ class MelodyTrainerActivity : BaseActivity() {
     private fun changeTempo(newBpm: Int) {
         if (isBusy) return
         bpm = MelodyTempo.clampBpm(newBpm)
+        rebuildState()
+    }
+
+    /**
+     * Puts the Trainer on [mode]'s ladder at the «Μεταφορά βάσης» the 8 Ήχοι page has saved for it,
+     * or back on «Διατονικός» (null), which is always at shift 0. Clamped on read, like that page.
+     */
+    private fun selectScale(mode: Mode?) {
+        if (isBusy) return
+        val shift = if (mode == null) {
+            BaseShift.DEFAULT_MORIA
+        } else {
+            BaseShift.clamp(modePrefs.getInt(AppPrefs.baseShiftKeyName(mode.key), BaseShift.DEFAULT_MORIA))
+        }
+        scale = TrainerScale(mode, shift)
+        rebuildState()
+    }
+
+    /** Moves the chosen ήχος's base and saves it under that ήχος's own key, shared with 8 Ήχοι. */
+    private fun changeBaseShift(moria: Int) {
+        if (isBusy) return
+        val mode = scale.mode ?: return
+        val bounded = BaseShift.clamp(moria)
+        if (bounded == scale.baseShiftMoria) return
+        scale = scale.copy(baseShiftMoria = bounded)
+        modePrefs.edit().putInt(AppPrefs.baseShiftKeyName(mode.key), bounded).apply()
         rebuildState()
     }
 
@@ -212,7 +256,7 @@ class MelodyTrainerActivity : BaseActivity() {
     private fun startPlayback() {
         if (isBusy || notes.isEmpty()) return
         val sequence = MelodySequence(notes.toList())
-        val plan = MelodyPlaybackPlanner.plan(sequence, MelodyTempo.of(bpm))
+        val plan = MelodyPlaybackPlanner.plan(sequence, MelodyTempo.of(bpm), scale::frequencyHz)
         if (plan.isEmpty()) return
         isPlaybackActive = true
         rebuildState()
@@ -249,10 +293,16 @@ class MelodyTrainerActivity : BaseActivity() {
         }
     }
 
+    /**
+     * The engine matches against the fixed diatonic table; its [PitchMatch.frequencyHz] is the pitch
+     * as sung, so it is read again on the Trainer's own scale before any evaluator sees it. Silence
+     * stays null.
+     */
     private fun onPitchDetected(match: PitchMatch?, capturedAtMillis: Long) {
+        val onScale = match?.let { scale.match(it.frequencyHz) }
         when {
-            isVoiceActive -> handleVoiceFrame(match)
-            isRhythmActive -> handleRhythmFrame(match, capturedAtMillis)
+            isVoiceActive -> handleVoiceFrame(onScale)
+            isRhythmActive -> handleRhythmFrame(onScale, capturedAtMillis)
         }
     }
 
@@ -408,7 +458,11 @@ class MelodyTrainerActivity : BaseActivity() {
     }
 
     private fun startRhythmClock() {
-        rhythmPlan = MelodyPlaybackPlanner.plan(MelodySequence(notes.toList()), MelodyTempo.of(bpm))
+        rhythmPlan = MelodyPlaybackPlanner.plan(
+            MelodySequence(notes.toList()),
+            MelodyTempo.of(bpm),
+            scale::frequencyHz,
+        )
         if (rhythmPlan.isEmpty()) {
             stopRhythmSession(clearGreens = true)
             return
@@ -560,6 +614,11 @@ class MelodyTrainerActivity : BaseActivity() {
             clearEnabled = !isBusy && notes.isNotEmpty(),
             addEnabled = !isBusy,
             nowPlayingLabel = nowPlaying,
+            scale = TrainerScaleUi(
+                mode = scale.mode,
+                baseShiftMoria = scale.baseShiftMoria,
+                enabled = !isBusy,
+            ),
             voice = PracticeModeUi(
                 checked = isVoiceActive,
                 enabled = !isPlaybackActive && !isRhythmActive,
@@ -621,8 +680,9 @@ class MelodyTrainerActivity : BaseActivity() {
     }
 
     private companion object {
-        const val MIN_OCTAVE_SHIFT = -1
-        const val MAX_OCTAVE_SHIFT = 1
+        /** Notes are written one octave either side of the middle — the range [TrainerScale]'s ladder covers. */
+        const val MIN_OCTAVE_SHIFT = TrainerScale.MIN_NOTE_OCTAVE
+        const val MAX_OCTAVE_SHIFT = TrainerScale.MAX_NOTE_OCTAVE
         const val COUNTDOWN_TICK_MILLIS = 1_000L
         const val RHYTHM_END_GRACE_MILLIS = 1_500L
     }

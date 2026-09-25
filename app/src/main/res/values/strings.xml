@@ -933,6 +933,19 @@
     <string name="melody_trainer_now_playing">Παίζει: %1$s</string>
     <string name="melody_trainer_tempo_slow">Αργά</string>
     <string name="melody_trainer_tempo_fast">Γρήγορα</string>
+    <string name="melody_trainer_scale_title">Ήχος και βάση</string>
+    <string name="melody_trainer_scale_hint">Η κλίμακα στην οποία παίζει και ακούει ο Γυμναστής: η ίδια με τη σελίδα «8 Ήχοι».</string>
+    <string name="melody_trainer_scale_default">Διατονικός</string>
+    <string name="melody_trainer_scale_default_detail">Νη = 220 Hz — ο Γυμναστής όπως ήταν πάντα</string>
+    <string name="melody_trainer_scale_open">Άνοιγμα επιλογής ήχου</string>
+    <string name="melody_trainer_base_shift_title">Μεταφορά βάσης</string>
+    <string name="melody_trainer_base_shift_value">%1$+d μόρια</string>
+    <string name="melody_trainer_base_shift_zero">0 μόρια</string>
+    <string name="melody_trainer_base_shift_reset">Επαναφορά</string>
+    <string name="melody_trainer_base_shift_lower">Πιο χαμηλή βάση</string>
+    <string name="melody_trainer_base_shift_higher">Πιο υψηλή βάση</string>
+    <string name="melody_trainer_base_shift_shared">Κοινή με τη σελίδα «8 Ήχοι»: ό,τι αλλάξεις εδώ ισχύει κι εκεί, για αυτόν τον ήχο.</string>
+    <string name="melody_trainer_base_shift_diatonic">Ο Διατονικός μένει πάντα στο Νη = 220 Hz. Για μεταφορά βάσης διάλεξε ήχο.</string>
     <string name="melody_trainer_practice_title">Εξάσκηση με τη φωνή</string>
     <string name="melody_trainer_practice_intro">Διάλεξε έναν τρόπο εξάσκησης, τραγούδησε, και οι σωστοί φθόγγοι πρασινίζουν.</string>
     <string name="melody_trainer_correct_progress">Σωστά: %1$d/%2$d</string>

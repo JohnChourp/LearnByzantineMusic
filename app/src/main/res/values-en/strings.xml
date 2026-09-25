@@ -934,6 +934,19 @@
     <string name="melody_trainer_now_playing">Playing: %1$s</string>
     <string name="melody_trainer_tempo_slow">Slow</string>
     <string name="melody_trainer_tempo_fast">Fast</string>
+    <string name="melody_trainer_scale_title">Mode and base</string>
+    <string name="melody_trainer_scale_hint">The scale the Trainer plays and listens on: the same one as on the «8 Modes» page.</string>
+    <string name="melody_trainer_scale_default">Diatonic</string>
+    <string name="melody_trainer_scale_default_detail">Νη = 220 Hz — the Trainer as it always was</string>
+    <string name="melody_trainer_scale_open">Open the mode picker</string>
+    <string name="melody_trainer_base_shift_title">Base transposition</string>
+    <string name="melody_trainer_base_shift_value">%1$+d moria</string>
+    <string name="melody_trainer_base_shift_zero">0 moria</string>
+    <string name="melody_trainer_base_shift_reset">Reset</string>
+    <string name="melody_trainer_base_shift_lower">Lower base</string>
+    <string name="melody_trainer_base_shift_higher">Higher base</string>
+    <string name="melody_trainer_base_shift_shared">Shared with the «8 Modes» page: a change here applies there too, for this mode.</string>
+    <string name="melody_trainer_base_shift_diatonic">Diatonic always stays at Νη = 220 Hz. To shift the base, choose a mode.</string>
     <string name="melody_trainer_practice_title">Practice with your voice</string>
     <string name="melody_trainer_practice_intro">Pick a practice mode, sing, and the correct phthongi turn green.</string>
     <string name="melody_trainer_correct_progress">Correct: %1$d/%2$d</string>
