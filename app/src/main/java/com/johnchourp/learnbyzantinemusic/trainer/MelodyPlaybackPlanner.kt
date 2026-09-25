@@ -20,7 +20,20 @@ data class PlannedNoteEvent(
  */
 object MelodyPlaybackPlanner {
 
-    fun plan(sequence: MelodySequence, tempo: MelodyTempo): List<PlannedNoteEvent> {
+    /** The schedule on the fixed diatonic table ([TrainerNote.frequencyHz], Νη = 220 Hz). */
+    fun plan(sequence: MelodySequence, tempo: MelodyTempo): List<PlannedNoteEvent> =
+        plan(sequence, tempo) { it.frequencyHz }
+
+    /**
+     * The same schedule, with each note's pitch resolved by [frequencyOf]. The Trainer passes its
+     * scale ([TrainerScale.frequencyHz]), so it plays the ladder it listens on (ClickUp `869f5x24v`).
+     * Timing does not depend on pitch: both overloads produce identical start times and durations.
+     */
+    fun plan(
+        sequence: MelodySequence,
+        tempo: MelodyTempo,
+        frequencyOf: (TrainerNote) -> Double,
+    ): List<PlannedNoteEvent> {
         val durations = sequence.effectiveDurationsBeats()
         var cursor = 0L
         return sequence.notes.mapIndexed { index, note ->
@@ -28,7 +41,7 @@ object MelodyPlaybackPlanner {
             PlannedNoteEvent(
                 index = index,
                 phthong = note.phthong,
-                frequencyHz = note.frequencyHz,
+                frequencyHz = frequencyOf(note),
                 startMillis = cursor,
                 durationMillis = durationMillis
             ).also { cursor += durationMillis }

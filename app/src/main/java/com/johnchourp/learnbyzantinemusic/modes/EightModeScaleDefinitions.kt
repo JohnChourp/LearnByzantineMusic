@@ -61,15 +61,21 @@ data class ModeScaleDefinition(
      *
      * This is the single entry point for anything that needs pitches: the diagram, the ison drone
      * and the απήχημα playback all take the same ladder, so they cannot disagree about a φθόγγος.
+     * Since ClickUp `869f5x24v` (F2) the Melody Trainer plays and listens on it too.
+     *
+     * [lowestOctave] is the octave of the base φθόγγος the ladder starts from — see
+     * [EightModeScaleDefinitions.ascendingPhthongi]. The Trainer starts an octave lower than the
+     * diagram, because its lowest note, Νη one octave down, sits below a Πα-based ladder's first rung.
      */
     fun ladder(
         octaves: Int,
         reference: Phthong = Phthong(PhthongName.NI),
         baseShift: Moria = Moria.ZERO,
+        lowestOctave: Int = EightModeScaleDefinitions.LOW_OCTAVE,
     ): ModeLadder = ModeLadder.build(
-        ascendingPhthongi = ascendingPhthongi(octaves),
+        ascendingPhthongi = ascendingPhthongi(octaves, lowestOctave),
         ascendingIntervals = repeatedIntervals(octaves).map(::Moria),
-        referenceMoria = referenceMoria(reference, octaves),
+        referenceMoria = referenceMoria(reference, octaves, lowestOctave),
         baseShift = baseShift,
     )
 
@@ -89,8 +95,10 @@ data class ModeScaleDefinition(
      * The ladder as **typed φθόγγοι**, ascending. This is the primary form; [ascendingPhthongs] is
      * its rendering.
      */
-    fun ascendingPhthongi(octaves: Int): List<Phthong> =
-        EightModeScaleDefinitions.ascendingPhthongi(base, octaves)
+    fun ascendingPhthongi(
+        octaves: Int,
+        lowestOctave: Int = EightModeScaleDefinitions.LOW_OCTAVE,
+    ): List<Phthong> = EightModeScaleDefinitions.ascendingPhthongi(base, octaves, lowestOctave)
 
     /** Rendering boundary: the same ladder as display labels. */
     fun ascendingPhthongs(octaves: Int): List<String> =
@@ -117,8 +125,12 @@ data class ModeScaleDefinition(
      * confused with the same name an octave away — which a label comparison would do the moment
      * anything trimmed the suffix.
      */
-    fun referenceMoria(reference: Phthong, octaves: Int): Moria {
-        val ladder = ascendingPhthongi(octaves)
+    fun referenceMoria(
+        reference: Phthong,
+        octaves: Int,
+        lowestOctave: Int = EightModeScaleDefinitions.LOW_OCTAVE,
+    ): Moria {
+        val ladder = ascendingPhthongi(octaves, lowestOctave)
         val referenceIndex = ladder.indexOf(reference)
         require(referenceIndex >= 0) {
             "reference phthong ${reference.label} is not present in ${ladder.joinToString { it.label }}"
@@ -191,14 +203,16 @@ object EightModeScaleDefinitions {
     /**
      * The ascending ladder as typed φθόγγοι, spanning [octaves] octaves.
      *
-     * It starts one octave **below** the middle register, which is why the first φθόγγος renders
-     * with `,`: the diagram is meant to reach comfortably under a singer's base as well as above it.
+     * By default it starts one octave **below** the middle register ([LOW_OCTAVE]), which is why
+     * the first φθόγγος renders with `,`: the diagram is meant to reach comfortably under a singer's
+     * base as well as above it. [lowestOctave] moves that start; only the Melody Trainer does, one
+     * octave further down, so that a Πα-based ladder still holds its Νη one octave down.
      * The octave advances when the run crosses Νη, because Νη is where a Byzantine octave begins —
      * that is the rule this used to express by incrementing a suffix counter.
      */
-    fun ascendingPhthongi(base: ModeScaleBase, octaves: Int): List<Phthong> {
+    fun ascendingPhthongi(base: ModeScaleBase, octaves: Int, lowestOctave: Int = LOW_OCTAVE): List<Phthong> {
         require(octaves > 0) { "octaves must be positive" }
-        var current = Phthong(base.base.name, LOW_OCTAVE)
+        var current = Phthong(base.base.name, lowestOctave)
         val ladder = mutableListOf(current)
         repeat(PhthongName.entries.size * octaves) {
             current = current.next()
@@ -239,5 +253,5 @@ object EightModeScaleDefinitions {
     }
 
     /** The ladder opens an octave below the middle register — see [ascendingPhthongi]. */
-    private const val LOW_OCTAVE = -1
+    const val LOW_OCTAVE = -1
 }
