@@ -438,6 +438,8 @@
     <string name="mode_theory_back_button">← Back to the 8 Modes</string>
     <string name="shortcut_new_recording_short">New recording</string>
     <string name="shortcut_new_recording_long">New recording</string>
+    <string name="shortcut_ison_short">Ison</string>
+    <string name="shortcut_ison_long">Ison in the 8 Modes</string>
     <string name="recordings_share_chooser_title">Share recording</string>
     <string name="recordings_share_failed">Could not share the recording.</string>
     <string name="recordings_action_share">Share</string>

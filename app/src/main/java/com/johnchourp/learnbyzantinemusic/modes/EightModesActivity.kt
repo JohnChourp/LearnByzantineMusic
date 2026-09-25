@@ -34,6 +34,11 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
  * to the saved «last selected mode»: that is saved only when the user taps a mode here, so following
  * the card never changes where the page opens next time from its own tile. The mode on screen is kept
  * in the instance state, so a recreation (a theme change) shows it again instead of the saved one.
+ *
+ * **The launcher shortcut «Ίσο»** (ClickUp `869f5x2dq`) opens this page with [EXTRA_START_ISON]: the
+ * last mode and its «Μεταφορά βάσης», with the ison already sounding. It only ever plays — it never
+ * records — and it is honoured on a fresh start only, so a recreation after the user switched the
+ * ison off does not switch it back on.
  */
 class EightModesActivity : BaseActivity() {
 
@@ -120,6 +125,8 @@ class EightModesActivity : BaseActivity() {
                     micDenied = micDenied,
                     onOpenMenu = { EightModesNavigation.showMenu(this, selectedTopicKey = null) },
                     onBack = ::finish,
+                    initialDroneOn = savedInstanceState == null &&
+                        intent.getBooleanExtra(EXTRA_START_ISON, false),
                 )
             }
         }
@@ -244,6 +251,12 @@ class EightModesActivity : BaseActivity() {
         private val SELECTED_MODE_KEY_PREF_KEY = AppPrefs.SelectedModeKey.name
         private const val EXTRA_MODE_KEY = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_MODE_KEY"
         private const val STATE_SHOWN_MODE_KEY = "shown_mode_key"
+
+        /**
+         * Set by the launcher shortcut «Ίσο» in `res/xml/shortcuts.xml`, whose `<extra>` must spell
+         * this exactly; `IsonShortcutTest` holds the two together.
+         */
+        internal const val EXTRA_START_ISON = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_START_ISON"
 
         /** Opens the page on [modeKey] for this opening only; see the class KDoc. */
         fun intent(context: Context, modeKey: String): Intent =

@@ -69,6 +69,7 @@ import com.johnchourp.learnbyzantinemusic.AppLanguage
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.modes.IsonDrone
 import com.johnchourp.learnbyzantinemusic.modes.LadderPitchMirror
+import com.johnchourp.learnbyzantinemusic.modes.ModeLadders
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleFrequencies
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleGenus
 import com.johnchourp.learnbyzantinemusic.modes.ModeTheoryCatalog
@@ -97,15 +98,14 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import com.johnchourp.learnbyzantinemusic.modes.ApichimaSequence
 import com.johnchourp.learnbyzantinemusic.music.ModeLadder
-import com.johnchourp.learnbyzantinemusic.music.Moria
 import com.johnchourp.learnbyzantinemusic.music.Phthong
 import java.util.Locale
 
 /**
  * Internal rather than private so `ApichimaInEveryLanguageTest` resolves the απήχημα on the very
- * ladder this screen builds.
+ * ladder this screen builds — which is [ModeLadders]' ladder, shared with the background ison.
  */
-internal const val SCALE_OCTAVES = 3
+internal const val SCALE_OCTAVES = ModeLadders.OCTAVES
 
 /**
  * The «Μεταφορά βάσης» range the slider offers, in μόρια. Internal so the ison tests sweep exactly
@@ -145,6 +145,8 @@ fun EightModesScreen(
     onOpenMenu: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    /** The ison starts sounding at once — the launcher shortcut «Ίσο» (ClickUp `869f5x2dq`). */
+    initialDroneOn: Boolean = false,
 ) {
     var selectedModeIndex by remember {
         mutableStateOf(initialModeIndex.coerceIn(EIGHT_MODES.indices))
@@ -154,7 +156,7 @@ fun EightModesScreen(
         mutableStateMapOf<Int, Int>().apply { putAll(initialBaseShifts) }
     }
     var activeIndex by remember { mutableStateOf(-1) }
-    var droneOn by remember { mutableStateOf(false) }
+    var droneOn by remember { mutableStateOf(initialDroneOn) }
     // Where «Ίσον σε…» moved the ison; null means the mode's base. Keyed on the mode, so a new ήχος
     // starts on its own base, and never persisted (ClickUp `869f5x251`).
     var isonChoice by remember(selectedModeIndex) { mutableStateOf<Phthong?>(null) }
@@ -542,9 +544,7 @@ private fun ScaleCard(
 @Composable
 private fun rememberLadder(modeIndex: Int, baseShiftMoria: Int): ModeLadder {
     val scale = EIGHT_MODES[modeIndex].scale
-    return remember(modeIndex, baseShiftMoria) {
-        scale.ladder(octaves = SCALE_OCTAVES, baseShift = Moria(baseShiftMoria))
-    }
+    return remember(modeIndex, baseShiftMoria) { ModeLadders.ladder(scale, baseShiftMoria) }
 }
 
 /* ----------------------------- Ισοκράτημα (ison drone) ----------------------------- */

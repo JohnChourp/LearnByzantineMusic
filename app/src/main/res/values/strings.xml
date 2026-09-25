@@ -437,6 +437,8 @@
     <string name="mode_theory_back_button">← Επιστροφή στους 8 Ήχους</string>
     <string name="shortcut_new_recording_short">Νέα ηχογράφηση</string>
     <string name="shortcut_new_recording_long">Νέα ηχογράφηση</string>
+    <string name="shortcut_ison_short">Ίσο</string>
+    <string name="shortcut_ison_long">Ίσο στους 8 Ήχους</string>
     <string name="recordings_share_chooser_title">Κοινοποίηση ηχογράφησης</string>
     <string name="recordings_share_failed">Αποτυχία κοινοποίησης ηχογράφησης.</string>
     <string name="recordings_action_share">Κοινοποίηση</string>
