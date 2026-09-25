@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.ui.components.FramedImage
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
@@ -58,16 +59,19 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurface
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
 
-/** Localized display name for a phthong (Greek: Νη Πα …, English: Ni Pa …). */
+/**
+ * Localized display name for a phthong (Greek: Νη Πα …, English: Ni Pa …). Theory prose only: a
+ * screen that plays or scores a note shows [PhthongName.displayName] in every language.
+ */
 @StringRes
-internal fun Phthong.nameRes(): Int = when (this) {
-    Phthong.NI -> R.string.phthong_ni
-    Phthong.PA -> R.string.phthong_pa
-    Phthong.VOU -> R.string.phthong_bou
-    Phthong.GA -> R.string.phthong_ga
-    Phthong.DI -> R.string.phthong_di
-    Phthong.KE -> R.string.phthong_ke
-    Phthong.ZO -> R.string.phthong_zo
+internal fun PhthongName.nameRes(): Int = when (this) {
+    PhthongName.NI -> R.string.phthong_ni
+    PhthongName.PA -> R.string.phthong_pa
+    PhthongName.VOU -> R.string.phthong_bou
+    PhthongName.GA -> R.string.phthong_ga
+    PhthongName.DI -> R.string.phthong_di
+    PhthongName.KE -> R.string.phthong_ke
+    PhthongName.ZO -> R.string.phthong_zo
 }
 
 /**

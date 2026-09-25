@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
 import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 
 /**
  * Intonation gate for the combined "phthong + time" exercise (Mode 3). It turns a raw
@@ -12,7 +13,7 @@ import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
  */
 object ComboPitchGate {
     /** The default is the app's one tolerance, [IntonationProfile]: the voice check and every other screen agree. */
-    fun inTunePhthong(match: PitchMatch?, toleranceMoria: Double = IntonationProfile.IN_TUNE_MORIA): TrainerPhthong? {
+    fun inTunePhthong(match: PitchMatch?, toleranceMoria: Double = IntonationProfile.IN_TUNE_MORIA): PhthongName? {
         if (match == null) return null
         return if (IntonationProfile.isInTune(match.deviationMoria, toleranceMoria)) match.phthong else null
     }

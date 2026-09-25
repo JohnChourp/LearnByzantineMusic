@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -58,6 +59,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
@@ -96,6 +98,7 @@ import androidx.compose.material.icons.filled.Stop
 import com.johnchourp.learnbyzantinemusic.modes.ApichimaSequence
 import com.johnchourp.learnbyzantinemusic.music.ModeLadder
 import com.johnchourp.learnbyzantinemusic.music.Moria
+import com.johnchourp.learnbyzantinemusic.music.Phthong
 import java.util.Locale
 
 /**
@@ -103,8 +106,13 @@ import java.util.Locale
  * ladder this screen builds.
  */
 internal const val SCALE_OCTAVES = 3
-private const val BASE_SHIFT_MIN = -12
-private const val BASE_SHIFT_MAX = 12
+
+/**
+ * The «Μεταφορά βάσης» range the slider offers, in μόρια. Internal so the ison tests sweep exactly
+ * this range, whatever it becomes, rather than a copy of today's numbers.
+ */
+internal const val BASE_SHIFT_MIN = -12
+internal const val BASE_SHIFT_MAX = 12
 
 /**
  * Redesigned «Κλίμακες των 8 Ήχων» screen. A hero with a ☰ that opens the catalog pages menu, a genus
@@ -147,6 +155,9 @@ fun EightModesScreen(
     }
     var activeIndex by remember { mutableStateOf(-1) }
     var droneOn by remember { mutableStateOf(false) }
+    // Where «Ίσον σε…» moved the ison; null means the mode's base. Keyed on the mode, so a new ήχος
+    // starts on its own base, and never persisted (ClickUp `869f5x251`).
+    var isonChoice by remember(selectedModeIndex) { mutableStateOf<Phthong?>(null) }
     var listening by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -156,13 +167,13 @@ fun EightModesScreen(
         onToneRelease()
     }
 
-    // The drone's pitch is derived, not stored: whenever the mode or its base shift changes it is
-    // recomputed and the drone retuned in place, so it can never keep sounding the previous mode's
-    // base. Switching off, or leaving the composition, stops it — that is what keeps the second
-    // AudioTrack from outliving the screen.
-    val droneBase = isonBaseFor(selectedModeIndex, baseShiftByMode[selectedModeIndex] ?: 0)
-    LaunchedEffect(droneOn, droneBase?.frequencyHz) {
-        onDroneChange(if (droneOn) droneBase?.frequencyHz else null)
+    // The drone's pitch is derived, not stored: whenever the mode, its base shift or the chosen
+    // φθόγγος changes it is recomputed and the drone retuned in place, so it can never keep sounding
+    // the previous mode's note. Switching off, or leaving the composition, stops it — that is what
+    // keeps the second AudioTrack from outliving the screen.
+    val ison = rememberIson(selectedModeIndex, baseShiftByMode[selectedModeIndex] ?: 0, isonChoice)
+    LaunchedEffect(droneOn, ison?.held?.frequencyHz) {
+        onDroneChange(if (droneOn) ison?.held?.frequencyHz else null)
     }
     DisposableEffect(Unit) {
         onDispose { onDroneChange(null) }
@@ -237,8 +248,9 @@ fun EightModesScreen(
             StaggeredAppear(delayMillis = 210) {
                 IsonDroneCard(
                     enabled = droneOn,
-                    baseLabel = droneBase?.label,
+                    ison = ison,
                     onToggle = { droneOn = it },
+                    onChoose = { isonChoice = it },
                 )
             }
             StaggeredAppear(delayMillis = 225) {
@@ -537,35 +549,46 @@ private fun rememberLadder(modeIndex: Int, baseShiftMoria: Int): ModeLadder {
 
 /* ----------------------------- Ισοκράτημα (ison drone) ----------------------------- */
 
-/** The ison's label and pitch for a mode at a given base shift. */
-private data class IsonBase(val label: String, val frequencyHz: Double)
+/** What the ison can hold for the current mode, and the rung it holds now. */
+private data class IsonState(val choices: IsonDrone.Choices, val held: ModeLadder.Step) {
+    val onBase: Boolean get() = held.phthong == choices.base
+}
 
 /**
- * Resolves the ison from the same scale data the diagram is drawn from, so the drone and the
- * diagram's base key cannot disagree — including after the «Μεταφορά βάσης» slider moves them.
+ * Resolves the ison from the same ladder the diagram is drawn from, so the drone and the diagram's
+ * key cannot disagree — including after the «Μεταφορά βάσης» slider moves them. [choice] null means
+ * the mode's base.
  */
 @Composable
-private fun isonBaseFor(modeIndex: Int, baseShiftMoria: Int): IsonBase? {
-    val scale = EIGHT_MODES[modeIndex].scale
+private fun rememberIson(modeIndex: Int, baseShiftMoria: Int, choice: Phthong?): IsonState? {
+    val mode = EIGHT_MODES[modeIndex].mode
     val ladder = rememberLadder(modeIndex, baseShiftMoria)
-    return remember(ladder, modeIndex) {
-        IsonDrone.baseStep(ladder, scale.base.base)
-            ?.let { step -> IsonBase(step.phthong.label, step.frequencyHz) }
+    return remember(ladder, mode, choice) {
+        val choices = mode?.let { IsonDrone.choices(it, ladder) } ?: return@remember null
+        IsonDrone.step(ladder, choice ?: choices.base)?.let { held -> IsonState(choices, held) }
     }
 }
 
 /**
  * Toggle for the continuous drone, naming the φθόγγος it holds so the singer knows what they are
- * chanting against.
+ * chanting against, and «Ίσον σε…» to move it (ClickUp `869f5x251`).
+ *
+ * The move is a menu rather than a tap on the diagram, because a tap there already plays a tone.
+ * The mode's δεσπόζοντες come first, then the other φθόγγοι, then the way back to the base.
  */
 @Composable
-private fun IsonDroneCard(enabled: Boolean, baseLabel: String?, onToggle: (Boolean) -> Unit) {
+private fun IsonDroneCard(
+    enabled: Boolean,
+    ison: IsonState?,
+    onToggle: (Boolean) -> Unit,
+    onChoose: (Phthong?) -> Unit,
+) {
     LessonCard(title = stringResource(R.string.eight_modes_ison_card_title)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = if (enabled && baseLabel != null) {
-                        stringResource(R.string.eight_modes_ison_active, baseLabel)
+                    text = if (enabled && ison != null) {
+                        stringResource(R.string.eight_modes_ison_active, ison.held.phthong.label)
                     } else {
                         stringResource(R.string.eight_modes_ison_hint)
                     },
@@ -578,10 +601,113 @@ private fun IsonDroneCard(enabled: Boolean, baseLabel: String?, onToggle: (Boole
             Switch(
                 checked = enabled,
                 onCheckedChange = onToggle,
-                enabled = baseLabel != null,
+                enabled = ison != null,
+            )
+        }
+        if (ison != null) {
+            Spacer(Modifier.height(10.dp))
+            IsonNoteSelector(ison = ison, onChoose = onChoose)
+        }
+    }
+}
+
+/** «Ίσον σε…»: the φθόγγος the ison holds, and the menu that moves it. */
+@Composable
+private fun IsonNoteSelector(ison: IsonState, onChoose: (Phthong?) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val heldLabel = ison.held.phthong.label
+    Box {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 48.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(LbmPrimaryContainer)
+                .border(1.dp, LbmBrown.copy(alpha = 0.45f), RoundedCornerShape(12.dp))
+                .clickable { expanded = true }
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.eight_modes_ison_selector_label),
+                style = MaterialTheme.typography.bodyMedium,
+                color = LbmTextSecondary,
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = if (ison.onBase) {
+                    stringResource(R.string.eight_modes_ison_selector_base_value, heldLabel)
+                } else {
+                    heldLabel
+                },
+                style = MaterialTheme.typography.titleMedium,
+                color = LbmBrown,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(
+                imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = stringResource(R.string.eight_modes_open_selector),
+                tint = LbmBrown,
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            fun choose(phthong: Phthong?) {
+                expanded = false
+                onChoose(phthong)
+            }
+            if (ison.choices.dominants.isNotEmpty()) {
+                IsonMenuSection(R.string.eight_modes_ison_selector_dominants)
+                ison.choices.dominants.forEach { phthong ->
+                    IsonMenuItem(phthong, held = phthong == ison.held.phthong, onClick = { choose(phthong) })
+                }
+            }
+            if (ison.choices.others.isNotEmpty()) {
+                IsonMenuSection(R.string.eight_modes_ison_selector_others)
+                ison.choices.others.forEach { phthong ->
+                    IsonMenuItem(phthong, held = phthong == ison.held.phthong, onClick = { choose(phthong) })
+                }
+            }
+            HorizontalDivider(color = LbmOutline)
+            DropdownMenuItem(
+                onClick = { choose(null) },
+                enabled = !ison.onBase,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Filled.Restore, contentDescription = null)
+                },
+                text = {
+                    Text(stringResource(R.string.eight_modes_ison_reset_to_base, ison.choices.base.label))
+                },
             )
         }
     }
+}
+
+@Composable
+private fun IsonMenuSection(@StringRes titleRes: Int) {
+    Text(
+        text = stringResource(titleRes),
+        style = MaterialTheme.typography.labelMedium,
+        color = LbmTextSecondary,
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .semantics { heading() },
+    )
+}
+
+@Composable
+private fun IsonMenuItem(phthong: Phthong, held: Boolean, onClick: () -> Unit) {
+    DropdownMenuItem(
+        onClick = onClick,
+        text = {
+            Text(
+                text = phthong.label,
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (held) LbmBrown else LbmTextPrimary,
+                fontWeight = if (held) FontWeight.Bold else FontWeight.Normal,
+            )
+        },
+    )
 }
 
 /* ----------------------------- Ζωντανός καθρέφτης φωνής ----------------------------- */

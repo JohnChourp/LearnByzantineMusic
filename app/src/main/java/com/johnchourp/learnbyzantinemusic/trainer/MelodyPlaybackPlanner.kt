@@ -1,9 +1,11 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
+
 /** One scheduled note in a playback plan, with absolute start/duration in milliseconds. */
 data class PlannedNoteEvent(
     val index: Int,
-    val phthong: TrainerPhthong,
+    val phthong: PhthongName,
     val frequencyHz: Double,
     val startMillis: Long,
     val durationMillis: Long

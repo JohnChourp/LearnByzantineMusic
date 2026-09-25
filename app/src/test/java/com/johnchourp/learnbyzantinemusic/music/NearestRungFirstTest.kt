@@ -9,8 +9,8 @@ import com.johnchourp.learnbyzantinemusic.recordings.analysis.PitchTrack
 import com.johnchourp.learnbyzantinemusic.trainer.ComboPitchGate
 import com.johnchourp.learnbyzantinemusic.trainer.GreeningResult
 import com.johnchourp.learnbyzantinemusic.trainer.PitchGreeningEvaluator
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
 import com.johnchourp.learnbyzantinemusic.trainer.TrainerPitchTable
+import com.johnchourp.learnbyzantinemusic.trainer.diatonicMoriaFromNi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -31,7 +31,7 @@ class NearestRungFirstTest {
 
     @Test
     fun theProbeSitsBetweenTheNewAndTheOldTolerance() {
-        val step = TrainerPhthong.GA.diatonicMoriaFromNi - TrainerPhthong.VOU.diatonicMoriaFromNi
+        val step = PhthongName.GA.diatonicMoriaFromNi - PhthongName.VOU.diatonicMoriaFromNi
         assertEquals("the diatonic Βου–Γα step", 8, step)
         assertTrue("nearer Βου than Γα, so no screen can hand it to the neighbour", OFF < step / 2.0)
         assertTrue("the old ±4 let it through", OFF <= 4.0)
@@ -41,17 +41,17 @@ class NearestRungFirstTest {
     @Test
     fun theTrainerCallsItOut() {
         val match = TrainerPitchTable.nearestPhthong(
-            ByzantineTuning.frequencyHz(TrainerPhthong.VOU.diatonicMoriaFromNi + OFF)
+            ByzantineTuning.frequencyHz(PhthongName.VOU.diatonicMoriaFromNi + OFF)
         )!!
-        assertEquals(TrainerPhthong.VOU, match.phthong)
+        assertEquals(PhthongName.VOU, match.phthong)
         assertEquals(OFF, match.deviationMoria, 1e-9)
 
         assertNull("φθόγγος + time: not an in-tune Βου", ComboPitchGate.inTunePhthong(match))
 
-        val voiceCheck = PitchGreeningEvaluator(listOf(TrainerPhthong.VOU))
+        val voiceCheck = PitchGreeningEvaluator(listOf(PhthongName.VOU))
         var verdict: GreeningResult? = null
         repeat(PitchGreeningEvaluator.DEFAULT_MIN_STABLE_FRAMES) { voiceCheck.onFrame(match)?.let { verdict = it } }
-        assertEquals("voice check: Βου, but not green", GreeningResult(0, false, TrainerPhthong.VOU), verdict)
+        assertEquals("voice check: Βου, but not green", GreeningResult(0, false, PhthongName.VOU), verdict)
     }
 
     @Test
@@ -68,14 +68,14 @@ class NearestRungFirstTest {
     fun theAnalysisCallsItOutOnADiatonicMode() {
         // Half a second held 3.5 μόρια above Βου of the first mode, calibrated to the app's own Νη.
         val positions = ModeScalePositions.forMode("first")
-        val hz = ByzantineTuning.frequencyHz(positions[TrainerPhthong.VOU.ordinal] + OFF).toFloat()
+        val hz = ByzantineTuning.frequencyHz(positions[PhthongName.VOU.ordinal] + OFF).toFloat()
         val hopMs = IntonationProfile.OFFLINE_HOP_MS
         val frames = List(22) { PitchFrame((it * hopMs).toLong(), hz) }
         val track = PitchTrack(frames, hopMs, (frames.size * hopMs).toLong())
 
         val notes = PhthongSegmenter.segment(track, ByzantineTuning.NI_BASE_HZ, positions)
         assertEquals(1, notes.size)
-        assertEquals(TrainerPhthong.VOU, notes.single().phthong)
+        assertEquals(PhthongName.VOU, notes.single().phthong)
         assertEquals(OFF, notes.single().deviationMoria, 1e-3)
         assertFalse("an orange bar, not a green one", notes.single().isInTune)
     }
@@ -89,7 +89,7 @@ class NearestRungFirstTest {
      */
     @Test
     fun withFourMoriaNothingBetweenVouAndGaCouldEverBeOut() {
-        val vou = TrainerPhthong.VOU.diatonicMoriaFromNi
+        val vou = PhthongName.VOU.diatonicMoriaFromNi
         val deviations = (0 until 160).map { index ->
             val moria = vou + 0.025 + index * 0.05
             TrainerPitchTable.nearestPhthong(ByzantineTuning.frequencyHz(moria))!!.deviationMoria

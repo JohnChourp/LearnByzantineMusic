@@ -1,12 +1,13 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
 import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 
 /** Verdict for one target note once the singer has produced a stable phthong for it. */
 data class GreeningResult(
     val targetIndex: Int,
     val matched: Boolean,
-    val sungPhthong: TrainerPhthong
+    val sungPhthong: PhthongName
 )
 
 /**
@@ -24,12 +25,12 @@ data class GreeningResult(
  * Pure logic with no Android dependency, so it is fully unit-testable.
  */
 class PitchGreeningEvaluator(
-    private val targets: List<TrainerPhthong>,
+    private val targets: List<PhthongName>,
     val toleranceMoria: Double = IntonationProfile.IN_TUNE_MORIA,
     private val minStableFrames: Int = DEFAULT_MIN_STABLE_FRAMES
 ) {
     private var index = 0
-    private var candidate: TrainerPhthong? = null
+    private var candidate: PhthongName? = null
     private var stableFrames = 0
     private var segmentCommitted = false
 
@@ -37,7 +38,7 @@ class PitchGreeningEvaluator(
     val isComplete: Boolean get() = index >= targets.size
 
     /** Expected phthong the singer should produce next, or null once complete. */
-    fun currentTarget(): TrainerPhthong? = targets.getOrNull(index)
+    fun currentTarget(): PhthongName? = targets.getOrNull(index)
 
     /**
      * Feeds one analysis frame. Returns a [GreeningResult] on the frame that commits a
