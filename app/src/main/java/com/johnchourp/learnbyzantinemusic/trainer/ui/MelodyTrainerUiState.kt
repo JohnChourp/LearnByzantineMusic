@@ -1,6 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.trainer.ui
 
 import androidx.compose.runtime.Immutable
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
+import com.johnchourp.learnbyzantinemusic.music.Mode
 
 /**
  * Immutable snapshot of everything the redesigned Melody Trainer screen renders. The host
@@ -27,9 +29,12 @@ data class MelodyTrainerUiState(
     val addEnabled: Boolean = true,
     /** Phthong currently sounding during Mode 1 playback, or null when not playing. */
     val nowPlayingLabel: String? = null,
+    val scale: TrainerScaleUi = TrainerScaleUi(),
     val voice: PracticeModeUi = PracticeModeUi(),
     val rhythm: PracticeModeUi = PracticeModeUi(),
     val combo: PracticeModeUi = PracticeModeUi(),
+    /** The numbers of the «Κανόνες χρόνου» card, already printed. */
+    val ruleNumbers: TimingRuleNumbersUi = TimingRuleNumbersUi(),
 )
 
 /** One note row as the screen needs to draw it. */
@@ -47,13 +52,43 @@ data class TrainerNoteUi(
     val matched: Boolean,
     /** Currently playing or expected — the row glows amber. */
     val active: Boolean,
+    /** `MelodySequence.canChangeLength` for this row: the rule lives there, not here. */
+    val lengthChangeable: Boolean,
+    /** `MelodySequence.canToggleGorgon` for this row: never the first note, and that rule lives there too. */
+    val gorgoToggleable: Boolean,
 ) {
-    /** Duration ±  only when editable and not turned into a γοργόν (which fixes the length). */
-    val durationEditable: Boolean get() = editable && !hasGorgo
+    /** Duration ± only while no mode is running and the melody's rules allow it. */
+    val durationEditable: Boolean get() = editable && lengthChangeable
 
-    /** γοργόν shortens the *previous* note, so it is invalid on the first row. */
-    val gorgoEnabled: Boolean get() = editable && index > 0
+    /** The γοργόν chip only while no mode is running and the melody's rules allow it. */
+    val gorgoEnabled: Boolean get() = editable && gorgoToggleable
 }
+
+/**
+ * The scale the Trainer plays and listens on (ClickUp `869f5x24v`): the ήχος — null for
+ * «Διατονικός», the default — and its «Μεταφορά βάσης». Both are read-only while a mode is running.
+ */
+@Immutable
+data class TrainerScaleUi(
+    val mode: Mode? = null,
+    val baseShiftMoria: Int = BaseShift.DEFAULT_MORIA,
+    val enabled: Boolean = true,
+) {
+    /** «Διατονικός» is fixed at Νη = 220 Hz; only a chosen ήχος can be transposed. */
+    val baseShiftEditable: Boolean get() = enabled && mode != null
+}
+
+/**
+ * The numbers the «Κανόνες χρόνου» card prints, already formatted like the note rows. They come from
+ * `TimingRulesHelp` — the time rules — and never from the card's text.
+ */
+@Immutable
+data class TimingRuleNumbersUi(
+    val defaultLength: String = "",
+    val gorgonNote: String = "",
+    val gorgonTakes: String = "",
+    val klasmaAdds: String = "",
+)
 
 /** State of one of the three mutually-exclusive practice modes. */
 @Immutable

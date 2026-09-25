@@ -80,6 +80,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.trainer.MelodyTempo
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
@@ -105,8 +106,9 @@ private val ActiveGlowBorder = Color(0xFFE0A100)
 /**
  * Redesigned «Γυμναστής Μελωδίας» screen. A pure renderer of [MelodyTrainerUiState] + callbacks:
  * a hero, a visual timing-rules card, the note picker + octave stepper, the editable sequence
- * with animated match/active feedback, a tempo slider, the transport row, and the three
- * voice-practice mode cards. All audio / mic / timing logic stays in the host Activity.
+ * with animated match/active feedback, the ήχος and «Μεταφορά βάσης» ([TrainerScaleCard]), a tempo
+ * slider, the transport row, and the three voice-practice mode cards. All audio / mic / timing
+ * logic stays in the host Activity.
  */
 @Composable
 fun MelodyTrainerScreen(
@@ -120,6 +122,8 @@ fun MelodyTrainerScreen(
     onIncrementDuration: (Int) -> Unit,
     onToggleGorgo: (Int) -> Unit,
     onRemoveNote: (Int) -> Unit,
+    onSelectScale: (Mode?) -> Unit,
+    onBaseShiftChange: (Int) -> Unit,
     onTempoChange: (Int) -> Unit,
     onPlay: () -> Unit,
     onStop: () -> Unit,
@@ -150,7 +154,7 @@ fun MelodyTrainerScreen(
         ) {
             Spacer(Modifier.height(2.dp))
             StaggeredAppear(delayMillis = 60) { IntroCard() }
-            StaggeredAppear(delayMillis = 120) { RulesCard() }
+            StaggeredAppear(delayMillis = 120) { RulesCard(state.ruleNumbers) }
             StaggeredAppear(delayMillis = 180) {
                 AddPhthongCard(
                     phthongLabels = phthongLabels,
@@ -175,6 +179,13 @@ fun MelodyTrainerScreen(
                 )
             }
             StaggeredAppear(delayMillis = 300) {
+                TrainerScaleCard(
+                    scale = state.scale,
+                    onSelect = onSelectScale,
+                    onBaseShiftChange = onBaseShiftChange,
+                )
+            }
+            StaggeredAppear(delayMillis = 330) {
                 TempoCard(
                     bpm = state.bpm,
                     enabled = state.tempoEnabled,
@@ -227,22 +238,27 @@ private data class RuleEntry(
     val content: Color,
     val titleRes: Int,
     val bodyRes: Int,
+    /** The body's numbers, in placeholder order — read from the time rules, never typed into the text. */
+    val bodyArgs: List<String> = emptyList(),
 )
 
 @Composable
-private fun RulesCard() {
+private fun RulesCard(numbers: TimingRuleNumbersUi) {
     val rules = listOf(
         RuleEntry(
             Icons.Filled.MusicNote, LbmPrimaryContainer, LbmBrown,
             R.string.melody_trainer_rule_default_title, R.string.melody_trainer_rule_default_body,
+            listOf(numbers.defaultLength),
         ),
         RuleEntry(
             Icons.Filled.Bolt, AccentPurpleContainer, AccentPurpleContent,
             R.string.melody_trainer_rule_gorgo_title, R.string.melody_trainer_rule_gorgo_body,
+            listOf(numbers.gorgonNote, numbers.gorgonTakes),
         ),
         RuleEntry(
             Icons.Filled.Add, AccentGreenContainer, AccentGreenContent,
             R.string.melody_trainer_rule_klasma_title, R.string.melody_trainer_rule_klasma_body,
+            listOf(numbers.klasmaAdds),
         ),
         RuleEntry(
             Icons.Filled.Speed, AccentBlueContainer, AccentBlueContent,
@@ -283,7 +299,11 @@ private fun RuleRow(rule: RuleEntry) {
             )
             Spacer(Modifier.height(2.dp))
             Text(
-                text = stringResource(rule.bodyRes),
+                text = if (rule.bodyArgs.isEmpty()) {
+                    stringResource(rule.bodyRes)
+                } else {
+                    stringResource(rule.bodyRes, *rule.bodyArgs.toTypedArray())
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 color = LbmTextSecondary,
             )

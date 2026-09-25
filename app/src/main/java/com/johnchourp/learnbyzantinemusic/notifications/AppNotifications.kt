@@ -17,8 +17,9 @@ import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
  * permission to post it (ClickUp `869f5x273`).
  *
  * The app has no server and sends nothing: these are local notifications. The first is the
- * «Ηχογράφηση…» of a recording in progress (`RecordingService`); the ison playback and the reminder
- * are meant to add a [Channel] and an id here, not a second helper.
+ * «Ηχογράφηση…» of a recording in progress (`RecordingService`); the second the ison playing in the
+ * background (`IsonPlaybackService`, ClickUp `869f5x2dq`); the third the daily practice reminder
+ * (`PracticeReminderNotification`, ClickUp `869f5x2dy`).
  *
  * **Stored for good by the system:** a channel's id — the user's settings for that channel hang on
  * it — so an id is never renamed. Names and descriptions follow the app's language each time a
@@ -32,9 +33,10 @@ object AppNotifications {
 
     /** One id per notification the app can show; they only have to differ. */
     const val RECORDING_NOTIFICATION_ID = 1
+    const val ISON_NOTIFICATION_ID = 2
 
     /** The daily practice reminder of «Πεντάλεπτο της ημέρας» (ClickUp `869f5x2dy`). */
-    const val PRACTICE_REMINDER_NOTIFICATION_ID = 2
+    const val PRACTICE_REMINDER_NOTIFICATION_ID = 3
 
     enum class Channel(
         val id: String,
@@ -47,6 +49,14 @@ object AppNotifications {
             id = "recording",
             nameRes = R.string.recordings_notification_channel_name,
             descriptionRes = R.string.recordings_notification_channel_description,
+            importance = NotificationManagerCompat.IMPORTANCE_LOW,
+        ),
+
+        /** Low and silent as well: it must never sound over the ison it controls. */
+        ISON(
+            id = "ison",
+            nameRes = R.string.eight_modes_ison_notification_channel,
+            descriptionRes = R.string.eight_modes_ison_notification_channel_description,
             importance = NotificationManagerCompat.IMPORTANCE_LOW,
         ),
 

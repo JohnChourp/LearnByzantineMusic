@@ -1,6 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.Beats
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
+import com.johnchourp.learnbyzantinemusic.music.TimeSign
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -9,11 +11,13 @@ class MelodySequenceTest {
     private fun note(phthong: PhthongName, beats: Float = 1f) =
         TrainerNote(phthong = phthong, baseDurationBeats = beats)
 
+    private val half = Beats.of(1, 2)
+
     @Test
     fun `plain notes keep their base durations`() {
         val sequence = MelodySequence(listOf(note(PhthongName.NI), note(PhthongName.PA, 2f)))
-        assertEquals(listOf(1f, 2f), sequence.effectiveDurationsBeats())
-        assertEquals(3f, sequence.totalBeats())
+        assertEquals(listOf(Beats.ONE, Beats.whole(2)), sequence.durations())
+        assertEquals(Beats.whole(3), sequence.total())
     }
 
     @Test
@@ -25,22 +29,22 @@ class MelodySequenceTest {
             )
         )
         // Two phthongi share one χρόνο: previous shrinks to 0.5, gorgo note is 0.5.
-        assertEquals(listOf(0.5f, 0.5f), sequence.effectiveDurationsBeats())
-        assertEquals(1f, sequence.totalBeats())
+        assertEquals(listOf(half, half), sequence.durations())
+        assertEquals(Beats.ONE, sequence.total())
     }
 
     @Test
     fun `fraction adds a whole beat`() {
-        val sequence = MelodySequence(listOf(note(PhthongName.DI).withFraction(true)))
-        assertEquals(listOf(2f), sequence.effectiveDurationsBeats())
-        assertEquals(2f, sequence.totalBeats())
+        val sequence = MelodySequence(listOf(note(PhthongName.DI).withSign(TimeSign.KLASMA, true)))
+        assertEquals(listOf(Beats.whole(2)), sequence.durations())
+        assertEquals(Beats.whole(2), sequence.total())
     }
 
     @Test
     fun `empty sequence has no durations`() {
         val sequence = MelodySequence(emptyList())
-        assertEquals(emptyList<Float>(), sequence.effectiveDurationsBeats())
-        assertEquals(0f, sequence.totalBeats())
+        assertEquals(emptyList<Beats>(), sequence.durations())
+        assertEquals(Beats.ZERO, sequence.total())
         assertEquals(0, sequence.size)
     }
 }

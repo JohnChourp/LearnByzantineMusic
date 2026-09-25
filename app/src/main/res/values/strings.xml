@@ -171,6 +171,7 @@
     <string name="time_1_by_4">&#188;</string>
     <string name="digorgo">Δίγοργο</string>
     <string name="time_1_by_3">&#8531;</string>
+    <string name="time_2_by_3">&#8532;</string>
     <string name="trigorgo">Τρίγοργο</string>
     <string name="presented_digorgo">Παρεστιγμένο Δίγοργο</string>
     <string name="digorgo_in_climbing_compositions">Το δίγοργο στις συνθέσεις ανάβασης</string>
@@ -372,6 +373,17 @@
     <string name="eight_modes_ison_selector_dominants">Δεσπόζοντες φθόγγοι</string>
     <string name="eight_modes_ison_selector_others">Άλλοι φθόγγοι</string>
     <string name="eight_modes_ison_reset_to_base">Επαναφορά στη βάση (%1$s)</string>
+    <string name="eight_modes_ison_background_label">Συνέχισε στο παρασκήνιο</string>
+    <string name="eight_modes_ison_background_hint">Το ίσον παίζει και με σβηστή οθόνη ή πάνω από άλλη εφαρμογή, με ειδοποίηση για να το σταματάς. Σταματά μόνο του μετά από μία ώρα ή όταν βγάλεις τα ακουστικά.</string>
+    <string name="eight_modes_ison_notification_channel">Ισοκράτημα</string>
+    <string name="eight_modes_ison_notification_channel_description">Το ισοκράτημα που παίζει στο παρασκήνιο, με στάση και αλλαγή φθόγγου.</string>
+    <string name="eight_modes_ison_notification_title">Ισοκράτημα · %1$s</string>
+    <string name="eight_modes_ison_notification_text">Κρατά τον φθόγγο %1$s</string>
+    <string name="eight_modes_ison_notification_stopped">Σταμάτησε στον φθόγγο %1$s</string>
+    <string name="eight_modes_ison_notification_lower">Φθόγγος −</string>
+    <string name="eight_modes_ison_notification_higher">Φθόγγος +</string>
+    <string name="eight_modes_ison_notification_stop">Στάση</string>
+    <string name="eight_modes_ison_notification_play">Αναπαραγωγή</string>
     <string name="eight_modes_scale_card_title">Η κλίμακα</string>
     <string name="eight_modes_scale_card_hint">Κράτα πατημένο έναν φθόγγο για να ακούσεις τον τόνο — σύρε πάνω-κάτω για γλίστρημα.</string>
     <string name="eight_modes_scale_moria_legend">οι αριθμοί δείχνουν τα μόρια κάθε διαστήματος</string>
@@ -444,6 +456,8 @@
     <string name="mode_theory_back_button">← Επιστροφή στους 8 Ήχους</string>
     <string name="shortcut_new_recording_short">Νέα ηχογράφηση</string>
     <string name="shortcut_new_recording_long">Νέα ηχογράφηση</string>
+    <string name="shortcut_ison_short">Ίσο</string>
+    <string name="shortcut_ison_long">Ίσο στους 8 Ήχους</string>
     <string name="recordings_share_chooser_title">Κοινοποίηση ηχογράφησης</string>
     <string name="recordings_share_failed">Αποτυχία κοινοποίησης ηχογράφησης.</string>
     <string name="recordings_action_share">Κοινοποίηση</string>
@@ -921,16 +935,30 @@
     <string name="melody_trainer_add_note_hint">Πάτησε φθόγγους για να χτίσεις τη μελωδία σου.</string>
     <string name="melody_trainer_octave_hint">Η οκτάβα τοποθετεί τους νέους φθόγγους ψηλότερα (΄) ή χαμηλότερα (,).</string>
     <string name="melody_trainer_rule_default_title">Προεπιλογή</string>
-    <string name="melody_trainer_rule_default_body">Κάθε φθόγγος κρατάει 1 χρόνο.</string>
+    <!-- The numbers of the three rule bodies are arguments read from the time rules (TimingRulesHelp): never type one in. -->
+    <string name="melody_trainer_rule_default_body">Κάθε φθόγγος κρατάει %1$s χρόνο.</string>
     <string name="melody_trainer_rule_gorgo_title">Γοργόν</string>
-    <string name="melody_trainer_rule_gorgo_body">Ο φθόγγος γίνεται μισός χρόνος (0,5) και «τραβάει» 0,5 από τον προηγούμενο — δύο φθόγγοι σε έναν χρόνο.</string>
+    <string name="melody_trainer_rule_gorgo_body">Ο φθόγγος γίνεται μισός χρόνος (%1$s) και «τραβάει» %2$s από τον προηγούμενο — δύο φθόγγοι σε έναν χρόνο.</string>
     <string name="melody_trainer_rule_klasma_title">Κλάσμα (απλή)</string>
-    <string name="melody_trainer_rule_klasma_body">Προσθέτει 1 ολόκληρο χρόνο στον φθόγγο.</string>
+    <string name="melody_trainer_rule_klasma_body">Προσθέτει %1$s ολόκληρο χρόνο στον φθόγγο.</string>
     <string name="melody_trainer_rule_speed_title">Ταχύτητα</string>
     <string name="melody_trainer_rule_speed_body">Ρυθμίζει πόσο γρήγορα μετράει ο χρόνος (χρόνοι ανά λεπτό).</string>
     <string name="melody_trainer_now_playing">Παίζει: %1$s</string>
     <string name="melody_trainer_tempo_slow">Αργά</string>
     <string name="melody_trainer_tempo_fast">Γρήγορα</string>
+    <string name="melody_trainer_scale_title">Ήχος και βάση</string>
+    <string name="melody_trainer_scale_hint">Η κλίμακα στην οποία παίζει και ακούει ο Γυμναστής: η ίδια με τη σελίδα «8 Ήχοι».</string>
+    <string name="melody_trainer_scale_default">Διατονικός</string>
+    <string name="melody_trainer_scale_default_detail">Νη = 220 Hz — ο Γυμναστής όπως ήταν πάντα</string>
+    <string name="melody_trainer_scale_open">Άνοιγμα επιλογής ήχου</string>
+    <string name="melody_trainer_base_shift_title">Μεταφορά βάσης</string>
+    <string name="melody_trainer_base_shift_value">%1$+d μόρια</string>
+    <string name="melody_trainer_base_shift_zero">0 μόρια</string>
+    <string name="melody_trainer_base_shift_reset">Επαναφορά</string>
+    <string name="melody_trainer_base_shift_lower">Πιο χαμηλή βάση</string>
+    <string name="melody_trainer_base_shift_higher">Πιο υψηλή βάση</string>
+    <string name="melody_trainer_base_shift_shared">Κοινή με τη σελίδα «8 Ήχοι»: ό,τι αλλάξεις εδώ ισχύει κι εκεί, για αυτόν τον ήχο.</string>
+    <string name="melody_trainer_base_shift_diatonic">Ο Διατονικός μένει πάντα στο Νη = 220 Hz. Για μεταφορά βάσης διάλεξε ήχο.</string>
     <string name="melody_trainer_practice_title">Εξάσκηση με τη φωνή</string>
     <string name="melody_trainer_practice_intro">Διάλεξε έναν τρόπο εξάσκησης, τραγούδησε, και οι σωστοί φθόγγοι πρασινίζουν.</string>
     <string name="melody_trainer_correct_progress">Σωστά: %1$d/%2$d</string>
@@ -960,14 +988,14 @@
     <string name="climbing_legend_embroideries">Κεντήματα: στολίζουν και ανεβάζουν τη φωνή.</string>
     <string name="climbing_legend_underflow">Υπορροή: γρήγορη κατιούσα κίνηση.</string>
     <string name="climbing_legend_gorgo">Γοργόν: τα νεύματα διαβάζονται γρήγορα, στον μισό χρόνο (½).</string>
-    <string name="climbing_legend_digorgo">Δίγοργον: ακόμη πιο γρήγορα — τα νεύματα στο ¼ του χρόνου.</string>
+    <string name="climbing_legend_digorgo">Δίγοργον: ακόμη πιο γρήγορα — τα νεύματα στο ⅓ του χρόνου.</string>
     <string name="climbing_legend_simple_dot">Απλή στιγμή: σημάδι χρόνου.</string>
     <string name="climbing_legend_fraction">Κλάσμα: μικρή χρονική προσθήκη.</string>
 
     <string name="gorgo_section_intro">Το γοργόν είναι ένα μικρό σημάδι που μπαίνει πάνω σε μια σύνθεση και κάνει τα νεύματά της να διαβάζονται γρήγορα — στον μισό χρόνο (½) το καθένα.</string>
-    <string name="digorgo_section_intro">Το δίγοργον επιταχύνει ακόμη περισσότερο: μοιράζει τον χρόνο σε ακόμη μικρότερα μέρη, ώστε τα νεύματα να διαβάζονται στο ¼ — ο συνολικός χρόνος της σύνθεσης μένει ίδιος.</string>
+    <string name="digorgo_section_intro">Το δίγοργον επιταχύνει ακόμη περισσότερο: μοιράζει έναν χρόνο σε τρία ίσα μέρη, ώστε τα νεύματα να διαβάζονται στο ⅓ — ο συνολικός χρόνος της σύνθεσης μένει ίδιος.</string>
     <string name="climbing_gorgo_badge">½ χρόνος</string>
-    <string name="climbing_digorgo_badge">¼ χρόνου</string>
+    <string name="climbing_digorgo_badge">⅓ χρόνου</string>
 
     <string name="climbing_timing_title">Ο χρόνος της σύνθεσης</string>
     <string name="climbing_timing_combined_label">Σύνθετο</string>
@@ -988,7 +1016,7 @@
     <string name="climbing_reading_gorgo_3">Ίσον και κεντήματα με γοργόν: η σύνθεση τρέχει στο ½ του χρόνου.</string>
     <string name="climbing_reading_gorgo_4">Απόστροφος και κεντήματα με γοργόν — γρήγορο στόλισμα.</string>
     <string name="climbing_reading_gorgo_5">Υπορροή με γοργόν: απόστροφος με γοργόν και απόστροφος, στον μισό χρόνο.</string>
-    <string name="climbing_reading_digorgo_1">Με δίγοργον: ίσον, κεντήματα με δίγοργον και Ολίγον — στο ¼ του χρόνου.</string>
+    <string name="climbing_reading_digorgo_1">Με δίγοργον: ίσον, κεντήματα με δίγοργον και Ολίγον — ⅓ του χρόνου το καθένα.</string>
 
     <string name="cd_gorgo">Νεύμα: Γοργόν</string>
     <string name="cd_digorgo">Νεύμα: Δίγοργον</string>

@@ -1,7 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
-import com.johnchourp.learnbyzantinemusic.analysis.ByzantineRhythmMapper
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
+import com.johnchourp.learnbyzantinemusic.music.TimeSign
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -22,21 +22,21 @@ class TrainerNoteTest {
 
         val withGorgo = base.withGorgo(true)
         assertTrue(withGorgo.hasGorgo)
-        assertEquals(listOf(ByzantineRhythmMapper.MODIFIER_GORGO), withGorgo.modifiers)
+        assertEquals(setOf(TimeSign.GORGON), withGorgo.signs)
 
         // Toggling on again is idempotent.
         assertEquals(withGorgo, withGorgo.withGorgo(true))
 
         val withoutGorgo = withGorgo.withGorgo(false)
         assertFalse(withoutGorgo.hasGorgo)
-        assertEquals(emptyList<String>(), withoutGorgo.modifiers)
+        assertEquals(emptySet<TimeSign>(), withoutGorgo.signs)
     }
 
     @Test
     fun `fraction modifier is tracked independently`() {
-        val note = TrainerNote(PhthongName.DI).withFraction(true)
-        assertTrue(note.hasFraction)
+        val note = TrainerNote(PhthongName.DI).withSign(TimeSign.KLASMA, true)
+        assertTrue(TimeSign.KLASMA in note.signs)
         assertFalse(note.hasGorgo)
-        assertTrue(note.modifiers.contains(ByzantineRhythmMapper.MODIFIER_FRACTION))
+        assertEquals(setOf(TimeSign.KLASMA, TimeSign.GORGON), note.withGorgo(true).signs)
     }
 }
