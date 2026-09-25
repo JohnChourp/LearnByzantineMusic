@@ -1,5 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.settings
 
+import com.johnchourp.learnbyzantinemusic.music.Mode
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.practice.PracticeDay
 import com.johnchourp.learnbyzantinemusic.practice.PracticeLog
 import com.johnchourp.learnbyzantinemusic.practice.PracticeLogCodec
@@ -11,11 +13,18 @@ import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.PRACTICE
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.RECORDINGS
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.RECORDING_ANALYSIS
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.SETTINGS
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.TRAINER
 import com.johnchourp.learnbyzantinemusic.settings.LearningDataFile.Item
 import com.johnchourp.learnbyzantinemusic.settings.LearningDataFile.Line
 import com.johnchourp.learnbyzantinemusic.settings.LearningDataFile.Reason
 import com.johnchourp.learnbyzantinemusic.settings.LearningDataFile.Result.Accepted
 import com.johnchourp.learnbyzantinemusic.settings.LearningDataFile.Result.Rejected
+import com.johnchourp.learnbyzantinemusic.trainer.ExerciseBook
+import com.johnchourp.learnbyzantinemusic.trainer.ExerciseChange
+import com.johnchourp.learnbyzantinemusic.trainer.TrainerMelody
+import com.johnchourp.learnbyzantinemusic.trainer.TrainerMelodyCodec
+import com.johnchourp.learnbyzantinemusic.trainer.TrainerNote
+import com.johnchourp.learnbyzantinemusic.trainer.TrainerScale
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
@@ -37,6 +46,18 @@ class LearningDataFileTest {
     private val practiceLog = PracticeLogCodec.encode(
         PracticeLog(mapOf(LocalDate.of(2026, 9, 24) to PracticeDay(1, 5), LocalDate.of(2026, 9, 25) to PracticeDay(2, 11)))
     )
+
+    /** Written by the Trainer's own codecs, so each is already in the form the export writes. */
+    private val trainerMelody = TrainerMelody(
+        notes = listOf(TrainerNote(PhthongName.PA), TrainerNote(PhthongName.VOU, octaveShift = 1, baseDurationBeats = 1.5f)),
+        bpm = 96,
+        scale = TrainerScale(Mode.SECOND, -4),
+    )
+    private val trainerExercises = listOf("Άσκηση α", "Άσκηση β")
+        .foldIndexed(ExerciseBook.EMPTY) { index, book, name ->
+            (book.saveAs(name, trainerMelody, nowMillis = exportedAt + index) as ExerciseChange.Done).book
+        }
+        .encode()
 
     /** A valid value for every key that travels — every registry key and family is here at least once. */
     private val everythingThatTravels: Map<AppPrefs.Store, Map<String, Any>> = mapOf(
@@ -68,6 +89,10 @@ class LearningDataFileTest {
             "hymn:varys:42|expected" to "",
         ),
         PRACTICE to mapOf("practice_log" to practiceLog),
+        TRAINER to mapOf(
+            "trainer_exercises" to trainerExercises,
+            "trainer_last_melody" to TrainerMelodyCodec.encodeString(trainerMelody),
+        ),
     )
 
     /** What each device keeps for itself: URIs, bookkeeping, once-per-install flags, leftovers. */
@@ -347,6 +372,8 @@ class LearningDataFileTest {
                 Line(Item.BASE_SHIFT, 3),
                 Line(Item.RECORDING_FORMAT, 1),
                 Line(Item.ANALYSIS, 2),
+                Line(Item.TRAINER_EXERCISES, 2),
+                Line(Item.TRAINER_LAST_MELODY, 1),
             ),
             LearningDataFile.summary(result)
         )

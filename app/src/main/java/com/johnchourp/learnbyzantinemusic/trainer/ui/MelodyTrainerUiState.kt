@@ -27,9 +27,12 @@ data class MelodyTrainerUiState(
     val stopEnabled: Boolean = false,
     val clearEnabled: Boolean = false,
     val addEnabled: Boolean = true,
+    /** The melody holds `MelodySequence.MAX_NOTES` notes: adding stops, and the card says why. */
+    val noteLimitReached: Boolean = false,
     /** Phthong currently sounding during Mode 1 playback, or null when not playing. */
     val nowPlayingLabel: String? = null,
     val scale: TrainerScaleUi = TrainerScaleUi(),
+    val exercises: TrainerExercisesUi = TrainerExercisesUi(),
     val voice: PracticeModeUi = PracticeModeUi(),
     val rhythm: PracticeModeUi = PracticeModeUi(),
     val combo: PracticeModeUi = PracticeModeUi(),
@@ -77,6 +80,43 @@ data class TrainerScaleUi(
     /** «Διατονικός» is fixed at Νη = 220 Hz; only a chosen ήχος can be transposed. */
     val baseShiftEditable: Boolean get() = enabled && mode != null
 }
+
+/**
+ * «Οι ασκήσεις μου» as the screen draws it (ClickUp `869f5x261`). The rules and the stored form are
+ * `ExerciseBook`'s; this is only what to show.
+ */
+@Immutable
+data class TrainerExercisesUi(
+    val items: List<ExerciseItemUi> = emptyList(),
+    /** «Αποθήκευση ως…» works: there is a melody, no mode is running, and this version may write the list. */
+    val saveEnabled: Boolean = false,
+    /** No mode is running: open, rename and delete work. */
+    val enabled: Boolean = true,
+    /** A newer version of the app wrote the list: it is left untouched, and the card says so. */
+    val newerFormat: Boolean = false,
+    /** The one dialog that is open, or null. */
+    val dialog: ExerciseDialogUi? = null,
+)
+
+/** One saved exercise in the list. [mode] null is «Διατονικός». */
+@Immutable
+data class ExerciseItemUi(
+    val name: String,
+    val noteCount: Int,
+    val mode: Mode?,
+    val bpm: Int,
+)
+
+/** The dialogs of «Οι ασκήσεις μου»; at most one is open. */
+sealed interface ExerciseDialogUi {
+    data class SaveAs(val error: ExerciseNameError? = null) : ExerciseDialogUi
+    data class Rename(val name: String, val error: ExerciseNameError? = null) : ExerciseDialogUi
+    data class ConfirmOpen(val name: String) : ExerciseDialogUi
+    data class ConfirmDelete(val name: String) : ExerciseDialogUi
+}
+
+/** Why a name, or a save, was refused; the screen puts it into words. */
+enum class ExerciseNameError { BLANK, TOO_LONG, TAKEN, FULL, NEWER_FORMAT }
 
 /**
  * The numbers the «Κανόνες χρόνου» card prints, already formatted like the note rows. They come from

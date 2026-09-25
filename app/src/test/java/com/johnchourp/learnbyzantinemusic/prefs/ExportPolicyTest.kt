@@ -11,8 +11,7 @@ import org.junit.Test
  *
  * The registry does not compile a key without an [AppPrefs.Export] decision. This pins WHICH
  * decision, so adding a key, or changing where one goes, is a deliberate edit here, next to its
- * reason. The saved melodies of the Melody Trainer (F6) will add registry keys too: whichever of the
- * two lands second classifies the other's keys here.
+ * reason.
  */
 class ExportPolicyTest {
 
@@ -34,6 +33,9 @@ class ExportPolicyTest {
         "recordings_output_format" to YES,
         // The practice history behind the streak (ClickUp 869f5x2dy): the learner's own, like the path.
         "practice_log" to YES,
+        // The learner's own work: the Melody Trainer's saved exercises and its last melody (F6).
+        "trainer_exercises" to YES,
+        "trainer_last_melody" to YES,
         // Per hymn only: a recording's analysis settings are keyed by that recording's URI.
         "<analysisContext>|expected" to HYMN_CONTEXTS_ONLY,
         "<analysisContext>|mode" to HYMN_CONTEXTS_ONLY,

@@ -609,7 +609,7 @@
     <string name="settings_language_current_badge">Τρέχουσα</string>
     <!-- «Δεδομένα μάθησης» (ClickUp 869f5x25w) -->
     <string name="settings_learning_data_label">Δεδομένα μάθησης</string>
-    <string name="settings_learning_data_hint">Πάρε σε άλλο κινητό τα αγαπημένα, την πρόοδο «Από το μηδέν», το ιστορικό εξάσκησης και τις ρυθμίσεις σου, σε ένα αρχείο. Οι φάκελοι (σημειώσεις, ηχογραφήσεις) δεν μπαίνουν στο αρχείο· στο νέο κινητό τους ξαναδιαλέγεις.</string>
+    <string name="settings_learning_data_hint">Πάρε σε άλλο κινητό τα αγαπημένα, την πρόοδο «Από το μηδέν», το ιστορικό εξάσκησης, τις ασκήσεις του Γυμναστή Μελωδίας και τις ρυθμίσεις σου, σε ένα αρχείο. Οι φάκελοι (σημειώσεις, ηχογραφήσεις) δεν μπαίνουν στο αρχείο· στο νέο κινητό τους ξαναδιαλέγεις.</string>
     <string name="settings_learning_data_export">Εξαγωγή</string>
     <string name="settings_learning_data_import">Εισαγωγή</string>
     <string name="settings_learning_data_reset_hint">Ένα μάθημα της διαδρομής «Από το μηδέν» μετρά ως ολοκληρωμένο μόλις το ανοίξεις. Ο μηδενισμός την ξεκινά από την αρχή.</string>
@@ -632,6 +632,8 @@
     <string name="learning_data_item_base_shift">Μεταφορά βάσης, σε ήχους: %1$d</string>
     <string name="learning_data_item_recording_format">Μορφή ηχογράφησης</string>
     <string name="learning_data_item_analysis">Ρυθμίσεις ανάλυσης ύμνων: %1$d</string>
+    <string name="learning_data_item_trainer_exercises">Οι ασκήσεις μου, στον Γυμναστή Μελωδίας: %1$d</string>
+    <string name="learning_data_item_trainer_last_melody">Η τελευταία μελωδία του Γυμναστή Μελωδίας</string>
     <string name="learning_data_import_failed_title">Η εισαγωγή δεν έγινε</string>
     <string name="learning_data_import_unfinished_title">Η εισαγωγή δεν ολοκληρώθηκε</string>
     <string name="learning_data_import_read_failed">Δεν ήταν δυνατό να διαβαστεί το αρχείο. Δεν άλλαξε τίποτα.</string>
@@ -1007,6 +1009,30 @@
     <string name="melody_trainer_base_shift_higher">Πιο υψηλή βάση</string>
     <string name="melody_trainer_base_shift_shared">Κοινή με τη σελίδα «8 Ήχοι»: ό,τι αλλάξεις εδώ ισχύει κι εκεί, για αυτόν τον ήχο.</string>
     <string name="melody_trainer_base_shift_diatonic">Ο Διατονικός μένει πάντα στο Νη = 220 Hz. Για μεταφορά βάσης διάλεξε ήχο.</string>
+    <string name="melody_trainer_notes_limit">Έως %1$d φθόγγοι σε μία μελωδία.</string>
+    <string name="melody_trainer_exercises_title">Οι ασκήσεις μου</string>
+    <string name="melody_trainer_exercises_hint">Αποθήκευσε μια μελωδία με όνομα για να την ξαναβρείς. Η τελευταία μελωδία κρατιέται μόνη της, και όταν κλείσεις την εφαρμογή.</string>
+    <string name="melody_trainer_exercises_empty">Δεν έχεις αποθηκευμένες ασκήσεις ακόμα.</string>
+    <string name="melody_trainer_exercises_newer">Οι ασκήσεις σου γράφτηκαν από νεότερη έκδοση της εφαρμογής. Ενημέρωσέ την για να τις δεις· εδώ δεν αλλάζουν.</string>
+    <string name="melody_trainer_exercise_save_as">Αποθήκευση ως…</string>
+    <string name="melody_trainer_exercise_save_title">Αποθήκευση άσκησης</string>
+    <string name="melody_trainer_exercise_rename_title">Μετονομασία άσκησης</string>
+    <string name="melody_trainer_exercise_name_label">Όνομα</string>
+    <string name="melody_trainer_exercise_save">Αποθήκευση</string>
+    <string name="melody_trainer_exercise_rename">Μετονομασία</string>
+    <string name="melody_trainer_exercise_open">Άνοιγμα</string>
+    <string name="melody_trainer_exercise_delete">Διαγραφή</string>
+    <string name="melody_trainer_exercise_cancel">Άκυρο</string>
+    <string name="melody_trainer_exercise_summary">%1$d φθόγγοι · %2$s · %3$d χρόνοι/λεπτό</string>
+    <string name="melody_trainer_exercise_open_cd">Άνοιγμα: %1$s</string>
+    <string name="melody_trainer_exercise_rename_cd">Μετονομασία: %1$s</string>
+    <string name="melody_trainer_exercise_delete_cd">Διαγραφή: %1$s</string>
+    <string name="melody_trainer_exercise_open_confirm">Να ανοίξει η «%1$s»; Η μελωδία που γράφεις τώρα θα αντικατασταθεί.</string>
+    <string name="melody_trainer_exercise_delete_confirm">Να σβηστεί η «%1$s»; Δεν γίνεται αναίρεση.</string>
+    <string name="melody_trainer_exercise_name_blank">Γράψε ένα όνομα.</string>
+    <string name="melody_trainer_exercise_name_too_long">Έως %1$d χαρακτήρες.</string>
+    <string name="melody_trainer_exercise_name_taken">Υπάρχει ήδη άσκηση με αυτό το όνομα.</string>
+    <string name="melody_trainer_exercise_full">Έχεις ήδη %1$d ασκήσεις· σβήσε μία για να αποθηκεύσεις άλλη.</string>
     <string name="melody_trainer_practice_title">Εξάσκηση με τη φωνή</string>
     <string name="melody_trainer_practice_intro">Διάλεξε έναν τρόπο εξάσκησης, τραγούδησε, και οι σωστοί φθόγγοι πρασινίζουν.</string>
     <string name="melody_trainer_correct_progress">Σωστά: %1$d/%2$d</string>
