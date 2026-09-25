@@ -5,7 +5,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.abs
-import kotlin.math.pow
 
 /**
  * ClickUp `869f4tpju`: *«Ο χρωματικός κώδικας γένους (μαύρο/μπλε/μωβ/πορτοκαλί) παραμένει διακριτός
@@ -30,23 +29,10 @@ class GenusContrastTest {
         "highContrast" to LbmPalette.highContrast,
     )
 
-    /** WCAG 2.1 relative luminance. */
-    private fun luminance(color: Color): Double {
-        fun channel(v: Float): Double {
-            val c = v.toDouble()
-            return if (c <= 0.03928) c / 12.92 else ((c + 0.055) / 1.055).pow(2.4)
-        }
-        return 0.2126 * channel(color.red) + 0.7152 * channel(color.green) + 0.0722 * channel(color.blue)
-    }
+    // The formula lives in Wcag so every contrast test shares it; the sanity check below pins it.
+    private fun luminance(color: Color): Double = Wcag.luminance(color)
 
-    /** WCAG 2.1 contrast ratio, always ≥ 1.0 and ≤ 21.0. */
-    private fun contrast(a: Color, b: Color): Double {
-        val la = luminance(a)
-        val lb = luminance(b)
-        val lighter = maxOf(la, lb)
-        val darker = minOf(la, lb)
-        return (lighter + 0.05) / (darker + 0.05)
-    }
+    private fun contrast(a: Color, b: Color): Double = Wcag.contrast(a, b)
 
     @Test
     fun theContrastFormulaIsItselfCorrect() {
