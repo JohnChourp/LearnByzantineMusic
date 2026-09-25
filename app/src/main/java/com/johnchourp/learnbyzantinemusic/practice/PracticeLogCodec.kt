@@ -13,6 +13,11 @@ import java.time.format.DateTimeParseException
  *
  * Oldest day first. **The format is stored on users' devices**: add fields, never rename one.
  *
+ * **It also travels** in the «Δεδομένα μάθησης» file (`settings/LearningDataFile`), which carries
+ * this text as [encode] writes it and imports it only in that form. So an older file keeps importing
+ * only while [encode] of what [decode] reads from it gives back the same text: a new field is written
+ * only when it has something to say.
+ *
  * Reading never throws. What it cannot read it skips — a day with a bad date, a negative count — and
  * a value that is not JSON at all reads as an empty log, so a damaged preference costs the history,
  * never the screen. The same day twice (a hand edit, a merge) is added up. A newer schemaVersion is

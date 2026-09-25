@@ -417,8 +417,14 @@ object AppPrefs {
             "anything unreadable reads as an empty history",
         writtenBy = "«Πεντάλεπτο της ημέρας» when a session is completed, via PracticeLogStore",
         readBy = "the home card and «Ιστορικό εξάσκησης» (streak, weekly chart), and the reminder",
+        export = Export.YES,
     )
 
+    /**
+     * The reminder and its time stay on each phone ([Export.NO]): switching it on is where Android
+     * 13+ asks for the notifications permission, and the schedule belongs to that phone. On a new
+     * phone the learner switches it on there, and that phone asks.
+     */
     val PracticeReminderEnabled = Key(
         name = "practice_reminder_enabled",
         store = Store.PRACTICE,
@@ -426,6 +432,7 @@ object AppPrefs {
         default = "false — the reminder is opt-in",
         writtenBy = "the reminder switch in «Ιστορικό εξάσκησης», via PracticeReminders",
         readBy = "PracticeReminders, which schedules the work, and PracticeReminderWorker",
+        export = Export.NO,
     )
 
     val PracticeReminderMinuteOfDay = Key(
@@ -436,6 +443,7 @@ object AppPrefs {
         allowed = "0..1439 minutes after local midnight; anything else falls back to the default",
         writtenBy = "the reminder time in «Ιστορικό εξάσκησης», via PracticeReminders",
         readBy = "PracticeReminders, to schedule the next reminder",
+        export = Export.NO,
     )
 
     /** Every registered key. A new key must appear here, or `AppPrefsRegistryTest` fails. */
