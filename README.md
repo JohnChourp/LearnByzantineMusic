@@ -734,7 +734,7 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 - `eight_modes_base_shift_card_bg.xml`: ορίζει το visual styling της κάρτας μεταφοράς βάσης.
 - `ByzantineScanActivity`: υλοποιεί camera/gallery ροή, επιλογή ήχου/βάσης και προβολή αποτελεσμάτων αναγνώρισης.
 - `ByzantineMelodyAnalyzer` + `BinaryImageOps`: υλοποιούν adaptive preprocessing, αποκοπή πρώτης γραμμής, segmentation και recognition σε events `base+modifier`.
-- `ByzantineRhythmMapper`: εφαρμόζει κανόνες διάρκειας (`κλάσμα`, `αντικένωμα+απλή`, `γοργό` με redistribution χρόνου).
+- `music/ByzantineRhythmMapper` + `music/TimeSign`: ο γραμμένος πίνακας κανόνων χρόνου (κλάσμα/κουκίδες, γοργόν, δίγοργον, τρίγοργον, αργόν και τα παρεστιγμένα) με ακριβείς διάρκειες· τον χρησιμοποιεί ο Γυμναστής Μελωδίας, και η σελίδα «Χαρακτήρες Χρόνου» ελέγχεται απέναντί του.
 - `byzantine_core_symbol_rules_v2.json`, `byzantine_mode_rules_v1.json`, `byzantine_display_names_v1.json`: ορίζουν core symbol rules, mode-aware trajectory profiles και ονόματα εμφάνισης.
 - `scripts/generate-mk-symbol-dataset.py`: δημιουργεί templates PNG και catalog JSON από `MK/fonts` + `KeyBoard.ini`.
 - `app/src/main/assets/byzantine_interval_mapping_v1.json`: διατηρεί το παραμετροποιήσιμο mapping `token -> κίνηση φθόγγου`.
