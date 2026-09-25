@@ -4,6 +4,7 @@ import com.johnchourp.learnbyzantinemusic.modes.EightModeScaleDefinitions
 import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleBase
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleDefinition
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
 
 /**
@@ -11,13 +12,16 @@ import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
  * from the same interval tables the 8 Ήχοι screen uses ([EightModeScaleDefinitions]). Indexed by
  * [TrainerPhthong.ordinal] (Νη, Πα, Βου, Γα, Δι, Κε, Ζω). For the diatonic genus this is exactly
  * [TrainerPhthong.diatonicMoriaFromNi].
+ *
+ * Both functions take a [Mode], not a key (ClickUp `869f5x299`): an unknown key used to fall through
+ * here silently to the diatonic scale from Νη. Keys are now parsed where they enter the app, and a
+ * stored one that names no mode falls back there, explicitly — see `AnalysisSettingsStore.resolveMode`.
  */
 object ModeScalePositions {
     /** The octave size is declared once, in ByzantineTuning — never re-stated here. */
     const val MORIA_PER_OCTAVE = ByzantineTuning.MORIA_PER_OCTAVE
 
-    fun forMode(modeKey: String): IntArray =
-        forDefinition(EightModeScaleDefinitions.MODE_SCALES[modeKey] ?: EightModeScaleDefinitions.DIATONIC)
+    fun forMode(mode: Mode): IntArray = forDefinition(mode.scale)
 
     fun forDefinition(definition: ModeScaleDefinition): IntArray {
         val intervals = definition.intervals
@@ -34,17 +38,14 @@ object ModeScalePositions {
     }
 
     /**
-     * The phthong the melody is assumed to start on unless the user picks another: the phthong of
-     * the mode's martyria in the app's mode theory (Α΄/Β΄ Πα, Γ΄ Γα, Δ΄ Βου, πλ. Α΄ Κε, πλ. Β΄ Δι,
-     * Βαρύς Ζω, πλ. Δ΄ Νη).
+     * The phthong the melody is assumed to start on unless the user picks another: [Mode.martyria],
+     * the φθόγγος of the mode's martyria (Α΄/Β΄ Πα, Γ΄ Γα, Δ΄ Βου, πλ. Α΄ Κε, πλ. Β΄ Δι, Βαρύς Ζω,
+     * πλ. Δ΄ Νη) — the same values this used to list by hand.
+     *
+     * Deliberately the martyria, not a style's base: the theory gives some modes another sticheraric
+     * base (Β΄ on Δι, for one). Whether that should drive the analysis is the owner's call, not
+     * something a refactor changes. [TrainerPhthong] and `PhthongName` spell the same seven φθόγγοι
+     * with the same names, so the name carries across.
      */
-    fun defaultStartPhthong(modeKey: String): TrainerPhthong = when (modeKey) {
-        "first", "second" -> TrainerPhthong.PA
-        "third" -> TrainerPhthong.GA
-        "fourth" -> TrainerPhthong.VOU
-        "plagal_first" -> TrainerPhthong.KE
-        "plagal_second" -> TrainerPhthong.DI
-        "varys" -> TrainerPhthong.ZO
-        else -> TrainerPhthong.NI
-    }
+    fun defaultStartPhthong(mode: Mode): TrainerPhthong = TrainerPhthong.valueOf(mode.martyria.name)
 }

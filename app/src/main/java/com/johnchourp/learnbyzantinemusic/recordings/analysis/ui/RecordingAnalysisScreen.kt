@@ -34,7 +34,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.johnchourp.learnbyzantinemusic.R
-import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionLabels
+import com.johnchourp.learnbyzantinemusic.modes.ModeResources
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AlignmentResult
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AlignmentStep
@@ -63,7 +64,7 @@ import kotlin.math.roundToInt
 fun RecordingAnalysisScreen(
     uiState: RecordingAnalysisUiState,
     onBack: () -> Unit,
-    onSelectMode: (String) -> Unit,
+    onSelectMode: (Mode) -> Unit,
     onSelectStart: (TrainerPhthong) -> Unit,
     onAddExpected: (TrainerPhthong) -> Unit,
     onRemoveLastExpected: () -> Unit,
@@ -147,7 +148,7 @@ fun RecordingAnalysisScreen(
 @Composable
 private fun ScaleCard(
     uiState: RecordingAnalysisUiState,
-    onSelectMode: (String) -> Unit,
+    onSelectMode: (Mode) -> Unit,
     onSelectStart: (TrainerPhthong) -> Unit,
 ) {
     LessonCard(title = stringResource(R.string.analysis_scale_title)) {
@@ -159,11 +160,11 @@ private fun ScaleCard(
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            AnastasimatarionLabels.MODE_ORDER.forEach { modeKey ->
+            Mode.entries.forEach { mode ->
                 LessonChip(
-                    label = stringResource(AnastasimatarionLabels.modeName(modeKey)),
-                    selected = modeKey == uiState.modeKey,
-                    onClick = { onSelectMode(modeKey) },
+                    label = stringResource(ModeResources.nameRes(mode)),
+                    selected = mode == uiState.mode,
+                    onClick = { onSelectMode(mode) },
                 )
             }
         }
