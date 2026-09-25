@@ -1,9 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
 import com.johnchourp.learnbyzantinemusic.modes.BackgroundIson.Sound
-import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MAX
-import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MIN
 import com.johnchourp.learnbyzantinemusic.modes.ui.EIGHT_MODES
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.Phthong
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
@@ -32,7 +31,7 @@ class BackgroundIsonTest {
     fun theBackgroundPitchIsThePagesForEveryModeChoiceAndShift() {
         var compared = 0
         EIGHT_MODES.forEach { row ->
-            (BASE_SHIFT_MIN..BASE_SHIFT_MAX).forEach { shift ->
+            (BaseShift.MIN_MORIA..BaseShift.MAX_MORIA).forEach { shift ->
                 // What the page sounds: its ladder, its choices, its lookup.
                 val pageLadder = ModeLadders.ladder(row.scale, shift)
                 val choices = IsonDrone.choices(row.mode, pageLadder)!!
@@ -47,7 +46,7 @@ class BackgroundIsonTest {
             }
         }
         // Guards the sweep: every mode × every shift × every φθόγγος, or it proves nothing.
-        assertEquals(EIGHT_MODES.size * (BASE_SHIFT_MAX - BASE_SHIFT_MIN + 1) * PhthongName.entries.size, compared)
+        assertEquals(EIGHT_MODES.size * (BaseShift.MAX_MORIA - BaseShift.MIN_MORIA + 1) * PhthongName.entries.size, compared)
     }
 
     // ---- what a change means for the sound -----------------------------------------------------

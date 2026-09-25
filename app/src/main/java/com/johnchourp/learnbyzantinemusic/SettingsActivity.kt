@@ -11,6 +11,12 @@ import com.johnchourp.learnbyzantinemusic.settings.ui.LanguagePrompt
 import com.johnchourp.learnbyzantinemusic.settings.ui.SettingsScreen
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
+import androidx.compose.runtime.collectAsState
+import com.johnchourp.learnbyzantinemusic.modes.IsonPlaybackService
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
+import com.johnchourp.learnbyzantinemusic.voice.GlobalShift
+import com.johnchourp.learnbyzantinemusic.voice.VoiceMicrophone
 
 /**
  * App settings page. State holder for the redesigned Compose [SettingsScreen]: it owns the
@@ -18,19 +24,32 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
  * cannot — recreating the Activity so a new font scale takes effect, and restarting the app when
  * the language changes. The previous XML layout (`layout_settings.xml`) was replaced by the
  * Compose screen; the persistence helpers ([AppFontScale] / [AppLanguage]) are unchanged.
+ *
+ * **«Φωνή»** (ClickUp `869f5x2dd`): «Βρες τη φωνή σου» is always here, and this page owns the
+ * microphone it listens with ([VoiceMicrophone]) — asked for only on «Ξεκίνα», released on onStop.
+ * An accepted suggestion becomes the voice's global shift ([GlobalShift]); «Μηδενισμός» sets it
+ * back to 0. A background ison is stopped when the test starts listening, so it measures only the
+ * singer. Taken from here, the test counts as offered, and the 8 Ήχοι page does not offer it again.
  */
 class SettingsActivity : BaseActivity() {
     private var appliedFontStep by mutableIntStateOf(AppFontScale.defaultStep)
     private var languageCode by mutableStateOf(AppLanguage.languageGreek)
     private var languagePrompt by mutableStateOf<LanguagePrompt?>(null)
+    private var globalShiftMoria by mutableIntStateOf(BaseShift.DEFAULT_MORIA)
+    private var voiceTestOpen by mutableStateOf(false)
+
+    /** Built with the activity, which lets it register its permission request (see its KDoc). */
+    private val microphone = VoiceMicrophone(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         appliedFontStep = AppFontScale.getSavedStep(this)
         languageCode = AppLanguage.getSavedLanguageCode(this)
+        globalShiftMoria = GlobalShift.load(this)
 
         setContent {
+            val backgroundIson by IsonPlaybackService.playing.collectAsState()
             LbmTheme(palette = currentPalette()) {
                 SettingsScreen(
                     appliedFontStep = appliedFontStep,
@@ -43,9 +62,49 @@ class SettingsActivity : BaseActivity() {
                     onConfirmLanguage = ::confirmLanguageChange,
                     onDismissLanguagePrompt = { languagePrompt = null },
                     onBack = ::finish,
+                    globalShiftMoria = globalShiftMoria,
+                    onFindVoice = { voiceTestOpen = true },
+                    onResetVoice = { applyGlobalShift(BaseShift.DEFAULT_MORIA) },
+                    voiceTestOpen = voiceTestOpen,
+                    heardFrequencyHz = microphone.heardFrequencyHz,
+                    micDenied = microphone.denied,
+                    isonWillStop = backgroundIson != null,
+                    onVoiceListen = ::listenForVoice,
+                    onApplyGlobalShift = ::applyGlobalShift,
+                    onCloseVoiceTest = ::closeVoiceTest,
                 )
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        microphone.onStart()
+    }
+
+    override fun onStop() {
+        // Released, not paused: a capture left running would hold the microphone from every other app.
+        microphone.onStop()
+        super.onStop()
+    }
+
+    /** The test listens, or stops; a background ison would be measured with the singer, so it stops. */
+    private fun listenForVoice(on: Boolean) {
+        if (on) IsonPlaybackService.stop(this)
+        microphone.listen(on)
+    }
+
+    private fun applyGlobalShift(moria: Int) {
+        GlobalShift.save(this, moria)
+        globalShiftMoria = BaseShift.clamp(moria)
+    }
+
+    /** However it ended, the test was seen: the 8 Ήχοι page need not offer it again. */
+    private fun closeVoiceTest() {
+        voiceTestOpen = false
+        AppPrefs.open(this, AppPrefs.Store.EIGHT_MODES).edit()
+            .putBoolean(AppPrefs.VoiceRangeOffered.name, true)
+            .apply()
     }
 
     /** Persist the chosen font size and recreate so the new fontScale is applied app-wide. */

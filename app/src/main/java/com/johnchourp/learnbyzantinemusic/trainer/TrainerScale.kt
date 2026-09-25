@@ -34,6 +34,13 @@ import com.johnchourp.learnbyzantinemusic.music.Moria
  * singer picks a ήχος; its shift is **that mode's own key**, `AppPrefs.baseShiftKeyName`, shared
  * with the 8 Ήχοι page, so both screens sing the same ήχος at the same height.
  *
+ * ## The voice's global shift
+ *
+ * «Βρες τη φωνή σου» (ClickUp `869f5x2dd`, J4) stores one global shift for the whole app. It is
+ * [globalShiftMoria] here, on top of the mode's own — and on «Διατονικός» too, which still has no
+ * shift of its own to store. The ladder is built with [ladderShiftMoria], the two combined and
+ * clamped by `BaseShift.combined`; a global 0 is the Trainer exactly as before.
+ *
  * ## The ladder's range
  *
  * The Trainer writes notes from Νη one octave down to Ζω one octave up ([MIN_NOTE_OCTAVE] ..
@@ -42,23 +49,31 @@ import com.johnchourp.learnbyzantinemusic.music.Moria
  * spans [OCTAVES] octaves. `TrainerScaleCoversEveryNoteTest` resolves every note in every mode
  * across the whole shift range.
  *
- * Pure Kotlin — [mode] and [baseShiftMoria] are the whole state, which is what ClickUp `869f5x261`
- * (F6) will save with a melody.
+ * Pure Kotlin — [mode] and [baseShiftMoria] are the whole state a melody belongs to, which is what
+ * ClickUp `869f5x261` (F6) will save with it; [globalShiftMoria] belongs to the singer, not the melody.
  */
 data class TrainerScale(
     /** The ήχος, or null for «Διατονικός», the default. */
     val mode: Mode? = null,
-    /** The «Μεταφορά βάσης», in μόρια; always 0 for «Διατονικός». */
+    /** The mode's own «Μεταφορά βάσης», in μόρια; always 0 for «Διατονικός». */
     val baseShiftMoria: Int = BaseShift.DEFAULT_MORIA,
+    /** The voice's global shift, added on top — «Διατονικός» included. */
+    val globalShiftMoria: Int = BaseShift.DEFAULT_MORIA,
 ) {
     init {
         require(baseShiftMoria in BaseShift.RANGE) {
             "base shift $baseShiftMoria is outside ${BaseShift.RANGE}"
         }
+        require(globalShiftMoria in BaseShift.RANGE) {
+            "global shift $globalShiftMoria is outside ${BaseShift.RANGE}"
+        }
         require(mode != null || baseShiftMoria == BaseShift.DEFAULT_MORIA) {
-            "«Διατονικός» is the Trainer's fixed default at shift 0; pick a mode to transpose"
+            "«Διατονικός» has no shift of its own; pick a mode to transpose it alone"
         }
     }
+
+    /** What the ladder is built with: the two shifts combined, clamped at this point of use. */
+    val ladderShiftMoria: Int get() = BaseShift.combined(baseShiftMoria, globalShiftMoria)
 
     /** The interval table: the mode's own ([Mode.scale]), or the natural diatonic one for the default. */
     val definition: ModeScaleDefinition
@@ -66,7 +81,7 @@ data class TrainerScale(
 
     /** The ladder every pitch of this scale comes from, built once. */
     val ladder: ModeLadder by lazy {
-        definition.ladder(octaves = OCTAVES, baseShift = Moria(baseShiftMoria), lowestOctave = LOWEST_OCTAVE)
+        definition.ladder(octaves = OCTAVES, baseShift = Moria(ladderShiftMoria), lowestOctave = LOWEST_OCTAVE)
     }
 
     /** Where [note] sounds on this scale. */

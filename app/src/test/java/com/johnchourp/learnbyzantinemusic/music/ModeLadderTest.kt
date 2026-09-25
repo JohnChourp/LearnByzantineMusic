@@ -33,7 +33,7 @@ class ModeLadderTest {
     fun theLadderSoundsExactlyWhatTheOldPathSounded() {
         var compared = 0
         scales.forEach { (name, scale) ->
-            (-12..12).forEach { shift ->
+            BaseShift.RANGE.forEach { shift ->
                 val legacy = ModeScaleFrequencies.topToBottom(
                     ascendingIntervals = scale.repeatedIntervals(octaves),
                     referenceMoriaFromBottom = scale.referenceMoriaFromBottom("Νη", octaves),
@@ -52,8 +52,10 @@ class ModeLadderTest {
                 compared++
             }
         }
-        // Guards the sweep: an empty loop would pass without comparing anything.
-        assertEquals(scales.size * 25, compared)
+        // Guards the sweep: an empty loop would pass without comparing anything. Since ClickUp
+        // `869f5x2dd` the range is ±36 μόρια, 73 shifts per scale.
+        assertEquals(scales.size * BaseShift.RANGE.count(), compared)
+        assertEquals(73, BaseShift.RANGE.count())
     }
 
     @Test
@@ -89,7 +91,7 @@ class ModeLadderTest {
     fun aBaseShiftMovesEveryRungByExactlyThatManyMoria() {
         val scale = EightModeScaleDefinitions.DIATONIC
         val unshifted = scale.ladder(octaves, reference)
-        listOf(-12, -5, 5, 12).forEach { shift ->
+        listOf(BaseShift.MIN_MORIA, -12, -5, 5, 12, BaseShift.MAX_MORIA).forEach { shift ->
             val shifted = scale.ladder(octaves, reference, Moria(shift))
             unshifted.steps.indices.forEach { i ->
                 assertEquals(

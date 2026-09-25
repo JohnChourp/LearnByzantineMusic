@@ -89,6 +89,14 @@ internal fun TrainerScaleCard(
                 onChange = onBaseShiftChange,
             )
         }
+        if (scale.globalShiftMoria != BaseShift.DEFAULT_MORIA) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.voice_global_shift_note, scale.globalShiftMoria),
+                style = MaterialTheme.typography.bodySmall,
+                color = LbmTextSecondary,
+            )
+        }
     }
 }
 

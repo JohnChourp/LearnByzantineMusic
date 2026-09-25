@@ -97,9 +97,25 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import com.johnchourp.learnbyzantinemusic.modes.ApichimaSequence
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.ModeLadder
 import com.johnchourp.learnbyzantinemusic.music.Phthong
 import java.util.Locale
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.material3.Surface
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntSize
+import com.johnchourp.learnbyzantinemusic.modes.EightModesFirstRun
+import com.johnchourp.learnbyzantinemusic.voice.ui.VoiceRangeDialog
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.withFrameNanos
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 
 /** No request held back from the background ison: see the echo guard in [EightModesScreen]. */
 private val NO_ECHO = Any()
@@ -109,13 +125,6 @@ private val NO_ECHO = Any()
  * ladder this screen builds — which is [ModeLadders]' ladder, shared with the background ison.
  */
 internal const val SCALE_OCTAVES = ModeLadders.OCTAVES
-
-/**
- * The «Μεταφορά βάσης» range the slider offers, in μόρια. Internal so the ison tests sweep exactly
- * this range, whatever it becomes, rather than a copy of today's numbers.
- */
-internal const val BASE_SHIFT_MIN = -12
-internal const val BASE_SHIFT_MAX = 12
 
 /**
  * Redesigned «Κλίμακες των 8 Ήχων» screen. A hero with a ☰ that opens the catalog pages menu, a genus
@@ -160,6 +169,16 @@ fun EightModesScreen(
     onInBackgroundChange: (Boolean) -> Unit = {},
     /** What the background ison is sounding now, so a change made from its notification shows here. */
     backgroundIson: IsonDrone.Request? = null,
+    /** The voice's global shift (ClickUp `869f5x2dd`), added to each mode's own on every ladder. */
+    globalShiftMoria: Int = BaseShift.DEFAULT_MORIA,
+    /** What the page shows by itself as it opens: the «Βρες τη φωνή σου» offer, the tour, or nothing. */
+    firstRun: EightModesFirstRun.Show = EightModesFirstRun.Show.NOTHING,
+    /** The offer has been answered — taken or not — so the host can mark it and move on to the tour. */
+    onVoiceOfferDone: () -> Unit = {},
+    /** The tour has ended — finished or skipped. */
+    onTourDone: () -> Unit = {},
+    /** «Εφαρμογή» on the voice test's suggestion. */
+    onApplyGlobalShift: (Int) -> Unit = {},
 ) {
     var selectedModeIndex by remember {
         mutableStateOf(initialModeIndex.coerceIn(EIGHT_MODES.indices))
@@ -182,11 +201,17 @@ fun EightModesScreen(
         onToneRelease()
     }
 
+    // Every ladder on this page — diagram, απήχημα, ison, «Πού είμαι» — is built with the mode's own
+    // shift plus the voice's global one, combined and clamped here, at the point of use (ClickUp
+    // `869f5x2dd`). The slider shows and saves only the mode's own; a global 0 changes nothing.
+    fun ladderShift(modeIndex: Int): Int =
+        BaseShift.combined(baseShiftByMode[modeIndex] ?: BaseShift.DEFAULT_MORIA, globalShiftMoria)
+
     // The drone's pitch is derived, not stored: whenever the mode, its base shift or the chosen
     // φθόγγος changes, the host gets the new request and retunes the ison in place, so it can never
     // keep sounding the previous mode's note. Leaving the page is the host's to handle: it silences a
     // drone this page plays, and leaves alone one the background service plays.
-    val shift = baseShiftByMode[selectedModeIndex] ?: 0
+    val shift = ladderShift(selectedModeIndex)
     val ison = rememberIson(selectedModeIndex, shift, isonChoice)
     val request = IsonDrone.Request(EIGHT_MODES[selectedModeIndex].mode, shift, isonChoice)
     // What the page has just taken over from the background ison (below), not yet sent: sending it
@@ -219,9 +244,11 @@ fun EightModesScreen(
         }
     }
 
-    // The microphone follows the same rule as the drone: derived from one flag, and released when
+    // The microphone follows the same rule as the drone: derived from state, and released when
     // the screen leaves. A capture thread outliving the composition is the bug this prevents.
-    LaunchedEffect(listening) { onListenChange(listening) }
+    // «Πού είμαι» and the voice test each want it; one request covers both.
+    var voiceListening by remember { mutableStateOf(false) }
+    LaunchedEffect(listening || voiceListening) { onListenChange(listening || voiceListening) }
     DisposableEffect(Unit) {
         onDispose { onListenChange(false) }
     }
@@ -231,120 +258,246 @@ fun EightModesScreen(
     val currentGenus = EIGHT_MODES[selectedModeIndex].genus
     val scroll = rememberScrollState()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(LbmPageBg)
-            .verticalScroll(scroll),
-    ) {
-        LessonHero(
-            title = stringResource(R.string.eight_modes_page_title),
-            subtitle = stringResource(R.string.eight_modes_page_subtitle),
-            onBack = onBack,
-            icon = Icons.Filled.LibraryMusic,
-            onMenuClick = onOpenMenu,
-            menuContentDescription = stringResource(
-                R.string.eight_modes_navigation_menu_content_description,
-            ),
+    // The first-run tour (ClickUp `869f5x2dd`): four stops, skippable at any of them, shown once — the
+    // host marks it done however it ends. Each stop is scrolled clear of the panel and outlined.
+    val touring = firstRun == EightModesFirstRun.Show.TOUR
+    var tourStop by remember { mutableStateOf(TourStop.MODE) }
+    val tourTargets = remember { TourStop.entries.associateWith { BringIntoViewRequester() } }
+    val tourSizes = remember { mutableStateMapOf<TourStop, IntSize>() }
+    // The panel's measured height — its text grows with the font size — kept clear below each stop.
+    var tourPanelHeight by remember { mutableIntStateOf(0) }
+    LaunchedEffect(touring, tourStop) {
+        if (!touring) return@LaunchedEffect
+        withFrameNanos { } // the panel has measured this stop's text
+        val size = snapshotFlow { tourSizes[tourStop]?.takeIf { tourPanelHeight > 0 } }.filterNotNull().first()
+        tourTargets.getValue(tourStop)
+            .bringIntoView(Rect(0f, 0f, size.width.toFloat(), (size.height + tourPanelHeight).toFloat()))
+    }
+    val tourHighlight = LbmBrown
+    fun Modifier.tourTarget(stop: TourStop): Modifier = this
+        .bringIntoViewRequester(tourTargets.getValue(stop))
+        .onSizeChanged { tourSizes[stop] = it }
+        .then(
+            if (touring && tourStop == stop) Modifier.border(2.dp, tourHighlight, RoundedCornerShape(18.dp))
+            else Modifier
         )
+
+    Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
+                .fillMaxSize()
+                .background(LbmPageBg)
+                .verticalScroll(scroll),
         ) {
-            Spacer(Modifier.height(2.dp))
-            StaggeredAppear(delayMillis = 60) { GenusLegend(currentGenus) }
-            StaggeredAppear(delayMillis = 120) {
-                ModePickerCard(
-                    selectedIndex = selectedModeIndex,
-                    onSelect = { index ->
-                        if (index != selectedModeIndex) {
-                            selectedModeIndex = index
-                            isonChoice = null
-                            onSelectMode(index)
-                        }
-                    },
-                )
-            }
-            StaggeredAppear(delayMillis = 180) {
-                Crossfade(
-                    targetState = selectedModeIndex,
-                    animationSpec = tween(280),
-                    label = "scaleCrossfade",
-                ) { idx ->
-                    ScaleCard(
-                        modeIndex = idx,
-                        baseShiftMoria = baseShiftByMode[idx] ?: 0,
-                        activeIndex = activeIndex,
-                        onActiveIndexChange = { i -> activeIndex = i },
-                        onTonePress = onTonePress,
-                        onToneRelease = onToneRelease,
-                        onAccessibilityPulse = onTonePress,
-                        onAccessibilityRelease = onToneRelease,
-                        scope = scope,
+            LessonHero(
+                title = stringResource(R.string.eight_modes_page_title),
+                subtitle = stringResource(R.string.eight_modes_page_subtitle),
+                onBack = onBack,
+                icon = Icons.Filled.LibraryMusic,
+                onMenuClick = onOpenMenu,
+                menuContentDescription = stringResource(
+                    R.string.eight_modes_navigation_menu_content_description,
+                ),
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                Spacer(Modifier.height(2.dp))
+                StaggeredAppear(delayMillis = 60) { GenusLegend(currentGenus) }
+                StaggeredAppear(delayMillis = 120) {
+                    Box(Modifier.tourTarget(TourStop.MODE)) {
+                        ModePickerCard(
+                            selectedIndex = selectedModeIndex,
+                            onSelect = { index ->
+                                if (index != selectedModeIndex) {
+                                    selectedModeIndex = index
+                                    isonChoice = null
+                                    onSelectMode(index)
+                                }
+                            },
+                        )
+                    }
+                }
+                StaggeredAppear(delayMillis = 180) {
+                    Crossfade(
+                        targetState = selectedModeIndex,
+                        animationSpec = tween(280),
+                        label = "scaleCrossfade",
+                        modifier = Modifier.tourTarget(TourStop.DIAGRAM),
+                    ) { idx ->
+                        ScaleCard(
+                            modeIndex = idx,
+                            baseShiftMoria = ladderShift(idx),
+                            activeIndex = activeIndex,
+                            onActiveIndexChange = { i -> activeIndex = i },
+                            onTonePress = onTonePress,
+                            onToneRelease = onToneRelease,
+                            onAccessibilityPulse = onTonePress,
+                            onAccessibilityRelease = onToneRelease,
+                            scope = scope,
+                        )
+                    }
+                }
+                StaggeredAppear(delayMillis = 210) {
+                    Box(Modifier.tourTarget(TourStop.ISON)) {
+                        IsonDroneCard(
+                            enabled = droneOn,
+                            ison = ison,
+                            onToggle = { droneOn = it },
+                            onChoose = { isonChoice = it },
+                            inBackground = inBackground,
+                            onInBackgroundChange = onInBackgroundChange,
+                        )
+                    }
+                }
+                StaggeredAppear(delayMillis = 225) {
+                    Box(Modifier.tourTarget(TourStop.MIRROR)) {
+                        PitchMirrorCard(
+                            listening = listening,
+                            micDenied = micDenied,
+                            reading = rememberMirrorReading(
+                                modeIndex = selectedModeIndex,
+                                baseShiftMoria = ladderShift(selectedModeIndex),
+                                heardFrequencyHz = if (listening) heardFrequencyHz else null,
+                            ),
+                            onToggle = { listening = it },
+                        )
+                    }
+                }
+                StaggeredAppear(delayMillis = 240) {
+                    TimbreCard(
+                        selected = timbre,
+                        onSelect = { picked ->
+                            if (picked != timbre) {
+                                timbre = picked
+                                activeIndex = -1
+                                onSelectTimbre(picked)
+                            }
+                        },
                     )
                 }
-            }
-            StaggeredAppear(delayMillis = 210) {
-                IsonDroneCard(
-                    enabled = droneOn,
-                    ison = ison,
-                    onToggle = { droneOn = it },
-                    onChoose = { isonChoice = it },
-                    inBackground = inBackground,
-                    onInBackgroundChange = onInBackgroundChange,
-                )
-            }
-            StaggeredAppear(delayMillis = 225) {
-                PitchMirrorCard(
-                    listening = listening,
-                    micDenied = micDenied,
-                    reading = rememberMirrorReading(
-                        modeIndex = selectedModeIndex,
-                        baseShiftMoria = baseShiftByMode[selectedModeIndex] ?: 0,
-                        heardFrequencyHz = if (listening) heardFrequencyHz else null,
-                    ),
-                    onToggle = { listening = it },
-                )
-            }
-            StaggeredAppear(delayMillis = 240) {
-                TimbreCard(
-                    selected = timbre,
-                    onSelect = { picked ->
-                        if (picked != timbre) {
-                            timbre = picked
-                            activeIndex = -1
-                            onSelectTimbre(picked)
-                        }
-                    },
-                )
-            }
-            StaggeredAppear(delayMillis = 300) {
-                BaseShiftCard(
-                    moria = baseShiftByMode[selectedModeIndex] ?: 0,
-                    onChange = { value ->
-                        baseShiftByMode[selectedModeIndex] = value
-                        onBaseShiftChange(selectedModeIndex, value)
-                    },
-                )
-            }
-            StaggeredAppear(delayMillis = 360) {
-                Crossfade(
-                    targetState = selectedModeIndex,
-                    animationSpec = tween(280),
-                    label = "detailsCrossfade",
-                ) { idx ->
-                    ModeDetailsCard(
-                        modeIndex = idx,
-                        baseShiftMoria = baseShiftByMode[idx] ?: 0,
-                        onTonePress = onTonePress,
-                        onToneRelease = onToneRelease,
-                        scope = scope,
+                StaggeredAppear(delayMillis = 300) {
+                    BaseShiftCard(
+                        moria = baseShiftByMode[selectedModeIndex] ?: 0,
+                        globalShiftMoria = globalShiftMoria,
+                        onChange = { value ->
+                            baseShiftByMode[selectedModeIndex] = value
+                            onBaseShiftChange(selectedModeIndex, value)
+                        },
                     )
                 }
+                StaggeredAppear(delayMillis = 360) {
+                    Crossfade(
+                        targetState = selectedModeIndex,
+                        animationSpec = tween(280),
+                        label = "detailsCrossfade",
+                    ) { idx ->
+                        ModeDetailsCard(
+                            modeIndex = idx,
+                            baseShiftMoria = ladderShift(idx),
+                            onTonePress = onTonePress,
+                            onToneRelease = onToneRelease,
+                            scope = scope,
+                        )
+                    }
+                }
+                // While the tour shows, room to scroll the last stop clear of its panel.
+                Spacer(Modifier.height(if (touring) with(LocalDensity.current) { tourPanelHeight.toDp() } else 8.dp))
             }
+        }
+        if (touring) {
+            TourPanel(
+                stop = tourStop,
+                onNext = {
+                    val next = TourStop.entries.getOrNull(tourStop.ordinal + 1)
+                    if (next == null) onTourDone() else tourStop = next
+                },
+                onSkip = onTourDone,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .onSizeChanged { tourPanelHeight = it.height },
+            )
+        }
+    }
+
+    if (firstRun == EightModesFirstRun.Show.VOICE_TEST_OFFER) {
+        VoiceRangeDialog(
+            heardFrequencyHz = heardFrequencyHz,
+            micDenied = micDenied,
+            currentGlobalShiftMoria = globalShiftMoria,
+            onListen = { voiceListening = it },
+            onApply = onApplyGlobalShift,
+            onClose = onVoiceOfferDone,
+        )
+    }
+}
+
+/* ----------------------------- First-run tour ----------------------------- */
+
+/** The four places the first-run tour points at, in order (ClickUp `869f5x2dd`). */
+private enum class TourStop(@StringRes val titleRes: Int, @StringRes val textRes: Int) {
+    MODE(R.string.eight_modes_tour_mode_title, R.string.eight_modes_tour_mode_text),
+    DIAGRAM(R.string.eight_modes_tour_diagram_title, R.string.eight_modes_tour_diagram_text),
+    ISON(R.string.eight_modes_tour_ison_title, R.string.eight_modes_tour_ison_text),
+    MIRROR(R.string.eight_modes_tour_mirror_title, R.string.eight_modes_tour_mirror_text),
+}
+
+/** The tour's panel: where it is, what that is, and «Επόμενο» / «Παράλειψη» — one tap ends it. */
+@Composable
+private fun TourPanel(stop: TourStop, onNext: () -> Unit, onSkip: () -> Unit, modifier: Modifier = Modifier) {
+    val last = stop.ordinal == TourStop.entries.lastIndex
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        shape = RoundedCornerShape(20.dp),
+        color = LbmSurface,
+        contentColor = LbmTextPrimary,
+        shadowElevation = 8.dp,
+        border = BorderStroke(1.dp, LbmBrown.copy(alpha = 0.45f)),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.eight_modes_tour_counter, stop.ordinal + 1, TourStop.entries.size),
+                style = MaterialTheme.typography.labelMedium,
+                color = LbmTextSecondary,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = stringResource(stop.titleRes),
+                style = MaterialTheme.typography.titleMedium,
+                color = LbmBrown,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.semantics { heading() },
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = stringResource(stop.textRes),
+                style = MaterialTheme.typography.bodyMedium,
+                color = LbmTextPrimary,
+            )
             Spacer(Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                TextButton(
+                    onClick = onSkip,
+                    colors = ButtonDefaults.textButtonColors(contentColor = LbmTextSecondary),
+                ) {
+                    Text(stringResource(R.string.eight_modes_tour_skip))
+                }
+                Spacer(Modifier.weight(1f))
+                TextButton(
+                    onClick = onNext,
+                    colors = ButtonDefaults.textButtonColors(contentColor = LbmBrown),
+                ) {
+                    Text(
+                        stringResource(if (last) R.string.eight_modes_tour_finish else R.string.eight_modes_tour_next),
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
         }
     }
 }
@@ -886,8 +1039,12 @@ private fun timbreLabelRes(timbre: ToneTimbre): Int = when (timbre) {
 
 /* ----------------------------- Base-shift slider ----------------------------- */
 
+/**
+ * The mode's own shift, as saved per mode. The voice's global shift is not part of the slider — it is
+ * set once from «Βρες τη φωνή σου» or Settings — so it is only mentioned here, when there is one.
+ */
 @Composable
-private fun BaseShiftCard(moria: Int, onChange: (Int) -> Unit) {
+private fun BaseShiftCard(moria: Int, globalShiftMoria: Int, onChange: (Int) -> Unit) {
     val valueText = if (moria == 0) {
         stringResource(R.string.eight_modes_base_shift_default_value)
     } else {
@@ -934,8 +1091,8 @@ private fun BaseShiftCard(moria: Int, onChange: (Int) -> Unit) {
             value = moria.toFloat(),
             onValueChange = { onChange(it.roundToInt()) },
             modifier = Modifier.semantics { stateDescription = valueText },
-            valueRange = BASE_SHIFT_MIN.toFloat()..BASE_SHIFT_MAX.toFloat(),
-            steps = (BASE_SHIFT_MAX - BASE_SHIFT_MIN) - 1,
+            valueRange = BaseShift.MIN_MORIA.toFloat()..BaseShift.MAX_MORIA.toFloat(),
+            steps = (BaseShift.MAX_MORIA - BaseShift.MIN_MORIA) - 1,
             colors = SliderDefaults.colors(
                 thumbColor = LbmBrown,
                 activeTrackColor = LbmBrown,
@@ -953,6 +1110,14 @@ private fun BaseShiftCard(moria: Int, onChange: (Int) -> Unit) {
                 text = stringResource(R.string.eight_modes_base_shift_higher),
                 style = MaterialTheme.typography.bodySmall,
                 color = LbmTextSecondary,
+            )
+        }
+        if (globalShiftMoria != BaseShift.DEFAULT_MORIA) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.voice_global_shift_note, globalShiftMoria),
+                style = MaterialTheme.typography.bodySmall,
+                color = LbmBrown,
             )
         }
     }

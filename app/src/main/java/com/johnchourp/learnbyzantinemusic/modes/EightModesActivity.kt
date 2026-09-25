@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import com.johnchourp.learnbyzantinemusic.BaseActivity
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.Phthong
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.notifications.AppNotifications
@@ -28,6 +29,7 @@ import com.johnchourp.learnbyzantinemusic.modes.ui.EIGHT_MODES
 import com.johnchourp.learnbyzantinemusic.modes.ui.EightModesScreen
 import com.johnchourp.learnbyzantinemusic.modes.ui.eightModesIndexOf
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
+import com.johnchourp.learnbyzantinemusic.voice.GlobalShift
 
 /**
  * Host for the redesigned «Κλίμακες των 8 Ήχων» screen. Owns the SharedPreferences (per-mode base
@@ -54,6 +56,12 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
  * moment and this page only sends it requests, so leaving the page hands nothing over and nothing
  * clicks. A page opened over a background ison shows that ison's mode and φθόγγος. If the system
  * refuses the service, this page plays the ison itself.
+ *
+ * **The voice's global shift and the first run** (ClickUp `869f5x2dd`). Every ladder the page builds
+ * adds the global shift from «Βρες τη φωνή σου» to the mode's own; it is re-read on every onStart,
+ * because Settings can change it while this page waits behind. The first time the page opens it
+ * offers that test, then a four-step tour, each once ([EightModesFirstRun]), and both are marked
+ * however they end. A page that opens with the ison already sounding shows neither and marks nothing.
  */
 class EightModesActivity : BaseActivity() {
 
@@ -116,12 +124,24 @@ class EightModesActivity : BaseActivity() {
     private val notificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
+    /** The voice's global shift, added to each mode's own on every ladder; 0 until one is accepted. */
+    private var globalShiftMoria: Int by mutableStateOf(BaseShift.DEFAULT_MORIA)
+
+    /** What the page shows by itself: the offer of «Βρες τη φωνή σου», then the tour, then nothing. */
+    private var firstRun: EightModesFirstRun.Show by mutableStateOf(EightModesFirstRun.Show.NOTHING)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefs = AppPrefs.open(this, AppPrefs.Store.EIGHT_MODES)
         activeTimbre = loadSavedTimbre()
+        globalShiftMoria = GlobalShift.load(this)
         inBackground = prefs.getBoolean(IN_BACKGROUND_PREF_KEY, false)
         val sounding = if (inBackground) IsonPlaybackService.playing.value else null
+        // Opened to play the ison — the shortcut «Ίσο», «Αναπαραγωγή», for the whole visit — or over
+        // a background one: nothing shows by itself over it, and nothing is marked.
+        firstRun = nextFirstRun(
+            isonSounding = intent.getBooleanExtra(EXTRA_START_ISON, false) || sounding != null,
+        )
         // What was on screen before a recreation; else the mode this opening asked for; else the
         // mode the background ison is playing; else the last one the user picked here.
         shownModeKey = savedInstanceState?.getString(STATE_SHOWN_MODE_KEY)
@@ -172,6 +192,11 @@ class EightModesActivity : BaseActivity() {
                     inBackground = inBackground,
                     onInBackgroundChange = ::switchInBackground,
                     backgroundIson = backgroundIson,
+                    globalShiftMoria = globalShiftMoria,
+                    firstRun = firstRun,
+                    onVoiceOfferDone = { markShown(VOICE_RANGE_OFFERED_PREF_KEY) },
+                    onTourDone = { markShown(TOUR_SHOWN_PREF_KEY) },
+                    onApplyGlobalShift = ::applyGlobalShift,
                 )
             }
         }
@@ -179,8 +204,7 @@ class EightModesActivity : BaseActivity() {
 
     private fun loadSavedBaseShifts(): Map<Int, Int> =
         EIGHT_MODES.indices.associateWith { index ->
-            prefs.getInt(baseShiftPrefKey(EIGHT_MODES[index].theoryKey), BASE_SHIFT_DEFAULT_MORIA)
-                .coerceIn(BASE_SHIFT_MORIA_MIN, BASE_SHIFT_MORIA_MAX)
+            BaseShift.clamp(prefs.getInt(baseShiftPrefKey(EIGHT_MODES[index].theoryKey), BaseShift.DEFAULT_MORIA))
         }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -205,11 +229,30 @@ class EightModesActivity : BaseActivity() {
 
     private fun persistBaseShift(modeIndex: Int, shiftMoria: Int) {
         val key = EIGHT_MODES.getOrNull(modeIndex)?.theoryKey ?: return
-        val bounded = shiftMoria.coerceIn(BASE_SHIFT_MORIA_MIN, BASE_SHIFT_MORIA_MAX)
+        val bounded = BaseShift.clamp(shiftMoria)
         prefs.edit().putInt(baseShiftPrefKey(key), bounded).apply()
     }
 
     private fun baseShiftPrefKey(modeKey: String): String = AppPrefs.baseShiftKeyName(modeKey)
+
+    private fun nextFirstRun(isonSounding: Boolean = false): EightModesFirstRun.Show =
+        EightModesFirstRun.next(
+            voiceTestOffered = prefs.getBoolean(VOICE_RANGE_OFFERED_PREF_KEY, false),
+            tourShown = prefs.getBoolean(TOUR_SHOWN_PREF_KEY, false),
+            isonSounding = isonSounding,
+        )
+
+    /** The offer answered, or the tour ended — however: never shown by itself again. */
+    private fun markShown(flagKey: String) {
+        prefs.edit().putBoolean(flagKey, true).apply()
+        firstRun = nextFirstRun()
+    }
+
+    /** «Εφαρμογή» on the voice test's suggestion: the global shift, for every ladder in the app. */
+    private fun applyGlobalShift(moria: Int) {
+        GlobalShift.save(this, moria)
+        globalShiftMoria = BaseShift.clamp(moria)
+    }
 
     /**
      * The screen's ison, to whoever plays it (ClickUp `869f5x2dq`): this page, or — with «Συνέχισε
@@ -317,6 +360,8 @@ class EightModesActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
+        // Settings may have found the voice, or reset it, while this page waited behind it.
+        globalShiftMoria = GlobalShift.load(this)
         // onStop silenced the drone without forgetting it; bring it back when the screen returns.
         droneFrequencyHz?.let { dronePlayer.start(it, activeTimbre) }
         if (listenRequested) setListening(true)
@@ -342,13 +387,12 @@ class EightModesActivity : BaseActivity() {
     }
 
     companion object {
-        private const val BASE_SHIFT_MORIA_MIN = -12
-        private const val BASE_SHIFT_MORIA_MAX = 12
-        private const val BASE_SHIFT_DEFAULT_MORIA = 0
         private const val BASE_SHIFT_PREF_KEY_PREFIX = AppPrefs.BASE_SHIFT_KEY_PREFIX
         private val TONE_TIMBRE_PREF_KEY = AppPrefs.SelectedToneTimbre.name
         private val SELECTED_MODE_KEY_PREF_KEY = AppPrefs.SelectedModeKey.name
         private val IN_BACKGROUND_PREF_KEY = AppPrefs.IsonInBackground.name
+        private val VOICE_RANGE_OFFERED_PREF_KEY = AppPrefs.VoiceRangeOffered.name
+        private val TOUR_SHOWN_PREF_KEY = AppPrefs.EightModesTourShown.name
         private const val EXTRA_MODE_KEY = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_MODE_KEY"
         private const val STATE_SHOWN_MODE_KEY = "shown_mode_key"
 
