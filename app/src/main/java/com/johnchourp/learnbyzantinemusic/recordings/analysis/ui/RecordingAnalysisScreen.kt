@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionLabels
+import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AlignmentResult
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AlignmentStep
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AnalysisStatus
@@ -55,7 +56,6 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPageBg
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurfaceVariant
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /** Renders [RecordingAnalysisUiState]; all work happens in the view model. */
@@ -231,16 +231,23 @@ private fun StatusBlock(uiState: RecordingAnalysisUiState, onRetry: () -> Unit) 
 @Composable
 private fun SungCard(notes: List<SungNote>, durationMs: Long) {
     LessonCard(title = stringResource(R.string.analysis_sung_title)) {
-        val inTune = notes.count { abs(it.deviationMoria) <= IN_TUNE_MORIA }
+        val inTune = notes.count { it.isInTune }
         Text(
-            text = stringResource(R.string.analysis_sung_summary, notes.size, formatDuration(durationMs), inTune),
+            // The tolerance is printed from the profile it is judged by, so the text cannot drift from it.
+            text = stringResource(
+                R.string.analysis_sung_summary,
+                notes.size,
+                formatDuration(durationMs),
+                inTune,
+                IntonationProfile.IN_TUNE_MORIA.roundToInt(),
+            ),
             style = MaterialTheme.typography.bodyMedium,
             color = LbmTextSecondary,
         )
         Spacer(Modifier.height(10.dp))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             notes.forEach { note ->
-                val good = abs(note.deviationMoria) <= IN_TUNE_MORIA
+                val good = note.isInTune
                 NoteChip(
                     text = phthongLabel(note.degree),
                     container = if (good) AccentGreenContainer else AccentOrangeContainer,
