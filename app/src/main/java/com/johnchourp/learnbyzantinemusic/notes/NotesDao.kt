@@ -8,15 +8,15 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NotesDao {
+    // Every note: the search box filters in memory (NotesSearch), since LIKE folds case for ASCII only.
     @Query(
         """
         SELECT *
         FROM notes
-        WHERE title LIKE :searchPattern OR body LIKE :searchPattern
         ORDER BY updatedAtEpochMs DESC, createdAtEpochMs DESC
         """
     )
-    fun observeBySearch(searchPattern: String): Flow<List<NoteEntity>>
+    fun observeAll(): Flow<List<NoteEntity>>
 
     @Query(
         """

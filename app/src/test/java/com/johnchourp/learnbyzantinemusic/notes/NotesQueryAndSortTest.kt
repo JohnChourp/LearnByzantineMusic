@@ -5,12 +5,6 @@ import org.junit.Test
 
 class NotesQueryAndSortTest {
     @Test
-    fun `search pattern escapes wildcards`() {
-        val pattern = "  100%_test  ".toNotesSearchPattern()
-        assertEquals("%100\\%\\_test%", pattern)
-    }
-
-    @Test
     fun `sort by most recent uses updated timestamp descending`() {
         val notes = listOf(
             NoteEntity("x", "", "", createdAtEpochMs = 100L, updatedAtEpochMs = 200L),

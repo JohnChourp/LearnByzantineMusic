@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
@@ -14,11 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class NotesViewModel(
     private val repository: NotesRepository,
     private val prefs: NotesPrefs
@@ -47,8 +47,13 @@ class NotesViewModel(
                 exitFlush.join()
                 _uiState.update { it.copy(isSaving = false) }
             }
-            searchQueryFlow
-                .flatMapLatest { search -> repository.observeNotes(search) }
+            // Each list from the database is normalised once; a keystroke in the search box then only
+            // filters it. Both off the main thread: a long note is not cheap to normalise.
+            combine(
+                repository.observeNotes().map { notes -> NotesSearch.index(notes) },
+                searchQueryFlow
+            ) { indexed, search -> NotesSearch.filter(indexed, search) }
+                .flowOn(Dispatchers.Default)
                 .collectLatest { notes ->
                     _uiState.update { NotesEditorSync.onNotesChanged(it, notes) }
                 }
@@ -75,7 +80,9 @@ class NotesViewModel(
     }
 
     fun onSearchQueryChanged(value: String) {
-        _uiState.update { it.copy(searchQuery = value) }
+        // The search may hide the open note: its unsaved text is saved now, not by the pending autosave.
+        autoSaveJob?.cancel()
+        runStep(NotesEditorSync.onSearchChanged(_uiState.value, value), SaveTrigger.AUTO)
         searchQueryFlow.value = value
     }
 
@@ -116,6 +123,9 @@ class NotesViewModel(
 
     fun deleteSelectedNote() {
         val selectedId = _uiState.value.selectedNoteId ?: return
+        // No save of this note from here on: one queued behind the delete would write it back.
+        autoSaveJob?.cancel()
+        _uiState.update { NotesEditorSync.onDeleteRequested(it) }
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
             val result = repository.deleteNote(selectedId)
@@ -197,10 +207,17 @@ class NotesViewModel(
     }
 
     private fun autoSaveNow(trigger: SaveTrigger) {
-        val request = NotesEditorSync.saveRequest(_uiState.value) ?: return
-        // Recorded before the save runs: a second trigger meanwhile does not repeat it, and typing that
-        // continues is compared against it and saved next.
-        _uiState.update { NotesEditorSync.onSaveStarted(it, request) }
+        runStep(NotesEditorSync.saveOpenNote(_uiState.value), trigger)
+    }
+
+    /**
+     * Applies [step] and runs the save it asks for, if any. The save is already recorded as running
+     * in [step]: a second trigger meanwhile does not repeat it, and typing that continues is compared
+     * against it and saved next.
+     */
+    private fun runStep(step: NotesEditorSync.Step, trigger: SaveTrigger) {
+        _uiState.value = step.state
+        val request = step.save ?: return
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = trigger == SaveTrigger.MANUAL) }
