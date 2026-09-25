@@ -5,7 +5,6 @@ import com.johnchourp.learnbyzantinemusic.music.ByzantineRhythmMapper
 import com.johnchourp.learnbyzantinemusic.music.RhythmNote
 import com.johnchourp.learnbyzantinemusic.music.RhythmProblem
 import com.johnchourp.learnbyzantinemusic.music.ShownBeats
-import com.johnchourp.learnbyzantinemusic.music.TimeSign
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -18,20 +17,11 @@ import org.junit.Test
  * goes through [ByzantineRhythmMapper], and the labels must show exactly those lengths — read as the
  * text the reader sees, in every language the page ships. Where the page decomposes a character into
  * simpler signs (the αργόν family, the κλάσμα/κουκίδες table), the simpler signs must give the same
- * lengths too.
+ * lengths too; which time sign a drawn glyph is comes from the sign table ([Neume.timeSign], H4).
  */
 class TimeCharactersFollowTheRulesTest {
 
     private val equations = TimePageEquations.all
-
-    /** Test-only: the glyphs the page's readings use, as the time signs they are. */
-    private val signOfGlyph = mapOf(
-        Neume.GORGO to TimeSign.GORGON,
-        Neume.FRACTION to TimeSign.KLASMA,
-        Neume.SIMPLE_DOT to TimeSign.APLI,
-        Neume.DOUBLE_DOTS to TimeSign.DIPLI,
-        Neume.TRIPLE_DOTS to TimeSign.TRIPLI,
-    )
 
     private fun shown(folder: String, labelRes: Int, where: String): Beats {
         val text = ShownBeats.text(folder, labelRes)
@@ -84,7 +74,7 @@ class TimeCharactersFollowTheRulesTest {
         assertEquals("αργόν, δίαργον, τρίαργον", setOf("argo", "diargo", "triargo"), readings.keys)
         readings.forEach { (name, equation) ->
             val reading = equation.terms.dropWhile { !it.isEquals }.drop(1).map { term ->
-                RhythmNote(term.form!!.glyphs.mapNotNull { signOfGlyph[it.neume] }.toSet())
+                RhythmNote(term.form!!.glyphs.mapNotNull { it.neume.timeSign }.toSet())
             }
             assertEquals(name, ByzantineRhythmMapper.durations(equation.rhythm), ByzantineRhythmMapper.durations(reading))
         }
@@ -96,7 +86,7 @@ class TimeCharactersFollowTheRulesTest {
         assertEquals("κλάσμα, απλή, διπλή, τριπλή", 4, rows.size)
         ShownBeats.languages.keys.forEach { folder ->
             rows.forEach { row ->
-                val sign = signOfGlyph.getValue(row.form.glyphs.single().neume)
+                val sign = checkNotNull(row.form.glyphs.single().neume.timeSign)
                 val text = ShownBeats.text(folder, row.meaningRes)
                 // «1 φθόγγο για N χρόνους»: the last number is how long the note lasts.
                 val shownBeats = Regex("""\d+""").findAll(text).last().value.toInt()

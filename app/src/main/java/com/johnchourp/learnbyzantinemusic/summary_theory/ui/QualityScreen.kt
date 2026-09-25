@@ -159,7 +159,7 @@ private fun TaxonomyRow(number: Int, sign: QualitySign) {
         }
         Spacer(Modifier.width(10.dp))
         Text(
-            text = stringResource(sign.titleRes),
+            text = sign.neume.displayName(),
             style = MaterialTheme.typography.titleSmall,
             color = LbmTextPrimary,
             fontWeight = FontWeight.SemiBold,
@@ -196,8 +196,8 @@ private fun GlyphLegendRow(item: QualityLegendItem) {
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Image(
-                    painter = painterResource(item.neume.drawableRes()),
-                    contentDescription = stringResource(item.cdRes),
+                    painter = painterResource(item.neume.drawable),
+                    contentDescription = item.neume.contentDescription(),
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxSize()
@@ -208,7 +208,7 @@ private fun GlyphLegendRow(item: QualityLegendItem) {
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(item.nameRes),
+                text = item.neume.displayName(),
                 style = MaterialTheme.typography.titleMedium,
                 color = LbmTextPrimary,
                 fontWeight = FontWeight.SemiBold,
@@ -227,7 +227,7 @@ private fun GlyphLegendRow(item: QualityLegendItem) {
 @Composable
 private fun SignCard(sign: QualitySign) {
     var replay by remember { mutableIntStateOf(0) }
-    LessonCard(title = stringResource(sign.titleRes)) {
+    LessonCard(title = sign.neume.displayName()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             HighlightedGlyph(sign)
             Spacer(Modifier.width(14.dp))
@@ -250,7 +250,7 @@ private fun SignCard(sign: QualitySign) {
             Spacer(Modifier.height(12.dp))
             CounterExample(sign)
         }
-        if (sign.id == "intercom") {
+        if (sign.neume == Neume.ENDOFONON) {
             Spacer(Modifier.height(12.dp))
             NasalHint()
         }
@@ -284,7 +284,7 @@ private fun HighlightedGlyph(sign: QualitySign) {
         Box(contentAlignment = Alignment.Center) {
             NeumeStack(
                 form = sign.glyph,
-                contentDescription = stringResource(sign.glyphCdRes),
+                contentDescription = sign.neume.contentDescription(),
                 highlight = sign.highlight,
                 modifier = Modifier
                     .padding(horizontal = 10.dp)

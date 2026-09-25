@@ -1,5 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.summary_theory.ui
 
+import androidx.annotation.StringRes
+import com.johnchourp.learnbyzantinemusic.R
+
 /**
  * The simple ascending "quantity characters" (χαρακτήρες ποσότητος ανιόντες) taught on the
  * «Ανιόντες» page, each raising the voice by a fixed number of φωνές (phthongs):
@@ -11,17 +14,33 @@ package com.johnchourp.learnbyzantinemusic.summary_theory.ui
  *  - Κέντημα  +2
  *  - Υψηλή    +4
  *
- * Pure Kotlin with no Android dependencies so the interval logic stays unit-testable.
- * Localized names, neume drawables and definitions live in the UI layer (see the `nameRes`,
- * `diagramRes`, `definitionRes` and `cdRes` extensions in `AscentsScreen`).
+ * A view of the sign table: each character is its [sign] — name, glyph, TalkBack text, size and
+ * φωνές all come from [Neume] — in the page's order, plus what only this page adds: a one-line
+ * [definitionRes] for the characters that have one. Pure Kotlin (resource ids are plain Ints), so
+ * the interval logic stays unit-testable.
  */
-enum class AscentCharacter(val voices: Int, val hasDefinition: Boolean = false) {
-    ISON(0),
-    OLIGON(1),
-    PETASTI(1, hasDefinition = true),
-    KENTIMATA(1, hasDefinition = true),
-    KENTIMA(2),
-    YPSILI(4);
+enum class AscentCharacter(
+    val sign: Neume,
+    @StringRes val definitionRes: Int? = null,
+    private val rowHeight: Int? = null,
+) {
+    ISON(Neume.ISON),
+
+    // The original simple Ολίγον row drew it 8dp tall, a thin, flat mark; the leaping section keeps
+    // the table's 18dp.
+    OLIGON(Neume.OLIGON, rowHeight = 8),
+    PETASTI(Neume.PETASTI, definitionRes = R.string.flyer_definition),
+    KENTIMATA(Neume.KENTIMATA, definitionRes = R.string.embroideries_definition),
+    KENTIMA(Neume.KENTIMA),
+    YPSILI(Neume.YPSILI);
+
+    /** How many φωνές the character raises the voice: the sign table's value. */
+    val voices: Int get() = checkNotNull(sign.voices) { "$sign has no φωνές in the sign table" }
+
+    val hasDefinition: Boolean get() = definitionRes != null
+
+    /** Width × height (dp) the page's simple row draws the sign at: its natural size, except [OLIGON]. */
+    val glyphSize: Pair<Int, Int> get() = sign.width to (rowHeight ?: sign.height)
 
     companion object {
         /** Ordered Ίσον → Ολίγον → Πεταστή → Κεντήματα → Κέντημα → Υψηλή. */

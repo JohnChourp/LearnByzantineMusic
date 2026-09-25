@@ -30,7 +30,7 @@ class LeapingAscentTest {
     fun every_form_is_built_on_an_oligon_or_petasti_base() {
         LeapingAscents.all.forEach { leap ->
             leap.forms.forEach { form ->
-                val hasBase = form.glyphs.any { it.neume == Neume.OLIGON || it.neume == Neume.FLYER }
+                val hasBase = form.glyphs.any { it.neume == Neume.OLIGON || it.neume == Neume.PETASTI }
                 assertTrue("+${leap.voices} form lacks a base character", hasBase)
             }
         }
@@ -44,7 +44,7 @@ class LeapingAscentTest {
         val plus4 = LeapingAscents.all.first { it.voices == 4 }
         val plus5 = LeapingAscents.all.first { it.voices == 5 }
         fun highDxOf(leap: LeapingAscent) =
-            leap.forms.first().glyphs.first { it.neume == Neume.HIGH }.dx
+            leap.forms.first().glyphs.first { it.neume == Neume.YPSILI }.dx
         assertNotEquals(highDxOf(plus4), highDxOf(plus5))
     }
 

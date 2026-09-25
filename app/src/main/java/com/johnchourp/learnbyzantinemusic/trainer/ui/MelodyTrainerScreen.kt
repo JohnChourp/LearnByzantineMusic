@@ -80,6 +80,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.summary_theory.ui.Neume
 import com.johnchourp.learnbyzantinemusic.trainer.MelodyTempo
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
@@ -241,7 +242,7 @@ private fun RulesCard(numbers: TimingRuleNumbersUi) {
         ),
         RuleEntry(
             Icons.Filled.Bolt, AccentPurpleContainer, AccentPurpleContent,
-            R.string.melody_trainer_rule_gorgo_title, R.string.melody_trainer_rule_gorgo_body,
+            Neume.GORGON.nameRes, R.string.melody_trainer_rule_gorgo_body,
             listOf(numbers.gorgonNote, numbers.gorgonTakes),
         ),
         RuleEntry(
@@ -698,7 +699,8 @@ private fun GorgoChip(selected: Boolean, enabled: Boolean, onClick: () -> Unit) 
         )
         Spacer(Modifier.width(6.dp))
         Text(
-            text = stringResource(R.string.melody_trainer_gorgo),
+            // The sign's one name, as on every theory page.
+            text = stringResource(Neume.GORGON.nameRes),
             style = MaterialTheme.typography.labelLarge,
             color = contentColor,
             fontWeight = FontWeight.SemiBold,
