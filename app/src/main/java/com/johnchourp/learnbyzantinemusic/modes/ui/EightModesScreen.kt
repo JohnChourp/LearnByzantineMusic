@@ -69,6 +69,7 @@ import com.johnchourp.learnbyzantinemusic.AppLanguage
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.modes.IsonDrone
 import com.johnchourp.learnbyzantinemusic.modes.LadderPitchMirror
+import com.johnchourp.learnbyzantinemusic.modes.ModeLadders
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleFrequencies
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleGenus
 import com.johnchourp.learnbyzantinemusic.modes.ModeTheoryCatalog
@@ -97,15 +98,17 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import com.johnchourp.learnbyzantinemusic.modes.ApichimaSequence
 import com.johnchourp.learnbyzantinemusic.music.ModeLadder
-import com.johnchourp.learnbyzantinemusic.music.Moria
 import com.johnchourp.learnbyzantinemusic.music.Phthong
 import java.util.Locale
 
+/** No request held back from the background ison: see the echo guard in [EightModesScreen]. */
+private val NO_ECHO = Any()
+
 /**
  * Internal rather than private so `ApichimaInEveryLanguageTest` resolves the απήχημα on the very
- * ladder this screen builds.
+ * ladder this screen builds — which is [ModeLadders]' ladder, shared with the background ison.
  */
-internal const val SCALE_OCTAVES = 3
+internal const val SCALE_OCTAVES = ModeLadders.OCTAVES
 
 /**
  * The «Μεταφορά βάσης» range the slider offers, in μόρια. Internal so the ison tests sweep exactly
@@ -131,8 +134,11 @@ fun EightModesScreen(
     onBaseShiftChange: (modeIndex: Int, moria: Int) -> Unit,
     onTonePress: (Double) -> Unit,
     onToneRelease: () -> Unit,
-    /** Non-null starts (or retunes) the ison drone; null stops it. */
-    onDroneChange: (Double?) -> Unit,
+    /**
+     * What the ison should hold — mode, base shift and «Ίσον σε…» choice — or null to silence it.
+     * The host decides who plays it: this page, or the background service (ClickUp `869f5x2dq`).
+     */
+    onIsonChange: (IsonDrone.Request?) -> Unit,
     /**
      * Asks the host to start listening (true) or stop (false). The host owns the microphone
      * permission and the capture engine; the screen only says when it wants to hear.
@@ -145,6 +151,15 @@ fun EightModesScreen(
     onOpenMenu: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    /** The ison starts sounding at once — the launcher shortcut «Ίσο» (ClickUp `869f5x2dq`). */
+    initialDroneOn: Boolean = false,
+    /** Where «Ίσον σε…» starts: what the background ison holds when the page opens over it. */
+    initialIsonChoice: Phthong? = null,
+    /** «Συνέχισε στο παρασκήνιο» — the ison keeps playing when this page is left. */
+    inBackground: Boolean = false,
+    onInBackgroundChange: (Boolean) -> Unit = {},
+    /** What the background ison is sounding now, so a change made from its notification shows here. */
+    backgroundIson: IsonDrone.Request? = null,
 ) {
     var selectedModeIndex by remember {
         mutableStateOf(initialModeIndex.coerceIn(EIGHT_MODES.indices))
@@ -154,10 +169,10 @@ fun EightModesScreen(
         mutableStateMapOf<Int, Int>().apply { putAll(initialBaseShifts) }
     }
     var activeIndex by remember { mutableStateOf(-1) }
-    var droneOn by remember { mutableStateOf(false) }
-    // Where «Ίσον σε…» moved the ison; null means the mode's base. Keyed on the mode, so a new ήχος
-    // starts on its own base, and never persisted (ClickUp `869f5x251`).
-    var isonChoice by remember(selectedModeIndex) { mutableStateOf<Phthong?>(null) }
+    var droneOn by remember { mutableStateOf(initialDroneOn) }
+    // Where «Ίσον σε…» moved the ison; null means the mode's base. A new ήχος starts on its own base
+    // (the mode picker clears it), and it is never persisted (ClickUp `869f5x251`).
+    var isonChoice by remember { mutableStateOf(initialIsonChoice) }
     var listening by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -168,15 +183,40 @@ fun EightModesScreen(
     }
 
     // The drone's pitch is derived, not stored: whenever the mode, its base shift or the chosen
-    // φθόγγος changes it is recomputed and the drone retuned in place, so it can never keep sounding
-    // the previous mode's note. Switching off, or leaving the composition, stops it — that is what
-    // keeps the second AudioTrack from outliving the screen.
-    val ison = rememberIson(selectedModeIndex, baseShiftByMode[selectedModeIndex] ?: 0, isonChoice)
-    LaunchedEffect(droneOn, ison?.held?.frequencyHz) {
-        onDroneChange(if (droneOn) ison?.held?.frequencyHz else null)
+    // φθόγγος changes, the host gets the new request and retunes the ison in place, so it can never
+    // keep sounding the previous mode's note. Leaving the page is the host's to handle: it silences a
+    // drone this page plays, and leaves alone one the background service plays.
+    val shift = baseShiftByMode[selectedModeIndex] ?: 0
+    val ison = rememberIson(selectedModeIndex, shift, isonChoice)
+    val request = IsonDrone.Request(EIGHT_MODES[selectedModeIndex].mode, shift, isonChoice)
+    // What the page has just taken over from the background ison (below), not yet sent: sending it
+    // back would only echo the service — and an echo of a φθόγγος already left would undo the next
+    // −/+ tapped on the notification. [NO_ECHO] when there is nothing to hold back.
+    var echo by remember { mutableStateOf<Any?>(NO_ECHO) }
+    LaunchedEffect(droneOn, request) {
+        val wanted = if (droneOn) request else null
+        val isEcho = echo != NO_ECHO && wanted == echo
+        echo = NO_ECHO
+        if (!isEcho) onIsonChange(wanted)
     }
-    DisposableEffect(Unit) {
-        onDispose { onDroneChange(null) }
+
+    // The notification can move or stop a background ison while this page is hidden; follow it
+    // rather than overwrite it. The value the page opened with is already in its state, so only a
+    // later change counts.
+    var backgroundSeen by remember { mutableStateOf(backgroundIson) }
+    LaunchedEffect(backgroundIson) {
+        if (backgroundIson == backgroundSeen) return@LaunchedEffect
+        backgroundSeen = backgroundIson
+        if (!inBackground) return@LaunchedEffect
+        val playing = backgroundIson
+        if (playing == null) {
+            echo = null
+            droneOn = false
+        } else if (playing.mode == EIGHT_MODES[selectedModeIndex].mode) {
+            echo = playing
+            droneOn = true
+            isonChoice = playing.choice
+        }
     }
 
     // The microphone follows the same rule as the drone: derived from one flag, and released when
@@ -221,6 +261,7 @@ fun EightModesScreen(
                     onSelect = { index ->
                         if (index != selectedModeIndex) {
                             selectedModeIndex = index
+                            isonChoice = null
                             onSelectMode(index)
                         }
                     },
@@ -251,6 +292,8 @@ fun EightModesScreen(
                     ison = ison,
                     onToggle = { droneOn = it },
                     onChoose = { isonChoice = it },
+                    inBackground = inBackground,
+                    onInBackgroundChange = onInBackgroundChange,
                 )
             }
             StaggeredAppear(delayMillis = 225) {
@@ -542,9 +585,7 @@ private fun ScaleCard(
 @Composable
 private fun rememberLadder(modeIndex: Int, baseShiftMoria: Int): ModeLadder {
     val scale = EIGHT_MODES[modeIndex].scale
-    return remember(modeIndex, baseShiftMoria) {
-        scale.ladder(octaves = SCALE_OCTAVES, baseShift = Moria(baseShiftMoria))
-    }
+    return remember(modeIndex, baseShiftMoria) { ModeLadders.ladder(scale, baseShiftMoria) }
 }
 
 /* ----------------------------- Ισοκράτημα (ison drone) ----------------------------- */
@@ -582,6 +623,8 @@ private fun IsonDroneCard(
     ison: IsonState?,
     onToggle: (Boolean) -> Unit,
     onChoose: (Phthong?) -> Unit,
+    inBackground: Boolean,
+    onInBackgroundChange: (Boolean) -> Unit,
 ) {
     LessonCard(title = stringResource(R.string.eight_modes_ison_card_title)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -608,6 +651,38 @@ private fun IsonDroneCard(
             Spacer(Modifier.height(10.dp))
             IsonNoteSelector(ison = ison, onChoose = onChoose)
         }
+        Spacer(Modifier.height(10.dp))
+        IsonInBackgroundOption(checked = inBackground, onCheckedChange = onInBackgroundChange)
+    }
+}
+
+/**
+ * «Συνέχισε στο παρασκήνιο» (ClickUp `869f5x2dq`). Off by default, which is today's behaviour: the
+ * ison stops when you leave the page. On, it keeps playing with the screen off or over another app.
+ */
+@Composable
+private fun IsonInBackgroundOption(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    val label = stringResource(R.string.eight_modes_ison_background_label)
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = LbmTextPrimary,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                text = stringResource(R.string.eight_modes_ison_background_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = LbmTextSecondary,
+            )
+        }
+        Spacer(Modifier.width(12.dp))
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            modifier = Modifier.semantics { contentDescription = label },
+        )
     }
 }
 

@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Long-press shortcut on the launcher icon (ClickUp 869f4tpmq).
+  Long-press shortcuts on the launcher icon.
 
-  It opens «Ηχογραφήσεις» ready to record. It deliberately does NOT start recording on its own:
-  a shortcut that begins capturing audio from a long-press would be a surprising side effect, and
-  the microphone permission and folder grant may still need asking for.
+  «Νέα ηχογράφηση» (ClickUp 869f4tpmq) opens «Ηχογραφήσεις» ready to record. It deliberately does NOT
+  start recording on its own: a shortcut that begins capturing audio from a long-press would be a
+  surprising side effect, and the microphone permission and folder grant may still need asking for.
+
+  «Ίσο» (ClickUp 869f5x2dq) opens the 8 Ήχοι page with the ison already sounding, in the last mode
+  and its base shift. It only plays — it never records. It carries no conversation category: that
+  category is for messaging shortcuts, and this one is not one. The extra's name must spell
+  EightModesActivity.EXTRA_START_ISON exactly; IsonShortcutTest holds the two together.
 -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
@@ -18,5 +23,20 @@
             android:targetClass="com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity"
             android:targetPackage="com.johnchourp.learnbyzantinemusic" />
         <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/_0"
+        android:shortcutId="ison"
+        android:shortcutLongLabel="@string/shortcut_ison_long"
+        android:shortcutShortLabel="@string/shortcut_ison_short">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.johnchourp.learnbyzantinemusic.modes.EightModesActivity"
+            android:targetPackage="com.johnchourp.learnbyzantinemusic">
+            <extra
+                android:name="com.johnchourp.learnbyzantinemusic.modes.EXTRA_START_ISON"
+                android:value="true" />
+        </intent>
     </shortcut>
 </shortcuts>
