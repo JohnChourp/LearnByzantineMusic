@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
 import android.content.Context
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 
@@ -38,6 +39,17 @@ class AnalysisSettingsStore(context: Context) {
     }
 
     companion object {
+        /**
+         * The mode an analysis opens on: the one stored for its context, else the one it was opened
+         * with (a hymn's mode), else Α΄ — today's order (ClickUp `869f5x299`).
+         *
+         * A stored value that names no mode — a corrupted or hand-edited preference — is skipped, never
+         * thrown on: the analysis must still open. What changed is only what happens next: such a key
+         * used to reach the scale lookup and turn silently into the diatonic scale from Νη.
+         */
+        fun resolveMode(stored: String?, requested: String?): Mode =
+            Mode.fromKey(stored) ?: Mode.fromKey(requested) ?: Mode.FIRST
+
         fun hymnKey(modeKey: String, hymnCode: String) = "hymn:$modeKey:$hymnCode"
 
         fun recordingKey(uri: String) = "recording:$uri"

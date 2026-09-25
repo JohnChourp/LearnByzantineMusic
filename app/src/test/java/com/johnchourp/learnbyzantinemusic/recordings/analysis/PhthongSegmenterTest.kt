@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.music.PhthongName.DI
 import com.johnchourp.learnbyzantinemusic.music.PhthongName.GA
@@ -13,7 +14,7 @@ import org.junit.Test
 import kotlin.math.pow
 
 class PhthongSegmenterTest {
-    private val diatonic = ModeScalePositions.forMode("first")
+    private val diatonic = ModeScalePositions.forMode(Mode.FIRST)
     private val singerNi = 196.0 // the singer's own Νη; not the trainer's 220 Hz
     private val hopMs = 23.2
 

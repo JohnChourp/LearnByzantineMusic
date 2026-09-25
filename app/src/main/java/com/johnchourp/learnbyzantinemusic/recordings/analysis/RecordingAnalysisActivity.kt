@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.ui.RecordingAnalysisScreen
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -89,7 +90,7 @@ data class RecordingAnalysisUiState(
     val recordingName: String = "",
     val status: AnalysisStatus = AnalysisStatus.DECODING,
     val progress: Float = 0f,
-    val modeKey: String = "first",
+    val mode: Mode = Mode.FIRST,
     val startPhthong: PhthongName = PhthongName.PA,
     val track: PitchTrack? = null,
     val niHz: Double? = null,
@@ -97,7 +98,7 @@ data class RecordingAnalysisUiState(
     val expected: List<PhthongName> = emptyList(),
     val alignment: AlignmentResult? = null,
 ) {
-    val positions: IntArray get() = ModeScalePositions.forMode(modeKey)
+    val positions: IntArray get() = ModeScalePositions.forMode(mode)
 }
 
 class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(application) {
@@ -113,12 +114,12 @@ class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(ap
         if (this.uri != null) return
         this.uri = uri
         this.contextKey = contextKey
-        val modeKey = store.modeKey(contextKey) ?: initialModeKey ?: "first"
+        val mode = AnalysisSettingsStore.resolveMode(stored = store.modeKey(contextKey), requested = initialModeKey)
         _uiState.update {
             it.copy(
                 recordingName = name,
-                modeKey = modeKey,
-                startPhthong = store.startPhthong(contextKey) ?: ModeScalePositions.defaultStartPhthong(modeKey),
+                mode = mode,
+                startPhthong = store.startPhthong(contextKey) ?: ModeScalePositions.defaultStartPhthong(mode),
                 expected = store.expected(contextKey),
             )
         }
@@ -156,16 +157,16 @@ class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(ap
         }
     }
 
-    fun selectMode(modeKey: String) {
-        if (modeKey == _uiState.value.modeKey) return
-        _uiState.update { it.copy(modeKey = modeKey, startPhthong = ModeScalePositions.defaultStartPhthong(modeKey)) }
-        store.saveScale(contextKey, modeKey, _uiState.value.startPhthong)
+    fun selectMode(mode: Mode) {
+        if (mode == _uiState.value.mode) return
+        _uiState.update { it.copy(mode = mode, startPhthong = ModeScalePositions.defaultStartPhthong(mode)) }
+        store.saveScale(contextKey, mode.key, _uiState.value.startPhthong)
         recompute()
     }
 
     fun selectStart(phthong: PhthongName) {
         _uiState.update { it.copy(startPhthong = phthong) }
-        store.saveScale(contextKey, _uiState.value.modeKey, phthong)
+        store.saveScale(contextKey, _uiState.value.mode.key, phthong)
         recompute()
     }
 
@@ -188,7 +189,7 @@ class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(ap
         recomputeJob?.cancel()
         recomputeJob = viewModelScope.launch {
             val result = withContext(Dispatchers.Default) {
-                val positions = ModeScalePositions.forMode(state.modeKey)
+                val positions = ModeScalePositions.forMode(state.mode)
                 val niHz = PhthongSegmenter.calibrate(track, positions, state.startPhthong)
                 val notes = niHz?.let { PhthongSegmenter.segment(track, it, positions) }.orEmpty()
                 val alignment = if (state.expected.isNotEmpty() && notes.isNotEmpty()) {

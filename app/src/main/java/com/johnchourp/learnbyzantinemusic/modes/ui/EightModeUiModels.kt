@@ -2,7 +2,7 @@ package com.johnchourp.learnbyzantinemusic.modes.ui
 
 import androidx.annotation.StringRes
 import com.johnchourp.learnbyzantinemusic.R
-import com.johnchourp.learnbyzantinemusic.modes.EightModeScaleDefinitions
+import com.johnchourp.learnbyzantinemusic.modes.ModeResources
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleDefinition
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleGenus
 import com.johnchourp.learnbyzantinemusic.modes.ModeTheoryCatalog
@@ -13,122 +13,111 @@ import com.johnchourp.learnbyzantinemusic.music.Mode
  * optional alternative), the theory key that joins it to [ModeTheoryCatalog], and the scale whose
  * genus drives the colour-coding. Lifted out of the old `EightModesActivity` so the Compose screen
  * (and any test) can read the catalogue without the Activity. Genus comes from [scale].genus.
+ *
+ * Each row names its [mode], and the facts that belong to the ήχος itself — its key, name and scale
+ * — are derived from it (ClickUp `869f5x299`) rather than written beside it. What stays here is
+ * what only this screen needs: the selector's short name and genus label, and the απήχημα.
  */
 data class EightModeUiModel(
-    @StringRes val nameRes: Int,
+    val mode: Mode,
     @StringRes val selectorNameRes: Int,
     @StringRes val selectorGenusRes: Int,
     @StringRes val apichimaRes: Int,
     @StringRes val apichimaAlternativeRes: Int?,
     @StringRes val apichimaSyllablesRes: Int,
     @StringRes val apichimaAlternativeSyllablesRes: Int?,
-    val theoryKey: String,
-    val scale: ModeScaleDefinition,
 ) {
-    val genus: ModeScaleGenus get() = scale.genus
+    @get:StringRes
+    val nameRes: Int get() = ModeResources.nameRes(mode)
 
     /**
-     * The ήχος this row is, as a value rather than a string (ClickUp `869f4tpxj`).
-     *
-     * Derived from [theoryKey] rather than declared beside it, so the two cannot disagree. The key
-     * itself stays a String because it is the **stored** spelling — it appears in the preference
-     * `mode_base_shift_moria_<key>`, and renaming one would silently reset a user's «Μεταφορά βάσης».
-     *
-     * Null would mean the UI table and [Mode] had drifted apart; `EightModeUiModelsTest` proves all
-     * eight resolve, and that each row's scale is the one the canonical table assigns that ήχος.
+     * The **stored** spelling of [mode] — it appears in the preference `mode_base_shift_moria_<key>`,
+     * and renaming one would silently reset a user's «Μεταφορά βάσης». Derived, so it cannot drift.
      */
-    val mode: Mode? get() = Mode.fromKey(theoryKey)
+    val theoryKey: String get() = mode.key
+
+    val scale: ModeScaleDefinition get() = mode.scale
+
+    val genus: ModeScaleGenus get() = scale.genus
 }
 
-/** The eight ήχοι in screen order, identical to the legacy `EightModesActivity.modes` list. */
+/**
+ * The eight ήχοι in screen order, identical to the legacy `EightModesActivity.modes` list. The order
+ * groups the modes by genus and is deliberately NOT the order of the cycle; `EightModeUiModelsTest`
+ * pins it.
+ */
 val EIGHT_MODES: List<EightModeUiModel> = listOf(
     EightModeUiModel(
-        nameRes = R.string.mode_first,
+        mode = Mode.FIRST,
         selectorNameRes = R.string.mode_first,
         selectorGenusRes = R.string.mode_genus_diatonic,
         apichimaRes = R.string.mode_apichima_first,
         apichimaAlternativeRes = null,
         apichimaSyllablesRes = R.string.mode_apichima_syllables_first,
         apichimaAlternativeSyllablesRes = null,
-        theoryKey = ModeTheoryCatalog.keyForPosition(0),
-        scale = EightModeScaleDefinitions.DIATONIC,
     ),
     EightModeUiModel(
-        nameRes = R.string.mode_fourth,
+        mode = Mode.FOURTH,
         selectorNameRes = R.string.mode_fourth,
         selectorGenusRes = R.string.mode_genus_diatonic,
         apichimaRes = R.string.mode_apichima_fourth,
         apichimaAlternativeRes = R.string.mode_apichima_alternative_fourth,
         apichimaSyllablesRes = R.string.mode_apichima_syllables_fourth,
         apichimaAlternativeSyllablesRes = R.string.mode_apichima_alternative_syllables_fourth,
-        theoryKey = ModeTheoryCatalog.keyForPosition(1),
-        scale = EightModeScaleDefinitions.DIATONIC,
     ),
     EightModeUiModel(
-        nameRes = R.string.mode_plagal_first,
+        mode = Mode.PLAGAL_FIRST,
         selectorNameRes = R.string.mode_selector_plagal_first,
         selectorGenusRes = R.string.mode_genus_diatonic,
         apichimaRes = R.string.mode_apichima_plagal_first,
         apichimaAlternativeRes = null,
         apichimaSyllablesRes = R.string.mode_apichima_syllables_plagal_first,
         apichimaAlternativeSyllablesRes = null,
-        theoryKey = ModeTheoryCatalog.keyForPosition(2),
-        scale = EightModeScaleDefinitions.DIATONIC,
     ),
     EightModeUiModel(
-        nameRes = R.string.mode_plagal_fourth,
+        mode = Mode.PLAGAL_FOURTH,
         selectorNameRes = R.string.mode_selector_plagal_fourth,
         selectorGenusRes = R.string.mode_genus_diatonic,
         apichimaRes = R.string.mode_apichima_plagal_fourth,
         apichimaAlternativeRes = null,
         apichimaSyllablesRes = R.string.mode_apichima_syllables_plagal_fourth,
         apichimaAlternativeSyllablesRes = null,
-        theoryKey = ModeTheoryCatalog.keyForPosition(3),
-        scale = EightModeScaleDefinitions.DIATONIC,
     ),
     EightModeUiModel(
-        nameRes = R.string.mode_third,
+        mode = Mode.THIRD,
         selectorNameRes = R.string.mode_third,
         selectorGenusRes = R.string.mode_genus_enharmonic,
         apichimaRes = R.string.mode_apichima_third,
         apichimaAlternativeRes = null,
         apichimaSyllablesRes = R.string.mode_apichima_syllables_third,
         apichimaAlternativeSyllablesRes = null,
-        theoryKey = ModeTheoryCatalog.keyForPosition(4),
-        scale = EightModeScaleDefinitions.ENHARMONIC,
     ),
     EightModeUiModel(
-        nameRes = R.string.mode_varys,
+        mode = Mode.VARYS,
         selectorNameRes = R.string.mode_varys,
         selectorGenusRes = R.string.mode_genus_enharmonic,
         apichimaRes = R.string.mode_apichima_varys,
         apichimaAlternativeRes = null,
         apichimaSyllablesRes = R.string.mode_apichima_syllables_varys,
         apichimaAlternativeSyllablesRes = null,
-        theoryKey = ModeTheoryCatalog.keyForPosition(5),
-        scale = EightModeScaleDefinitions.ENHARMONIC,
     ),
     EightModeUiModel(
-        nameRes = R.string.mode_second,
+        mode = Mode.SECOND,
         selectorNameRes = R.string.mode_second,
         selectorGenusRes = R.string.mode_genus_chromatic_second,
         apichimaRes = R.string.mode_apichima_second,
         apichimaAlternativeRes = null,
         apichimaSyllablesRes = R.string.mode_apichima_syllables_second,
         apichimaAlternativeSyllablesRes = null,
-        theoryKey = ModeTheoryCatalog.keyForPosition(6),
-        scale = EightModeScaleDefinitions.SOFT_CHROMATIC,
     ),
     EightModeUiModel(
-        nameRes = R.string.mode_plagal_second,
+        mode = Mode.PLAGAL_SECOND,
         selectorNameRes = R.string.mode_selector_plagal_second,
         selectorGenusRes = R.string.mode_genus_chromatic_plagal_second,
         apichimaRes = R.string.mode_apichima_plagal_second,
         apichimaAlternativeRes = null,
         apichimaSyllablesRes = R.string.mode_apichima_syllables_plagal_second,
         apichimaAlternativeSyllablesRes = null,
-        theoryKey = ModeTheoryCatalog.keyForPosition(7),
-        scale = EightModeScaleDefinitions.HARD_CHROMATIC,
     ),
 )
 

@@ -67,7 +67,7 @@ class IsonDroneTest {
         // the «Μεταφορά βάσης» slider offers.
         var compared = 0
         EIGHT_MODES.forEach { row ->
-            val mode = row.mode!!
+            val mode = row.mode
             (BASE_SHIFT_MIN..BASE_SHIFT_MAX).forEach { shift ->
                 val all = labels(row.scale)
                 val freqs = frequencies(row.scale, shift)
