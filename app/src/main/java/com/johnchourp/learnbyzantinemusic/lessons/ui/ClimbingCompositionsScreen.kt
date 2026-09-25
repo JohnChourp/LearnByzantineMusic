@@ -51,10 +51,10 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.johnchourp.learnbyzantinemusic.R
-import com.johnchourp.learnbyzantinemusic.summary_theory.ui.Neume
 import com.johnchourp.learnbyzantinemusic.summary_theory.ui.NeumeForm
 import com.johnchourp.learnbyzantinemusic.summary_theory.ui.NeumeStack
-import com.johnchourp.learnbyzantinemusic.summary_theory.ui.drawableRes
+import com.johnchourp.learnbyzantinemusic.summary_theory.ui.contentDescription
+import com.johnchourp.learnbyzantinemusic.summary_theory.ui.displayName
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
 import com.johnchourp.learnbyzantinemusic.ui.components.StaggeredAppear
@@ -137,36 +137,17 @@ private fun ConceptCard() {
 
 /* ----------------------------- Legend ----------------------------- */
 
-private data class LegendItem(
-    val neume: Neume,
-    @StringRes val nameRes: Int,
-    @StringRes val meaningRes: Int,
-    @StringRes val cdRes: Int,
-)
-
-private val LEGEND = listOf(
-    LegendItem(Neume.OLIGON, R.string.name_oligon, R.string.climbing_legend_oligon, R.string.cd_oligon),
-    LegendItem(Neume.ISON, R.string.name_ison, R.string.climbing_legend_ison, R.string.cd_ison),
-    LegendItem(Neume.APOSTROPHE, R.string.name_apostrophe, R.string.climbing_legend_apostrophe, R.string.cd_apostrophe),
-    LegendItem(Neume.EMBROIDERIES, R.string.name_embroideries, R.string.climbing_legend_embroideries, R.string.cd_embroideries),
-    LegendItem(Neume.UNDERFLOW, R.string.name_underflow, R.string.climbing_legend_underflow, R.string.cd_underflow),
-    LegendItem(Neume.GORGO, R.string.name_gorgo, R.string.climbing_legend_gorgo, R.string.cd_gorgo),
-    LegendItem(Neume.DIGORGO, R.string.name_digorgo, R.string.climbing_legend_digorgo, R.string.cd_digorgo),
-    LegendItem(Neume.SIMPLE_DOT, R.string.name_simple_dot, R.string.climbing_legend_simple_dot, R.string.cd_simple_dot),
-    LegendItem(Neume.FRACTION, R.string.name_fraction, R.string.climbing_legend_fraction, R.string.cd_fraction),
-)
-
 @Composable
 private fun LegendCard() {
     LessonCard(title = stringResource(R.string.climbing_legend_title)) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            LEGEND.forEach { GlyphLegendRow(it) }
+            ClimbingCompositions.legend.forEach { GlyphLegendRow(it) }
         }
     }
 }
 
 @Composable
-private fun GlyphLegendRow(item: LegendItem) {
+private fun GlyphLegendRow(item: ClimbingLegendItem) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Surface(
             modifier = Modifier.size(width = 66.dp, height = 46.dp),
@@ -176,8 +157,8 @@ private fun GlyphLegendRow(item: LegendItem) {
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Image(
-                    painter = painterResource(item.neume.drawableRes()),
-                    contentDescription = stringResource(item.cdRes),
+                    painter = painterResource(item.neume.drawable),
+                    contentDescription = item.neume.contentDescription(),
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxSize()
@@ -188,7 +169,7 @@ private fun GlyphLegendRow(item: LegendItem) {
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(item.nameRes),
+                text = item.neume.displayName(),
                 style = MaterialTheme.typography.titleMedium,
                 color = LbmTextPrimary,
                 fontWeight = FontWeight.SemiBold,

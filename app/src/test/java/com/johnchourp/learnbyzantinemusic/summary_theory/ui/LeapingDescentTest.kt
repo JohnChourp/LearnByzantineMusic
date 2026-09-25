@@ -25,7 +25,7 @@ class LeapingDescentTest {
 
     @Test
     fun every_glyph_is_one_of_the_four_descending_neumes() {
-        val allowed = DescentNeume.entries.toSet()
+        val allowed = setOf(Neume.APOSTROPHOS, Neume.ELAFRON, Neume.ELAFRON_APOSTROPHOS, Neume.CHAMILI)
         LeapingDescents.all.forEach { descent ->
             descent.form.glyphs.forEach { g ->
                 assertTrue("unexpected neume in −${descent.voices}", g.neume in allowed)
@@ -37,15 +37,15 @@ class LeapingDescentTest {
     fun minus_five_stacks_a_chamili_over_an_apostrophos() {
         // −5 = χαμηλή (−4) with an απόστροφος (−1) below it.
         val minus5 = LeapingDescents.all.first { it.voices == 5 }.form
-        assertTrue(minus5.glyphs.any { it.neume == DescentNeume.LOW })
-        assertTrue(minus5.glyphs.any { it.neume == DescentNeume.APOSTROPHE })
+        assertTrue(minus5.glyphs.any { it.neume == Neume.CHAMILI })
+        assertTrue(minus5.glyphs.any { it.neume == Neume.APOSTROPHOS })
     }
 
     @Test
     fun the_deep_descents_repeat_the_chamili() {
         // −8 … −12 are written by stacking (at least) two χαμηλή — the doubled "low" is their core.
         LeapingDescents.all.filter { it.voices in 8..12 }.forEach { descent ->
-            val lows = descent.form.glyphs.count { it.neume == DescentNeume.LOW }
+            val lows = descent.form.glyphs.count { it.neume == Neume.CHAMILI }
             assertTrue("−${descent.voices} should stack ≥2 χαμηλή", lows >= 2)
         }
     }
@@ -55,7 +55,7 @@ class LeapingDescentTest {
         // The −8 form is two χαμηλή; if their alignment/offset were dropped they'd collapse into a
         // single diagram. This guards that the position stays part of the model.
         val minus8 = LeapingDescents.all.first { it.voices == 8 }.form
-        val lows = minus8.glyphs.filter { it.neume == DescentNeume.LOW }
+        val lows = minus8.glyphs.filter { it.neume == Neume.CHAMILI }
         assertEquals(2, lows.size)
         val (a, b) = lows[0] to lows[1]
         assertTrue("stacked χαμηλή must differ in position", a.align != b.align || a.dy != b.dy)

@@ -93,28 +93,28 @@ fun TimeScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                 SymbolListCard(R.string.pause, listOf(R.string.heavy_definition_used), TimeCharacters.pauses)
             }
             StaggeredAppear(delayMillis = 180) {
-                EquationCard(R.string.gorgo, listOf(R.string.gorgo_definition_1, R.string.gorgo_definition_2), listOf(TimeCharacters.gorgo))
+                EquationCard(Neume.GORGON.nameRes, listOf(R.string.gorgo_definition_1, R.string.gorgo_definition_2), listOf(TimeCharacters.gorgo))
             }
             StaggeredAppear(delayMillis = 240) {
                 EquationCard(R.string.presented_gorgo, listOf(R.string.presented_gorgo_definition), TimeCharacters.presentedGorgo)
             }
             StaggeredAppear(delayMillis = 300) {
-                EquationCard(R.string.digorgo, emptyList(), listOf(TimeCharacters.digorgo))
+                EquationCard(Neume.DIGORGON.nameRes, emptyList(), listOf(TimeCharacters.digorgo))
             }
             StaggeredAppear(delayMillis = 360) {
                 EquationCard(R.string.presented_digorgo, emptyList(), TimeCharacters.presentedDigorgo)
             }
             StaggeredAppear(delayMillis = 420) {
-                EquationCard(R.string.trigorgo, emptyList(), listOf(TimeCharacters.trigorgo))
+                EquationCard(Neume.TRIGORGON.nameRes, emptyList(), listOf(TimeCharacters.trigorgo))
             }
             StaggeredAppear(delayMillis = 480) {
-                EquationCard(R.string.argo, emptyList(), listOf(TimeCharacters.argo))
+                EquationCard(Neume.ARGON.nameRes, emptyList(), listOf(TimeCharacters.argo))
             }
             StaggeredAppear(delayMillis = 540) {
-                EquationCard(R.string.diargo, emptyList(), listOf(TimeCharacters.diargo))
+                EquationCard(Neume.DIARGON.nameRes, emptyList(), listOf(TimeCharacters.diargo))
             }
             StaggeredAppear(delayMillis = 600) {
-                EquationCard(R.string.triargo, emptyList(), listOf(TimeCharacters.triargo))
+                EquationCard(Neume.TRIARGON.nameRes, emptyList(), listOf(TimeCharacters.triargo))
             }
             Spacer(Modifier.height(8.dp))
         }
@@ -201,9 +201,9 @@ private fun SymbolListCard(titleRes: Int, bodyRes: List<Int>, rows: List<TimeSym
 @Composable
 private fun SymbolRow(row: TimeSymbolRow) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        if (row.nameRes != 0) {
+        if (row.names != null) {
             Text(
-                text = stringResource(row.nameRes),
+                text = row.names.displayName(),
                 style = MaterialTheme.typography.titleSmall,
                 color = LbmTextPrimary,
                 fontWeight = FontWeight.SemiBold,
@@ -211,7 +211,7 @@ private fun SymbolRow(row: TimeSymbolRow) {
             )
             Spacer(Modifier.width(8.dp))
         }
-        GlyphTile(form = row.form, contentDescription = stringResource(if (row.nameRes != 0) row.nameRes else row.meaningRes))
+        GlyphTile(form = row.form, contentDescription = row.names?.contentDescription() ?: stringResource(row.meaningRes))
         Spacer(Modifier.width(12.dp))
         Text(
             text = stringResource(row.meaningRes),

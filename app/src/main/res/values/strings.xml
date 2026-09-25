@@ -160,27 +160,27 @@
     <string name="heavy_definition_used">Η Βαρεία χρησιμοποιείται και για παύση και είναι κενή (δεν λέμε τίποτα).</string>
     <string name="title_activity_lesson4">Lesson4</string>
     <string name="underflow">Υπορροή</string>
-    <string name="gorgo">Γοργό</string>
+    <string name="gorgo">Γοργόν</string>
     <string name="time_1_by_2">&#189;</string>
     <string name="gorgo_definition_1">Σε ένα χρόνο λέμε δύο φθόγγους ίσον.</string>
-    <string name="gorgo_definition_2">Το γοργό διαιρεί το χρόνο στο φθόγγο που βρίσκεται και το προηγούμενο.</string>
-    <string name="gorgo_in_climbing_compositions">Το γοργό στις συνθέσεις ανάβασης</string>
-    <string name="presented_gorgo">Παρεστιγμένο Γοργό</string>
-    <string name="presented_gorgo_definition">Το παρεστιγμένο γοργό διαιρεί το χρόνο στο φθόγγο που βρίσκεται και τον ξαναδιαιρεί.\nΕπίσης από την μεριά που βρίσκεται η κουκίδα δίνει τον χρόνο που διαιρέθηκε.</string>
+    <string name="gorgo_definition_2">Το γοργόν διαιρεί το χρόνο στο φθόγγο που βρίσκεται και το προηγούμενο.</string>
+    <string name="gorgo_in_climbing_compositions">Το γοργόν στις συνθέσεις ανάβασης</string>
+    <string name="presented_gorgo">Παρεστιγμένο Γοργόν</string>
+    <string name="presented_gorgo_definition">Το παρεστιγμένο γοργόν διαιρεί το χρόνο στο φθόγγο που βρίσκεται και τον ξαναδιαιρεί.\nΕπίσης από την μεριά που βρίσκεται η κουκίδα δίνει τον χρόνο που διαιρέθηκε.</string>
     <string name="time_3_by_4">&#190;</string>
     <string name="time_1_by_4">&#188;</string>
-    <string name="digorgo">Δίγοργο</string>
+    <string name="digorgo">Δίγοργον</string>
     <string name="time_1_by_3">&#8531;</string>
     <string name="time_2_by_3">&#8532;</string>
-    <string name="trigorgo">Τρίγοργο</string>
-    <string name="presented_digorgo">Παρεστιγμένο Δίγοργο</string>
-    <string name="digorgo_in_climbing_compositions">Το δίγοργο στις συνθέσεις ανάβασης</string>
+    <string name="trigorgo">Τρίγοργον</string>
+    <string name="presented_digorgo">Παρεστιγμένο Δίγοργον</string>
+    <string name="digorgo_in_climbing_compositions">Το δίγοργον στις συνθέσεις ανάβασης</string>
     <string name="title_activity_lesson5">Lesson5</string>
-    <string name="argo">Αργό</string>
+    <string name="argo">Αργόν</string>
     <string name="time_2">2</string>
-    <string name="diargo">Δίαργο</string>
+    <string name="diargo">Δίαργον</string>
     <string name="time_3">3</string>
-    <string name="triargo">Τρίαργο</string>
+    <string name="triargo">Τρίαργον</string>
     <string name="time_4">4</string>
     <string name="ascent_of_two_voices">Ανάβαση δύο φωνών</string>
     <string name="add_two_voice">+2 φωνές</string>
@@ -229,16 +229,11 @@
     <string name="ascents_leaping_intro">Για μεγαλύτερα πηδήματα συνδυάζουμε έναν βασικό χαρακτήρα (Ολίγον ή Πεταστή) με κεντήματα και υψηλές. Διάλεξε διάστημα για να δεις πώς γράφεται.</string>
     <string name="ascents_leaping_pick">Διάλεξε διάστημα</string>
     <string name="ascents_leaping_forms_title">Πώς γράφεται</string>
-    <string name="ascents_base_oligon">με Ολίγον</string>
-    <string name="ascents_base_petasti">με Πεταστή</string>
+    <string name="ascents_base">με %1$s</string>
     <string name="ascents_tip_title">Συμβουλή</string>
     <string name="ascents_tip_body">Μάθε πρώτα τους απλούς χαρακτήρες. Οι υπερβατές αναβάσεις είναι απλώς συνδυασμοί τους — μην τις φοβάσαι!</string>
-    <string name="cd_ison">Νεύμα: Ίσον</string>
-    <string name="cd_oligon">Νεύμα: Ολίγον</string>
-    <string name="cd_flyer">Νεύμα: Πεταστή</string>
-    <string name="cd_embroidery">Νεύμα: Κέντημα</string>
-    <string name="cd_embroideries">Νεύμα: Κεντήματα</string>
-    <string name="cd_high">Νεύμα: Υψηλή</string>
+    <string name="cd_neume">Νεύμα: %1$s</string>
+    <string name="cd_quality_sign">Σημάδι ποιότητος: %1$s</string>
     <string name="cd_leaping_neume">Νεύματα για ανάβαση %1$s</string>
 
     <!-- «Κατιόντες» page redesign (Compose) -->
@@ -258,10 +253,6 @@
     <string name="descents_tip_title">Συμβουλή</string>
     <string name="descents_tip_body">Μάθε πρώτα τους απλούς χαρακτήρες. Οι υπερβατές καταβάσεις είναι απλώς συνδυασμοί τους — μην τις φοβάσαι!</string>
     <string name="yporroi_definition">Η Υπορροή γράφεται ως ένα σημάδι, αλλά ισοδυναμεί με δύο αποστρόφους — κατεβάζει τη φωνή κατά δύο φωνές (-2).</string>
-    <string name="cd_apostrophe">Νεύμα: Απόστροφος</string>
-    <string name="cd_slight">Νεύμα: Ελαφρόν</string>
-    <string name="cd_underflow">Νεύμα: Υπορροή</string>
-    <string name="cd_low">Νεύμα: Χαμηλή</string>
     <string name="cd_leaping_descent">Νεύματα για κατάβαση %1$s</string>
 
     <string name="title_activity_descents">Descents</string>
@@ -304,10 +295,10 @@
     <string name="vaccum">Αντικένωμα</string>
     <string name="vaccum_definition">Το Αντικένωμα τοποθετείται επίσης κάτω από φθόγγους και πάντα ακολουθείται από κατιόντες.\nΠροφέρει τη φωνή με μικρό πέταγμα, το οποίο προσδίδει ζωηρότητα στον απαγγελλόμενο φθόγγο.</string>
     <string name="vaccum_examples">Μερικά παραδείγματα με αντικένωμα έχουμε παρακάτω:</string>
-    <string name="vaccum_examples_with_one_dot">Συνήθως το αντικένωμα βρίσκεται συνδεδεμένο με απλήν, οπότε ακολουθείται από κατιόντα φθόγγο με γοργό.\nΓια παράδειγμα:</string>
+    <string name="vaccum_examples_with_one_dot">Συνήθως το αντικένωμα βρίσκεται συνδεδεμένο με απλήν, οπότε ακολουθείται από κατιόντα φθόγγο με γοργόν.\nΓια παράδειγμα:</string>
     <string name="vaccum_examples_with_one_dot_definition">Σε τέτοια περίπτωση, το αντικένωμα ενεργεί μεταξύ του πρώτου και του δεύτερου χρόνου του φθόγγου, σε αυτόν που βρίσκεται.\nΟ φθόγγος του ακόλουθου φθόγγου προφέρεται κερματισμένος, κάπως αχρηστοποιημένος, από τον φθόγγο του ίσου ή το ολίγον φθόγγο.</string>
-    <string name="intercom">Ενδόφωνο</string>
-    <string name="intercom_definition">Το Ενδόφωνο απαιτεί να προφέρουμε τον φθόγγο, κάτω από τον οποίο βρίσκεται, με στόμα κλειστό, επομένως ασθενώς και διά της ρινός.\nΕάν ο φθόγγος που έχει το ενδόφωνο έχει και χρονικό σημείο, το ενδόφωνο ενεργεί και στο χρονικό σημείο, ώστε όλοι οι χρόνοι του φθόγγου να απαγγελθούν διά της ρινός.</string>
+    <string name="intercom">Ενδόφωνον</string>
+    <string name="intercom_definition">Το Ενδόφωνον απαιτεί να προφέρουμε τον φθόγγο, κάτω από τον οποίο βρίσκεται, με στόμα κλειστό, επομένως ασθενώς και διά της ρινός.\nΕάν ο φθόγγος που έχει το ενδόφωνον έχει και χρονικό σημείο, το ενδόφωνον ενεργεί και στο χρονικό σημείο, ώστε όλοι οι χρόνοι του φθόγγου να απαγγελθούν διά της ρινός.</string>
     <string name="vaccum_complex_examples">Παρακάτω έχουμε λίγο πιο σύνθετα παραδείγματα:\nΣτη σύνθεση (1) το αντικένωμα ενεργεί στο ολίγον.\nΣτη σύνθεση (2) το αντικένωμα ενεργεί με ζωηρότητα στην ποιότητα της πεταστής.</string>
     <string name="link_pronounced">Οι συνδεόμενοι φθόγγοι προφέρονται με ομαλότητα και ασθενώς ένταση.</string>
     <string name="link_with_dots_examples">Όμοια ενέργεια έχει ο σύνδεσμος, όταν τοποθετείται κάτω από φθόγγο που έχει δυο η τρεις κουκκίδες.\nΓια παράδειγμα:</string>
@@ -618,7 +609,7 @@
     <string name="settings_language_current_badge">Τρέχουσα</string>
     <!-- «Δεδομένα μάθησης» (ClickUp 869f5x25w) -->
     <string name="settings_learning_data_label">Δεδομένα μάθησης</string>
-    <string name="settings_learning_data_hint">Πάρε σε άλλο κινητό τα αγαπημένα, την πρόοδο «Από το μηδέν», τις ασκήσεις του Γυμναστή Μελωδίας και τις ρυθμίσεις σου, σε ένα αρχείο. Οι φάκελοι (σημειώσεις, ηχογραφήσεις) δεν μπαίνουν στο αρχείο· στο νέο κινητό τους ξαναδιαλέγεις.</string>
+    <string name="settings_learning_data_hint">Πάρε σε άλλο κινητό τα αγαπημένα, την πρόοδο «Από το μηδέν», το ιστορικό εξάσκησης, τις ασκήσεις του Γυμναστή Μελωδίας και τις ρυθμίσεις σου, σε ένα αρχείο. Οι φάκελοι (σημειώσεις, ηχογραφήσεις) δεν μπαίνουν στο αρχείο· στο νέο κινητό τους ξαναδιαλέγεις.</string>
     <string name="settings_learning_data_export">Εξαγωγή</string>
     <string name="settings_learning_data_import">Εισαγωγή</string>
     <string name="settings_learning_data_reset_hint">Ένα μάθημα της διαδρομής «Από το μηδέν» μετρά ως ολοκληρωμένο μόλις το ανοίξεις. Ο μηδενισμός την ξεκινά από την αρχή.</string>
@@ -634,6 +625,7 @@
     <string name="learning_data_item_metronome">Μετρονόμος: tempo και διακόπτες</string>
     <string name="learning_data_item_favourites">Αγαπημένες σελίδες: %1$d</string>
     <string name="learning_data_item_progress">Πρόοδος «Από το μηδέν»: %1$d από %2$d</string>
+    <string name="learning_data_item_practice">Ιστορικό εξάσκησης, ημέρες: %1$d</string>
     <string name="learning_data_item_selected_mode">Ο ήχος που ανοίγουν οι 8 Ήχοι</string>
     <string name="learning_data_item_timbre">Χροιά ήχου</string>
     <string name="learning_data_item_ison_background">Το ισοκράτημα στο παρασκήνιο</string>
@@ -652,7 +644,7 @@
     <string name="learning_data_import_empty">Το αρχείο δεν έχει τίποτα για εισαγωγή.</string>
     <string name="learning_data_import_write_failed">Η εγγραφή απέτυχε· ίσως άλλαξαν μόνο κάποιες από τις ρυθμίσεις. Ξαναδοκίμασε την εισαγωγή.</string>
     <string name="learning_data_reset_title">Μηδενισμός προόδου;</string>
-    <string name="learning_data_reset_message">Η διαδρομή «Από το μηδέν» θα ξεκινήσει από την αρχή: κανένα βήμα δεν θα μετρά ως ολοκληρωμένο. Ένα μάθημα μετρά ως ολοκληρωμένο μόλις το ανοίξεις, οπότε ξαναμετρά την επόμενη φορά που θα το ανοίξεις. Τα αγαπημένα και οι ρυθμίσεις δεν αλλάζουν.</string>
+    <string name="learning_data_reset_message">Η διαδρομή «Από το μηδέν» θα ξεκινήσει από την αρχή: κανένα βήμα δεν θα μετρά ως ολοκληρωμένο. Ένα μάθημα μετρά ως ολοκληρωμένο μόλις το ανοίξεις, οπότε ξαναμετρά την επόμενη φορά που θα το ανοίξεις. Τα αγαπημένα, το ιστορικό εξάσκησης και οι ρυθμίσεις δεν αλλάζουν.</string>
     <string name="learning_data_reset_confirm">Μηδενισμός</string>
     <string name="learning_data_reset_done">Η πρόοδος μηδενίστηκε.</string>
     <string name="learning_data_cancel">Άκυρο</string>
@@ -966,7 +958,6 @@
     <string name="melody_trainer_note_duration">%1$s χρ.</string>
     <string name="melody_trainer_duration_decrease">Λιγότερος χρόνος</string>
     <string name="melody_trainer_duration_increase">Περισσότερος χρόνος</string>
-    <string name="melody_trainer_gorgo">Γοργόν</string>
     <string name="melody_trainer_note_remove">Αφαίρεση φθόγγου</string>
     <string name="melody_trainer_tempo_title">Ταχύτητα</string>
     <string name="melody_trainer_tempo_value">%1$d χρόνοι/λεπτό</string>
@@ -997,7 +988,6 @@
     <string name="melody_trainer_rule_default_title">Προεπιλογή</string>
     <!-- The numbers of the three rule bodies are arguments read from the time rules (TimingRulesHelp): never type one in. -->
     <string name="melody_trainer_rule_default_body">Κάθε φθόγγος κρατάει %1$s χρόνο.</string>
-    <string name="melody_trainer_rule_gorgo_title">Γοργόν</string>
     <string name="melody_trainer_rule_gorgo_body">Ο φθόγγος γίνεται μισός χρόνος (%1$s) και «τραβάει» %2$s από τον προηγούμενο — δύο φθόγγοι σε έναν χρόνο.</string>
     <string name="melody_trainer_rule_klasma_title">Κλάσμα (απλή)</string>
     <string name="melody_trainer_rule_klasma_body">Προσθέτει %1$s ολόκληρο χρόνο στον φθόγγο.</string>
@@ -1055,15 +1045,6 @@
     <string name="climbing_concept_title">Τι είναι μια σύνθεση ανάβασης;</string>
     <string name="climbing_concept_body">Ένας σύνθετος χαρακτήρας ανάβασης είναι ένα και μόνο γραπτό σημάδι που διαβάζεται σαν συνδυασμός απλούστερων νευμάτων. Βρες πρώτα τη βάση (Ολίγον, Ίσον ή Απόστροφος) — αυτή ορίζει την κίνηση της φωνής — και μετά τα μικρά σημάδια γύρω της, που προσθέτουν στόλισμα ή χρόνο. Τη σειρά με την οποία διαβάζονται τη δείχνει η ανάλυση δεξιά από κάθε σύνθεση.</string>
     <string name="climbing_how_to_read">Σε κάθε γραμμή, αριστερά είναι ο σύνθετος χαρακτήρας και δεξιά τα νεύματα που τον αποτελούν. Πάτησε μια γραμμή για να δεις ξανά πώς «σπάει» στα μέρη του.</string>
-    <string name="name_oligon">Ολίγον</string>
-    <string name="name_ison">Ίσον</string>
-    <string name="name_apostrophe">Απόστροφος</string>
-    <string name="name_embroideries">Κεντήματα</string>
-    <string name="name_underflow">Υπορροή</string>
-    <string name="name_gorgo">Γοργόν</string>
-    <string name="name_digorgo">Δίγοργον</string>
-    <string name="name_simple_dot">Απλή στιγμή</string>
-    <string name="name_fraction">Κλάσμα</string>
 
     <string name="climbing_legend_title">Τα σύμβολα με μια ματιά</string>
     <string name="climbing_legend_oligon">Ανεβαίνει μία φωνή — η βασική ανάβαση.</string>
@@ -1102,11 +1083,6 @@
     <string name="climbing_reading_gorgo_5">Υπορροή με γοργόν: απόστροφος με γοργόν και απόστροφος, στον μισό χρόνο.</string>
     <string name="climbing_reading_digorgo_1">Με δίγοργον: ίσον, κεντήματα με δίγοργον και Ολίγον — ⅓ του χρόνου το καθένα.</string>
 
-    <string name="cd_gorgo">Νεύμα: Γοργόν</string>
-    <string name="cd_digorgo">Νεύμα: Δίγοργον</string>
-    <string name="cd_simple_dot">Νεύμα: Απλή στιγμή</string>
-    <string name="cd_fraction">Νεύμα: Κλάσμα</string>
-
     <!-- «Ποιότητος» page redesign (Compose) -->
     <string name="quality_subtitle">Τα σημάδια που αλλάζουν το χρώμα του φθόγγου</string>
     <string name="quality_intro_title">Τι είναι τα σημάδια ποιότητος;</string>
@@ -1131,11 +1107,7 @@
     <string name="q_tag_link">Αλλάζει: σύνδεση</string>
     <string name="q_tag_intercom">Αλλάζει: χροιά</string>
 
-    <!-- Quality: legend meanings + missing base-neume names/descriptions -->
-    <string name="name_slight">Ελαφρόν</string>
-    <string name="name_flyer">Πεταστή</string>
-    <string name="name_double_dots">Δύο κουκκίδες</string>
-    <string name="cd_double_dots">Νεύμα: Δύο κουκκίδες</string>
+    <!-- Quality: legend meanings -->
     <string name="q_legend_ison">Κρατάει το ίδιο ύψος</string>
     <string name="q_legend_oligon">Ανεβαίνει έναν φθόγγο</string>
     <string name="q_legend_apostrophe">Κατεβαίνει έναν φθόγγο</string>
@@ -1148,15 +1120,7 @@
     <string name="q_legend_underflow">Δύο κατιόντες σε ένα σημάδι</string>
     <string name="q_legend_double_dots">Προσθέτουν χρόνους στον φθόγγο</string>
 
-    <!-- Quality: content descriptions for the eight signs -->
-    <string name="cd_heavy">Σημάδι ποιότητος: Βαρεία</string>
-    <string name="cd_yfen">Σημάδι ποιότητος: Υφέν</string>
-    <string name="cd_continuous_slight">Σημάδι ποιότητος: Συνεχές ελαφρόν</string>
-    <string name="cd_digital">Σημάδι ποιότητος: Ψηφιστόν</string>
-    <string name="cd_all_right">Σημάδι ποιότητος: Ομαλόν</string>
-    <string name="cd_vaccum">Σημάδι ποιότητος: Αντικένωμα</string>
-    <string name="cd_link">Σημάδι ποιότητος: Σύνδεσμος</string>
-    <string name="cd_intercom">Σημάδι ποιότητος: Ενδόφωνο</string>
+    <!-- Quality: the counter-example's description -->
     <string name="cd_continuous_slight_example">Παράδειγμα όπου ΔΕΝ εκτελείται συνεχές ελαφρόν, γιατί αλλάζει συλλαβή και υπάρχει κλάσμα πάνω στην απόστροφο.</string>
 
     <!-- Quality: short readings under each worked example -->
@@ -1175,7 +1139,7 @@
     <string name="q_read_vaccum_2">Συνδεδεμένο με απλήν, ενεργεί ανάμεσα στον πρώτο και τον δεύτερο χρόνο του φθόγγου.</string>
     <string name="q_read_link_1">Ο σύνδεσμος ενώνει δύο ίσα σε μία συλλαβή, χωρίς να κόβεται η φωνή.</string>
     <string name="q_read_link_3">Ενώνει επίσης έναν ολίγον με ίσον σε μία συλλαβή.</string>
-    <string name="q_read_intercom_1">Ο φθόγγος με ενδόφωνο προφέρεται με κλειστό στόμα, ασθενώς και διά της ρινός.</string>
+    <string name="q_read_intercom_1">Ο φθόγγος με ενδόφωνον προφέρεται με κλειστό στόμα, ασθενώς και διά της ρινός.</string>
 
     <!-- Αναστασιματάριο -->
     <string name="home_tile_anastasimatarion_sub">Οι ύμνοι της Κυριακής και οι ηχογραφήσεις σου</string>
@@ -1257,6 +1221,51 @@
     <string name="home_weekly_tone_this_week">Αυτή την εβδομάδα: %1$s</string>
     <string name="home_weekly_tone_from_vespers">Από τον εσπερινό απόψε: %1$s</string>
     <string name="home_weekly_tone_open_eight_modes">Άνοιξε στους 8 Ήχους</string>
+    <!-- Πεντάλεπτο της ημέρας (ClickUp 869f5x2dy) -->
+    <string name="practice_daily_title">Πεντάλεπτο της ημέρας</string>
+    <string name="practice_daily_subtitle">Απήχημα, φωνή, ρυθμός και το επόμενο μάθημα — πέντε λεπτά.</string>
+    <string name="home_practice_status_done">Σήμερα ✓ · Συνέχεια ημερών: %1$d</string>
+    <string name="home_practice_status_pending">Όχι ακόμη σήμερα · Συνέχεια ημερών: %1$d</string>
+    <string name="practice_step_counter">Βήμα %1$d από %2$d · %3$d′</string>
+    <string name="practice_step_apichima_title">Απήχημα και ίσον</string>
+    <string name="practice_step_apichima_body">Ήχος: %1$s. Άκου το απήχημα και κράτα έναν φθόγγο πάνω στο ίσο.</string>
+    <string name="practice_step_voice_title">Φωνή</string>
+    <string name="practice_step_voice_body">Ήχος: %1$s. Με το ίσο να ηχεί, ψάλε και δες στο «Πού είμαι» σε ποιον φθόγγο βρίσκεσαι.</string>
+    <string name="practice_step_voice_action">Άνοιξε το «Πού είμαι»</string>
+    <string name="practice_step_rhythm_title">Ρυθμός</string>
+    <string name="practice_step_rhythm_body">Βάλε τον μετρονόμο και κράτα τον χρόνο με το χέρι για ένα λεπτό.</string>
+    <string name="practice_step_rhythm_action">Άνοιξε τον μετρονόμο</string>
+    <string name="practice_step_lesson_title">Το επόμενο μάθημα</string>
+    <string name="practice_step_lesson_body">Από το μηδέν: %1$s</string>
+    <string name="practice_step_lesson_action">Άνοιξε το μάθημα</string>
+    <string name="practice_no_tone_note">Αυτή την εβδομάδα δεν ψάλλεται ήχος της Οκτωήχου· εξασκούμαστε στον Α’ Ήχο, όπου αρχίζει ο κύκλος.</string>
+    <string name="practice_next">Επόμενο</string>
+    <string name="practice_end">Τέλος</string>
+    <string name="practice_counts_at_end_hint">Η ημέρα μετρά όταν φτάσεις στο τελευταίο βήμα.</string>
+    <string name="practice_last_step_hint">Τελευταίο βήμα: με «Επόμενο» ή «Τέλος» η σημερινή εξάσκηση μετρά.</string>
+    <string name="practice_done_title">Μπράβο — η σημερινή εξάσκηση μετρά.</string>
+    <string name="practice_streak_days">Συνέχεια ημερών: %1$d</string>
+    <string name="practice_open_history">Ιστορικό εξάσκησης</string>
+    <string name="practice_close">Κλείσιμο</string>
+    <string name="practice_history_subtitle">Οι ημέρες που ολοκλήρωσες το πεντάλεπτο, και μια υπενθύμιση αν τη θέλεις.</string>
+    <string name="practice_history_streak_title">Συνέχεια</string>
+    <string name="practice_history_today_done">Σήμερα: ολοκληρώθηκε</string>
+    <string name="practice_history_today_pending">Σήμερα: όχι ακόμη</string>
+    <string name="practice_history_best">Καλύτερη συνέχεια: %1$d</string>
+    <string name="practice_history_week_title">Οι τελευταίες 7 ημέρες</string>
+    <string name="practice_history_week_total">Ημέρες: %1$d · Λεπτά: %2$d</string>
+    <string name="practice_history_bar_cd">%1$s — λεπτά: %2$d</string>
+    <string name="practice_reminder_title">Υπενθύμιση</string>
+    <string name="practice_reminder_switch">Υπενθύμισέ μου αν δεν έχω εξασκηθεί</string>
+    <string name="practice_reminder_time">Ώρα: %1$s</string>
+    <string name="practice_reminder_change_time">Αλλαγή ώρας</string>
+    <string name="practice_reminder_note">Κοντά σε αυτή την ώρα, και μόνο αν δεν έχεις ολοκληρώσει ακόμη το πεντάλεπτο της ημέρας.</string>
+    <string name="practice_reminder_blocked">Οι ειδοποιήσεις της εφαρμογής είναι κλειστές, οπότε η υπενθύμιση δεν θα φαίνεται.</string>
+    <string name="practice_reminder_open_settings">Ρυθμίσεις ειδοποιήσεων</string>
+    <string name="practice_reminder_channel_name">Υπενθύμιση εξάσκησης</string>
+    <string name="practice_reminder_channel_description">Μία φορά την ημέρα, στην ώρα που διάλεξες, αν δεν έχεις εξασκηθεί ακόμη.</string>
+    <string name="practice_reminder_notification_text">Δεν έχεις εξασκηθεί ακόμη σήμερα — πέντε λεπτά αρκούν.</string>
+    <string name="practice_reminder_notification_text_streak">Συνέχεια ημερών: %1$d — πέντε λεπτά για να συνεχίσει.</string>
     <!-- Ζωντανός καθρέφτης φωνής (E1) -->
     <string name="eight_modes_mirror_card_title">Πού είμαι</string>
     <string name="eight_modes_mirror_hint">Άνοιξε το μικρόφωνο και ψάλε: σου λέει σε ποιον φθόγγο είσαι και πόσα μόρια μακριά.</string>

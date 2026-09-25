@@ -121,6 +121,17 @@
             android:exported="false"
             android:label="@string/title_activity_hymn"
             android:theme="@style/Theme.LearnByzantineMusic" />
+        <!-- «Πεντάλεπτο της ημέρας» and its history (ClickUp 869f5x2dy). -->
+        <activity
+            android:name=".practice.DailyPracticeActivity"
+            android:exported="false"
+            android:label="@string/practice_daily_title"
+            android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
+            android:name=".practice.PracticeHistoryActivity"
+            android:exported="false"
+            android:label="@string/practice_open_history"
+            android:theme="@style/Theme.LearnByzantineMusic" />
         <activity
             android:name=".trainer.MelodyTrainerActivity"
             android:exported="false"

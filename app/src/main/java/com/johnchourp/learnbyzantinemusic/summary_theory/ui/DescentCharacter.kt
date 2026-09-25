@@ -1,5 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.summary_theory.ui
 
+import androidx.annotation.StringRes
+import com.johnchourp.learnbyzantinemusic.R
+
 /**
  * The simple descending "quantity characters" (χαρακτήρες ποσότητος κατιόντες) taught on the
  * «Κατιόντες» page, each lowering the voice by a fixed number of φωνές (phthongs):
@@ -11,15 +14,24 @@ package com.johnchourp.learnbyzantinemusic.summary_theory.ui
  *
  * [voices] is the *magnitude* of the descent (always positive); the page renders it as "−N".
  *
- * Pure Kotlin with no Android dependencies so the interval logic stays unit-testable. Localized
- * names, neume drawables and definitions live in the UI layer (see the `nameRes`, `diagramRes`,
- * `definitionRes` and `cdRes` extensions in `DescentsScreen`).
+ * A view of the sign table: each character is its [sign] — name, glyph, TalkBack text, size and
+ * φωνές all come from [Neume] — in the page's order, plus what only this page adds: a one-line
+ * [definitionRes] for the characters that have one. Pure Kotlin (resource ids are plain Ints), so
+ * the interval logic stays unit-testable.
  */
-enum class DescentCharacter(val voices: Int, val hasDefinition: Boolean = false) {
-    APOSTROPHOS(1),
-    ELAFRON(2),
-    YPORROI(2, hasDefinition = true),
-    CHAMILI(4);
+enum class DescentCharacter(val sign: Neume, @StringRes val definitionRes: Int? = null) {
+    APOSTROPHOS(Neume.APOSTROPHOS),
+    ELAFRON(Neume.ELAFRON),
+    YPORROI(Neume.YPORROI, definitionRes = R.string.yporroi_definition),
+    CHAMILI(Neume.CHAMILI);
+
+    /** How many φωνές the character lowers the voice; the sign table stores it negative. */
+    val voices: Int get() = -checkNotNull(sign.voices) { "$sign has no φωνές in the sign table" }
+
+    val hasDefinition: Boolean get() = definitionRes != null
+
+    /** Width × height (dp) the page's simple row draws the sign at: its natural size. */
+    val glyphSize: Pair<Int, Int> get() = sign.width to sign.height
 
     companion object {
         /** Ordered Απόστροφος → Ελαφρόν → Υπορροή → Χαμηλή. */

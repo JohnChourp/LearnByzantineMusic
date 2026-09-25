@@ -43,7 +43,7 @@ class ClimbingCompositionTest {
     fun gorgo_section_is_marked_and_actually_contains_a_gorgo_glyph() {
         ClimbingCompositions.gorgo.forEach { c ->
             assertEquals(Emphasis.GORGON, c.emphasis)
-            val hasGorgo = (c.combined + c.parts).any { f -> f.glyphs.any { it.neume == Neume.GORGO } }
+            val hasGorgo = (c.combined + c.parts).any { f -> f.glyphs.any { it.neume == Neume.GORGON } }
             assertTrue("a γοργόν composition is missing its GORGO glyph", hasGorgo)
         }
     }
@@ -52,7 +52,7 @@ class ClimbingCompositionTest {
     fun digorgo_section_is_marked_and_actually_contains_a_digorgo_glyph() {
         ClimbingCompositions.digorgo.forEach { c ->
             assertEquals(Emphasis.DIGORGON, c.emphasis)
-            val hasDigorgo = (c.combined + c.parts).any { f -> f.glyphs.any { it.neume == Neume.DIGORGO } }
+            val hasDigorgo = (c.combined + c.parts).any { f -> f.glyphs.any { it.neume == Neume.DIGORGON } }
             assertTrue("the δίγοργον composition is missing its DIGORGO glyph", hasDigorgo)
         }
     }

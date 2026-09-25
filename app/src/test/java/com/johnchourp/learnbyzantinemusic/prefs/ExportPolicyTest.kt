@@ -31,6 +31,8 @@ class ExportPolicyTest {
         "mode_base_shift_moria_<modeKey>" to YES,
         "ison_in_background" to YES,
         "recordings_output_format" to YES,
+        // The practice history behind the streak (ClickUp 869f5x2dy): the learner's own, like the path.
+        "practice_log" to YES,
         // The learner's own work: the Melody Trainer's saved exercises and its last melody (F6).
         "trainer_exercises" to YES,
         "trainer_last_melody" to YES,
@@ -48,6 +50,9 @@ class ExportPolicyTest {
         // Once per install: the first-launch language wizard, and Android's notifications prompt.
         "app_language_onboarding_completed" to NO,
         "notifications_permission_asked" to NO,
+        // The daily reminder: switching it on is where Android asks for notifications, on that phone.
+        "practice_reminder_enabled" to NO,
+        "practice_reminder_minute_of_day" to NO,
     )
 
     @Test

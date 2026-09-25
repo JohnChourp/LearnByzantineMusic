@@ -49,6 +49,11 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
  * records — and it is honoured on a fresh start only, so a recreation after the user switched the
  * ison off does not switch it back on.
  *
+ * **«Πεντάλεπτο της ημέρας»** (ClickUp `869f5x2dy`) opens it the same way on the tone of the week —
+ * [intent] with `isonOn` sets that same [EXTRA_START_ISON] — and for its voice step with «Πού είμαι»
+ * already listening ([EXTRA_LISTEN]; the microphone is asked for then, as a tap would). Both are
+ * one-shot: read on a fresh start only, never saved.
+ *
  * **Who plays the ison.** With «Συνέχισε στο παρασκήνιο» off — the default — this page plays it and
  * silences it in onStop, as it always has. With it on, [IsonPlaybackService] plays it from the first
  * moment and this page only sends it requests, so leaving the page hands nothing over and nothing
@@ -165,6 +170,7 @@ class EightModesActivity : BaseActivity() {
                     onListenChange = ::setListening,
                     heardFrequencyHz = heardFrequencyHz,
                     micDenied = micDenied,
+                    initialListening = savedInstanceState == null && intent.getBooleanExtra(EXTRA_LISTEN, false),
                     onOpenMenu = { EightModesNavigation.showMenu(this, selectedTopicKey = null) },
                     onBack = ::finish,
                     initialDroneOn = startIson || sounding != null,
@@ -350,6 +356,7 @@ class EightModesActivity : BaseActivity() {
         private val SELECTED_MODE_KEY_PREF_KEY = AppPrefs.SelectedModeKey.name
         private val IN_BACKGROUND_PREF_KEY = AppPrefs.IsonInBackground.name
         private const val EXTRA_MODE_KEY = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_MODE_KEY"
+        private const val EXTRA_LISTEN = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_LISTEN"
         private const val STATE_SHOWN_MODE_KEY = "shown_mode_key"
 
         /**
@@ -362,9 +369,15 @@ class EightModesActivity : BaseActivity() {
         private const val EXTRA_ISON_CHOICE = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_ISON_CHOICE"
         private const val EXTRA_ISON_CHOICE_OCTAVE = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_ISON_CHOICE_OCTAVE"
 
-        /** Opens the page on [modeKey] for this opening only; see the class KDoc. */
-        fun intent(context: Context, modeKey: String): Intent =
-            Intent(context, EightModesActivity::class.java).putExtra(EXTRA_MODE_KEY, modeKey)
+        /**
+         * Opens the page on [modeKey] for this opening only; see the class KDoc. [isonOn] starts the
+         * ison ([EXTRA_START_ISON]) and [listen] starts «Πού είμαι», both only on this opening.
+         */
+        fun intent(context: Context, modeKey: String, isonOn: Boolean = false, listen: Boolean = false): Intent =
+            Intent(context, EightModesActivity::class.java).putExtra(EXTRA_MODE_KEY, modeKey).apply {
+                if (isonOn) putExtra(EXTRA_START_ISON, true)
+                if (listen) putExtra(EXTRA_LISTEN, true)
+            }
 
         /**
          * Opens the page on [request]'s mode with that ison already sounding, on its φθόγγος — the

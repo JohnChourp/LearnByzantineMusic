@@ -2,10 +2,14 @@ package com.johnchourp.learnbyzantinemusic.settings
 
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
+import com.johnchourp.learnbyzantinemusic.practice.PracticeDay
+import com.johnchourp.learnbyzantinemusic.practice.PracticeLog
+import com.johnchourp.learnbyzantinemusic.practice.PracticeLogCodec
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.EIGHT_MODES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.NOTES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.OWNED_RECORDINGS
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.PRACTICE
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.RECORDINGS
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.RECORDING_ANALYSIS
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.SETTINGS
@@ -37,6 +41,11 @@ import java.time.LocalDate
 class LearningDataFileTest {
 
     private val exportedAt = 1_758_800_000_000L
+
+    /** A practice history as the app writes it (ClickUp `869f5x2dy`): two days practised. */
+    private val practiceLog = PracticeLogCodec.encode(
+        PracticeLog(mapOf(LocalDate.of(2026, 9, 24) to PracticeDay(1, 5), LocalDate.of(2026, 9, 25) to PracticeDay(2, 11)))
+    )
 
     /** Written by the Trainer's own codecs, so each is already in the form the export writes. */
     private val trainerMelody = TrainerMelody(
@@ -79,6 +88,7 @@ class LearningDataFileTest {
             "hymn:first:01|start" to "PA",
             "hymn:varys:42|expected" to "",
         ),
+        PRACTICE to mapOf("practice_log" to practiceLog),
         TRAINER to mapOf(
             "trainer_exercises" to trainerExercises,
             "trainer_last_melody" to TrainerMelodyCodec.encodeString(trainerMelody),
@@ -99,6 +109,7 @@ class LearningDataFileTest {
             "notes_last_sync_error" to "backup_file_write_failed",
         ),
         OWNED_RECORDINGS to mapOf("owned_recordings" to """["content://media/external/audio/1"]"""),
+        PRACTICE to mapOf("practice_reminder_enabled" to true, "practice_reminder_minute_of_day" to 1140),
         RECORDING_ANALYSIS to mapOf(
             "recording:content://com.android.externalstorage.documents/document/primary%3AMusic%2F1.flac|expected" to "NI,PA",
             "recording:content://com.android.externalstorage.documents/document/primary%3AMusic%2F1.flac|mode" to "first",
@@ -354,6 +365,7 @@ class LearningDataFileTest {
                 Line(Item.METRONOME, 4),
                 Line(Item.FAVOURITES, 2),
                 Line(Item.PROGRESS, 3),
+                Line(Item.PRACTICE, 2),
                 Line(Item.SELECTED_MODE, 1),
                 Line(Item.TIMBRE, 1),
                 Line(Item.ISON_BACKGROUND, 1),

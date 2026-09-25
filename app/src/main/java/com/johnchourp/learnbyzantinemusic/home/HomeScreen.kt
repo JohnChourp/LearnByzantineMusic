@@ -36,6 +36,8 @@ fun HomeScreen(
     learningPath: LearningPathUi? = null,
     /** The tone of the week, first on the screen: the first thing a chanter wants each day. */
     weeklyTone: WeeklyToneUi? = null,
+    /** «Πεντάλεπτο της ημέρας», right under the tone of the week. */
+    dailyPractice: DailyPracticeUi? = null,
     /** Opens the theory search. Null hides the row entirely rather than showing a dead control. */
     onOpenSearch: (() -> Unit)? = null,
 ) {
@@ -61,6 +63,11 @@ fun HomeScreen(
             if (weeklyTone != null) {
                 StaggeredAppear(delayMillis = appearDelay(appearIndex++)) {
                     WeeklyToneCard(state = weeklyTone, modifier = Modifier.fillMaxWidth())
+                }
+            }
+            if (dailyPractice != null) {
+                StaggeredAppear(delayMillis = appearDelay(appearIndex++)) {
+                    DailyPracticeCard(state = dailyPractice, modifier = Modifier.fillMaxWidth())
                 }
             }
             if (learningPath != null) {
