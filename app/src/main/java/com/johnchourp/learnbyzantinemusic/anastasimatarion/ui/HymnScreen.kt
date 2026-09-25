@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.LibraryMusic
@@ -37,6 +38,11 @@ import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionLabel
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.HymnFolders
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.HymnRecording
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.HymnUiState
+import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerPhase
+import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerState
+import com.johnchourp.learnbyzantinemusic.recordings.ui.components.RecordingPlayerActions
+import com.johnchourp.learnbyzantinemusic.recordings.ui.components.RecordingPlayerCard
+import com.johnchourp.learnbyzantinemusic.recordings.ui.components.ScrollToPlayerOnOpen
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
 import com.johnchourp.learnbyzantinemusic.ui.components.StaggeredAppear
@@ -50,11 +56,14 @@ import java.util.Date
 
 /**
  * Renders [HymnUiState]: the hymn (incipit, mode · service · group), a record button that saves
- * into the hymn's folder, and the hymn's recordings with an «Άνοιγμα» action each.
+ * into the hymn's folder, and the hymn's recordings with an «Άνοιγμα» action each — which plays the
+ * recording in the in-app player right under the title ([RecordingPlayerCard], ClickUp `869f5x268`).
  */
 @Composable
 fun HymnScreen(
     uiState: HymnUiState,
+    player: PlayerState,
+    playerActions: RecordingPlayerActions,
     onBack: () -> Unit,
     onRecord: () -> Unit,
     onOpenRecording: (HymnRecording) -> Unit,
@@ -62,7 +71,10 @@ fun HymnScreen(
     modifier: Modifier = Modifier,
 ) {
     val ref = uiState.ref
+    val listState = rememberLazyListState()
+    ScrollToPlayerOnOpen(player.openCount, listState)
     LazyColumn(
+        state = listState,
         modifier = modifier
             .fillMaxSize()
             .background(LbmPageBg),
@@ -85,6 +97,12 @@ fun HymnScreen(
                 onBack = onBack,
                 icon = Icons.Filled.LibraryMusic,
             )
+        }
+
+        if (player.phase != PlayerPhase.EMPTY) {
+            item(key = "player") {
+                RecordingPlayerCard(player, playerActions, modifier = Modifier.padding(horizontal = 16.dp))
+            }
         }
 
         if (ref == null) {

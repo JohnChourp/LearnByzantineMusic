@@ -47,6 +47,17 @@ data class LearningPathUi(
 )
 
 /**
+ * State of the «Πεντάλεπτο της ημέρας» card on home (ClickUp `869f5x2dy`): the one button that starts
+ * the guided session, and a line saying where the streak stands.
+ */
+data class DailyPracticeUi(
+    /** Days in a row with a completed session, ending today or — while today is open — yesterday. */
+    val streak: Int,
+    val practisedToday: Boolean,
+    val onStart: () -> Unit,
+)
+
+/**
  * State of the «tone of the week» card at the top of home (ClickUp `869f5x24r`).
  *
  * Built by [from] out of a [WeeklyToneAnnouncement.Announcement], so the tone comes from

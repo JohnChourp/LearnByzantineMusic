@@ -170,7 +170,10 @@ class GlobalShiftLaddersTest {
         assertEquals(2, Regex("""globalShiftMoria = GlobalShift\.load\(this\)""").findAll(activity).count())
     }
 
-    /** The Trainer takes the global shift on opening, on every return, and keeps it when the ήχος changes. */
+    /**
+     * The Trainer takes the global shift on opening and on every return, and keeps it when the ήχος
+     * changes or a saved melody opens — a melody carries its ήχος and shift, never the singer's voice.
+     */
     @Test
     fun theTrainerKeepsTheGlobalShiftWhenItsScaleChanges() {
         val trainer = KotlinSource.withoutComments(
@@ -180,6 +183,7 @@ class GlobalShiftLaddersTest {
             "scale = scale.copy(globalShiftMoria = GlobalShift.load(this))",
             "scale = TrainerScale(mode, shift, scale.globalShiftMoria)",
             "globalShiftMoria = scale.globalShiftMoria",
+            "scale = live.scale.copy(globalShiftMoria = scale.globalShiftMoria)",
         ).forEach { wiring -> assertTrue("MelodyTrainerActivity: $wiring", wiring in trainer) }
         val scale = KotlinSource.withoutComments(
             File(KotlinSource.mainRoot, "com/johnchourp/learnbyzantinemusic/trainer/TrainerScale.kt").readText(),

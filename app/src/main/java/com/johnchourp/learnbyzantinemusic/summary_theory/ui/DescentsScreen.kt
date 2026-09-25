@@ -1,6 +1,5 @@
 package com.johnchourp.learnbyzantinemusic.summary_theory.ui
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -69,49 +68,6 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurface
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurfaceVariant
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
-
-/** Localized name of a simple descending character. */
-@StringRes
-internal fun DescentCharacter.nameRes(): Int = when (this) {
-    DescentCharacter.APOSTROPHOS -> R.string.apostrophe
-    DescentCharacter.ELAFRON -> R.string.slight
-    DescentCharacter.YPORROI -> R.string.underflow
-    DescentCharacter.CHAMILI -> R.string.low
-}
-
-/** The neume drawable for a simple descending character. */
-@DrawableRes
-internal fun DescentCharacter.diagramRes(): Int = when (this) {
-    DescentCharacter.APOSTROPHOS -> R.drawable.apostrophe
-    DescentCharacter.ELAFRON -> R.drawable.slight
-    DescentCharacter.YPORROI -> R.drawable.underflow
-    DescentCharacter.CHAMILI -> R.drawable.low
-}
-
-/** Accessibility description for a simple character's neume. */
-@StringRes
-internal fun DescentCharacter.cdRes(): Int = when (this) {
-    DescentCharacter.APOSTROPHOS -> R.string.cd_apostrophe
-    DescentCharacter.ELAFRON -> R.string.cd_slight
-    DescentCharacter.YPORROI -> R.string.cd_underflow
-    DescentCharacter.CHAMILI -> R.string.cd_low
-}
-
-/** One-line definition for the characters that have one (Υπορροή); else null. */
-@StringRes
-internal fun DescentCharacter.definitionRes(): Int? = when (this) {
-    DescentCharacter.YPORROI -> R.string.yporroi_definition
-    else -> null
-}
-
-/** Intrinsic neume size (width × height, dp) from the original layout, kept to preserve scale. */
-internal fun DescentCharacter.glyphSize(): Pair<Int, Int> = when (this) {
-    DescentCharacter.APOSTROPHOS -> 30 to 18
-    DescentCharacter.ELAFRON -> 52 to 18
-    // The Υπορροή neume (underflow) is a small, compact mark.
-    DescentCharacter.YPORROI -> 19 to 18
-    DescentCharacter.CHAMILI -> 58 to 36
-}
 
 /** Localized "-N φωνές" label for a descent magnitude 1..12. */
 @StringRes
@@ -207,7 +163,7 @@ private fun VoiceDropCard() {
         ) {
             DescentCharacter.all.forEach { character ->
                 LessonChip(
-                    label = stringResource(character.nameRes()),
+                    label = character.sign.displayName(),
                     selected = character == selected,
                     onClick = {
                         // Always restart the drop, even when switching between equal-depth
@@ -224,7 +180,7 @@ private fun VoiceDropCard() {
         Text(
             text = stringResource(
                 R.string.descents_interactive_caption,
-                stringResource(selected.nameRes()),
+                selected.sign.displayName(),
                 stringResource(minusVoicesLabelRes(selected.voices)),
             ),
             style = MaterialTheme.typography.bodyMedium,
@@ -368,7 +324,7 @@ private fun SimpleCharacterRow(character: DescentCharacter) {
             VoiceBadge(voices = character.voices)
             Spacer(Modifier.width(12.dp))
             Text(
-                text = stringResource(character.nameRes()),
+                text = character.sign.displayName(),
                 style = MaterialTheme.typography.titleMedium,
                 color = LbmTextPrimary,
                 fontWeight = FontWeight.Bold,
@@ -381,7 +337,7 @@ private fun SimpleCharacterRow(character: DescentCharacter) {
                 fontWeight = FontWeight.SemiBold,
             )
         }
-        character.definitionRes()?.let { defRes ->
+        character.definitionRes?.let { defRes ->
             Spacer(Modifier.height(6.dp))
             Text(
                 text = stringResource(defRes),
@@ -400,7 +356,7 @@ private val SIMPLE_NEUME_FRAME_HEIGHT = 88.dp
 /** A single neume on a white frame, drawn at its true (scaled) size so rows stay compact. */
 @Composable
 private fun SimpleNeumeFrame(character: DescentCharacter) {
-    val (w, h) = character.glyphSize()
+    val (w, h) = character.glyphSize
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
@@ -414,8 +370,8 @@ private fun SimpleNeumeFrame(character: DescentCharacter) {
             contentAlignment = Alignment.Center,
         ) {
             Image(
-                painter = painterResource(character.diagramRes()),
-                contentDescription = stringResource(character.cdRes()),
+                painter = painterResource(character.sign.drawable),
+                contentDescription = character.sign.contentDescription(),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(
                     width = (w * SIMPLE_NEUME_SCALE).dp,
@@ -497,7 +453,7 @@ private fun LeapingDescentsCard() {
 
 /** The single authored neume spelling of a leaping descent, framed on white. */
 @Composable
-private fun LeapingDescentForm(form: DescentForm, contentDescription: String, modifier: Modifier = Modifier) {
+private fun LeapingDescentForm(form: NeumeForm, contentDescription: String, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -514,7 +470,7 @@ private fun LeapingDescentForm(form: DescentForm, contentDescription: String, mo
                 .padding(8.dp),
             contentAlignment = Alignment.Center,
         ) {
-            DescentNeumeStack(form = form, contentDescription = contentDescription)
+            NeumeStack(form = form, contentDescription = contentDescription)
         }
     }
 }

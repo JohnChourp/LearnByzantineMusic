@@ -30,12 +30,13 @@ import com.johnchourp.learnbyzantinemusic.music.TimeSign
 
 /**
  * One symbol→meaning row of the «examples» and «pause» tables: the [form] glyph, the plain-Greek
- * [meaningRes] it stands for, and an optional [nameRes] (the examples table names each κουκίδα).
+ * [meaningRes] it stands for, and the sign it [names] — the examples table names the κλάσμα and each
+ * κουκίδα, with the sign table's name; the rests are named by what they do.
  */
 data class TimeSymbolRow(
     val form: NeumeForm,
     @StringRes val meaningRes: Int,
-    @StringRes val nameRes: Int = 0,
+    val names: Neume? = null,
 )
 
 /**
@@ -83,29 +84,29 @@ private fun isonRaised() = form(18, ison(dy = -4))
 /* ---- Composite tiles: a note carrying its time character (offsets from layout_time.xml) ---- */
 
 private fun isonGorgo() =
-    form(36, ison(), g(Neume.GORGO, 18, 9, NeumeAlign.CENTER, dx = 5, dy = -5))
+    form(36, ison(), g(Neume.GORGON, 18, 9, NeumeAlign.CENTER, dx = 5, dy = -5))
 
 private fun isonPresentedGorgo() =
-    form(54, ison(), g(Neume.PRESENTED_GORGO, 21, 10, NeumeAlign.TOP_CENTER, dx = 2, dy = 12))
+    form(54, ison(), g(Neume.GORGON_DOT_LEFT, 21, 10, NeumeAlign.TOP_CENTER, dx = 2, dy = 12))
 
 private fun isonGorgoPresented() =
-    form(54, ison(), g(Neume.GORGO_PRESENTED, 21, 10, NeumeAlign.TOP_CENTER, dx = 2, dy = 12))
+    form(54, ison(), g(Neume.GORGON_DOT_RIGHT, 21, 10, NeumeAlign.TOP_CENTER, dx = 2, dy = 12))
 
 private fun isonDigorgo() =
-    form(54, ison(), g(Neume.DIGORGO, 22, 15, NeumeAlign.TOP_CENTER, dx = 8, dy = 9))
+    form(54, ison(), g(Neume.DIGORGON, 22, 15, NeumeAlign.TOP_CENTER, dx = 8, dy = 9))
 
 private fun isonPresentedDigorgo(n: Neume, w: Int) =
     form(54, ison(), g(n, w, 18, NeumeAlign.TOP_CENTER, dx = 8, dy = 6))
 
 private fun isonTrigorgo() =
-    form(54, ison(), g(Neume.TRIGORGO, 36, 18, NeumeAlign.TOP_CENTER, dx = 12, dy = 4))
+    form(54, ison(), g(Neume.TRIGORGON, 36, 18, NeumeAlign.TOP_CENTER, dx = 12, dy = 4))
 
 /** Ολίγον carrying an argó-family character above and κεντήματα below-right (the written form). */
 private fun oligonArgoFamily(n: Neume, w: Int, dy: Int) =
     form(
         54,
         oligon(),
-        g(Neume.EMBROIDERIES, 25, 18, NeumeAlign.TOP_END, dx = -4, dy = 28),
+        g(Neume.KENTIMATA, 25, 18, NeumeAlign.TOP_END, dx = -4, dy = 28),
         g(n, w, 18, NeumeAlign.TOP_CENTER, dx = 4, dy = dy),
     )
 
@@ -114,13 +115,13 @@ private fun oligonArgo() =
     form(
         54,
         oligon(),
-        g(Neume.EMBROIDERIES, 25, 18, NeumeAlign.TOP_END, dx = -4, dy = 28),
-        g(Neume.ARGO, 13, 10, NeumeAlign.TOP_CENTER, dx = 6, dy = 6),
+        g(Neume.KENTIMATA, 25, 18, NeumeAlign.TOP_END, dx = -4, dy = 28),
+        g(Neume.ARGON, 13, 10, NeumeAlign.TOP_CENTER, dx = 6, dy = 6),
     )
 
 /** Κεντήματα carrying a γοργόν — the shared middle term of every αργό decomposition. */
 private fun embGorgo() =
-    form(54, g(Neume.EMBROIDERIES, 30, 18, NeumeAlign.CENTER), g(Neume.GORGO, 18, 9, NeumeAlign.TOP_CENTER, dx = 2, dy = 6))
+    form(54, g(Neume.KENTIMATA, 30, 18, NeumeAlign.CENTER), g(Neume.GORGON, 18, 9, NeumeAlign.TOP_CENTER, dx = 2, dy = 6))
 
 /** Ολίγον carrying a κλάσμα/κουκίδες below it — the lengthened note that closes an αργό decomposition. */
 private fun oligonWith(n: Neume, w: Int, dx: Int, dy: Int) =
@@ -138,17 +139,17 @@ object TimeCharacters {
 
     /** The κλάσμα / κουκίδες that add time to any σημαδόφωνο (ίσον, ολίγον, απόστροφο …). */
     val examples: List<TimeSymbolRow> = listOf(
-        TimeSymbolRow(form(18, g(Neume.FRACTION, 48, 18)), R.string.phthong_1_for_2_time, R.string.fraction),
-        TimeSymbolRow(form(18, g(Neume.SIMPLE_DOT, 22, 18)), R.string.phthong_1_for_2_time, R.string.dot_simple),
-        TimeSymbolRow(form(18, g(Neume.DOUBLE_DOTS, 56, 18)), R.string.phthong_1_for_3_time, R.string.dot_double),
-        TimeSymbolRow(form(18, g(Neume.TRIPLE_DOTS, 70, 18)), R.string.phthong_1_for_4_time, R.string.dot_triple),
+        TimeSymbolRow(form(18, g(Neume.KLASMA, 48, 18)), R.string.phthong_1_for_2_time, names = Neume.KLASMA),
+        TimeSymbolRow(form(18, g(Neume.APLI, 22, 18)), R.string.phthong_1_for_2_time, names = Neume.APLI),
+        TimeSymbolRow(form(18, g(Neume.DIPLI, 56, 18)), R.string.phthong_1_for_3_time, names = Neume.DIPLI),
+        TimeSymbolRow(form(18, g(Neume.TRIPLI, 70, 18)), R.string.phthong_1_for_4_time, names = Neume.TRIPLI),
     )
 
     /** The βαρεία used as a rest, in its 1 / 2 / 3-beat forms. */
     val pauses: List<TimeSymbolRow> = listOf(
-        TimeSymbolRow(form(54, g(Neume.HEAVY_SIMPLE_DOT, 36, 54)), R.string.pause_time_1),
-        TimeSymbolRow(form(54, g(Neume.HEAVY_DOUBLE_DOTS, 50, 54)), R.string.pause_time_2),
-        TimeSymbolRow(form(54, g(Neume.HEAVY_TRIPLE_DOTS, 66, 54)), R.string.pause_time_3),
+        TimeSymbolRow(form(54, g(Neume.VAREIA_APLI, 36, 54)), R.string.pause_time_1),
+        TimeSymbolRow(form(54, g(Neume.VAREIA_DIPLI, 50, 54)), R.string.pause_time_2),
+        TimeSymbolRow(form(54, g(Neume.VAREIA_TRIPLI, 66, 54)), R.string.pause_time_3),
     )
 
     /** Γοργό: two ίσον in one beat (½ + ½). */
@@ -159,7 +160,7 @@ object TimeCharacters {
             equals(),
             term(isonTile(), R.string.time_1),
         ),
-        highlight = setOf(Neume.GORGO),
+        highlight = setOf(Neume.GORGON),
         rhythm = listOf(note(), note(TimeSign.GORGON)),
     )
 
@@ -172,7 +173,7 @@ object TimeCharacters {
                 equals(),
                 term(isonTile(), R.string.time_1),
             ),
-            highlight = setOf(Neume.PRESENTED_GORGO),
+            highlight = setOf(Neume.GORGON_DOT_LEFT),
             rhythm = listOf(note(), note(TimeSign.GORGON_DOT_LEFT)),
         ),
         TimeEquation(
@@ -182,7 +183,7 @@ object TimeCharacters {
                 equals(),
                 term(isonTile(), R.string.time_1),
             ),
-            highlight = setOf(Neume.GORGO_PRESENTED),
+            highlight = setOf(Neume.GORGON_DOT_RIGHT),
             rhythm = listOf(note(), note(TimeSign.GORGON_DOT_RIGHT)),
         ),
     )
@@ -196,7 +197,7 @@ object TimeCharacters {
             equals(),
             term(isonTile(), R.string.time_1),
         ),
-        highlight = setOf(Neume.DIGORGO),
+        highlight = setOf(Neume.DIGORGON),
         rhythm = listOf(note(), note(TimeSign.DIGORGON), note()),
     )
 
@@ -205,34 +206,34 @@ object TimeCharacters {
         TimeEquation(
             terms = listOf(
                 term(isonTile(), R.string.time_1_by_2),
-                term(isonPresentedDigorgo(Neume.PRESENTED_BOTTOM_DIGORGO, 35), R.string.time_1_by_4),
+                term(isonPresentedDigorgo(Neume.DIGORGON_DOT_BOTTOM, 35), R.string.time_1_by_4),
                 term(isonTile(), R.string.time_1_by_4),
                 equals(),
                 term(isonTile(), R.string.time_1),
             ),
-            highlight = setOf(Neume.PRESENTED_BOTTOM_DIGORGO),
+            highlight = setOf(Neume.DIGORGON_DOT_BOTTOM),
             rhythm = listOf(note(), note(TimeSign.DIGORGON_DOT_BOTTOM), note()),
         ),
         TimeEquation(
             terms = listOf(
                 term(isonTile(), R.string.time_1_by_4),
-                term(isonPresentedDigorgo(Neume.PRESENTED_MIDDLE_DIGORGO, 27), R.string.time_1_by_2),
+                term(isonPresentedDigorgo(Neume.DIGORGON_DOT_MIDDLE, 27), R.string.time_1_by_2),
                 term(isonTile(), R.string.time_1_by_4),
                 equals(),
                 term(isonTile(), R.string.time_1),
             ),
-            highlight = setOf(Neume.PRESENTED_MIDDLE_DIGORGO),
+            highlight = setOf(Neume.DIGORGON_DOT_MIDDLE),
             rhythm = listOf(note(), note(TimeSign.DIGORGON_DOT_MIDDLE), note()),
         ),
         TimeEquation(
             terms = listOf(
                 term(isonTile(), R.string.time_1_by_4),
-                term(isonPresentedDigorgo(Neume.PRESENTED_TOP_DIGORGO, 35), R.string.time_1_by_4),
+                term(isonPresentedDigorgo(Neume.DIGORGON_DOT_TOP, 35), R.string.time_1_by_4),
                 term(isonTile(), R.string.time_1_by_2),
                 equals(),
                 term(isonTile(), R.string.time_1),
             ),
-            highlight = setOf(Neume.PRESENTED_TOP_DIGORGO),
+            highlight = setOf(Neume.DIGORGON_DOT_TOP),
             rhythm = listOf(note(), note(TimeSign.DIGORGON_DOT_TOP), note()),
         ),
     )
@@ -247,7 +248,7 @@ object TimeCharacters {
             equals(),
             term(isonTile(), R.string.time_1),
         ),
-        highlight = setOf(Neume.TRIGORGO),
+        highlight = setOf(Neume.TRIGORGON),
         rhythm = listOf(note(), note(TimeSign.TRIGORGON), note(), note()),
     )
 
@@ -262,9 +263,9 @@ object TimeCharacters {
             equals(),
             term(isonRaised(), R.string.time_1_by_2),
             term(embGorgo(), R.string.time_1_by_2),
-            term(oligonWith(Neume.FRACTION, 23, dx = 0, dy = 14), R.string.time_2),
+            term(oligonWith(Neume.KLASMA, 23, dx = 0, dy = 14), R.string.time_2),
         ),
-        highlight = setOf(Neume.ARGO),
+        highlight = setOf(Neume.ARGON),
         rhythm = listOf(note(), note(), note(TimeSign.ARGON)),
     )
 
@@ -272,13 +273,13 @@ object TimeCharacters {
     val diargo = TimeEquation(
         terms = listOf(
             term(isonRaised()),
-            term(oligonArgoFamily(Neume.DIARGO, 17, dy = 1)),
+            term(oligonArgoFamily(Neume.DIARGON, 17, dy = 1)),
             equals(),
             term(isonRaised(), R.string.time_1_by_2),
             term(embGorgo(), R.string.time_1_by_2),
-            term(oligonWith(Neume.DOUBLE_DOTS, 15, dx = 8, dy = 19), R.string.time_3),
+            term(oligonWith(Neume.DIPLI, 15, dx = 8, dy = 19), R.string.time_3),
         ),
-        highlight = setOf(Neume.DIARGO),
+        highlight = setOf(Neume.DIARGON),
         rhythm = listOf(note(), note(), note(TimeSign.DIARGON)),
     )
 
@@ -286,13 +287,13 @@ object TimeCharacters {
     val triargo = TimeEquation(
         terms = listOf(
             term(isonRaised()),
-            term(oligonArgoFamily(Neume.TRIARGO, 27, dy = 1)),
+            term(oligonArgoFamily(Neume.TRIARGON, 27, dy = 1)),
             equals(),
             term(isonRaised(), R.string.time_1_by_2),
             term(embGorgo(), R.string.time_1_by_2),
-            term(oligonWith(Neume.TRIPLE_DOTS, 25, dx = 6, dy = 19), R.string.time_4),
+            term(oligonWith(Neume.TRIPLI, 25, dx = 6, dy = 19), R.string.time_4),
         ),
-        highlight = setOf(Neume.TRIARGO),
+        highlight = setOf(Neume.TRIARGON),
         rhythm = listOf(note(), note(), note(TimeSign.TRIARGON)),
     )
 }

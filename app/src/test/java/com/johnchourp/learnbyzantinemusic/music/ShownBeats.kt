@@ -12,7 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory
  * The pages print beat values as text — «½», «⅓», «1 χρόνο», «2» — in every language they ship.
  * The tests that hold those pages to the time rules read that text rather than the resource names,
  * so a label is judged by what the reader sees, in each language: a `time_1_by_4` whose text were
- * «½» would be caught too.
+ * «½» would be caught too. The sign-name tests (H4) read [languages] and [nameOf] the same way.
  */
 internal object ShownBeats {
 

@@ -51,6 +51,11 @@ import com.johnchourp.learnbyzantinemusic.voice.GlobalShift
  * records — and it is honoured on a fresh start only, so a recreation after the user switched the
  * ison off does not switch it back on.
  *
+ * **«Πεντάλεπτο της ημέρας»** (ClickUp `869f5x2dy`) opens it the same way on the tone of the week —
+ * [intent] with `isonOn` sets that same [EXTRA_START_ISON] — and for its voice step with «Πού είμαι»
+ * already listening ([EXTRA_LISTEN]; the microphone is asked for then, as a tap would). Both are
+ * one-shot: read on a fresh start only, never saved.
+ *
  * **Who plays the ison.** With «Συνέχισε στο παρασκήνιο» off — the default — this page plays it and
  * silences it in onStop, as it always has. With it on, [IsonPlaybackService] plays it from the first
  * moment and this page only sends it requests, so leaving the page hands nothing over and nothing
@@ -61,7 +66,8 @@ import com.johnchourp.learnbyzantinemusic.voice.GlobalShift
  * adds the global shift from «Βρες τη φωνή σου» to the mode's own; it is re-read on every onStart,
  * because Settings can change it while this page waits behind. The first time the page opens it
  * offers that test, then a four-step tour, each once ([EightModesFirstRun]), and both are marked
- * however they end. A page that opens with the ison already sounding shows neither and marks nothing.
+ * however they end. A page that opens already sounding the ison or listening shows neither and marks
+ * nothing.
  */
 class EightModesActivity : BaseActivity() {
 
@@ -137,10 +143,13 @@ class EightModesActivity : BaseActivity() {
         globalShiftMoria = GlobalShift.load(this)
         inBackground = prefs.getBoolean(IN_BACKGROUND_PREF_KEY, false)
         val sounding = if (inBackground) IsonPlaybackService.playing.value else null
-        // Opened to play the ison — the shortcut «Ίσο», «Αναπαραγωγή», for the whole visit — or over
-        // a background one: nothing shows by itself over it, and nothing is marked.
+        // Opened to play the ison or to listen — the shortcut «Ίσο», «Αναπαραγωγή», «Πεντάλεπτο της
+        // ημέρας», for the whole visit — or over a background ison: nothing shows by itself over it,
+        // and nothing is marked.
         firstRun = nextFirstRun(
-            isonSounding = intent.getBooleanExtra(EXTRA_START_ISON, false) || sounding != null,
+            startsBusy = intent.getBooleanExtra(EXTRA_START_ISON, false) ||
+                intent.getBooleanExtra(EXTRA_LISTEN, false) ||
+                sounding != null,
         )
         // What was on screen before a recreation; else the mode this opening asked for; else the
         // mode the background ison is playing; else the last one the user picked here.
@@ -185,6 +194,7 @@ class EightModesActivity : BaseActivity() {
                     onListenChange = ::setListening,
                     heardFrequencyHz = heardFrequencyHz,
                     micDenied = micDenied,
+                    initialListening = savedInstanceState == null && intent.getBooleanExtra(EXTRA_LISTEN, false),
                     onOpenMenu = { EightModesNavigation.showMenu(this, selectedTopicKey = null) },
                     onBack = ::finish,
                     initialDroneOn = startIson || sounding != null,
@@ -235,11 +245,11 @@ class EightModesActivity : BaseActivity() {
 
     private fun baseShiftPrefKey(modeKey: String): String = AppPrefs.baseShiftKeyName(modeKey)
 
-    private fun nextFirstRun(isonSounding: Boolean = false): EightModesFirstRun.Show =
+    private fun nextFirstRun(startsBusy: Boolean = false): EightModesFirstRun.Show =
         EightModesFirstRun.next(
             voiceTestOffered = prefs.getBoolean(VOICE_RANGE_OFFERED_PREF_KEY, false),
             tourShown = prefs.getBoolean(TOUR_SHOWN_PREF_KEY, false),
-            isonSounding = isonSounding,
+            startsBusy = startsBusy,
         )
 
     /** The offer answered, or the tour ended — however: never shown by itself again. */
@@ -394,6 +404,7 @@ class EightModesActivity : BaseActivity() {
         private val VOICE_RANGE_OFFERED_PREF_KEY = AppPrefs.VoiceRangeOffered.name
         private val TOUR_SHOWN_PREF_KEY = AppPrefs.EightModesTourShown.name
         private const val EXTRA_MODE_KEY = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_MODE_KEY"
+        private const val EXTRA_LISTEN = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_LISTEN"
         private const val STATE_SHOWN_MODE_KEY = "shown_mode_key"
 
         /**
@@ -406,9 +417,15 @@ class EightModesActivity : BaseActivity() {
         private const val EXTRA_ISON_CHOICE = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_ISON_CHOICE"
         private const val EXTRA_ISON_CHOICE_OCTAVE = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_ISON_CHOICE_OCTAVE"
 
-        /** Opens the page on [modeKey] for this opening only; see the class KDoc. */
-        fun intent(context: Context, modeKey: String): Intent =
-            Intent(context, EightModesActivity::class.java).putExtra(EXTRA_MODE_KEY, modeKey)
+        /**
+         * Opens the page on [modeKey] for this opening only; see the class KDoc. [isonOn] starts the
+         * ison ([EXTRA_START_ISON]) and [listen] starts «Πού είμαι», both only on this opening.
+         */
+        fun intent(context: Context, modeKey: String, isonOn: Boolean = false, listen: Boolean = false): Intent =
+            Intent(context, EightModesActivity::class.java).putExtra(EXTRA_MODE_KEY, modeKey).apply {
+                if (isonOn) putExtra(EXTRA_START_ISON, true)
+                if (listen) putExtra(EXTRA_LISTEN, true)
+            }
 
         /**
          * Opens the page on [request]'s mode with that ison already sounding, on its φθόγγος — the

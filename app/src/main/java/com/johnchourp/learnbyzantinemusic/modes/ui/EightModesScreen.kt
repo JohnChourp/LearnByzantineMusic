@@ -160,7 +160,10 @@ fun EightModesScreen(
     onOpenMenu: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    /** The ison starts sounding at once — the launcher shortcut «Ίσο» (ClickUp `869f5x2dq`). */
+    /**
+     * The ison starts sounding at once — the launcher shortcut «Ίσο» (ClickUp `869f5x2dq`), and the
+     * first two steps of «Πεντάλεπτο της ημέρας» (ClickUp `869f5x2dy`).
+     */
     initialDroneOn: Boolean = false,
     /** Where «Ίσον σε…» starts: what the background ison holds when the page opens over it. */
     initialIsonChoice: Phthong? = null,
@@ -169,6 +172,8 @@ fun EightModesScreen(
     onInBackgroundChange: (Boolean) -> Unit = {},
     /** What the background ison is sounding now, so a change made from its notification shows here. */
     backgroundIson: IsonDrone.Request? = null,
+    /** «Πού είμαι» listens from the start — the voice step of «Πεντάλεπτο της ημέρας». */
+    initialListening: Boolean = false,
     /** The voice's global shift (ClickUp `869f5x2dd`), added to each mode's own on every ladder. */
     globalShiftMoria: Int = BaseShift.DEFAULT_MORIA,
     /** What the page shows by itself as it opens: the «Βρες τη φωνή σου» offer, the tour, or nothing. */
@@ -192,7 +197,7 @@ fun EightModesScreen(
     // Where «Ίσον σε…» moved the ison; null means the mode's base. A new ήχος starts on its own base
     // (the mode picker clears it), and it is never persisted (ClickUp `869f5x251`).
     var isonChoice by remember { mutableStateOf(initialIsonChoice) }
-    var listening by remember { mutableStateOf(false) }
+    var listening by remember { mutableStateOf(initialListening) }
     val scope = rememberCoroutineScope()
 
     // Switching modes never carries a held tone over.

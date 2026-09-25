@@ -42,6 +42,10 @@ class BackupRulesTest {
         AppPrefs.Store.EIGHT_MODES to Backup.KEPT,
         // Expected melodies per hymn — the user's own work.
         AppPrefs.Store.RECORDING_ANALYSIS to Backup.KEPT,
+        // The practice history behind the streak, and the reminder's time — the user's own history.
+        AppPrefs.Store.PRACTICE to Backup.KEPT,
+        // The Trainer's saved exercises and last melody — the user's own work (ClickUp 869f5x261).
+        AppPrefs.Store.TRAINER to Backup.KEPT,
     )
 
     /** Everything else that stays on the device, by the name the code gives it on disk. */

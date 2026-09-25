@@ -10,7 +10,7 @@ import java.io.File
 
 /**
  * What the 8 Ήχοι page shows by itself (ClickUp `869f5x2dd`, J4): the offer of «Βρες τη φωνή σου»,
- * then the four-step tour — each once, however it ends — and nothing over an ison that is sounding.
+ * then the four-step tour — each once, however it ends — and nothing over a page that opens busy.
  */
 class EightModesFirstRunTest {
 
@@ -19,7 +19,7 @@ class EightModesFirstRunTest {
         var offered = false
         var toured = false
 
-        fun next(isonSounding: Boolean = false) = EightModesFirstRun.next(offered, toured, isonSounding)
+        fun next(startsBusy: Boolean = false) = EightModesFirstRun.next(offered, toured, startsBusy)
 
         fun end(show: Show) {
             when (show) {
@@ -41,15 +41,15 @@ class EightModesFirstRunTest {
     }
 
     @Test
-    fun anIsonAlreadySoundingGetsNeitherAndMarksNothing() {
+    fun aPageThatOpensBusyGetsNeitherAndMarksNothing() {
         val flags = Flags()
-        // The shortcut «Ίσο», «Αναπαραγωγή», or a page opened over a background ison.
-        assertEquals(Show.NOTHING, flags.next(isonSounding = true))
-        flags.end(flags.next(isonSounding = true))
+        // The shortcut «Ίσο», «Αναπαραγωγή», «Πεντάλεπτο της ημέρας», or a background ison.
+        assertEquals(Show.NOTHING, flags.next(startsBusy = true))
+        flags.end(flags.next(startsBusy = true))
         // The first ordinary opening still gets both, in order.
         assertEquals(Show.VOICE_TEST_OFFER, flags.next())
         flags.end(Show.VOICE_TEST_OFFER)
-        assertEquals(Show.NOTHING, flags.next(isonSounding = true))
+        assertEquals(Show.NOTHING, flags.next(startsBusy = true))
         assertEquals(Show.TOUR, flags.next())
     }
 
@@ -84,6 +84,10 @@ class EightModesFirstRunTest {
             "prefs.edit().putBoolean(flagKey, true).apply()",
             "VOICE_RANGE_OFFERED_PREF_KEY = AppPrefs.VoiceRangeOffered.name",
             "TOUR_SHOWN_PREF_KEY = AppPrefs.EightModesTourShown.name",
+            // Busy: opened to play, to listen, or over a background ison.
+            "intent.getBooleanExtra(EXTRA_START_ISON, false) ||",
+            "intent.getBooleanExtra(EXTRA_LISTEN, false) ||",
+            "sounding != null,",
         ).forEach { wiring -> assertTrue("EightModesActivity: $wiring", wiring in activity) }
 
         val screen = KotlinSource.withoutComments(File(modes, "ui/EightModesScreen.kt").readText())

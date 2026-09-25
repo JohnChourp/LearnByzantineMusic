@@ -52,7 +52,14 @@ object ByzantineTuning {
      * scale diagram spans three octaves either side of the reference.
      */
     fun frequencyHz(moriaFromNi: Double): Double =
-        NI_BASE_HZ * 2.0.pow(moriaFromNi / MORIA_PER_OCTAVE_D)
+        NI_BASE_HZ * ratioForMoria(moriaFromNi)
+
+    /**
+     * The frequency ratio of an interval of [moria] μόρια: 1 at 0, 2 at +72 (an octave up), ½ at −72.
+     * [frequencyHz] is Νη times this; the in-app player's «μετατόπιση» plays a recording this much
+     * higher or lower (ClickUp `869f5x268`). The one place the app raises 2 to a μόρια fraction.
+     */
+    fun ratioForMoria(moria: Double): Double = 2.0.pow(moria / MORIA_PER_OCTAVE_D)
 
     /** Convenience overload for whole μόρια. */
     fun frequencyHz(moriaFromNi: Int): Double = frequencyHz(moriaFromNi.toDouble())
