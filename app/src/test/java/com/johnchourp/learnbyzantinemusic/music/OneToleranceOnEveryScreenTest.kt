@@ -7,7 +7,6 @@ import com.johnchourp.learnbyzantinemusic.trainer.ComboPitchGate
 import com.johnchourp.learnbyzantinemusic.trainer.GreeningResult
 import com.johnchourp.learnbyzantinemusic.trainer.PitchGreeningEvaluator
 import com.johnchourp.learnbyzantinemusic.trainer.PitchMatch
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -27,17 +26,17 @@ class OneToleranceOnEveryScreenTest {
     private val deviations: List<Double> = (-24..24).map { it * 0.25 }
 
     private fun analysisDiagram(deviation: Double): Boolean =
-        SungNote(TrainerPhthong.DI, octave = 0, startMs = 0, endMs = 500, deviationMoria = deviation, moria = 42.0 + deviation)
+        SungNote(PhthongName.DI, octave = 0, startMs = 0, endMs = 500, deviationMoria = deviation, moria = 42.0 + deviation)
             .isInTune
 
     private fun trainerPhthongPlusTime(deviation: Double): Boolean =
-        ComboPitchGate.inTunePhthong(PitchMatch(TrainerPhthong.DI, deviation)) != null
+        ComboPitchGate.inTunePhthong(PitchMatch(PhthongName.DI, deviation)) != null
 
     private fun trainerVoiceCheck(deviation: Double): Boolean {
-        val evaluator = PitchGreeningEvaluator(listOf(TrainerPhthong.DI))
+        val evaluator = PitchGreeningEvaluator(listOf(PhthongName.DI))
         var verdict: GreeningResult? = null
         repeat(PitchGreeningEvaluator.DEFAULT_MIN_STABLE_FRAMES) {
-            evaluator.onFrame(PitchMatch(TrainerPhthong.DI, deviation))?.let { verdict = it }
+            evaluator.onFrame(PitchMatch(PhthongName.DI, deviation))?.let { verdict = it }
         }
         return verdict!!.matched
     }

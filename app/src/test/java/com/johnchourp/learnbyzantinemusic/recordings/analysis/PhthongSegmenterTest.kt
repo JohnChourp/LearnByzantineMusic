@@ -1,13 +1,13 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
 import com.johnchourp.learnbyzantinemusic.music.Mode
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.DI
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.GA
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.KE
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.NI
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.PA
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.VOU
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.DI
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.GA
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.KE
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.NI
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.PA
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.VOU
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -35,9 +35,9 @@ class PhthongSegmenterTest {
         return PitchTrack(frames, hopMs, (frames.size * hopMs).toLong())
     }
 
-    private data class Part(val phthong: TrainerPhthong?, val frames: Int, val octave: Int = 0, val offsetMoria: Double = 0.0)
+    private data class Part(val phthong: PhthongName?, val frames: Int, val octave: Int = 0, val offsetMoria: Double = 0.0)
 
-    private fun note(phthong: TrainerPhthong, frames: Int = 12, octave: Int = 0, offset: Double = 0.0) = Part(phthong, frames, octave, offset)
+    private fun note(phthong: PhthongName, frames: Int = 12, octave: Int = 0, offset: Double = 0.0) = Part(phthong, frames, octave, offset)
     private fun rest(frames: Int) = Part(null, frames)
 
     @Test
@@ -88,6 +88,6 @@ class PhthongSegmenterTest {
     }
 
     companion object {
-        private val ZO_LOW = TrainerPhthong.ZO to -1
+        private val ZO_LOW = PhthongName.ZO to -1
     }
 }

@@ -5,10 +5,11 @@
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- A recording in progress, and recordings the folder could not take (ClickUp 869f5x26x):
+             raw WAV audio that stays on this device. A few minutes of it exceed the 25 MB backup
+             quota, and a backup over quota is not made at all, the notes included. -->
+        <exclude domain="file" path="recordings_capture" />
+        <exclude domain="file" path="recordings_pending" />
     </cloud-backup>
     <!--
     <device-transfer>

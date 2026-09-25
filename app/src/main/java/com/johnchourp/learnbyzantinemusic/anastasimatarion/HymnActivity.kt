@@ -35,10 +35,17 @@ import kotlinx.coroutines.withContext
  * **In:** `EXTRA_MODE_KEY` + `EXTRA_HYMN_CODE`, resolved against [AnastasimatarionCatalog]. An
  * unknown pair is not a crash — the screen says the hymn was not found and offers nothing else.
  *
- * **Stores:** nothing of its own. Recordings go to the user's chosen recordings folder, under the
- * per-hymn subfolder [HymnFolders] names (`Αναστασιματάριο/<mode>/<code> <incipit>/`), so they
- * survive a reinstall and stay visible in «Διαχείριση». There is no database row for a hymn, which
- * is why the two-digit [Hymn.code] must never be reused for a different hymn.
+ * **Stores:** nothing of its own. Two things are keyed by the hymn's two-digit [Hymn.code], for
+ * good:
+ * - its recordings, in the user's chosen recordings folder under the per-hymn subfolder
+ *   [HymnFolders] names (`Αναστασιματάριο/<mode>/<code> <incipit>/`), so they survive a reinstall
+ *   and stay visible in «Διαχείριση»;
+ * - its analysis settings, which [analyzeRecording] keys as `hymn:<mode>:<code>`
+ *   ([AnalysisSettingsStore.hymnKey]), shared by every recording of the hymn.
+ *
+ * There is no database row for a hymn, so a code given to a different hymn would re-attach both,
+ * silently. Codes are locked in `scripts/anastasimatarion-codes.lock.json` — see the catalog's
+ * header in `AnastasimatarionCatalog.kt` (ClickUp `869f5x2a9`).
  *
  * **Needs:** a recordings folder to have been chosen already. Without one, recording is disabled
  * and the screen points the user at the «Ηχογραφήσεις» page rather than failing at save time.

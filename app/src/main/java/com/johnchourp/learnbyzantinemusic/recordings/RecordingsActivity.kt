@@ -4,9 +4,6 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.AudioFormat
-import android.media.AudioRecord
-import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
@@ -27,24 +24,31 @@ import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.recordings.index.RecordingsRepository
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AnalysisSettingsStore
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.RecordingAnalysisActivity
+import com.johnchourp.learnbyzantinemusic.recordings.session.PendingRecording
+import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingEventText
+import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingSessionState
+import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingSessions
+import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingTarget
 import com.johnchourp.learnbyzantinemusic.recordings.ui.RecordingsScreen
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
-import java.io.RandomAccessFile
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 /**
  * The «Ηχογραφήσεις» screen: record from the microphone into a folder the user owns.
  *
- * **Flow.** Records raw PCM to a cache WAV, then, for every format other than WAV, transcodes with
- * FFmpeg and writes the result into the chosen SAF folder. A failed transcode surfaces an error and
- * produces no file, rather than leaving a half-written recording behind.
+ * **Flow.** The recording belongs to the process, not to this screen: a
+ * [com.johnchourp.learnbyzantinemusic.recordings.session.RecordingSession] captures raw PCM into an
+ * app-private WAV and saves it in the order transcode → create the file in the chosen SAF folder →
+ * copy → verify → only then delete the WAV. This screen shows the session's state and forwards taps,
+ * so re-creating it — the device's dark theme switching on a schedule, split-screen, a fold, a
+ * language or font-size change — neither stops nor deletes a recording, and Back during
+ * «Αποθήκευση…» simply leaves while the save finishes (ClickUp `869f5x26x`).
+ *
+ * **A failed transcode produces no file in the chosen format** — nothing empty or half-written is
+ * left in the folder; the WAV is saved there instead, with a message saying so
+ * (`RecordingSaverTranscodeFailureTest`). When the folder cannot take the recording at all, it is
+ * kept inside the app and listed here under «Δεν αποθηκεύτηκαν ακόμη», with «Αποθήκευση» and
+ * «Διαγραφή».
  *
  * **Why this list is "the last 10 of mine".** It is served from [OwnedRecordingsStore], a local
  * history of what *this app* produced — not from a scan of the folder. That is deliberate: the main
@@ -57,7 +61,8 @@ import java.util.Locale
  * **Requires** `RECORD_AUDIO` and a persisted SAF tree grant; changing the folder is confirmed first,
  * so a mis-tap cannot silently orphan the current one.
  *
- * **Touches:** `recordings_folder_tree_uri`, `recordings_output_format`, `owned_recordings`.
+ * **Touches:** `recordings_folder_tree_uri`, `recordings_output_format`, `owned_recordings`, and —
+ * through the session — `filesDir/recordings_capture/` and `filesDir/recordings_pending/`.
  */
 class RecordingsActivity : BaseActivity() {
     private lateinit var recordingsPrefs: RecordingsPrefs
@@ -71,26 +76,18 @@ class RecordingsActivity : BaseActivity() {
         )
     }
 
+    // The process's recording: it outlives this screen (see the class KDoc).
+    private val session by lazy { RecordingSessions.get(applicationContext) }
+    private var sessionShown = false
+
     private var selectedFolderUri: Uri? = null
     // Optional sub-folder of the picked folder to save into (e.g. a hymn's folder, see EXTRA_TARGET_FOLDER_PATH).
     private var targetFolderSegments: List<String> = emptyList()
     private var targetFolderMatchPrefix: String? = null
+    private var intentTargetLabel: String? = null
     private var hasAttemptedInitialFolderRequest = false
     private var folderPickMode: FolderPickMode = FolderPickMode.INITIAL_REQUIRED
     private var pendingFolderBeforeChange: Uri? = null
-
-    private val ioLock = Any()
-    private var audioRecord: AudioRecord? = null
-    private var recordingThread: Thread? = null
-    private var tempWavFile: File? = null
-    private var tempOutputStream: FileOutputStream? = null
-    private var pcmBytesWritten: Long = 0L
-
-    @Volatile
-    private var shouldRecord = false
-
-    @Volatile
-    private var isPaused = false
 
     private val requestAudioPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -157,12 +154,14 @@ class RecordingsActivity : BaseActivity() {
             ?.filter { it.isNotBlank() }
             .orEmpty()
         targetFolderMatchPrefix = intent.getStringExtra(EXTRA_TARGET_FOLDER_MATCH_PREFIX)?.takeIf { it.isNotBlank() }
-        viewModel.setRecordingTarget(
-            intent.getStringExtra(EXTRA_TARGET_LABEL)?.takeIf { targetFolderSegments.isNotEmpty() }
-        )
+        intentTargetLabel = intent.getStringExtra(EXTRA_TARGET_LABEL)?.takeIf { targetFolderSegments.isNotEmpty() }
+        viewModel.setRecordingTarget(intentTargetLabel)
 
         restoreSavedFolder()
-        viewModel.setRecordingState(RecordingStateUi.IDLE)
+        // The recording state comes from the session, never from a fresh screen's assumption: a
+        // re-created screen must show a recording that is still running as running.
+        lifecycleScope.launch { session.state.collect { renderSession(it) } }
+        lifecycleScope.launch { session.pendingState.collect { viewModel.setPending(it) } }
 
         onBackPressedDispatcher.addCallback(
             this,
@@ -188,6 +187,8 @@ class RecordingsActivity : BaseActivity() {
                     onStartRecording = { ensureMicrophonePermissionThenStart() },
                     onPauseResume = { togglePauseResume() },
                     onStopRecording = { stopAndPersistRecording() },
+                    onSavePending = { savePendingRecording(it) },
+                    onDeletePending = { showDeletePendingDialog(it) },
                     onFormatChanged = { viewModel.setSelectedFormat(it) },
                     onOpenRecording = { openRecordingInExternalPlayer(it) },
                     onShareRecording = { shareRecording(it) },
@@ -208,10 +209,27 @@ class RecordingsActivity : BaseActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        stopCaptureInfrastructure()
-        cleanupTempFiles()
+    /**
+     * Mirrors the session onto this screen; the first call comes from [onCreate], right after
+     * [restoreSavedFolder] has written its «ready» line. A recording in progress always shows its
+     * phase — over that line, on a re-created screen too. An error always shows what went wrong. A
+     * finished save's line shows only when this screen saw it happen, so an old «saved» does not greet
+     * the next visit (its toast was shown either way).
+     *
+     * The label says what the recording is *for*: while one is in progress that is the session's —
+     * this page may have been opened without a hymn (the launcher shortcut) while a hymn's recording runs.
+     */
+    private fun renderSession(state: RecordingSessionState) {
+        val status = when (state.phase) {
+            RecordingStateUi.RECORDING -> getString(R.string.recordings_status_recording)
+            RecordingStateUi.PAUSED -> getString(R.string.recordings_status_paused)
+            RecordingStateUi.SAVING -> getString(R.string.recordings_status_saving)
+            RecordingStateUi.ERROR -> state.lastEvent?.let { RecordingEventText.status(this, it) }
+            RecordingStateUi.IDLE -> state.lastEvent?.takeIf { sessionShown }?.let { RecordingEventText.status(this, it) }
+        }
+        sessionShown = true
+        val label = if (state.isActive) state.target?.label else intentTargetLabel
+        viewModel.applySession(state, status, label)
     }
 
     private fun restoreSavedFolder() {
@@ -498,269 +516,52 @@ class RecordingsActivity : BaseActivity() {
     }
 
     private fun startRecordingSession() {
-        val recordingState = viewModel.uiState.value.recordingState
-        if (recordingState == RecordingStateUi.RECORDING || recordingState == RecordingStateUi.PAUSED || recordingState == RecordingStateUi.SAVING) {
-            return
-        }
-
-        val minBuffer = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_ENCODING)
-        if (minBuffer <= 0) {
-            setStatus(getString(R.string.recordings_error_start))
-            viewModel.setRecordingState(RecordingStateUi.ERROR)
-            return
-        }
-
-        val bufferSize = (minBuffer * 2).coerceAtLeast(8192)
-        val tempFile = File.createTempFile("recording_", ".wav", cacheDir)
-
-        try {
-            tempWavFile = tempFile
-            tempOutputStream = FileOutputStream(tempFile).apply {
-                write(ByteArray(WAV_HEADER_SIZE))
-                flush()
-            }
-            pcmBytesWritten = 0L
-            shouldRecord = true
-            isPaused = false
-
-            val recorder = AudioRecord(
-                MediaRecorder.AudioSource.MIC,
-                SAMPLE_RATE,
-                CHANNEL_CONFIG,
-                AUDIO_ENCODING,
-                bufferSize
+        // The session refuses while a recording runs or saves; the result — recording, or
+        // «Αποτυχία εκκίνησης» — arrives through its state.
+        session.start(
+            RecordingTarget(
+                folderSegments = targetFolderSegments,
+                folderMatchPrefix = targetFolderMatchPrefix,
+                label = intentTargetLabel,
             )
-
-            if (recorder.state != AudioRecord.STATE_INITIALIZED) {
-                recorder.release()
-                throw IllegalStateException("audio_record_not_initialized")
-            }
-
-            audioRecord = recorder
-            recorder.startRecording()
-            recordingThread = Thread {
-                runCaptureLoop(bufferSize)
-            }.apply { start() }
-
-            viewModel.setRecordingState(RecordingStateUi.RECORDING)
-            setStatus(getString(R.string.recordings_status_recording))
-        } catch (_: Throwable) {
-            stopCaptureInfrastructure()
-            cleanupTempFiles()
-            setStatus(getString(R.string.recordings_error_start))
-            viewModel.setRecordingState(RecordingStateUi.ERROR)
-        }
-    }
-
-    private fun runCaptureLoop(bufferSize: Int) {
-        val recorder = audioRecord ?: return
-        val localBuffer = ByteArray(bufferSize)
-
-        while (shouldRecord) {
-            val readBytes = recorder.read(localBuffer, 0, localBuffer.size)
-            if (readBytes <= 0) {
-                continue
-            }
-            if (isPaused) {
-                continue
-            }
-
-            synchronized(ioLock) {
-                tempOutputStream?.write(localBuffer, 0, readBytes)
-                pcmBytesWritten += readBytes
-            }
-        }
+        )
     }
 
     private fun togglePauseResume() {
-        when (viewModel.uiState.value.recordingState) {
-            RecordingStateUi.RECORDING -> {
-                isPaused = true
-                viewModel.setRecordingState(RecordingStateUi.PAUSED)
-                setStatus(getString(R.string.recordings_status_paused))
-            }
-
-            RecordingStateUi.PAUSED -> {
-                isPaused = false
-                viewModel.setRecordingState(RecordingStateUi.RECORDING)
-                setStatus(getString(R.string.recordings_status_recording))
-            }
-
+        when (session.state.value.phase) {
+            RecordingStateUi.RECORDING -> session.pause()
+            RecordingStateUi.PAUSED -> session.resume()
             else -> Unit
         }
     }
 
     private fun stopAndPersistRecording() {
-        if (viewModel.uiState.value.recordingState != RecordingStateUi.RECORDING && viewModel.uiState.value.recordingState != RecordingStateUi.PAUSED) {
+        session.stop()
+    }
+
+    /** «Αποθήκευση» on a recording kept in the app: into the folder picked now — or pick one first. */
+    private fun savePendingRecording(item: PendingRecording) {
+        if (currentFolderDocument() == null) {
+            setStatus(getString(R.string.recordings_select_folder_first))
+            Toast.makeText(this, R.string.recordings_select_folder_first, Toast.LENGTH_SHORT).show()
+            launchFolderPicker(FolderPickMode.INITIAL_REQUIRED, selectedFolderUri)
             return
         }
+        session.savePending(item)
+    }
 
-        viewModel.setRecordingState(RecordingStateUi.SAVING)
-        setStatus(getString(R.string.recordings_status_saving))
-
-        lifecycleScope.launch {
-            val saveResult = withContext(Dispatchers.IO) { persistRecording() }
-            saveResult.onSuccess { savedItem ->
-                val rootUri = selectedFolderUri
-                if (rootUri != null) {
-                    lifecycleScope.launch {
-                        recordingsRepository.registerOwnedRecording(rootUri, savedItem)
-                    }
-                }
-
-                setStatus(getString(R.string.recordings_status_saved_template, savedItem.name))
-                Toast.makeText(this@RecordingsActivity, R.string.recordings_saved_ok, Toast.LENGTH_SHORT).show()
-                viewModel.setRecordingState(RecordingStateUi.IDLE)
-            }.onFailure {
-                setStatus(getString(R.string.recordings_error_save))
-                Toast.makeText(this@RecordingsActivity, R.string.recordings_error_save, Toast.LENGTH_SHORT).show()
-                viewModel.setRecordingState(RecordingStateUi.ERROR)
+    /** A kept recording exists nowhere else, so deleting it is confirmed — and the dialog says so. */
+    private fun showDeletePendingDialog(item: PendingRecording) {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.recordings_delete_confirm_title))
+            .setMessage(getString(R.string.recordings_pending_delete_confirm_message, item.baseName))
+            .setPositiveButton(getString(R.string.recordings_delete_confirm_button)) { _, _ ->
+                session.deletePending(item)
             }
-        }
-    }
-
-    private fun persistRecording(): Result<RecordingListItem> {
-        return runCatching {
-            stopCaptureInfrastructure()
-
-            val wavSource = tempWavFile ?: error("missing_temp_wav")
-            writeWavHeader(wavSource, pcmBytesWritten)
-
-            val rootFolder = currentFolderDocument() ?: error("folder_not_available")
-            val (folder, folderSegments) = resolveTargetFolder(rootFolder) ?: error("target_folder_not_available")
-            val selectedFormat = viewModel.uiState.value.selectedFormat
-            val targetFileName = generateTargetFileName(selectedFormat)
-            val targetDocument = folder.createFile(selectedFormat.mimeType, targetFileName)
-                ?: error("create_target_failed")
-
-            val sourceForCopy = if (selectedFormat == RecordingFormatOption.WAV) {
-                wavSource
-            } else {
-                val transcodedFile = File.createTempFile("recording_encoded_", ".${selectedFormat.extension}", cacheDir)
-                val transcodeResult = AudioTranscoder.transcode(
-                    sourceWav = wavSource,
-                    outputFile = transcodedFile,
-                    format = selectedFormat
-                )
-                if (!transcodeResult.isSuccess) {
-                    transcodedFile.delete()
-                    error(transcodeResult.details)
-                }
-                transcodedFile
+            .setNegativeButton(getString(R.string.recordings_delete_cancel_button)) { dialog, _ ->
+                dialog.dismiss()
             }
-
-            try {
-                contentResolver.openOutputStream(targetDocument.uri, "w")?.use { outputStream ->
-                    sourceForCopy.inputStream().use { inputStream ->
-                        inputStream.copyTo(outputStream)
-                    }
-                } ?: error("output_stream_not_available")
-            } finally {
-                if (sourceForCopy != wavSource) {
-                    sourceForCopy.delete()
-                }
-                cleanupTempFiles()
-            }
-
-            val resolvedName = targetDocument.name ?: targetFileName
-            val updatedTimestamp = runCatching { targetDocument.lastModified() }
-                .getOrDefault(System.currentTimeMillis())
-                .takeIf { it > 0L }
-                ?: System.currentTimeMillis()
-            val createdTimestamp = RecordingDocumentOps.resolveCreationLikeTimestamp(resolvedName) ?: updatedTimestamp
-
-            val folderPath = folderSegments.joinToString("/")
-            RecordingListItem(
-                name = resolvedName,
-                uri = targetDocument.uri,
-                mimeType = targetDocument.type ?: selectedFormat.mimeType,
-                relativePath = if (folderPath.isEmpty()) resolvedName else "$folderPath/$resolvedName",
-                parentRelativePath = if (folderPath.isEmpty()) "/" else "/$folderPath",
-                parentUri = folder.uri,
-                createdTimestamp = createdTimestamp,
-                updatedTimestamp = updatedTimestamp
-            )
-        }
-    }
-
-    /**
-     * The folder to save into and its path below the picked root: the root itself, or the
-     * EXTRA_TARGET_FOLDER_PATH sub-folders, created on first use. The last segment also matches an
-     * existing folder that starts with EXTRA_TARGET_FOLDER_MATCH_PREFIX, so a renamed hymn folder
-     * keeps receiving its recordings.
-     */
-    private fun resolveTargetFolder(root: DocumentFile): Pair<DocumentFile, List<String>>? {
-        var current = root
-        val actualNames = mutableListOf<String>()
-        targetFolderSegments.forEachIndexed { index, segment ->
-            val prefix = targetFolderMatchPrefix?.takeIf { index == targetFolderSegments.lastIndex }
-            val children = current.listFiles().filter { it.isDirectory }
-            val existing = children.firstOrNull { it.name == segment }
-                ?: prefix?.let { p -> children.firstOrNull { it.name?.startsWith(p) == true } }
-            current = existing ?: current.createDirectory(segment) ?: return null
-            actualNames += current.name ?: segment
-        }
-        return current to actualNames
-    }
-
-    private fun stopCaptureInfrastructure() {
-        shouldRecord = false
-
-        val recorder = audioRecord
-        runCatching {
-            recorder?.stop()
-        }
-        runCatching {
-            recordingThread?.join(1200)
-        }
-        recordingThread = null
-        runCatching {
-            recorder?.release()
-        }
-        audioRecord = null
-
-        synchronized(ioLock) {
-            runCatching { tempOutputStream?.flush() }
-            runCatching { tempOutputStream?.close() }
-            tempOutputStream = null
-        }
-    }
-
-    private fun cleanupTempFiles() {
-        tempWavFile?.delete()
-        tempWavFile = null
-        pcmBytesWritten = 0L
-        isPaused = false
-    }
-
-    private fun writeWavHeader(file: File, pcmBytes: Long) {
-        val channels = 1
-        val bitsPerSample = 16
-        val byteRate = SAMPLE_RATE * channels * (bitsPerSample / 8)
-        val blockAlign = channels * (bitsPerSample / 8)
-        val totalDataLen = pcmBytes + 36
-
-        RandomAccessFile(file, "rw").use { raf ->
-            raf.seek(0)
-            raf.writeBytes("RIFF")
-            raf.writeInt(Integer.reverseBytes(totalDataLen.toInt()))
-            raf.writeBytes("WAVE")
-            raf.writeBytes("fmt ")
-            raf.writeInt(Integer.reverseBytes(16))
-            raf.writeShort(java.lang.Short.reverseBytes(1.toShort()).toInt())
-            raf.writeShort(java.lang.Short.reverseBytes(channels.toShort()).toInt())
-            raf.writeInt(Integer.reverseBytes(SAMPLE_RATE))
-            raf.writeInt(Integer.reverseBytes(byteRate))
-            raf.writeShort(java.lang.Short.reverseBytes(blockAlign.toShort()).toInt())
-            raf.writeShort(java.lang.Short.reverseBytes(bitsPerSample.toShort()).toInt())
-            raf.writeBytes("data")
-            raf.writeInt(Integer.reverseBytes(pcmBytes.toInt()))
-        }
-    }
-
-    private fun generateTargetFileName(format: RecordingFormatOption): String {
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        return "recording_$timestamp.${format.extension}"
+            .show()
     }
 
     private fun handleRemovedRecording(item: RecordingListItem) {
@@ -772,12 +573,13 @@ class RecordingsActivity : BaseActivity() {
     }
 
     /**
-     * Back handling (hero arrow + system back). A recording in progress would otherwise be silently
-     * discarded by onDestroy()'s temp-file cleanup, so while RECORDING/PAUSED we confirm: stop &
-     * save (persist via the normal flow), discard & exit, or cancel. Other states just finish.
+     * Back handling (hero arrow + system back). While RECORDING/PAUSED we confirm: stop & save,
+     * discard & exit (the one way a recording in progress is thrown away), or cancel. Otherwise —
+     * SAVING included — the screen just closes: the save belongs to the session and finishes on its
+     * own, with its toast and its place in «πρόσφατες», whether or not this screen is still here.
      */
     private fun handleBackRequested() {
-        val state = viewModel.uiState.value.recordingState
+        val state = session.state.value.phase
         if (state == RecordingStateUi.RECORDING || state == RecordingStateUi.PAUSED) {
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.recordings_exit_recording_title))
@@ -786,6 +588,7 @@ class RecordingsActivity : BaseActivity() {
                     stopAndPersistRecording()
                 }
                 .setNegativeButton(getString(R.string.recordings_exit_discard)) { _, _ ->
+                    session.discard()
                     finish()
                 }
                 .setNeutralButton(getString(R.string.recordings_delete_cancel_button)) { dialog, _ ->
@@ -815,10 +618,5 @@ class RecordingsActivity : BaseActivity() {
 
         /** String: what the recording is for, shown on the record card. */
         const val EXTRA_TARGET_LABEL = "com.johnchourp.learnbyzantinemusic.recordings.EXTRA_TARGET_LABEL"
-
-        private const val SAMPLE_RATE = 44_100
-        private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
-        private const val AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT
-        private const val WAV_HEADER_SIZE = 44
     }
 }

@@ -75,7 +75,7 @@
     <string name="cd_testimonial_zo">Testimony of the note Zo.</string>
     <string name="cd_testimonial_ni_high">Testimony of the note Ni in the next octave.</string>
     <string name="phthong_ni">Ni</string>
-    <string name="phthong_ni_high">Ni′</string>
+    <string name="phthong_ni_high">Ni΄</string>
     <string name="phthong_pa">Pa</string>
     <string name="phthong_bou">Vou</string>
     <string name="phthong_ga">Ga</string>
@@ -361,6 +361,11 @@
     <string name="eight_modes_ison_card_title">Ison (drone)</string>
     <string name="eight_modes_ison_hint">Turn the drone on to chant over a steady base.</string>
     <string name="eight_modes_ison_active">Drone on %1$s</string>
+    <string name="eight_modes_ison_selector_label">Ison on</string>
+    <string name="eight_modes_ison_selector_base_value">%1$s (base)</string>
+    <string name="eight_modes_ison_selector_dominants">Dominant phthongs</string>
+    <string name="eight_modes_ison_selector_others">Other phthongs</string>
+    <string name="eight_modes_ison_reset_to_base">Back to the base (%1$s)</string>
     <string name="eight_modes_scale_card_title">The scale</string>
     <string name="eight_modes_scale_card_hint">Press and hold a phthong to hear its tone — drag up and down to glide between them.</string>
     <string name="eight_modes_scale_moria_legend">the numbers show the moria of each interval</string>
@@ -763,6 +768,12 @@
     <string name="recordings_saved_ok">Recording saved successfully.</string>
     <string name="recordings_error_start">Failed to start recording.</string>
     <string name="recordings_error_save">Failed to save recording.</string>
+    <string name="recordings_saved_as_wav_template">Conversion to %1$s failed — saved as WAV: %2$s</string>
+    <string name="recordings_kept_in_app">The folder is not available — the recording was kept in the app.</string>
+    <string name="recordings_pending_title">Not saved yet</string>
+    <string name="recordings_pending_hint">Kept inside the app because they could not be written to the folder. “Save” puts them in the current folder.</string>
+    <string name="recordings_pending_save">Save</string>
+    <string name="recordings_pending_delete_confirm_message">The recording %1$s exists only inside the app. Delete it permanently?</string>
     <string name="recordings_microphone_permission_required">Microphone permission is required to record.</string>
     <string name="recordings_format_label">Storage format</string>
     <string name="recordings_format_flac">FLAC (.flac)</string>

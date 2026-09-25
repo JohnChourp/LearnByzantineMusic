@@ -4,7 +4,6 @@ import com.johnchourp.learnbyzantinemusic.modes.ModeResources
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.summary_theory.ui.TESTIMONY_ROW
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -20,14 +19,14 @@ class AnalysisStartPhthongTest {
     fun theAnalysisStartsWhereItAlwaysDid() {
         // Unchanged by the refactor: Α΄/Β΄ Πα, Γ΄ Γα, Δ΄ Βου, πλ. Α΄ Κε, πλ. Β΄ Δι, Βαρύς Ζω, πλ. Δ΄ Νη.
         val expected = mapOf(
-            Mode.FIRST to TrainerPhthong.PA,
-            Mode.SECOND to TrainerPhthong.PA,
-            Mode.THIRD to TrainerPhthong.GA,
-            Mode.FOURTH to TrainerPhthong.VOU,
-            Mode.PLAGAL_FIRST to TrainerPhthong.KE,
-            Mode.PLAGAL_SECOND to TrainerPhthong.DI,
-            Mode.VARYS to TrainerPhthong.ZO,
-            Mode.PLAGAL_FOURTH to TrainerPhthong.NI,
+            Mode.FIRST to PhthongName.PA,
+            Mode.SECOND to PhthongName.PA,
+            Mode.THIRD to PhthongName.GA,
+            Mode.FOURTH to PhthongName.VOU,
+            Mode.PLAGAL_FIRST to PhthongName.KE,
+            Mode.PLAGAL_SECOND to PhthongName.DI,
+            Mode.VARYS to PhthongName.ZO,
+            Mode.PLAGAL_FOURTH to PhthongName.NI,
         )
         Mode.entries.forEach { mode ->
             assertEquals(mode.key, expected.getValue(mode), ModeScalePositions.defaultStartPhthong(mode))
@@ -37,7 +36,7 @@ class AnalysisStartPhthongTest {
     @Test
     fun theStartIsTheMartyria() {
         Mode.entries.forEach { mode ->
-            assertEquals(mode.key, mode.martyria.name, ModeScalePositions.defaultStartPhthong(mode).name)
+            assertEquals(mode.key, mode.martyria, ModeScalePositions.defaultStartPhthong(mode))
         }
     }
 

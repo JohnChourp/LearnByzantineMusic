@@ -5,13 +5,14 @@ import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleBase
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleDefinition
 import com.johnchourp.learnbyzantinemusic.music.Mode
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 
 /**
  * Where the seven phthongs sit in a mode's scale, in moria above Νη (0 ≤ position < 72), taken
  * from the same interval tables the 8 Ήχοι screen uses ([EightModeScaleDefinitions]). Indexed by
- * [TrainerPhthong.ordinal] (Νη, Πα, Βου, Γα, Δι, Κε, Ζω). For the diatonic genus this is exactly
- * [TrainerPhthong.diatonicMoriaFromNi].
+ * [PhthongName.ordinal] (Νη, Πα, Βου, Γα, Δι, Κε, Ζω) — which is why that order is frozen. For the
+ * diatonic genus this is exactly the Melody Trainer's table (`diatonicMoriaFromNi` in
+ * `TrainerPitchTable.kt`).
  *
  * Both functions take a [Mode], not a key (ClickUp `869f5x299`): an unknown key used to fall through
  * here silently to the diatonic scale from Νη. Keys are now parsed where they enter the app, and a
@@ -44,8 +45,7 @@ object ModeScalePositions {
      *
      * Deliberately the martyria, not a style's base: the theory gives some modes another sticheraric
      * base (Β΄ on Δι, for one). Whether that should drive the analysis is the owner's call, not
-     * something a refactor changes. [TrainerPhthong] and `PhthongName` spell the same seven φθόγγοι
-     * with the same names, so the name carries across.
+     * something a refactor changes.
      */
-    fun defaultStartPhthong(mode: Mode): TrainerPhthong = TrainerPhthong.valueOf(mode.martyria.name)
+    fun defaultStartPhthong(mode: Mode): PhthongName = mode.martyria
 }

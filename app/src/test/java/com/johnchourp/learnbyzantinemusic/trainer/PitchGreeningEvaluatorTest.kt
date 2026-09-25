@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -10,10 +11,10 @@ class PitchGreeningEvaluatorTest {
 
     private val stableFrames = 3
 
-    private fun match(phthong: TrainerPhthong, deviation: Double = 0.0) = PitchMatch(phthong, deviation)
+    private fun match(phthong: PhthongName, deviation: Double = 0.0) = PitchMatch(phthong, deviation)
 
     /** Feeds the same phthong [stableFrames] times and returns the committing result. */
-    private fun PitchGreeningEvaluator.sing(phthong: TrainerPhthong, deviation: Double = 0.0): GreeningResult? {
+    private fun PitchGreeningEvaluator.sing(phthong: PhthongName, deviation: Double = 0.0): GreeningResult? {
         var committed: GreeningResult? = null
         repeat(stableFrames) {
             val r = onFrame(match(phthong, deviation))
@@ -26,28 +27,28 @@ class PitchGreeningEvaluatorTest {
     @Test
     fun `correctly sung phthongi commit as matched and advance`() {
         val evaluator = PitchGreeningEvaluator(
-            listOf(TrainerPhthong.NI, TrainerPhthong.PA, TrainerPhthong.GA),
+            listOf(PhthongName.NI, PhthongName.PA, PhthongName.GA),
             minStableFrames = stableFrames
         )
 
-        val first = evaluator.sing(TrainerPhthong.NI)
-        assertEquals(GreeningResult(0, true, TrainerPhthong.NI), first)
+        val first = evaluator.sing(PhthongName.NI)
+        assertEquals(GreeningResult(0, true, PhthongName.NI), first)
         assertEquals(1, evaluator.currentTargetIndex)
 
-        evaluator.sing(TrainerPhthong.PA)
-        val third = evaluator.sing(TrainerPhthong.GA)
-        assertEquals(GreeningResult(2, true, TrainerPhthong.GA), third)
+        evaluator.sing(PhthongName.PA)
+        val third = evaluator.sing(PhthongName.GA)
+        assertEquals(GreeningResult(2, true, PhthongName.GA), third)
         assertTrue(evaluator.isComplete)
     }
 
     @Test
     fun `a wrong phthong still advances but is not matched`() {
         val evaluator = PitchGreeningEvaluator(
-            listOf(TrainerPhthong.NI, TrainerPhthong.PA),
+            listOf(PhthongName.NI, PhthongName.PA),
             minStableFrames = stableFrames
         )
-        val result = evaluator.sing(TrainerPhthong.DI) // expected Νη, sang Δι
-        assertEquals(GreeningResult(0, false, TrainerPhthong.DI), result)
+        val result = evaluator.sing(PhthongName.DI) // expected Νη, sang Δι
+        assertEquals(GreeningResult(0, false, PhthongName.DI), result)
         assertEquals(1, evaluator.currentTargetIndex)
     }
 
@@ -56,46 +57,46 @@ class PitchGreeningEvaluatorTest {
         // This passed toleranceMoria = 4.0, the Trainer's own value until ClickUp 869f5x28t (H1). It now
         // uses the default, the one tolerance of IntonationProfile (±3 μόρια), which is what the app runs.
         val evaluator = PitchGreeningEvaluator(
-            listOf(TrainerPhthong.NI),
+            listOf(PhthongName.NI),
             minStableFrames = stableFrames
         )
-        val result = evaluator.sing(TrainerPhthong.NI, deviation = 6.0) // right phthong, too sharp
-        assertEquals(GreeningResult(0, false, TrainerPhthong.NI), result)
+        val result = evaluator.sing(PhthongName.NI, deviation = 6.0) // right phthong, too sharp
+        assertEquals(GreeningResult(0, false, PhthongName.NI), result)
     }
 
     @Test
     fun `a phthong held too briefly does not commit`() {
         val evaluator = PitchGreeningEvaluator(
-            listOf(TrainerPhthong.NI),
+            listOf(PhthongName.NI),
             minStableFrames = stableFrames
         )
-        assertNull(evaluator.onFrame(match(TrainerPhthong.NI)))
-        assertNull(evaluator.onFrame(match(TrainerPhthong.NI)))
+        assertNull(evaluator.onFrame(match(PhthongName.NI)))
+        assertNull(evaluator.onFrame(match(PhthongName.NI)))
         assertEquals(0, evaluator.currentTargetIndex)
         assertFalse(evaluator.isComplete)
     }
 
     @Test
     fun `reset returns to the first target`() {
-        val evaluator = PitchGreeningEvaluator(listOf(TrainerPhthong.NI, TrainerPhthong.PA), minStableFrames = stableFrames)
-        evaluator.sing(TrainerPhthong.NI)
+        val evaluator = PitchGreeningEvaluator(listOf(PhthongName.NI, PhthongName.PA), minStableFrames = stableFrames)
+        evaluator.sing(PhthongName.NI)
         assertEquals(1, evaluator.currentTargetIndex)
         evaluator.reset()
         assertEquals(0, evaluator.currentTargetIndex)
         assertFalse(evaluator.isComplete)
-        assertEquals(TrainerPhthong.NI, evaluator.currentTarget())
+        assertEquals(PhthongName.NI, evaluator.currentTarget())
     }
 
     @Test
     fun `a held note advances through repeated identical targets`() {
         val evaluator = PitchGreeningEvaluator(
-            listOf(TrainerPhthong.NI, TrainerPhthong.NI),
+            listOf(PhthongName.NI, PhthongName.NI),
             minStableFrames = stableFrames
         )
         val results = mutableListOf<GreeningResult>()
         // Sing one continuous Νη with no silence in between.
         repeat(2 * stableFrames) {
-            evaluator.onFrame(match(TrainerPhthong.NI))?.let { results.add(it) }
+            evaluator.onFrame(match(PhthongName.NI))?.let { results.add(it) }
         }
         assertEquals(listOf(0, 1), results.map { it.targetIndex })
         assertTrue(results.all { it.matched })
