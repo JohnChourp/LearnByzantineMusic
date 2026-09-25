@@ -43,6 +43,12 @@ class OneNamePerSignTest {
         }
     }
 
+    /** Strings that spell a sign's name but name something else, each with the reason. */
+    private val sameWordOtherThing = mapOf(
+        // The launcher shortcut to the ισοκράτημα — the drone, «Ίσο» in Greek — not the sign ίσον.
+        "shortcut_ison_short" to "the ison drone",
+    )
+
     @Test
     fun everySignHasOneStringKey() {
         // No second key holds a sign's name: not a name_X twin, not a screen's own copy of it.
@@ -50,11 +56,14 @@ class OneNamePerSignTest {
             named.forEach { sign ->
                 val own = ShownBeats.nameOf(sign.nameRes)
                 val name = key(nameIn(folder, sign))
-                val copies = strings.filter { (k, text) -> k != own && key(text) == name }.keys
+                val copies = strings
+                    .filter { (k, text) -> k != own && k !in sameWordOtherThing && key(text) == name }.keys
                 assertEquals("$folder: «${nameIn(folder, sign)}» is also held by", emptySet<String>(), copies)
             }
         }
         val keys = languages.getValue("values").keys
+        // An exception that outlived its string would hide nothing but itself: drop it with the string.
+        sameWordOtherThing.keys.forEach { assertTrue("$it no longer exists", it in keys) }
         named.map { ShownBeats.nameOf(it.nameRes) }.forEach { own ->
             assertTrue("name_$own is back", "name_$own" !in keys)
             assertTrue("cd_$own is back: TalkBack reads the name through cd_neume / cd_quality_sign", "cd_$own" !in keys)
