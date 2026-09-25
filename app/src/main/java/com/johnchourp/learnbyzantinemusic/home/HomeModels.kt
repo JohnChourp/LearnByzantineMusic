@@ -3,9 +3,9 @@ package com.johnchourp.learnbyzantinemusic.home
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.johnchourp.learnbyzantinemusic.R
-import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionLabels
 import com.johnchourp.learnbyzantinemusic.calendar.LiturgicalToneKind
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyToneAnnouncement
+import com.johnchourp.learnbyzantinemusic.music.Mode
 
 /** Color family used to tint a [HomeTile]'s icon badge so sections read as visually distinct groups. */
 enum class TileAccent { Gold, Blue, Purple, Orange, Green, Brown }
@@ -83,7 +83,7 @@ data class WeeklyToneUi(
                 LiturgicalToneKind.HOLY_WEEK -> R.string.weekly_mode_calendar_tone_none_holy_week
                 LiturgicalToneKind.PENTECOST_WEEK -> R.string.weekly_mode_calendar_tone_none_pentecost_week
             }
-            val modeKey = announcement.currentToneIndex?.let { AnastasimatarionLabels.MODE_ORDER[it] }
+            val modeKey = announcement.currentToneIndex?.let { Mode.ofToneIndex(it).key }
             return WeeklyToneUi(
                 headlineRes = headlineRes,
                 headlineToneRes = today.toneNameRes,

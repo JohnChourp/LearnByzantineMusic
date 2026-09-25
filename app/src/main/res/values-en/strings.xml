@@ -858,6 +858,7 @@
     <string name="notes_status_sync_failed_local_saved">Saved locally, but folder sync failed. Retry is pending.</string>
     <string name="notes_status_sync_partial_pending">Saved with partial sync. Pending backups remain.</string>
     <string name="notes_status_import_invalid_json">Invalid backup file.</string>
+    <string name="notes_status_import_newer_version">This backup was made by a newer version of the app. Update the app and try again; your notes have not changed.</string>
     <string name="notes_status_import_read_failed">Failed to read backup file.</string>
     <string name="notes_status_folder_selected">Backup folder selected.</string>
     <!-- Notes redesign (v1.14.0) — section titles, empty/a11y states -->

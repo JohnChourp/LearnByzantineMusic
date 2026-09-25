@@ -262,6 +262,7 @@ class NotesViewModel(
             "sync_failed_local_saved" -> "notes_status_sync_failed_local_saved"
             "sync_partial_pending" -> "notes_status_sync_partial_pending"
             "import_invalid_json" -> "notes_status_import_invalid_json"
+            "import_newer_version" -> "notes_status_import_newer_version"
             "import_read_failed" -> "notes_status_import_read_failed"
             else -> "notes_status_saved"
         }

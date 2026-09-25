@@ -76,6 +76,8 @@ import { fileURLToPath } from 'node:url';
 const SOURCE_URL = process.env.ANASTASIMATARION_SOURCE_URL ?? '';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
+// The app's eight modes (music/Mode.kt), in the same order: each key is Mode.key and the N of
+// ToneNSun.html is Mode.number. AnastasimatarionGeneratorModesTest checks this list on every build.
 const MODES = [
   { key: 'first', page: 'Tone1Sun.html', label: 'Α' },
   { key: 'second', page: 'Tone2Sun.html', label: 'Β' },

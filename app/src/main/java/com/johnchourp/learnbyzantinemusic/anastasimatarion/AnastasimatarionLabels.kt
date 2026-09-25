@@ -2,24 +2,19 @@ package com.johnchourp.learnbyzantinemusic.anastasimatarion
 
 import androidx.annotation.StringRes
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.modes.ModeResources
+import com.johnchourp.learnbyzantinemusic.music.Mode
 
 /** Catalog keys → localized labels. Every key in the catalog must have an entry here (unit-tested). */
 object AnastasimatarionLabels {
-    /** Mode keys in the order of the liturgical cycle; index = LiturgicalToneCycle.toneIndex. */
-    val MODE_ORDER = listOf(
-        "first", "second", "third", "fourth", "plagal_first", "plagal_second", "varys", "plagal_fourth",
-    )
+    /**
+     * Mode keys in the order of the liturgical cycle, so index = LiturgicalToneCycle.toneIndex.
+     * Derived from [Mode], whose entries ARE that order (ClickUp `869f5x299`) — the rule is no longer
+     * kept true by hand, and a test walks the calendar to prove it.
+     */
+    val MODE_ORDER: List<String> = Mode.entries.map { it.key }
 
-    val MODE_NAMES: Map<String, Int> = mapOf(
-        "first" to R.string.mode_first,
-        "second" to R.string.mode_second,
-        "third" to R.string.mode_third,
-        "fourth" to R.string.mode_fourth,
-        "plagal_first" to R.string.mode_plagal_first,
-        "plagal_second" to R.string.mode_plagal_second,
-        "varys" to R.string.mode_varys,
-        "plagal_fourth" to R.string.mode_plagal_fourth,
-    )
+    val MODE_NAMES: Map<String, Int> = Mode.entries.associate { it.key to ModeResources.nameRes(it) }
 
     val SERVICE_NAMES: Map<String, Int> = mapOf(
         "vespers" to R.string.anastasimatarion_service_vespers,

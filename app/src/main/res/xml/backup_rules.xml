@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older that API 31
-   See https://developer.android.com/about/versions/12/backup-restore
+    What Android Auto Backup keeps on Android 7-11 (API 24-30). Android 12+ reads
+    data_extraction_rules.xml instead, which explains each exclusion; both files exclude exactly the
+    same things, and BackupRulesTest fails if they drift apart (ClickUp 869f5x2a2).
+
+    EXCLUDE-ONLY: everything not listed is kept - the notes (notes.db), the settings, the 8 Ήχοι
+    choices and the analysis settings. An <include> would switch Android to include-only mode and
+    drop all of that.
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
-    <!-- Raw recording audio stays on the device; see data_extraction_rules.xml (ClickUp 869f5x26x). -->
+    <!-- The recordings index and its SQLite companion files: rebuilt from the folder. -->
+    <exclude domain="database" path="recordings_index.db" />
+    <exclude domain="database" path="recordings_index.db-wal" />
+    <exclude domain="database" path="recordings_index.db-shm" />
+    <exclude domain="database" path="recordings_index.db-journal" />
+    <!-- Preferences that hold folder URIs or recording URIs, useless without the folder permission. -->
+    <exclude domain="sharedpref" path="learn_byzantine_music_recordings.xml" />
+    <exclude domain="sharedpref" path="learn_byzantine_music_notes.xml" />
+    <exclude domain="sharedpref" path="learn_byzantine_music_owned_recordings.xml" />
+    <!-- Notes snapshots still waiting for the folder: notes.db, which is kept, holds the same notes. -->
+    <exclude domain="file" path="notes_pending_snapshots" />
+    <!-- Raw recording audio stays on the device (ClickUp 869f5x26x). -->
     <exclude domain="file" path="recordings_capture" />
     <exclude domain="file" path="recordings_pending" />
 </full-backup-content>
