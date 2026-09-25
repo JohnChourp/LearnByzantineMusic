@@ -12,8 +12,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.johnchourp.learnbyzantinemusic.BaseActivity
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.ui.RecordingAnalysisScreen
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -90,11 +90,11 @@ data class RecordingAnalysisUiState(
     val status: AnalysisStatus = AnalysisStatus.DECODING,
     val progress: Float = 0f,
     val modeKey: String = "first",
-    val startPhthong: TrainerPhthong = TrainerPhthong.PA,
+    val startPhthong: PhthongName = PhthongName.PA,
     val track: PitchTrack? = null,
     val niHz: Double? = null,
     val notes: List<SungNote> = emptyList(),
-    val expected: List<TrainerPhthong> = emptyList(),
+    val expected: List<PhthongName> = emptyList(),
     val alignment: AlignmentResult? = null,
 ) {
     val positions: IntArray get() = ModeScalePositions.forMode(modeKey)
@@ -163,19 +163,19 @@ class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(ap
         recompute()
     }
 
-    fun selectStart(phthong: TrainerPhthong) {
+    fun selectStart(phthong: PhthongName) {
         _uiState.update { it.copy(startPhthong = phthong) }
         store.saveScale(contextKey, _uiState.value.modeKey, phthong)
         recompute()
     }
 
-    fun addExpected(phthong: TrainerPhthong) = updateExpected(_uiState.value.expected + phthong)
+    fun addExpected(phthong: PhthongName) = updateExpected(_uiState.value.expected + phthong)
 
     fun removeLastExpected() = updateExpected(_uiState.value.expected.dropLast(1))
 
     fun clearExpected() = updateExpected(emptyList())
 
-    private fun updateExpected(expected: List<TrainerPhthong>) {
+    private fun updateExpected(expected: List<PhthongName>) {
         _uiState.update { it.copy(expected = expected) }
         store.saveExpected(contextKey, expected)
         recompute()

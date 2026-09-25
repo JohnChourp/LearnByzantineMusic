@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.lessons.ui
 
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -9,7 +10,10 @@ class PhthongScaleTest {
     fun octave_has_seven_phthongs_in_scale_order() {
         assertEquals(7, PhthongScale.size)
         assertEquals(
-            listOf(Phthong.NI, Phthong.PA, Phthong.VOU, Phthong.GA, Phthong.DI, Phthong.KE, Phthong.ZO),
+            listOf(
+                PhthongName.NI, PhthongName.PA, PhthongName.VOU, PhthongName.GA,
+                PhthongName.DI, PhthongName.KE, PhthongName.ZO,
+            ),
             PhthongScale.octave,
         )
     }
@@ -25,20 +29,20 @@ class PhthongScaleTest {
     @Test
     fun phthongAt_wraps_across_octaves_in_both_directions() {
         // Within the base octave.
-        assertEquals(Phthong.NI, PhthongScale.phthongAt(0))
-        assertEquals(Phthong.ZO, PhthongScale.phthongAt(6))
+        assertEquals(PhthongName.NI, PhthongScale.phthongAt(0))
+        assertEquals(PhthongName.ZO, PhthongScale.phthongAt(6))
         // Up into the next octave: Νη appears again.
-        assertEquals(Phthong.NI, PhthongScale.phthongAt(7))
-        assertEquals(Phthong.PA, PhthongScale.phthongAt(8))
+        assertEquals(PhthongName.NI, PhthongScale.phthongAt(7))
+        assertEquals(PhthongName.PA, PhthongScale.phthongAt(8))
         // Down below Νη: the previous phthong is Ζω.
-        assertEquals(Phthong.ZO, PhthongScale.phthongAt(-1))
-        assertEquals(Phthong.NI, PhthongScale.phthongAt(-7))
-        assertEquals(Phthong.ZO, PhthongScale.phthongAt(-8))
+        assertEquals(PhthongName.ZO, PhthongScale.phthongAt(-1))
+        assertEquals(PhthongName.NI, PhthongScale.phthongAt(-7))
+        assertEquals(PhthongName.ZO, PhthongScale.phthongAt(-8))
     }
 
     @Test
     fun every_phthong_derives_from_a_distinct_letter() {
-        val letters = Phthong.entries.map { it.sourceLetter }
+        val letters = PhthongName.entries.map { it.sourceLetter }
         assertEquals(letters.size, letters.toSet().size)
     }
 }

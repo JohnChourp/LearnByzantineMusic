@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -9,8 +10,8 @@ class MelodyPlaybackPlannerTest {
     fun `plan lays notes end to end in absolute time`() {
         val sequence = MelodySequence(
             listOf(
-                TrainerNote(TrainerPhthong.NI, baseDurationBeats = 1f),
-                TrainerNote(TrainerPhthong.PA, baseDurationBeats = 2f)
+                TrainerNote(PhthongName.NI, baseDurationBeats = 1f),
+                TrainerNote(PhthongName.PA, baseDurationBeats = 2f)
             )
         )
         val plan = MelodyPlaybackPlanner.plan(sequence, MelodyTempo(60)) // 1000 ms per beat
@@ -26,10 +27,10 @@ class MelodyPlaybackPlannerTest {
 
     @Test
     fun `plan carries each note's frequency`() {
-        val sequence = MelodySequence(listOf(TrainerNote(TrainerPhthong.NI)))
+        val sequence = MelodySequence(listOf(TrainerNote(PhthongName.NI)))
         val plan = MelodyPlaybackPlanner.plan(sequence, MelodyTempo(120))
         assertEquals(220.0, plan.single().frequencyHz, 1e-6)
-        assertEquals(TrainerPhthong.NI, plan.single().phthong)
+        assertEquals(PhthongName.NI, plan.single().phthong)
     }
 
     @Test
