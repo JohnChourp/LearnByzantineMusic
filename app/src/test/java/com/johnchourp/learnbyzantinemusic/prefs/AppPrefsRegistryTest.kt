@@ -25,6 +25,7 @@ class AppPrefsRegistryTest {
                 "app_language_onboarding_completed",
                 "app_theme_mode",
                 "favorite_topic_ids",
+                "ison_in_background",
                 "learning_completed_step_ids",
                 "metronome_bpm",
                 "metronome_foot_mode",

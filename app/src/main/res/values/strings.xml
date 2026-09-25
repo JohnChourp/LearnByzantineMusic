@@ -373,6 +373,17 @@
     <string name="eight_modes_ison_selector_dominants">Δεσπόζοντες φθόγγοι</string>
     <string name="eight_modes_ison_selector_others">Άλλοι φθόγγοι</string>
     <string name="eight_modes_ison_reset_to_base">Επαναφορά στη βάση (%1$s)</string>
+    <string name="eight_modes_ison_background_label">Συνέχισε στο παρασκήνιο</string>
+    <string name="eight_modes_ison_background_hint">Το ίσον παίζει και με σβηστή οθόνη ή πάνω από άλλη εφαρμογή, με ειδοποίηση για να το σταματάς. Σταματά μόνο του μετά από μία ώρα ή όταν βγάλεις τα ακουστικά.</string>
+    <string name="eight_modes_ison_notification_channel">Ισοκράτημα</string>
+    <string name="eight_modes_ison_notification_channel_description">Το ισοκράτημα που παίζει στο παρασκήνιο, με στάση και αλλαγή φθόγγου.</string>
+    <string name="eight_modes_ison_notification_title">Ισοκράτημα · %1$s</string>
+    <string name="eight_modes_ison_notification_text">Κρατά τον φθόγγο %1$s</string>
+    <string name="eight_modes_ison_notification_stopped">Σταμάτησε στον φθόγγο %1$s</string>
+    <string name="eight_modes_ison_notification_lower">Φθόγγος −</string>
+    <string name="eight_modes_ison_notification_higher">Φθόγγος +</string>
+    <string name="eight_modes_ison_notification_stop">Στάση</string>
+    <string name="eight_modes_ison_notification_play">Αναπαραγωγή</string>
     <string name="eight_modes_scale_card_title">Η κλίμακα</string>
     <string name="eight_modes_scale_card_hint">Κράτα πατημένο έναν φθόγγο για να ακούσεις τον τόνο — σύρε πάνω-κάτω για γλίστρημα.</string>
     <string name="eight_modes_scale_moria_legend">οι αριθμοί δείχνουν τα μόρια κάθε διαστήματος</string>
@@ -445,6 +456,8 @@
     <string name="mode_theory_back_button">← Επιστροφή στους 8 Ήχους</string>
     <string name="shortcut_new_recording_short">Νέα ηχογράφηση</string>
     <string name="shortcut_new_recording_long">Νέα ηχογράφηση</string>
+    <string name="shortcut_ison_short">Ίσο</string>
+    <string name="shortcut_ison_long">Ίσο στους 8 Ήχους</string>
     <string name="recordings_share_chooser_title">Κοινοποίηση ηχογράφησης</string>
     <string name="recordings_share_failed">Αποτυχία κοινοποίησης ηχογράφησης.</string>
     <string name="recordings_action_share">Κοινοποίηση</string>
