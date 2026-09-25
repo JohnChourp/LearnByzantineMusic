@@ -128,7 +128,7 @@ class WeeklyModeCalendarActivity : BaseActivity() {
             maxYear = MAX_PICKER_YEAR,
             monthGrid = buildMonthGrid(),
             selectedDay = selectedDate.dayOfMonth,
-            toneNameRes = tone.toneNameRes,
+            toneLabel = toneLabel(tone),
             weekRangeLabel = getString(
                 R.string.weekly_mode_calendar_week_range_template,
                 tone.weekStart.format(weekRangeFormatter),
@@ -142,6 +142,20 @@ class WeeklyModeCalendarActivity : BaseActivity() {
             readingsEmpty = readings.apostle.isEmpty() && readings.gospel.isEmpty(),
             coverageNoticeRes = coverageNoticeRes(),
         )
+    }
+
+    /**
+     * The tone card's headline. The periods without a tone of the week say so by name, rather than
+     * leaving the headline empty or showing a tone that is not sung.
+     */
+    private fun toneLabel(tone: WeeklyToneResult): String {
+        val toneName = tone.toneNameRes?.let { getString(it) }.orEmpty()
+        return when (tone.kind) {
+            LiturgicalToneKind.WEEKLY -> toneName
+            LiturgicalToneKind.BRIGHT_WEEK_DAY -> getString(R.string.weekly_mode_calendar_tone_bright_week, toneName)
+            LiturgicalToneKind.HOLY_WEEK -> getString(R.string.weekly_mode_calendar_tone_none_holy_week)
+            LiturgicalToneKind.PENTECOST_WEEK -> getString(R.string.weekly_mode_calendar_tone_none_pentecost_week)
+        }
     }
 
     /**
