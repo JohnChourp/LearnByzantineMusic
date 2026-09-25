@@ -18,13 +18,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * «Αναστασιματάριο» page: the eight modes → services → hymns, with how many recordings the user
- * keeps for each hymn. Opens on the mode of the current week ([AnastasimatarionWeekMode]: the day's
- * own tone in Bright Week, the first mode in the weeks that have no tone); tapping a hymn opens
- * [HymnActivity].
+ * keeps for each hymn. Opens on the current mode ([AnastasimatarionWeekMode]: the tone of the week,
+ * the day's own tone in Bright Week, from Saturday noon the tone of tonight's vespers, and the first
+ * mode in the weeks that have no tone); tapping a hymn opens [HymnActivity].
  */
 class AnastasimatarionActivity : BaseActivity() {
     private val viewModel: AnastasimatarionViewModel by viewModels()
@@ -48,13 +48,16 @@ class AnastasimatarionActivity : BaseActivity() {
         super.onResume()
         // Back from a hymn page or from recording: the counts may have changed.
         viewModel.refreshCounts()
+        // And the clock may have passed the vespers hour; the badge follows it, the selection stays.
+        viewModel.refreshWeekMode()
     }
 }
 
 data class AnastasimatarionUiState(
     val catalog: HymnCatalog? = null,
     val selectedModeKey: String = AnastasimatarionLabels.MODE_ORDER.first(),
-    val weekModeKey: String? = null,
+    /** The current mode and the badge that names it; null in a week with no tone (no badge). */
+    val weekMode: AnastasimatarionWeekMode.CurrentMode? = null,
     val counts: Map<String, Int> = emptyMap(),
     val hasRecordingsFolder: Boolean = false,
     val loadFailed: Boolean = false,
@@ -66,9 +69,9 @@ class AnastasimatarionViewModel(application: Application) : AndroidViewModel(app
     val uiState: StateFlow<AnastasimatarionUiState> = _uiState.asStateFlow()
 
     init {
-        val weekModeKey = runCatching { AnastasimatarionWeekMode.weekModeKey(LocalDate.now()) }.getOrNull()
+        val weekMode = currentWeekMode()
         _uiState.update { state ->
-            state.copy(selectedModeKey = weekModeKey ?: state.selectedModeKey, weekModeKey = weekModeKey)
+            state.copy(selectedModeKey = weekMode?.modeKey ?: state.selectedModeKey, weekMode = weekMode)
         }
         viewModelScope.launch {
             val catalog = runCatching {
@@ -78,6 +81,15 @@ class AnastasimatarionViewModel(application: Application) : AndroidViewModel(app
             refreshCounts()
         }
     }
+
+    /** Re-reads the badge only: the mode the user is looking at is theirs, not the clock's. */
+    fun refreshWeekMode() {
+        val weekMode = currentWeekMode()
+        _uiState.update { it.copy(weekMode = weekMode) }
+    }
+
+    private fun currentWeekMode(): AnastasimatarionWeekMode.CurrentMode? =
+        runCatching { AnastasimatarionWeekMode.currentMode(LocalDateTime.now()) }.getOrNull()
 
     fun selectMode(modeKey: String) {
         if (modeKey == _uiState.value.selectedModeKey) return
