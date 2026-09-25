@@ -145,6 +145,10 @@ fun EightModesScreen(
     onOpenMenu: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    /** The ison sounds from the start — «Πεντάλεπτο της ημέρας» opens the page this way. */
+    initialDroneOn: Boolean = false,
+    /** «Πού είμαι» listens from the start — the voice step of the same session. */
+    initialListening: Boolean = false,
 ) {
     var selectedModeIndex by remember {
         mutableStateOf(initialModeIndex.coerceIn(EIGHT_MODES.indices))
@@ -154,11 +158,11 @@ fun EightModesScreen(
         mutableStateMapOf<Int, Int>().apply { putAll(initialBaseShifts) }
     }
     var activeIndex by remember { mutableStateOf(-1) }
-    var droneOn by remember { mutableStateOf(false) }
+    var droneOn by remember { mutableStateOf(initialDroneOn) }
     // Where «Ίσον σε…» moved the ison; null means the mode's base. Keyed on the mode, so a new ήχος
     // starts on its own base, and never persisted (ClickUp `869f5x251`).
     var isonChoice by remember(selectedModeIndex) { mutableStateOf<Phthong?>(null) }
-    var listening by remember { mutableStateOf(false) }
+    var listening by remember { mutableStateOf(initialListening) }
     val scope = rememberCoroutineScope()
 
     // Switching modes never carries a held tone over.

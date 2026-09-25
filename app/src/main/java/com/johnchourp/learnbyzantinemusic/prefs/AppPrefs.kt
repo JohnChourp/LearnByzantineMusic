@@ -49,6 +49,12 @@ object AppPrefs {
 
         /** «Ανάλυση φθόγγων»: what the user expects to have chanted, per hymn or per recording. */
         RECORDING_ANALYSIS("recording_analysis_settings"),
+
+        /**
+         * «Πεντάλεπτο της ημέρας»: the practice history behind the streak, and the reminder. Its own
+         * file, so resetting the learning path's progress never touches the streak.
+         */
+        PRACTICE("learn_byzantine_music_practice"),
     }
 
     /** What a key holds, so a reader cannot ask for the wrong accessor. */
@@ -342,6 +348,38 @@ object AppPrefs {
     /** Stored name of the starting-phthong key for [analysisContext]. */
     fun analysisStartKeyName(analysisContext: String): String = analysisContext + ANALYSIS_START_SUFFIX
 
+    // ---- PRACTICE -----------------------------------------------------------------------------
+
+    val PracticeLogJson = Key(
+        name = "practice_log",
+        store = Store.PRACTICE,
+        type = Type.STRING,
+        default = "absent — no practice yet, a streak of 0",
+        allowed = "PracticeLogCodec JSON, schemaVersion 1: completed sessions and minutes per day; " +
+            "anything unreadable reads as an empty history",
+        writtenBy = "«Πεντάλεπτο της ημέρας» when a session is completed, via PracticeLogStore",
+        readBy = "the home card and «Ιστορικό εξάσκησης» (streak, weekly chart), and the reminder",
+    )
+
+    val PracticeReminderEnabled = Key(
+        name = "practice_reminder_enabled",
+        store = Store.PRACTICE,
+        type = Type.BOOLEAN,
+        default = "false — the reminder is opt-in",
+        writtenBy = "the reminder switch in «Ιστορικό εξάσκησης», via PracticeReminders",
+        readBy = "PracticeReminders, which schedules the work, and PracticeReminderWorker",
+    )
+
+    val PracticeReminderMinuteOfDay = Key(
+        name = "practice_reminder_minute_of_day",
+        store = Store.PRACTICE,
+        type = Type.INT,
+        default = "1140 (19:00)",
+        allowed = "0..1439 minutes after local midnight; anything else falls back to the default",
+        writtenBy = "the reminder time in «Ιστορικό εξάσκησης», via PracticeReminders",
+        readBy = "PracticeReminders, to schedule the next reminder",
+    )
+
     /** Every registered key. A new key must appear here, or `AppPrefsRegistryTest` fails. */
     val all: List<Key> = listOf(
         FontStep,
@@ -367,6 +405,9 @@ object AppPrefs {
         AnalysisExpectedMelody,
         AnalysisModeKey,
         AnalysisStartPhthong,
+        PracticeLogJson,
+        PracticeReminderEnabled,
+        PracticeReminderMinuteOfDay,
     )
 
     /** Opens [store]. The only place the app names a preferences file. */

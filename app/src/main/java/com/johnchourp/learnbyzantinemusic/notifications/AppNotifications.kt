@@ -33,6 +33,9 @@ object AppNotifications {
     /** One id per notification the app can show; they only have to differ. */
     const val RECORDING_NOTIFICATION_ID = 1
 
+    /** The daily practice reminder of «Πεντάλεπτο της ημέρας» (ClickUp `869f5x2dy`). */
+    const val PRACTICE_REMINDER_NOTIFICATION_ID = 2
+
     enum class Channel(
         val id: String,
         @StringRes val nameRes: Int,
@@ -45,6 +48,18 @@ object AppNotifications {
             nameRes = R.string.recordings_notification_channel_name,
             descriptionRes = R.string.recordings_notification_channel_description,
             importance = NotificationManagerCompat.IMPORTANCE_LOW,
+        ),
+
+        /**
+         * The opt-in daily practice reminder (ClickUp `869f5x2dy`): at most one a day, and only when
+         * the day has no completed practice yet. Default importance, so it shows in the status bar —
+         * still without sound, like every channel here.
+         */
+        PRACTICE_REMINDER(
+            id = "practice_reminder",
+            nameRes = R.string.practice_reminder_channel_name,
+            descriptionRes = R.string.practice_reminder_channel_description,
+            importance = NotificationManagerCompat.IMPORTANCE_DEFAULT,
         ),
     }
 

@@ -34,6 +34,10 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
  * to the saved «last selected mode»: that is saved only when the user taps a mode here, so following
  * the card never changes where the page opens next time from its own tile. The mode on screen is kept
  * in the instance state, so a recreation (a theme change) shows it again instead of the saved one.
+ *
+ * **«Πεντάλεπτο της ημέρας»** (ClickUp `869f5x2dy`) also opens the page with the ison already sounding,
+ * and for its voice step with «Πού είμαι» already listening (asking for the microphone then, as a tap
+ * would). Both are one-shot too: read on the first creation only, never saved.
  */
 class EightModesActivity : BaseActivity() {
 
@@ -118,6 +122,8 @@ class EightModesActivity : BaseActivity() {
                     onListenChange = ::setListening,
                     heardFrequencyHz = heardFrequencyHz,
                     micDenied = micDenied,
+                    initialDroneOn = savedInstanceState == null && intent.getBooleanExtra(EXTRA_ISON_ON, false),
+                    initialListening = savedInstanceState == null && intent.getBooleanExtra(EXTRA_LISTEN, false),
                     onOpenMenu = { EightModesNavigation.showMenu(this, selectedTopicKey = null) },
                     onBack = ::finish,
                 )
@@ -243,10 +249,18 @@ class EightModesActivity : BaseActivity() {
         private val TONE_TIMBRE_PREF_KEY = AppPrefs.SelectedToneTimbre.name
         private val SELECTED_MODE_KEY_PREF_KEY = AppPrefs.SelectedModeKey.name
         private const val EXTRA_MODE_KEY = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_MODE_KEY"
+        private const val EXTRA_ISON_ON = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_ISON_ON"
+        private const val EXTRA_LISTEN = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_LISTEN"
         private const val STATE_SHOWN_MODE_KEY = "shown_mode_key"
 
-        /** Opens the page on [modeKey] for this opening only; see the class KDoc. */
-        fun intent(context: Context, modeKey: String): Intent =
-            Intent(context, EightModesActivity::class.java).putExtra(EXTRA_MODE_KEY, modeKey)
+        /**
+         * Opens the page on [modeKey] for this opening only; see the class KDoc. [isonOn] starts the ison
+         * and [listen] starts «Πού είμαι», both only on this opening.
+         */
+        fun intent(context: Context, modeKey: String, isonOn: Boolean = false, listen: Boolean = false): Intent =
+            Intent(context, EightModesActivity::class.java)
+                .putExtra(EXTRA_MODE_KEY, modeKey)
+                .putExtra(EXTRA_ISON_ON, isonOn)
+                .putExtra(EXTRA_LISTEN, listen)
     }
 }
