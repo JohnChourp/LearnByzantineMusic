@@ -1,20 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
+    What Android 12+ (API 31+) copies to the user's Google account backup (<cloud-backup>) and to a
+    new phone in a direct device-to-device transfer (<device-transfer>). Android 7-11 read
+    backup_rules.xml instead. All three rule sets exclude exactly the same things, and
+    BackupRulesTest fails if they drift apart (ClickUp 869f5x2a2).
+
+    EXCLUDE-ONLY. Everything not listed below is kept, as it always was: the notes (notes.db), the
+    settings, the 8 Ήχοι choices and the analysis settings. An <include> anywhere would switch Android
+    to include-only mode and silently drop all of that, so there is none - BackupRulesTest checks.
+
+    Why these are left out:
+    - A folder permission (SAF grant) is never backed up or transferred. A folder URI, or a recording
+      URI, restored on another phone points at nothing the app may open; the app asks for the folder
+      again anyway.
+    - The recordings index is rebuilt from the folder.
+    - A backup over 25 MB is not made at all, the notes included: bulky or redundant files stay out.
+    Cached files are never backed up by Android, so they need no rule.
+
+    A manual export of settings (ClickUp 869f5x25w, «Δεδομένα μάθησης») follows the same line: it
+    carries no folder URIs either.
 -->
 <data-extraction-rules>
     <cloud-backup>
+        <!-- The recordings index and its SQLite companion files: rebuilt from the folder. -->
+        <exclude domain="database" path="recordings_index.db" />
+        <exclude domain="database" path="recordings_index.db-wal" />
+        <exclude domain="database" path="recordings_index.db-shm" />
+        <exclude domain="database" path="recordings_index.db-journal" />
+        <!-- Preferences that hold folder URIs or recording URIs (AppPrefs.Store RECORDINGS, NOTES,
+             OWNED_RECORDINGS). The chosen recording format lives with the folder URI and falls back
+             to FLAC on a new phone. -->
+        <exclude domain="sharedpref" path="learn_byzantine_music_recordings.xml" />
+        <exclude domain="sharedpref" path="learn_byzantine_music_notes.xml" />
+        <exclude domain="sharedpref" path="learn_byzantine_music_owned_recordings.xml" />
+        <!-- Notes snapshots still waiting for the folder: notes.db, which is kept, holds the same notes. -->
+        <exclude domain="file" path="notes_pending_snapshots" />
         <!-- A recording in progress, and recordings the folder could not take (ClickUp 869f5x26x):
-             raw WAV audio that stays on this device. A few minutes of it exceed the 25 MB backup
-             quota, and a backup over quota is not made at all, the notes included. -->
+             raw WAV audio that stays on this device. A few minutes of it exceed the 25 MB quota. -->
         <exclude domain="file" path="recordings_capture" />
         <exclude domain="file" path="recordings_pending" />
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <!-- The same exclusions, for the same reasons: see <cloud-backup> above. -->
+        <exclude domain="database" path="recordings_index.db" />
+        <exclude domain="database" path="recordings_index.db-wal" />
+        <exclude domain="database" path="recordings_index.db-shm" />
+        <exclude domain="database" path="recordings_index.db-journal" />
+        <exclude domain="sharedpref" path="learn_byzantine_music_recordings.xml" />
+        <exclude domain="sharedpref" path="learn_byzantine_music_notes.xml" />
+        <exclude domain="sharedpref" path="learn_byzantine_music_owned_recordings.xml" />
+        <exclude domain="file" path="notes_pending_snapshots" />
+        <exclude domain="file" path="recordings_capture" />
+        <exclude domain="file" path="recordings_pending" />
     </device-transfer>
-    -->
 </data-extraction-rules>
