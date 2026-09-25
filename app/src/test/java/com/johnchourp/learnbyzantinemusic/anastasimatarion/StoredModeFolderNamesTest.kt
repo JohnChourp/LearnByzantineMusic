@@ -10,7 +10,7 @@ import org.junit.Test
  * be, byte for byte, the ones the app has always written.
  *
  * The expected names are spelled as UTF-8 bytes on purpose. Seven of them end in «΄», U+0384 GREEK
- * TONOS (`cd 84`), which an editor, a font or a "tidy-up" can turn into an apostrophe or a combining
+ * TONOS (UTF-8 `ce 84`), which an editor, a font or a "tidy-up" can turn into an apostrophe or a combining
  * accent without anyone seeing the difference — only the bytes show it.
  */
 class StoredModeFolderNamesTest {
