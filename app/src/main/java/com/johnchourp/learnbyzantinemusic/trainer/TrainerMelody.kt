@@ -57,7 +57,7 @@ data class TrainerMelody(
  *
  * **Rejected** means [decode] returns null: never a crash, and never half a melody — a note with a sign
  * the app does not know would play with the wrong timing, so the whole melody is refused instead.
- * Clamping only brings a value back to one the app could have written itself.
+ * Clamping only brings a value back into the range the app itself writes.
  *
  * On the way in the notes also go through `MelodySequence.normalised`, the rule of H5: a γοργόν that
  * can never stand on the first note is taken off, exactly as a deletion in the Trainer would.
