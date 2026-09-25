@@ -278,8 +278,10 @@ object LearningDataFile {
         // An empty or unreadable history is not carried, so an import never replaces a history with nothing.
         AppPrefs.PracticeLogJson -> (value as? String)?.let(PracticeLogCodec::decode)
             ?.takeIf { it.days.isNotEmpty() }?.let(PracticeLogCodec::encode)
-        // A melody or a list the Trainer cannot read stays on this phone; one a newer app wrote, too.
-        AppPrefs.TrainerLastMelody -> TrainerMelodyCodec.decodeString(value as? String)?.let(TrainerMelodyCodec::encodeString)
+        // The same for the Trainer: a melody without notes, or a list without entries, is not carried,
+        // and neither is one the Trainer cannot read or a newer app wrote.
+        AppPrefs.TrainerLastMelody -> TrainerMelodyCodec.decodeString(value as? String)
+            ?.takeIf { it.notes.isNotEmpty() }?.let(TrainerMelodyCodec::encodeString)
         AppPrefs.TrainerExercises -> (value as? String)?.let(ExerciseBook::normalized)
         // A key the file may not carry has no value in it.
         else -> null

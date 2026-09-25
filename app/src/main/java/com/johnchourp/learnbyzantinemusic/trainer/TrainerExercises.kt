@@ -132,11 +132,13 @@ class ExerciseBook private constructor(
         fun decode(raw: String?): ExerciseBook = read(raw) ?: EMPTY
 
         /**
-         * [raw] exactly as the Trainer would write it back, or null when it writes nothing from it: a
-         * value that is not a list at all, or a list in a newer format. This is what the «Δεδομένα
-         * μάθησης» file carries, and the only form its import accepts (ClickUp `869f5x25w`).
+         * [raw] exactly as the Trainer would write it back — what the «Δεδομένα μάθησης» file carries,
+         * and the only form its import accepts (ClickUp `869f5x25w`). Null when there is nothing to
+         * carry: a value that is not a list at all, a list in a newer format, or a list without a single
+         * entry, so that an import never replaces the exercises on the other phone with nothing.
          */
-        fun normalized(raw: String): String? = read(raw)?.takeUnless { it.isNewerFormat }?.encode()
+        fun normalized(raw: String): String? =
+            read(raw)?.takeUnless { it.isNewerFormat || it.storedCount == 0 }?.encode()
 
         /** The book [raw] holds; null when it is not JSON at all, so there is nothing to keep. */
         private fun read(raw: String?): ExerciseBook? {

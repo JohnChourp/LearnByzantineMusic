@@ -29,7 +29,7 @@ import org.junit.Test
 /**
  * The Melody Trainer's exercises and last melody in the «Δεδομένα μάθησης» file (ClickUp `869f5x261`
  * with `869f5x25w`): they are the learner's own work, so they go to another phone — but only in the
- * form the Trainer itself writes, and never a value it cannot read.
+ * form the Trainer itself writes: never a value it cannot read, and never an empty one.
  */
 class TrainerLearningDataTest {
 
@@ -137,8 +137,10 @@ class TrainerLearningDataTest {
     }
 
     @Test
-    fun `what the Trainer cannot use stays on this phone`() {
+    fun `nothing to carry, or what the Trainer cannot use, stays on this phone`() {
         listOf(
+            // A melody without notes and a list without entries: an import never replaces them with nothing.
+            TrainerMelodyCodec.encodeString(TrainerMelody()) to ExerciseBook.EMPTY.encode(),
             """{"schemaVersion":2,"bpm":80,"notes":[]}""" to """{"schemaVersion":2,"exercises":[]}""",
             "{ not json" to "not json either",
         ).forEach { (lastMelody, exercises) ->
@@ -159,12 +161,14 @@ class TrainerLearningDataTest {
             "trainer_last_melody" to JSONObject(canonical.toString()).put("bpm", 999).toString(),
             "trainer_last_melody" to JSONObject(canonical.toString()).put("schemaVersion", 2).toString(),
             "trainer_last_melody" to "{ not json",
+            "trainer_last_melody" to TrainerMelodyCodec.encodeString(TrainerMelody()),
             "trainer_exercises" to JSONObject()
                 .put("schemaVersion", 1)
                 .put("exercises", JSONArray().put(JSONObject().put("name", " Αρχή ").put("savedAt", 7L).put("melody", canonical)))
                 .toString(),
             "trainer_exercises" to """{"schemaVersion":2,"exercises":[]}""",
             "trainer_exercises" to "not json",
+            "trainer_exercises" to ExerciseBook.EMPTY.encode(),
         )
         badValues.forEach { (key, value) ->
             assertEquals("$key = $value", Rejected(Reason.BAD_VALUE, key), LearningDataFile.decode(fileWith(key, value)))
@@ -176,18 +180,13 @@ class TrainerLearningDataTest {
         // An exercise a newer app wrote: it travels along, but this version cannot open it.
         val newer = JSONObject().put("name", "δ").put("savedAt", 1L).put("melody", JSONObject().put("schemaVersion", 2))
         val withUnreadable = JSONObject(bookOf("α", "β", "γ").encode()).apply { getJSONArray("exercises").put(newer) }.toString()
-        val cases = mapOf(
-            withUnreadable to Line(Item.TRAINER_EXERCISES, 3),
-            ExerciseBook.EMPTY.encode() to Line(Item.TRAINER_EXERCISES, 0),
-        )
-        cases.forEach { (list, line) ->
-            val file = export(mapOf("trainer_exercises" to list, "trainer_last_melody" to TrainerMelodyCodec.encodeString(melody)))
 
-            assertEquals(
-                listOf(Line(Item.FONT_SIZE, 1), line, Line(Item.TRAINER_LAST_MELODY, 1)),
-                LearningDataFile.summary(accepted(file))
-            )
-        }
+        val file = export(mapOf("trainer_exercises" to withUnreadable, "trainer_last_melody" to TrainerMelodyCodec.encodeString(melody)))
+
+        assertEquals(
+            listOf(Line(Item.FONT_SIZE, 1), Line(Item.TRAINER_EXERCISES, 3), Line(Item.TRAINER_LAST_MELODY, 1)),
+            LearningDataFile.summary(accepted(file))
+        )
     }
 
     @Test
