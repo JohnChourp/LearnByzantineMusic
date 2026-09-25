@@ -21,6 +21,9 @@ package com.johnchourp.learnbyzantinemusic.notes
  * - A created note opens as soon as the list containing it has arrived ([onNoteCreated]).
  * - Every save also writes a backup file, so a save is asked for only when the editor differs from
  *   what the database holds or is about to hold ([saveRequest]) — never twice for the same text.
+ * - Before the editor can lose the open note, its unsaved text is saved: a new search may hide it
+ *   ([onSearchChanged]). A note being deleted is the exception — nothing saves it again
+ *   ([onDeleteRequested]).
  */
 object NotesEditorSync {
 
@@ -92,6 +95,14 @@ object NotesEditorSync {
     fun onSearchChanged(state: NotesUiState, query: String): Step =
         saveOpenNote(state.copy(searchQuery = query))
 
+    /**
+     * The user confirmed deleting the open note. From here on nothing saves it — not its pending
+     * autosave, not leaving it, not the exit flush — because a save now would queue behind the delete
+     * and write the note back. The guard lifts once the editor holds another note ([load]).
+     */
+    fun onDeleteRequested(state: NotesUiState): NotesUiState =
+        state.copy(noteBeingDeleted = state.selectedNoteId)
+
     fun onTitleEdited(state: NotesUiState, title: String): NotesUiState =
         state.copy(editorTitle = title, editorFollowsDatabase = false)
 
@@ -146,7 +157,7 @@ object NotesEditorSync {
 
     private fun NotesUiState.editorRequest(): NoteSaveRequest? {
         val noteId = selectedNoteId ?: return null
-        if (!canInteractWithNotes) {
+        if (!canInteractWithNotes || noteId == noteBeingDeleted) {
             return null
         }
         return NoteSaveRequest(noteId, editorTitle, editorBody)
@@ -161,7 +172,9 @@ object NotesEditorSync {
             editorTitle = saving?.title ?: note?.title.orEmpty(),
             editorBody = saving?.body ?: note?.body.orEmpty(),
             storedTitle = note?.title.orEmpty(),
-            storedBody = note?.body.orEmpty()
+            storedBody = note?.body.orEmpty(),
+            // A delete's guard ends with the note it guarded: an import can bring the same id back.
+            noteBeingDeleted = noteBeingDeleted?.takeIf { it == note?.id }
         )
     }
 }

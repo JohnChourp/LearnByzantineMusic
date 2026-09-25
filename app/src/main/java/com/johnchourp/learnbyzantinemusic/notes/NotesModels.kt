@@ -32,12 +32,14 @@ data class NotesUiState(
     val editorTitle: String = "",
     val editorBody: String = "",
     // Not rendered — NotesEditorSync's bookkeeping: what the database holds for the open note, the
-    // save still running, a created note waiting for its list, and an import's reset in force.
+    // save still running, a created note waiting for its list, an import's reset in force, and a
+    // note being deleted (which nothing may save again).
     val storedTitle: String = "",
     val storedBody: String = "",
     val saveInFlight: NoteSaveRequest? = null,
     val noteToOpen: String? = null,
     val editorFollowsDatabase: Boolean = false,
+    val noteBeingDeleted: String? = null,
     val searchQuery: String = "",
     val statusMessage: String = "",
     val isSaving: Boolean = false,

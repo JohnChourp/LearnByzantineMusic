@@ -207,4 +207,32 @@ class NotesEditorSyncTest {
         assertEquals("b", state.selectedNoteId)
         assertNull(NotesEditorSync.onSearchChanged(state, "Δόξα Πατρί").save)
     }
+
+    @Test
+    fun `a note being deleted is saved by nothing, and the guard ends with it`() {
+        val a = note("a", title = "Α", body = "α", updated = 2L)
+        val b = note("b", title = "Β", body = "β", updated = 1L)
+        var state = screenWith(a, b)
+        state = NotesEditorSync.onBodyEdited(state, "α και κάτι")
+        val running = NotesEditorSync.saveRequest(state)!!
+        state = NotesEditorSync.onSaveStarted(state, running)
+        // More typing: its autosave is pending when the user confirms the delete.
+        state = NotesEditorSync.onBodyEdited(state, "α και κάτι ακόμη")
+
+        state = NotesEditorSync.onDeleteRequested(state)
+        // Until the list without A arrives, nothing saves A: that save would queue behind the delete.
+        assertNull("the pending autosave", NotesEditorSync.saveRequest(state))
+        assertNull("a search, «Νέα σημείωση», another note", NotesEditorSync.saveOpenNote(state).save)
+        assertNull("Back", NotesEditorSync.exitSaveRequest(state))
+        state = NotesEditorSync.onSaveFinished(state, running)
+        assertNull("after the running save lands", NotesEditorSync.saveRequest(state))
+
+        state = NotesEditorSync.onNotesChanged(state, listOf(b))
+        assertEquals("b", state.selectedNoteId)
+        // An import can bring the same note back, and its edits must be saved again.
+        state = NotesEditorSync.onNotesChanged(state, listOf(a, b))
+        state = NotesEditorSync.open(state, "a")
+        state = NotesEditorSync.onBodyEdited(state, "α ξανά")
+        assertEquals(NoteSaveRequest("a", "Α", "α ξανά"), NotesEditorSync.saveRequest(state))
+    }
 }

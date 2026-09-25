@@ -123,6 +123,9 @@ class NotesViewModel(
 
     fun deleteSelectedNote() {
         val selectedId = _uiState.value.selectedNoteId ?: return
+        // No save of this note from here on: one queued behind the delete would write it back.
+        autoSaveJob?.cancel()
+        _uiState.update { NotesEditorSync.onDeleteRequested(it) }
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
             val result = repository.deleteNote(selectedId)
