@@ -106,6 +106,14 @@ android {
     }
 }
 
+kapt {
+    arguments {
+        // Room writes every database's schema here, one JSON per version. The files are committed:
+        // they are what each migration is written against (DatabaseSchemaGuardTest pins them).
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+}
+
 dependencies {
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
