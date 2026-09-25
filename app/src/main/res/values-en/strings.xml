@@ -1049,6 +1049,8 @@
     <string name="anastasimatarion_title">Anastasimatarion</string>
     <string name="anastasimatarion_subtitle">The Sunday resurrection hymns in the 8 modes, with your recordings for each one</string>
     <string name="anastasimatarion_week_mode_template">Mode of the week: %1$s</string>
+    <string name="anastasimatarion_day_mode_template">Mode of the day: %1$s</string>
+    <string name="anastasimatarion_vespers_mode_template">From vespers tonight: %1$s</string>
     <string name="anastasimatarion_service_vespers">Vespers</string>
     <string name="anastasimatarion_service_orthros">Orthros (Matins)</string>
     <string name="anastasimatarion_service_liturgy">Divine Liturgy</string>
@@ -1117,6 +1119,9 @@
     <string name="learning_path_step">Step %1$d of %2$d</string>
     <string name="learning_path_start">Start</string>
     <string name="learning_path_continue">Continue</string>
+    <string name="home_weekly_tone_this_week">This week: %1$s</string>
+    <string name="home_weekly_tone_from_vespers">From vespers tonight: %1$s</string>
+    <string name="home_weekly_tone_open_eight_modes">Open in the 8 Modes</string>
     <!-- Live voice mirror (E1) -->
     <string name="eight_modes_mirror_card_title">Where am I</string>
     <string name="eight_modes_mirror_hint">Turn the microphone on and chant: it tells you which phthong you are on, and how many moria away.</string>

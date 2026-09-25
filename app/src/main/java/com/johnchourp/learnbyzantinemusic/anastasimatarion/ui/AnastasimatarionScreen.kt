@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionLabels
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionUiState
+import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.Hymn
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.HymnService
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
@@ -53,7 +54,7 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
 
 /**
- * Renders [AnastasimatarionUiState]: hero, mode picker (the week's mode is named under it),
+ * Renders [AnastasimatarionUiState]: hero, mode picker (the current mode is named under it),
  * then one card per service with its hymn groups. A hymn row shows its code, incipit, catalog
  * note and — when the user has recordings for it — a recordings badge.
  */
@@ -87,7 +88,7 @@ fun AnastasimatarionScreen(
             StaggeredAppear(delayMillis = 60, modifier = Modifier.padding(horizontal = 16.dp)) {
                 ModePicker(
                     selectedModeKey = uiState.selectedModeKey,
-                    weekModeKey = uiState.weekModeKey,
+                    weekMode = uiState.weekMode,
                     onSelectMode = onSelectMode,
                 )
             }
@@ -122,7 +123,7 @@ fun AnastasimatarionScreen(
 @Composable
 private fun ModePicker(
     selectedModeKey: String,
-    weekModeKey: String?,
+    weekMode: AnastasimatarionWeekMode.CurrentMode?,
     onSelectMode: (String) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -140,12 +141,12 @@ private fun ModePicker(
                 )
             }
         }
-        if (weekModeKey != null) {
+        if (weekMode != null) {
             Spacer(Modifier.height(8.dp))
             Text(
                 text = stringResource(
-                    R.string.anastasimatarion_week_mode_template,
-                    stringResource(AnastasimatarionLabels.modeName(weekModeKey)),
+                    weekMode.badgeRes,
+                    stringResource(AnastasimatarionLabels.modeName(weekMode.modeKey)),
                 ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = LbmTextSecondary,

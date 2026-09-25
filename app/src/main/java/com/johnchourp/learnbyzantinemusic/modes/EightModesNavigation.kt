@@ -150,7 +150,10 @@ object EightModesNavigation {
             orientation = LinearLayout.VERTICAL
             setPadding(activity.dp(18), activity.dp(18), activity.dp(18), activity.dp(12))
             background = roundedBackground(
-                fillColor = Color.WHITE,
+                // A night-aware resource, never a literal (ClickUp `869f5x286`): every text colour in
+                // this menu follows the theme, so the card under it must too. A hard-coded white put
+                // the dark theme's near-white text on white, at 1.19:1. PagesMenuContrastTest.
+                fillColor = ContextCompat.getColor(activity, R.color.first_mode_theory_card_bg),
                 strokeColor = ContextCompat.getColor(activity, R.color.first_mode_theory_card_border),
                 radiusDp = 18,
                 context = activity

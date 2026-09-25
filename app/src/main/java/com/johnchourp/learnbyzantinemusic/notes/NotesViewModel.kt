@@ -36,30 +36,21 @@ class NotesViewModel(
     val uiState: StateFlow<NotesUiState> = _uiState.asStateFlow()
 
     private var autoSaveJob: Job? = null
-    private var lastPersistedTitle: String = ""
-    private var lastPersistedBody: String = ""
 
     init {
         viewModelScope.launch {
+            // Leaving the previous notes screen may have queued a save of its last edits behind a slow
+            // backup write (flushPendingEdits). Open the notes only once it has landed: the editor is not
+            // reloaded for a note that stays open, so it would keep the older text and save it back.
+            lastExitFlush?.takeIf { it.isActive }?.let { exitFlush ->
+                _uiState.update { it.copy(isSaving = true) }
+                exitFlush.join()
+                _uiState.update { it.copy(isSaving = false) }
+            }
             searchQueryFlow
                 .flatMapLatest { search -> repository.observeNotes(search) }
                 .collectLatest { notes ->
-                    _uiState.update { current ->
-                        val selectedId = when {
-                            current.selectedNoteId != null && notes.any { it.id == current.selectedNoteId } -> current.selectedNoteId
-                            notes.isNotEmpty() -> notes.first().id
-                            else -> null
-                        }
-                        val selectedNote = notes.firstOrNull { it.id == selectedId }
-                        lastPersistedTitle = selectedNote?.title.orEmpty()
-                        lastPersistedBody = selectedNote?.body.orEmpty()
-                        current.copy(
-                            notes = notes,
-                            selectedNoteId = selectedId,
-                            editorTitle = selectedNote?.title.orEmpty(),
-                            editorBody = selectedNote?.body.orEmpty()
-                        )
-                    }
+                    _uiState.update { NotesEditorSync.onNotesChanged(it, notes) }
                 }
         }
     }
@@ -89,35 +80,37 @@ class NotesViewModel(
     }
 
     fun onSelectNote(noteId: String) {
-        autoSaveNow(SaveTrigger.AUTO)
-        val selected = _uiState.value.notes.firstOrNull { it.id == noteId } ?: return
-        lastPersistedTitle = selected.title
-        lastPersistedBody = selected.body
-        _uiState.update {
-            it.copy(
-                selectedNoteId = selected.id,
-                editorTitle = selected.title,
-                editorBody = selected.body
-            )
-        }
+        leaveOpenNote()
+        _uiState.update { NotesEditorSync.open(it, noteId) }
     }
 
     fun onEditorTitleChanged(value: String) {
-        _uiState.update { it.copy(editorTitle = value) }
+        _uiState.update { NotesEditorSync.onTitleEdited(it, value) }
         scheduleAutoSave()
     }
 
     fun onEditorBodyChanged(value: String) {
-        _uiState.update { it.copy(editorBody = value) }
+        _uiState.update { NotesEditorSync.onBodyEdited(it, value) }
         scheduleAutoSave()
     }
 
     fun createNewNote() {
+        leaveOpenNote()
+        // The new note is empty, so an active search would keep it out of the list, and so out of
+        // the editor too.
+        if (_uiState.value.searchQuery.isNotEmpty()) {
+            onSearchQueryChanged("")
+        }
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
-            val result = repository.createNote()
-            applyMutationResult(result)
-            _uiState.update { it.copy(isSaving = false, statusMessage = resolveMessageKey(result.message)) }
+            val created = repository.createNote()
+            applyMutationResult(created.result)
+            // Anything typed into the old note while this one was being created is saved to it.
+            leaveOpenNote()
+            _uiState.update {
+                NotesEditorSync.onNoteCreated(it, created.noteId)
+                    .copy(isSaving = false, statusMessage = resolveMessageKey(created.result.message))
+            }
         }
     }
 
@@ -143,21 +136,13 @@ class NotesViewModel(
      * cannot race an import). Idempotent and a no-op when nothing is dirty.
      */
     fun flushPendingEdits() {
-        val current = _uiState.value
-        val selectedId = current.selectedNoteId ?: return
-        if (!current.canInteractWithNotes) {
-            return
-        }
-        if (current.editorTitle == lastPersistedTitle && current.editorBody == lastPersistedBody) {
-            return
-        }
+        val request = NotesEditorSync.exitSaveRequest(_uiState.value) ?: return
         autoSaveJob?.cancel()
-        val title = current.editorTitle
-        val body = current.editorBody
-        lastPersistedTitle = title.trim()
-        lastPersistedBody = body.trimEnd()
-        flushScope.launch {
-            repository.saveNote(noteId = selectedId, title = title, body = body)
+        // Counted as stored at once: flushScope is never cancelled, and a second call must not
+        // queue the same save again.
+        _uiState.update { NotesEditorSync.onSaveFinished(it, request) }
+        lastExitFlush = flushScope.launch {
+            repository.saveNote(request)
         }
     }
 
@@ -171,11 +156,17 @@ class NotesViewModel(
     }
 
     fun importReplace(snapshotUri: Uri) {
+        // Saved before the import — a pending autosave running after it would write this text over
+        // the imported notes.
+        leaveOpenNote()
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
             val result = repository.importReplace(snapshotUri)
             applyMutationResult(result)
-            _uiState.update { it.copy(isSaving = false, statusMessage = resolveMessageKey(result.message)) }
+            _uiState.update {
+                NotesEditorSync.onImportFinished(it)
+                    .copy(isSaving = false, statusMessage = resolveMessageKey(result.message))
+            }
         }
     }
 
@@ -196,28 +187,27 @@ class NotesViewModel(
         }
     }
 
+    /**
+     * Before the editor moves away from the open note: its unsaved text is saved now, not by a pending
+     * autosave that would find another note open by the time it runs.
+     */
+    private fun leaveOpenNote() {
+        autoSaveJob?.cancel()
+        autoSaveNow(SaveTrigger.AUTO)
+    }
+
     private fun autoSaveNow(trigger: SaveTrigger) {
-        val currentState = _uiState.value
-        val selectedId = currentState.selectedNoteId ?: return
-        if (!currentState.canInteractWithNotes) {
-            return
-        }
-        if (currentState.editorTitle == lastPersistedTitle && currentState.editorBody == lastPersistedBody) {
-            return
-        }
+        val request = NotesEditorSync.saveRequest(_uiState.value) ?: return
+        // Recorded before the save runs: a second trigger meanwhile does not repeat it, and typing that
+        // continues is compared against it and saved next.
+        _uiState.update { NotesEditorSync.onSaveStarted(it, request) }
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = trigger == SaveTrigger.MANUAL) }
-            val result = repository.saveNote(
-                noteId = selectedId,
-                title = currentState.editorTitle,
-                body = currentState.editorBody
-            )
+            val result = repository.saveNote(request)
             applyMutationResult(result)
-            lastPersistedTitle = currentState.editorTitle.trim()
-            lastPersistedBody = currentState.editorBody.trimEnd()
             _uiState.update {
-                it.copy(
+                NotesEditorSync.onSaveFinished(it, request).copy(
                     isSaving = false,
                     statusMessage = if (trigger == SaveTrigger.AUTO) {
                         resolveMessageKey("auto_saved")
@@ -266,6 +256,10 @@ class NotesViewModel(
         // Process-lifetime scope for exit-time flushes; outlives any single Activity/ViewModel so a
         // save triggered on the way out (Back/background) completes instead of being cancelled.
         private val flushScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+        // The latest of those flushes; the next notes screen waits for it before opening a note (init).
+        @Volatile
+        private var lastExitFlush: Job? = null
     }
 }
 
