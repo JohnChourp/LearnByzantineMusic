@@ -8,6 +8,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- «Συνέχισε στο παρασκήνιο» (ClickUp 869f5x2dq): IsonPlaybackService, a foreground service of
+         type mediaPlayback, keeps the ison playing with the screen off or over another app. It shares
+         FOREGROUND_SERVICE and POST_NOTIFICATIONS with the recording above. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <!-- The metronome's vibration (ClickUp 869f5x2d7). A normal permission: granted at install,
          no prompt. -->
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -147,6 +151,10 @@
             android:name=".recordings.session.RecordingService"
             android:exported="false"
             android:foregroundServiceType="microphone" />
+        <service
+            android:name=".modes.IsonPlaybackService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

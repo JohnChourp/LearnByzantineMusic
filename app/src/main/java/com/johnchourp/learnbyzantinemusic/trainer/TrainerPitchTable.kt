@@ -11,6 +11,12 @@ import kotlin.math.abs
  * knows where Νη sounds and how many μόρια an octave holds. That is what guarantees the trainer
  * listens for exactly the pitches the 8 Ήχοι diagram plays — a second copy of the formula would let
  * the two drift apart silently.
+ *
+ * **Since ClickUp `869f5x24v` (F2) the Trainer no longer plays or judges against this table.** It
+ * plays and listens on a [TrainerScale] — the same ladder as the 8 Ήχοι page — whose default,
+ * «Διατονικός», reproduces this table exactly (`TrainerScaleDefaultIsTodaysTableTest` pins that).
+ * What remains here: [nearestPhthong] is the pitch engine's first match, whose frequency both the
+ * Trainer and «Πού είμαι» read again on their own ladders, and [frequencyHz] is that reference.
  */
 object TrainerPitchTable {
     /** μόρια in an octave, re-exported so trainer code reads one name for the octave's size. */
@@ -71,8 +77,8 @@ object TrainerPitchTable {
  *
  * These positions match the diatonic genus used by the 8 Ήχοι screen (`ModeScalePositionsTest`).
  * It lives here, beside the one table that reads it, rather than on [PhthongName]: which pitch a
- * φθόγγος sounds depends on the screen's scale, not on its name. ClickUp `869f5x24v` (F2) moves the
- * Trainer onto the mode's own ladder.
+ * φθόγγος sounds depends on the screen's scale, not on its name. Since ClickUp `869f5x24v` (F2) the
+ * Trainer itself plays on its [TrainerScale]; this is the reference its default is pinned against.
  */
 val PhthongName.diatonicMoriaFromNi: Int
     get() = when (this) {

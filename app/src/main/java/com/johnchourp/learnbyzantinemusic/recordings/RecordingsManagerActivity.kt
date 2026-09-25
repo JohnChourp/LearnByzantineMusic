@@ -9,6 +9,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -16,6 +17,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.recordings.index.RecordingsRepository
+import com.johnchourp.learnbyzantinemusic.recordings.player.InAppPlayerViewModel
+import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerItem
+import com.johnchourp.learnbyzantinemusic.recordings.player.cardActions
 import com.johnchourp.learnbyzantinemusic.recordings.ui.RecordingsManagerScreen
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.launch
@@ -36,6 +40,10 @@ import kotlinx.coroutines.launch
  * - a document that has disappeared underneath the app resolves to «καταργήθηκε» and is dropped from
  *   the list instead of lingering as a dead row.
  *
+ * **Listening:** a recording opens in the in-app player under the title (loop, slower at the same
+ * pitch, shift in μόρια — ClickUp `869f5x268`); another app is one tap away on the player card. The
+ * player is released in `onStop`, and closed when the file it holds is renamed, moved or deleted.
+ *
  * **Inputs:** none — it opens on the folder recorded in preferences.
  * **Touches:** `recordings_folder_tree_uri` and the `recordings_index.db` Room index.
  */
@@ -43,6 +51,7 @@ class RecordingsManagerActivity : BaseActivity() {
     private lateinit var recordingsPrefs: RecordingsPrefs
     private val recordingsRepository by lazy { RecordingsRepository.getInstance(applicationContext) }
     private val recordingExternalOpener by lazy { RecordingExternalOpener(this) }
+    private val player: InAppPlayerViewModel by viewModels()
 
     private val viewModel: RecordingsManagerViewModel by viewModels {
         RecordingsManagerViewModelFactory(
@@ -71,10 +80,13 @@ class RecordingsManagerActivity : BaseActivity() {
             LbmTheme(palette = currentPalette()) {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val entries = viewModel.entriesFlow.collectAsLazyPagingItems()
+                val playerState by player.state.collectAsStateWithLifecycle()
 
                 RecordingsManagerScreen(
                     uiState = uiState,
                     entries = entries,
+                    player = playerState,
+                    playerActions = remember { player.cardActions(this@RecordingsManagerActivity, ::openRecordingExternally) },
                     onBack = {
                         viewModel.navigateUp { moved ->
                             if (!moved) {
@@ -97,7 +109,7 @@ class RecordingsManagerActivity : BaseActivity() {
                         if (entry.type == ManagerEntryType.FOLDER) {
                             viewModel.enterFolder(entry)
                         } else {
-                            openRecordingInExternalPlayer(entry)
+                            playRecording(entry)
                         }
                     },
                     onRenameEntry = { showRenameEntryDialog(it) },
@@ -113,6 +125,12 @@ class RecordingsManagerActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.requestReindex(force = false)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // No sound in the background: released here, prepared again on the next play.
+        player.onScreenStopped()
     }
 
     private fun setupBackHandling() {
@@ -198,6 +216,7 @@ class RecordingsManagerActivity : BaseActivity() {
                 }
 
                 viewModel.renameItem(item, targetName) { result ->
+                    if (result == RenameOutcome.SUCCESS || result == RenameOutcome.REMOVED) closePlayerIfHolding(item.uri)
                     when (result) {
                         RenameOutcome.SUCCESS -> {
                             Toast.makeText(this, R.string.recordings_renamed_ok, Toast.LENGTH_SHORT).show()
@@ -241,6 +260,7 @@ class RecordingsManagerActivity : BaseActivity() {
             .setMessage(getString(messageRes, item.name))
             .setPositiveButton(getString(R.string.recordings_delete_confirm_button)) { _, _ ->
                 viewModel.deleteItem(item) { result ->
+                    if (result != DeleteOutcome.FAILED) closePlayerIfHolding(item.uri)
                     when (result) {
                         DeleteOutcome.SUCCESS -> {
                             Toast.makeText(this, R.string.recordings_deleted_ok, Toast.LENGTH_SHORT).show()
@@ -274,6 +294,7 @@ class RecordingsManagerActivity : BaseActivity() {
             )
             .setPositiveButton(getString(R.string.recordings_manage_move_confirm_button)) { _, _ ->
                 viewModel.moveItem(item, target) { outcome ->
+                    if (outcome == MoveOutcome.SUCCESS) closePlayerIfHolding(item.uri)
                     when (outcome) {
                         MoveOutcome.SUCCESS -> {
                             Toast.makeText(this, R.string.recordings_manage_move_success, Toast.LENGTH_SHORT).show()
@@ -299,19 +320,44 @@ class RecordingsManagerActivity : BaseActivity() {
             .show()
     }
 
-    private fun openRecordingInExternalPlayer(item: ManagerListItem) {
-        val mimeType = if (!item.mimeType.isNullOrBlank() && item.mimeType != "application/octet-stream") {
-            item.mimeType
+    /** A recording opens in the in-app player; one that has disappeared is dropped from the list. */
+    private fun playRecording(item: ManagerListItem) {
+        lifecycleScope.launch {
+            if (!recordingsRepository.checkRecordingExists(item.uri)) {
+                recordingsRepository.removeOwnedRecording(item.uri)
+                viewModel.requestReindex(force = true)
+                Toast.makeText(
+                    this@RecordingsManagerActivity,
+                    R.string.recordings_manage_error_entry_removed,
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@launch
+            }
+            player.open(PlayerItem(item.uri, item.name, item.mimeType))
+        }
+    }
+
+    /** «Άνοιγμα σε άλλη εφαρμογή» on the player card — the only way out when the device cannot play the file. */
+    private fun openRecordingExternally() {
+        val recording = player.current ?: return
+        openRecordingInExternalPlayer(recording.uri, recording.name, recording.mimeType)
+    }
+
+    private fun closePlayerIfHolding(uri: Uri) {
+        if (player.current?.uri == uri) player.close()
+    }
+
+    private fun openRecordingInExternalPlayer(uri: Uri, name: String, itemMimeType: String?) {
+        val mimeType = if (!itemMimeType.isNullOrBlank() && itemMimeType != "application/octet-stream") {
+            itemMimeType
         } else {
-            RecordingFormatOption.resolveMimeTypeByFileName(item.name) ?: "audio/*"
+            RecordingFormatOption.resolveMimeTypeByFileName(name) ?: "audio/*"
         }
 
         lifecycleScope.launch {
-            val exists = recordingsRepository.checkRecordingExists(item.uri)
+            val exists = recordingsRepository.checkRecordingExists(uri)
             if (!exists) {
-                if (item.type == ManagerEntryType.AUDIO_FILE) {
-                    recordingsRepository.removeOwnedRecording(item.uri)
-                }
+                recordingsRepository.removeOwnedRecording(uri)
                 viewModel.requestReindex(force = true)
                 Toast.makeText(
                     this@RecordingsManagerActivity,
@@ -322,17 +368,15 @@ class RecordingsManagerActivity : BaseActivity() {
             }
 
             recordingExternalOpener.openRecordingWithChooser(
-                sourceUri = item.uri,
-                fileName = item.name,
+                sourceUri = uri,
+                fileName = name,
                 mimeType = mimeType,
                 chooserTitle = getString(R.string.recordings_open_recording_with),
                 onFailure = {
                     lifecycleScope.launch {
-                        val stillExists = recordingsRepository.checkRecordingExists(item.uri)
+                        val stillExists = recordingsRepository.checkRecordingExists(uri)
                         if (!stillExists) {
-                            if (item.type == ManagerEntryType.AUDIO_FILE) {
-                                recordingsRepository.removeOwnedRecording(item.uri)
-                            }
+                            recordingsRepository.removeOwnedRecording(uri)
                             viewModel.requestReindex(force = true)
                             Toast.makeText(
                                 this@RecordingsManagerActivity,

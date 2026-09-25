@@ -33,16 +33,17 @@ package com.johnchourp.learnbyzantinemusic.music
  *
  * ## Where a φθόγγος sits: one table per screen
  *
- * The names are one model; their **positions** still come from three tables, by screen:
+ * The names are one model; their **positions** come from two tables, by screen:
  *
  * | Screen | Table | Why |
  * |---|---|---|
- * | Melody Trainer: playback, voice check, φθόγγος + time | `TrainerPitchTable`: the natural diatonic scale, Νη = 220 Hz | the Trainer has no mode or base shift yet; ClickUp `869f5x24v` (F2) moves it onto [ModeLadder] |
+ * | 8 Ήχοι diagram, ison, απήχημα, «Πού είμαι», and the Melody Trainer (playback, voice check, φθόγγος + time) | [ModeLadder]: the mode's scale with its «Μεταφορά βάσης» | what is drawn, sounded and judged must be one object; the Trainer joined in ClickUp `869f5x24v` (F2), through `TrainerScale` |
  * | Recording analysis | `ModeScalePositions`: the chosen mode's scale | a recording has no absolute pitch, so the scale is anchored to the singer's first steady note |
- * | 8 Ήχοι diagram, ison, απήχημα, «Πού είμαι» | [ModeLadder]: the mode's scale with its «Μεταφορά βάσης» | what is drawn, sounded and read back must be one object |
  *
- * The last two are built from the same interval tables (`EightModeScaleDefinitions`), and the
- * Trainer's diatonic positions equal the diatonic table (`ModeScalePositionsTest`).
+ * Both are built from the same interval tables (`EightModeScaleDefinitions`). The Trainer's old
+ * fixed table, `TrainerPitchTable` (natural diatonic, Νη = 220 Hz), is now only the reference its
+ * default «Διατονικός» is pinned against (`TrainerScaleDefaultIsTodaysTableTest`), and the pitch
+ * engine's first, raw match.
  */
 enum class PhthongName(
     val displayName: String,

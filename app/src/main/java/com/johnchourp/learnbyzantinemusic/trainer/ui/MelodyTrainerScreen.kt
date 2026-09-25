@@ -80,6 +80,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.summary_theory.ui.Neume
 import com.johnchourp.learnbyzantinemusic.trainer.MelodyTempo
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
@@ -106,8 +107,9 @@ private val ActiveGlowBorder = Color(0xFFE0A100)
 /**
  * Redesigned «Γυμναστής Μελωδίας» screen. A pure renderer of [MelodyTrainerUiState] + callbacks:
  * a hero, a visual timing-rules card, the note picker + octave stepper, the editable sequence
- * with animated match/active feedback, a tempo slider, the transport row, and the three
- * voice-practice mode cards. All audio / mic / timing logic stays in the host Activity.
+ * with animated match/active feedback, the ήχος and «Μεταφορά βάσης» ([TrainerScaleCard]), a tempo
+ * slider, the transport row, and the three voice-practice mode cards. All audio / mic / timing
+ * logic stays in the host Activity.
  */
 @Composable
 fun MelodyTrainerScreen(
@@ -121,6 +123,8 @@ fun MelodyTrainerScreen(
     onIncrementDuration: (Int) -> Unit,
     onToggleGorgo: (Int) -> Unit,
     onRemoveNote: (Int) -> Unit,
+    onSelectScale: (Mode?) -> Unit,
+    onBaseShiftChange: (Int) -> Unit,
     onTempoChange: (Int) -> Unit,
     onPlay: () -> Unit,
     onStop: () -> Unit,
@@ -176,6 +180,13 @@ fun MelodyTrainerScreen(
                 )
             }
             StaggeredAppear(delayMillis = 300) {
+                TrainerScaleCard(
+                    scale = state.scale,
+                    onSelect = onSelectScale,
+                    onBaseShiftChange = onBaseShiftChange,
+                )
+            }
+            StaggeredAppear(delayMillis = 330) {
                 TempoCard(
                     bpm = state.bpm,
                     enabled = state.tempoEnabled,
