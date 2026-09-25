@@ -1,7 +1,5 @@
 package com.johnchourp.learnbyzantinemusic.notes
 
-import java.util.Locale
-
 data class NotesSyncState(
     val folderName: String?,
     val folderUri: String?,
@@ -34,12 +32,14 @@ data class NotesUiState(
     val editorTitle: String = "",
     val editorBody: String = "",
     // Not rendered — NotesEditorSync's bookkeeping: what the database holds for the open note, the
-    // save still running, a created note waiting for its list, and an import's reset in force.
+    // save still running, a created note waiting for its list, an import's reset in force, and a
+    // note being deleted (which nothing may save again).
     val storedTitle: String = "",
     val storedBody: String = "",
     val saveInFlight: NoteSaveRequest? = null,
     val noteToOpen: String? = null,
     val editorFollowsDatabase: Boolean = false,
+    val noteBeingDeleted: String? = null,
     val searchQuery: String = "",
     val statusMessage: String = "",
     val isSaving: Boolean = false,
@@ -62,16 +62,4 @@ data class NotesUiState(
 enum class SaveTrigger {
     AUTO,
     MANUAL
-}
-
-fun String.toNotesSearchPattern(): String {
-    val normalized = trim().lowercase(Locale.getDefault())
-    if (normalized.isBlank()) {
-        return "%"
-    }
-    val escaped = normalized
-        .replace("\\", "\\\\")
-        .replace("%", "\\%")
-        .replace("_", "\\_")
-    return "%$escaped%"
 }

@@ -20,8 +20,9 @@ class NotesRepository private constructor(
     private val dao: NotesDao = database.notesDao()
     private val mutationMutex = Mutex()
 
-    fun observeNotes(searchQuery: String): Flow<List<NoteEntity>> {
-        return dao.observeBySearch(searchQuery.toNotesSearchPattern())
+    /** Every note, newest first. The search box filters them in memory — see [NotesSearch]. */
+    fun observeNotes(): Flow<List<NoteEntity>> {
+        return dao.observeAll()
     }
 
     suspend fun createNote(): CreatedNote = mutationMutex.withLock {
