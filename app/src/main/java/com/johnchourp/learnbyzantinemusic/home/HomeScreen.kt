@@ -18,9 +18,10 @@ import com.johnchourp.learnbyzantinemusic.ui.components.StaggeredAppear
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPageBg
 
 /**
- * Redesigned home screen: an animated hero header, the optional guided-path card, then grouped,
- * icon-led navigation sections and a version footer. Pure UI — all navigation is supplied via
- * the [HomeTile.onClick] lambdas in [sections] and [LearningPathUi.onContinue].
+ * Redesigned home screen: an animated hero header, the «tone of the week» card, the optional
+ * guided-path card, then grouped, icon-led navigation sections and a version footer. Pure UI — all
+ * navigation is supplied via the [HomeTile.onClick] lambdas in [sections], [WeeklyToneUi] and
+ * [LearningPathUi.onContinue].
  *
  * [learningPath] is null once every step is done, and the screen then looks exactly as it did
  * before the path existed.
@@ -33,6 +34,8 @@ fun HomeScreen(
     sections: List<HomeSection>,
     modifier: Modifier = Modifier,
     learningPath: LearningPathUi? = null,
+    /** The tone of the week, first on the screen: the first thing a chanter wants each day. */
+    weeklyTone: WeeklyToneUi? = null,
     /** Opens the theory search. Null hides the row entirely rather than showing a dead control. */
     onOpenSearch: (() -> Unit)? = null,
 ) {
@@ -55,6 +58,11 @@ fun HomeScreen(
         ) {
             Spacer(Modifier.height(6.dp))
             var appearIndex = 0
+            if (weeklyTone != null) {
+                StaggeredAppear(delayMillis = appearDelay(appearIndex++)) {
+                    WeeklyToneCard(state = weeklyTone, modifier = Modifier.fillMaxWidth())
+                }
+            }
             if (learningPath != null) {
                 StaggeredAppear(delayMillis = appearDelay(appearIndex++)) {
                     LearningPathCard(state = learningPath, modifier = Modifier.fillMaxWidth())
