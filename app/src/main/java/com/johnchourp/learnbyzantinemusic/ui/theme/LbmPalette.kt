@@ -30,6 +30,14 @@ import androidx.compose.ui.graphics.Color
  * background and several of them fail against a dark one. So the dark set is not the light set
  * dimmed — each accent was lightened until it clears WCAG on its own surface, and
  * `GenusContrastTest` computes the ratios rather than trusting the eye.
+ *
+ * ## The calendar's celebration cards (ClickUp `869f5x286`)
+ *
+ * They used to take their background from `R.color.weekly_calendar_celebration_*`, which had light
+ * values only, while the text on them followed this palette — so dark mode put near-white text on
+ * a near-white card (1.08:1). A card's background, border and badge colour now live here, one set
+ * per palette, so the card and the text on it can no longer come from two different themes.
+ * `CalendarCelebrationContrastTest` holds every card type in every palette to 4.5:1.
  */
 data class LbmPalette(
     val brown: Color,
@@ -58,6 +66,19 @@ data class LbmPalette(
     val accentBrownContent: Color,
     val accentCrimsonContainer: Color,
     val accentCrimsonContent: Color,
+    // Calendar celebration cards, one family per celebration type. The accent is the type badge's
+    // text; a normal day's badge uses textSecondary, so it has no accent of its own.
+    val celebrationPublicBg: Color,
+    val celebrationPublicBorder: Color,
+    val celebrationPublicAccent: Color,
+    val celebrationHalfBg: Color,
+    val celebrationHalfBorder: Color,
+    val celebrationHalfAccent: Color,
+    val celebrationReligiousBg: Color,
+    val celebrationReligiousBorder: Color,
+    val celebrationReligiousAccent: Color,
+    val celebrationNormalBg: Color,
+    val celebrationNormalBorder: Color,
     val isDark: Boolean,
 ) {
     companion object {
@@ -97,6 +118,21 @@ data class LbmPalette(
             accentBrownContent = Color(0xFF5D4037),
             accentCrimsonContainer = Color(0xFFF7E0E8),
             accentCrimsonContent = Color(0xFFA0003C),
+            // Backgrounds and borders are the shipped `weekly_calendar_celebration_*` values,
+            // unchanged. The accents are not: the shipped 0xFFC62828 / 0xFFEF6C00 / 0xFF1565C0
+            // measured 4.00, 2.46 and 4.27:1 on their own badge. Same hue and saturation, darkened
+            // only until they clear 4.5:1.
+            celebrationPublicBg = Color(0xFFFFF1F1),
+            celebrationPublicBorder = Color(0xFFF3BBBB),
+            celebrationPublicAccent = Color(0xFFAF2323),
+            celebrationHalfBg = Color(0xFFFFF7ED),
+            celebrationHalfBorder = Color(0xFFF4D2A6),
+            celebrationHalfAccent = Color(0xFF9B4600),
+            celebrationReligiousBg = Color(0xFFF1F7FF),
+            celebrationReligiousBorder = Color(0xFFB9D1F3),
+            celebrationReligiousAccent = Color(0xFF135CAF),
+            celebrationNormalBg = Color(0xFFF9FAFC),
+            celebrationNormalBorder = Color(0xFFD8DEE8),
             isDark = false,
         )
 
@@ -131,6 +167,19 @@ data class LbmPalette(
             accentBrownContent = Color(0xFFD9BFA3),
             accentCrimsonContainer = Color(0xFF3A1522),
             accentCrimsonContent = Color(0xFFFF7BA5),
+            // Each card is its type's hue deepened into the dark ground (the half-holiday and
+            // religious ones reuse the orange and blue containers); each accent is lightened.
+            celebrationPublicBg = Color(0xFF3A1C1C),
+            celebrationPublicBorder = Color(0xFF6B3535),
+            celebrationPublicAccent = Color(0xFFFF9C9C),
+            celebrationHalfBg = Color(0xFF3A2413),
+            celebrationHalfBorder = Color(0xFF6B4824),
+            celebrationHalfAccent = Color(0xFFFFB870),
+            celebrationReligiousBg = Color(0xFF16243A),
+            celebrationReligiousBorder = Color(0xFF34507A),
+            celebrationReligiousAccent = Color(0xFF9CC4FF),
+            celebrationNormalBg = Color(0xFF2B2219),
+            celebrationNormalBorder = Color(0xFF4A3C2C),
             isDark = true,
         )
 
@@ -164,6 +213,18 @@ data class LbmPalette(
             accentBrownContent = Color(0xFFEDD9C2),
             accentCrimsonContainer = Color(0xFF260D16),
             accentCrimsonContent = Color(0xFFFF9EBF),
+            // Near-black cards with only a trace of hue, stronger borders, paler accents.
+            celebrationPublicBg = Color(0xFF240B0B),
+            celebrationPublicBorder = Color(0xFFA04848),
+            celebrationPublicAccent = Color(0xFFFFB4B4),
+            celebrationHalfBg = Color(0xFF261603),
+            celebrationHalfBorder = Color(0xFFA06A2E),
+            celebrationHalfAccent = Color(0xFFFFCC8F),
+            celebrationReligiousBg = Color(0xFF0A1626),
+            celebrationReligiousBorder = Color(0xFF4F77AD),
+            celebrationReligiousAccent = Color(0xFFBFD9FF),
+            celebrationNormalBg = Color(0xFF161616),
+            celebrationNormalBorder = Color(0xFF8A7A66),
             isDark = true,
         )
     }
