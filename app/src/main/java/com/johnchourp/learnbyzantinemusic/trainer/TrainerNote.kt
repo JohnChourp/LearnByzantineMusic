@@ -1,31 +1,28 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
-import com.johnchourp.learnbyzantinemusic.analysis.ByzantineRhythmMapper
+import com.johnchourp.learnbyzantinemusic.music.ByzantineRhythmMapper
+import com.johnchourp.learnbyzantinemusic.music.TimeSign
 
 /**
  * One entry in a trainer melody: a phthong at an octave shift, a base duration in
- * χρόνοι (beats), and optional Byzantine rhythm modifiers (γοργόν, κλάσμα, …). The
- * modifier strings reuse the constants from [ByzantineRhythmMapper] so the trainer and
- * the notation analyzer interpret rhythm identically.
+ * χρόνοι (beats), and the time signs it carries (γοργόν, κλάσμα, …) as typed [TimeSign]s.
+ * They are timed by [ByzantineRhythmMapper], the one table of time rules that the
+ * «Χαρακτήρες Χρόνου» page is checked against too; the Trainer offers only the γοργόν.
  */
 data class TrainerNote(
     val phthong: TrainerPhthong,
     val octaveShift: Int = 0,
     val baseDurationBeats: Float = 1f,
-    val modifiers: List<String> = emptyList()
+    val signs: Set<TimeSign> = emptySet()
 ) {
     val frequencyHz: Double get() = TrainerPitchTable.frequencyHz(phthong, octaveShift)
 
-    val hasGorgo: Boolean get() = modifiers.contains(ByzantineRhythmMapper.MODIFIER_GORGO)
-    val hasFraction: Boolean get() = modifiers.contains(ByzantineRhythmMapper.MODIFIER_FRACTION)
+    val hasGorgo: Boolean get() = TimeSign.GORGON in signs
 
-    fun withGorgo(enabled: Boolean): TrainerNote = withModifier(ByzantineRhythmMapper.MODIFIER_GORGO, enabled)
-    fun withFraction(enabled: Boolean): TrainerNote = withModifier(ByzantineRhythmMapper.MODIFIER_FRACTION, enabled)
+    fun withGorgo(enabled: Boolean): TrainerNote = withSign(TimeSign.GORGON, enabled)
 
-    private fun withModifier(modifier: String, enabled: Boolean): TrainerNote {
-        val present = modifiers.contains(modifier)
-        if (present == enabled) return this
-        val updated = if (enabled) modifiers + modifier else modifiers - modifier
-        return copy(modifiers = updated)
+    fun withSign(sign: TimeSign, enabled: Boolean): TrainerNote {
+        if ((sign in signs) == enabled) return this
+        return copy(signs = if (enabled) signs + sign else signs - sign)
     }
 }

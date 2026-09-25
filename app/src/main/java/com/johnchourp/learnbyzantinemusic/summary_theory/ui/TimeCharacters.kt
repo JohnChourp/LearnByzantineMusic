@@ -2,6 +2,9 @@ package com.johnchourp.learnbyzantinemusic.summary_theory.ui
 
 import androidx.annotation.StringRes
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.music.ByzantineRhythmMapper
+import com.johnchourp.learnbyzantinemusic.music.RhythmNote
+import com.johnchourp.learnbyzantinemusic.music.TimeSign
 
 /**
  * Model of the «Χαρακτήρες Χρόνου» (Time Characters) reference: the marks that add or divide the
@@ -17,6 +20,12 @@ import com.johnchourp.learnbyzantinemusic.R
  * so every size / gravity / translation is transcribed faithfully from the source — the offsets are
  * part of the model, not cosmetic. Pure Kotlin (no Android deps) so it stays unit-testable; the UI
  * layer maps [Neume] → drawable and [NeumeAlign] → `Alignment`.
+ *
+ * The beat values under the notes are written by hand, but they are not the source of truth: every
+ * equation also carries its [TimeEquation.rhythm], the notes as sung with their time signs, and
+ * `TimeCharactersFollowTheRulesTest` fails when a label disagrees with what [ByzantineRhythmMapper]
+ * makes of them (ClickUp `869f5x29r`, H5). That is how the τρίγοργον's «½ + ¼ + ¼ + ¼ = 1» — which
+ * adds up to 1¼ — was found.
  */
 
 /**
@@ -43,10 +52,16 @@ data class TimeTerm(
  * A worked time diagram read left→right: the written character(s), an «=», then the simpler notes it
  * is read as, with each note's beat value below. Every [Neume] in [highlight] is tinted crimson
  * wherever it appears, so the time character separates from the plain black base neumes it modifies.
+ *
+ * [rhythm] is the same example for the time rules: the notes as sung, in order, each with the
+ * [TimeSign] written on it. [ByzantineRhythmMapper] times them, and the labelled terms say the same —
+ * one label per note, on the side of the «=» that has them; for the γοργόν family, the label after
+ * the «=» is their total.
  */
 data class TimeEquation(
     val terms: List<TimeTerm>,
     val highlight: Set<Neume>,
+    val rhythm: List<RhythmNote>,
 )
 
 /* ---- Glyph atoms (sizes mirror the ImageView styles in res/values/styles.xml) ---- */
@@ -116,6 +131,9 @@ private fun oligonWith(n: Neume, w: Int, dx: Int, dy: Int) =
 private fun term(form: NeumeForm, @StringRes labelRes: Int = 0) = TimeTerm(form = form, labelRes = labelRes)
 private fun equals() = TimeTerm(isEquals = true)
 
+/** One sung note of an equation's [TimeEquation.rhythm], carrying [signs]. */
+private fun note(vararg signs: TimeSign) = RhythmNote(signs.toSet())
+
 object TimeCharacters {
 
     /** The κλάσμα / κουκίδες that add time to any σημαδόφωνο (ίσον, ολίγον, απόστροφο …). */
@@ -142,6 +160,7 @@ object TimeCharacters {
             term(isonTile(), R.string.time_1),
         ),
         highlight = setOf(Neume.GORGO),
+        rhythm = listOf(note(), note(TimeSign.GORGON)),
     )
 
     /** Παρεστιγμένο γοργό: the dot gives the larger share to its side (¾ + ¼ or ¼ + ¾). */
@@ -154,6 +173,7 @@ object TimeCharacters {
                 term(isonTile(), R.string.time_1),
             ),
             highlight = setOf(Neume.PRESENTED_GORGO),
+            rhythm = listOf(note(), note(TimeSign.GORGON_DOT_LEFT)),
         ),
         TimeEquation(
             terms = listOf(
@@ -163,6 +183,7 @@ object TimeCharacters {
                 term(isonTile(), R.string.time_1),
             ),
             highlight = setOf(Neume.GORGO_PRESENTED),
+            rhythm = listOf(note(), note(TimeSign.GORGON_DOT_RIGHT)),
         ),
     )
 
@@ -176,6 +197,7 @@ object TimeCharacters {
             term(isonTile(), R.string.time_1),
         ),
         highlight = setOf(Neume.DIGORGO),
+        rhythm = listOf(note(), note(TimeSign.DIGORGON), note()),
     )
 
     /** Παρεστιγμένο δίγοργο: the dot's position decides which of the three notes gets the ½ share. */
@@ -189,6 +211,7 @@ object TimeCharacters {
                 term(isonTile(), R.string.time_1),
             ),
             highlight = setOf(Neume.PRESENTED_BOTTOM_DIGORGO),
+            rhythm = listOf(note(), note(TimeSign.DIGORGON_DOT_BOTTOM), note()),
         ),
         TimeEquation(
             terms = listOf(
@@ -199,6 +222,7 @@ object TimeCharacters {
                 term(isonTile(), R.string.time_1),
             ),
             highlight = setOf(Neume.PRESENTED_MIDDLE_DIGORGO),
+            rhythm = listOf(note(), note(TimeSign.DIGORGON_DOT_MIDDLE), note()),
         ),
         TimeEquation(
             terms = listOf(
@@ -209,13 +233,14 @@ object TimeCharacters {
                 term(isonTile(), R.string.time_1),
             ),
             highlight = setOf(Neume.PRESENTED_TOP_DIGORGO),
+            rhythm = listOf(note(), note(TimeSign.DIGORGON_DOT_TOP), note()),
         ),
     )
 
-    /** Τρίγοργο: four notes in one beat (½ + ¼ + ¼ + ¼). */
+    /** Τρίγοργο: four notes in one beat (¼ + ¼ + ¼ + ¼). */
     val trigorgo = TimeEquation(
         terms = listOf(
-            term(isonTile(), R.string.time_1_by_2),
+            term(isonTile(), R.string.time_1_by_4),
             term(isonTrigorgo(), R.string.time_1_by_4),
             term(isonTile(), R.string.time_1_by_4),
             term(isonTile(), R.string.time_1_by_4),
@@ -223,9 +248,13 @@ object TimeCharacters {
             term(isonTile(), R.string.time_1),
         ),
         highlight = setOf(Neume.TRIGORGO),
+        rhythm = listOf(note(), note(TimeSign.TRIGORGON), note(), note()),
     )
 
-    /** Αργό: read as ίσον + (κεντήματα-γοργό) + (ολίγον-κλάσμα), totalling 2 beats. */
+    /**
+     * Αργό: read as ίσον ½ + (κεντήματα-γοργό) ½ + (ολίγον-κλάσμα) 2 — three beats in all, the ολίγον
+     * alone lasting two. [rhythm] is the ίσον, the κεντήματα and the ολίγον carrying the αργό.
+     */
     val argo = TimeEquation(
         terms = listOf(
             term(isonRaised()),
@@ -236,9 +265,10 @@ object TimeCharacters {
             term(oligonWith(Neume.FRACTION, 23, dx = 0, dy = 14), R.string.time_2),
         ),
         highlight = setOf(Neume.ARGO),
+        rhythm = listOf(note(), note(), note(TimeSign.ARGON)),
     )
 
-    /** Δίαργο: like αργό but the closing ολίγον carries διπλή κουκίδα, totalling 3 beats. */
+    /** Δίαργο: like αργό but the closing ολίγον carries διπλή κουκίδα and lasts 3 beats (½ + ½ + 3). */
     val diargo = TimeEquation(
         terms = listOf(
             term(isonRaised()),
@@ -249,9 +279,10 @@ object TimeCharacters {
             term(oligonWith(Neume.DOUBLE_DOTS, 15, dx = 8, dy = 19), R.string.time_3),
         ),
         highlight = setOf(Neume.DIARGO),
+        rhythm = listOf(note(), note(), note(TimeSign.DIARGON)),
     )
 
-    /** Τρίαργο: like αργό but the closing ολίγον carries τριπλή κουκίδα, totalling 4 beats. */
+    /** Τρίαργο: like αργό but the closing ολίγον carries τριπλή κουκίδα and lasts 4 beats (½ + ½ + 4). */
     val triargo = TimeEquation(
         terms = listOf(
             term(isonRaised()),
@@ -262,5 +293,6 @@ object TimeCharacters {
             term(oligonWith(Neume.TRIPLE_DOTS, 25, dx = 6, dy = 19), R.string.time_4),
         ),
         highlight = setOf(Neume.TRIARGO),
+        rhythm = listOf(note(), note(), note(TimeSign.TRIARGON)),
     )
 }

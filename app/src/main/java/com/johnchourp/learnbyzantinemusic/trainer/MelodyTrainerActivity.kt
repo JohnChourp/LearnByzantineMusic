@@ -14,14 +14,15 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.music.Beats
 import com.johnchourp.learnbyzantinemusic.trainer.ui.MelodyTrainerScreen
 import com.johnchourp.learnbyzantinemusic.trainer.ui.MelodyTrainerUiState
 import com.johnchourp.learnbyzantinemusic.trainer.ui.PracticeModeUi
+import com.johnchourp.learnbyzantinemusic.trainer.ui.TimingRuleNumbersUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerNoteUi
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import java.text.DecimalFormatSymbols
 import java.util.Locale
-import kotlin.math.roundToInt
 
 /**
  * Practice page where the user writes a sequence of phthongi (Νη … Ζω), sets how long
@@ -34,8 +35,9 @@ import kotlin.math.roundToInt
  * This Activity is the state holder / "brain": it owns the melody, the audio player, the mic
  * pitch engine, the evaluators and all timing, and it hosts the redesigned Compose
  * [MelodyTrainerScreen] via [setContent]. After any change it rebuilds an immutable
- * [MelodyTrainerUiState] that the screen renders. The timing rules (γοργόν, κλάσμα) are
- * applied through [MelodySequence] / the shared ByzantineRhythmMapper.
+ * [MelodyTrainerUiState] that the screen renders. The time rules (γοργόν, κλάσμα …) are applied
+ * through [MelodySequence], which also holds the Trainer's input rules — where a γοργόν may go,
+ * which lengths the ± buttons write — so this class and the screen only ask it.
  */
 class MelodyTrainerActivity : BaseActivity() {
 
@@ -115,8 +117,8 @@ class MelodyTrainerActivity : BaseActivity() {
                     onAddPhthong = { index -> TrainerPhthong.ascending.getOrNull(index)?.let(::addNote) },
                     onOctaveDown = ::octaveDown,
                     onOctaveUp = ::octaveUp,
-                    onDecrementDuration = { index -> changeDuration(index, -DURATION_STEP) },
-                    onIncrementDuration = { index -> changeDuration(index, DURATION_STEP) },
+                    onDecrementDuration = { index -> changeDuration(index, -MelodySequence.LENGTH_STEP_BEATS) },
+                    onIncrementDuration = { index -> changeDuration(index, MelodySequence.LENGTH_STEP_BEATS) },
                     onToggleGorgo = ::toggleGorgo,
                     onRemoveNote = ::removeNote,
                     onTempoChange = ::changeTempo,
@@ -167,17 +169,18 @@ class MelodyTrainerActivity : BaseActivity() {
 
     private fun changeDuration(index: Int, delta: Float) {
         if (isBusy) return
-        val note = notes.getOrNull(index) ?: return
-        if (note.hasGorgo) return
-        val updated = (note.baseDurationBeats + delta).coerceIn(MIN_DURATION, MAX_DURATION)
+        if (!MelodySequence(notes.toList()).canChangeLength(index)) return
+        val note = notes[index]
+        val updated = (note.baseDurationBeats + delta)
+            .coerceIn(MelodySequence.MIN_LENGTH_BEATS, MelodySequence.MAX_LENGTH_BEATS)
         notes[index] = note.copy(baseDurationBeats = updated)
         rebuildState()
     }
 
     private fun toggleGorgo(index: Int) {
         if (isBusy) return
-        if (index == 0) return // γοργόν needs a previous note to shorten
-        val note = notes.getOrNull(index) ?: return
+        if (!MelodySequence(notes.toList()).canToggleGorgon(index)) return
+        val note = notes[index]
         notes[index] = note.withGorgo(!note.hasGorgo)
         rebuildState()
     }
@@ -186,7 +189,10 @@ class MelodyTrainerActivity : BaseActivity() {
         if (isBusy) return
         if (index !in notes.indices) return
         notes.removeAt(index)
-        normalizeLeadingGorgo()
+        // A deletion can move a γοργόν onto the first note, where the rules have no note for it to share with.
+        val kept = MelodySequence(notes.toList()).normalised().notes
+        notes.clear()
+        notes.addAll(kept)
         matchedIndices.clear()
         rebuildState()
     }
@@ -196,12 +202,6 @@ class MelodyTrainerActivity : BaseActivity() {
         notes.clear()
         matchedIndices.clear()
         rebuildState()
-    }
-
-    /** γοργόν is invalid on the first note, so strip it if a deletion shifted one to index 0. */
-    private fun normalizeLeadingGorgo() {
-        val first = notes.firstOrNull() ?: return
-        if (first.hasGorgo) notes[0] = first.withGorgo(false)
     }
 
     // endregion
@@ -525,17 +525,19 @@ class MelodyTrainerActivity : BaseActivity() {
 
     /** Recomputes the immutable UI state the Compose screen renders. Always called on the main thread. */
     private fun rebuildState() {
-        val effective = MelodySequence(notes.toList()).effectiveDurationsBeats()
+        val sequence = MelodySequence(notes.toList())
+        val durations = sequence.durations()
         val noteUis = notes.mapIndexed { index, note ->
-            val beats = effective.getOrElse(index) { note.baseDurationBeats }
             TrainerNoteUi(
                 index = index,
                 phthongLabel = phthongDisplay(note),
-                beatsLabel = formatBeats(beats),
+                beatsLabel = formatBeats(durations[index]),
                 hasGorgo = note.hasGorgo,
                 editable = !isBusy,
                 matched = matchedIndices.contains(index),
                 active = index == activeIndex,
+                lengthChangeable = sequence.canChangeLength(index),
+                gorgoToggleable = sequence.canToggleGorgon(index),
             )
         }
         val nowPlaying = if (isPlaybackActive && activeIndex in notes.indices) {
@@ -546,7 +548,7 @@ class MelodyTrainerActivity : BaseActivity() {
         val total = notes.size
         uiState = MelodyTrainerUiState(
             notes = noteUis,
-            totalBeatsLabel = formatBeats(effective.sum()),
+            totalBeatsLabel = formatBeats(sequence.total()),
             octaveLabel = octaveLabel(currentOctaveShift),
             octaveDownEnabled = !isBusy && currentOctaveShift > MIN_OCTAVE_SHIFT,
             octaveUpEnabled = !isBusy && currentOctaveShift < MAX_OCTAVE_SHIFT,
@@ -575,6 +577,12 @@ class MelodyTrainerActivity : BaseActivity() {
                 status = comboStatus,
                 progress = if (isRhythmActive && rhythmRequirePitch) correctProgress(rhythmCorrectCount, total) else null,
             ),
+            ruleNumbers = TimingRuleNumbersUi(
+                defaultLength = formatBeats(TimingRulesHelp.defaultLength),
+                gorgonNote = formatBeats(TimingRulesHelp.gorgonNote),
+                gorgonTakes = formatBeats(TimingRulesHelp.gorgonTakes),
+                klasmaAdds = formatBeats(TimingRulesHelp.klasmaAdds),
+            ),
         )
     }
 
@@ -594,13 +602,8 @@ class MelodyTrainerActivity : BaseActivity() {
     private fun correctProgress(correct: Int, total: Int): String =
         getString(R.string.melody_trainer_correct_progress, correct, total)
 
-    private fun formatBeats(beats: Float): String {
-        val halves = (beats * 2).roundToInt()
-        val whole = halves / 2
-        if (halves % 2 == 0) return whole.toString()
-        val separator = DecimalFormatSymbols.getInstance(currentLocale()).decimalSeparator
-        return "$whole${separator}5"
-    }
+    private fun formatBeats(beats: Beats): String =
+        BeatsLabel.of(beats, DecimalFormatSymbols.getInstance(currentLocale()).decimalSeparator)
 
     private fun currentLocale(): Locale = resources.configuration.locales.get(0)
 
@@ -628,9 +631,6 @@ class MelodyTrainerActivity : BaseActivity() {
     private companion object {
         const val MIN_OCTAVE_SHIFT = -1
         const val MAX_OCTAVE_SHIFT = 1
-        const val DURATION_STEP = 0.5f
-        const val MIN_DURATION = 0.5f
-        const val MAX_DURATION = 4.0f
         const val COUNTDOWN_TICK_MILLIS = 1_000L
         const val RHYTHM_END_GRACE_MILLIS = 1_500L
     }
