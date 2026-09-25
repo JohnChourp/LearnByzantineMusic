@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Dark values for the two remaining View-based screens: ModeTheoryActivity and TheoryTopicActivity
-  (ClickUp 869f4tpju).
+  (ClickUp 869f4tpju), and for the pages menu (EightModesNavigation), a View dialog that also opens
+  over the Compose home and 8 Ήχοι screens (ClickUp 869f5x286).
 
   These mirror LbmPalette.dark so a theory page opened from a Compose screen does not change
   character halfway. They are kept as a second copy only because XML layouts cannot read a Compose
-  CompositionLocal; ThemeXmlParityTest asserts the two stay in step.
+  CompositionLocal; ThemeXmlParityTest asserts the two stay in step. Its one named exception is
+  first_mode_theory_callout_border: no Compose surface draws a callout border, so the palette has no
+  field for it to mirror.
 
   Which values-night is used is driven by BaseActivity, not only by the device: it forces the night
   flag to match the user's own choice before anything inflates.

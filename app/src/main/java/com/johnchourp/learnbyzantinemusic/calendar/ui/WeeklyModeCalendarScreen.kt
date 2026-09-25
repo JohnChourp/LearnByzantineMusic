@@ -87,6 +87,7 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPrimaryContainer
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurface
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
+import com.johnchourp.learnbyzantinemusic.ui.theme.LocalLbmPalette
 
 /**
  * Redesigned «Ημερολόγιο Ήχου Εβδομάδας» screen. A pure renderer of [WeeklyModeCalendarUiState] +
@@ -544,9 +545,9 @@ private fun ToneCard(state: WeeklyModeCalendarUiState) {
                     )
                 }
                 Column {
-                    Crossfade(targetState = state.toneNameRes, label = "toneName") { res ->
+                    Crossfade(targetState = state.toneLabel, label = "toneName") { label ->
                         Text(
-                            text = if (res != 0) stringResource(res) else "",
+                            text = label,
                             style = MaterialTheme.typography.titleLarge,
                             color = LbmTextPrimary,
                             fontWeight = FontWeight.Bold,
@@ -632,25 +633,24 @@ private fun CelebrationsCard(state: WeeklyModeCalendarUiState) {
 
 @Composable
 private fun CelebrationBlock(celebration: CelebrationUi) {
-    val bg = celebrationBackground(celebration.type)
-    val border = celebrationBorder(celebration.type)
-    val accent = celebrationAccent(celebration.type)
+    // Card, badge and text all from the palette in force — see CelebrationColors for why.
+    val colors = celebrationColors(celebration.type, LocalLbmPalette.current)
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        color = bg,
-        border = BorderStroke(1.dp, border),
+        color = colors.background,
+        border = BorderStroke(1.dp, colors.border),
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            TypeBadge(typeLabelRes(celebration.type), accent)
+            TypeBadge(typeLabelRes(celebration.type), colors)
             if (celebration.title.isNotEmpty()) {
                 Text(
                     text = celebration.title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = LbmTextPrimary,
+                    color = colors.title,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
@@ -658,7 +658,7 @@ private fun CelebrationBlock(celebration: CelebrationUi) {
                 Text(
                     text = celebration.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = LbmTextSecondary,
+                    color = colors.description,
                 )
             }
         }
@@ -687,17 +687,17 @@ private fun CoverageNotice(noticeRes: Int) {
 }
 
 @Composable
-private fun TypeBadge(labelRes: Int, accent: Color) {
+private fun TypeBadge(labelRes: Int, colors: CelebrationColors) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(accent.copy(alpha = 0.16f))
+            .background(colors.badgeFill)
             .padding(horizontal = 10.dp, vertical = 4.dp),
     ) {
         Text(
             text = stringResource(labelRes),
             style = MaterialTheme.typography.labelLarge,
-            color = accent,
+            color = colors.accent,
             fontWeight = FontWeight.SemiBold,
         )
     }
@@ -904,7 +904,7 @@ private fun MonthYearPickerDialog(
 }
 
 /* ----------------------------------------------------------------------------------------------- */
-/* Type → label / colour helpers                                                                   */
+/* Type → label helper (the card colours per type live in CelebrationColors.kt)                    */
 /* ----------------------------------------------------------------------------------------------- */
 
 private fun typeLabelRes(type: CalendarCelebrationType): Int = when (type) {
@@ -912,28 +912,4 @@ private fun typeLabelRes(type: CalendarCelebrationType): Int = when (type) {
     CalendarCelebrationType.HALF_HOLIDAY -> R.string.weekly_mode_calendar_type_half_holiday
     CalendarCelebrationType.RELIGIOUS_OBSERVANCE -> R.string.weekly_mode_calendar_type_religious_observance
     CalendarCelebrationType.NORMAL_DAY -> R.string.weekly_mode_calendar_type_normal_day
-}
-
-@Composable
-private fun celebrationBackground(type: CalendarCelebrationType): Color = when (type) {
-    CalendarCelebrationType.PUBLIC_HOLIDAY -> colorResource(R.color.weekly_calendar_celebration_public_bg)
-    CalendarCelebrationType.HALF_HOLIDAY -> colorResource(R.color.weekly_calendar_celebration_half_bg)
-    CalendarCelebrationType.RELIGIOUS_OBSERVANCE -> colorResource(R.color.weekly_calendar_celebration_religious_bg)
-    CalendarCelebrationType.NORMAL_DAY -> colorResource(R.color.weekly_calendar_celebration_normal_bg)
-}
-
-@Composable
-private fun celebrationBorder(type: CalendarCelebrationType): Color = when (type) {
-    CalendarCelebrationType.PUBLIC_HOLIDAY -> colorResource(R.color.weekly_calendar_celebration_public_border)
-    CalendarCelebrationType.HALF_HOLIDAY -> colorResource(R.color.weekly_calendar_celebration_half_border)
-    CalendarCelebrationType.RELIGIOUS_OBSERVANCE -> colorResource(R.color.weekly_calendar_celebration_religious_border)
-    CalendarCelebrationType.NORMAL_DAY -> colorResource(R.color.weekly_calendar_celebration_normal_border)
-}
-
-@Composable
-private fun celebrationAccent(type: CalendarCelebrationType): Color = when (type) {
-    CalendarCelebrationType.PUBLIC_HOLIDAY -> colorResource(R.color.weekly_calendar_dot_public)
-    CalendarCelebrationType.HALF_HOLIDAY -> colorResource(R.color.weekly_calendar_dot_half)
-    CalendarCelebrationType.RELIGIOUS_OBSERVANCE -> colorResource(R.color.weekly_calendar_dot_religious)
-    CalendarCelebrationType.NORMAL_DAY -> LbmTextSecondary
 }

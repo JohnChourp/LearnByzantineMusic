@@ -35,7 +35,7 @@ class LiturgicalToneCycleTest {
     }
 
     @Test
-    fun januaryUsesCycleStartedInPreviousSummer() {
+    fun januaryUsesTheCycleStartedAtLastYearsThomasSunday() {
         val januaryDate = LocalDate.of(2026, 1, 15)
 
         val cycleStartForDate = toneCycle.computeCycleStartForDate(januaryDate)
@@ -43,6 +43,7 @@ class LiturgicalToneCycleTest {
         val cycleStartForPreviousYear = toneCycle.computeCycleStartForYear(2025)
 
         assertEquals(cycleStartForPreviousYear, cycleStartForDate)
+        assertEquals("Thomas Sunday 2025 (Pascha 20 Apr + 7)", LocalDate.of(2025, 4, 27), cycleStartForDate)
         assertTrue(cycleStartForDate.isBefore(cycleStartForCurrentYear))
     }
 }

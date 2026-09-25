@@ -33,11 +33,7 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.AccentOrangeContent
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmBrown
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmOutline
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
-import kotlin.math.abs
 import kotlin.math.max
-
-/** Moria within which a note counts as in tune (same ±4 moria as the Melody Trainer's voice check). */
-const val IN_TUNE_MORIA = 4.0
 
 private val DIAGRAM_HEIGHT = 240.dp
 private val LABEL_WIDTH = 44.dp
@@ -46,7 +42,7 @@ private val DP_PER_SECOND = 56.dp
 /**
  * Pitch over time on the lines of the mode's scale: the phthong names in a fixed column, then a
  * horizontally scrolling plot of the voiced frames (dots) and the recognised notes (bars, green
- * when within [IN_TUNE_MORIA], orange otherwise).
+ * when [SungNote.isInTune] — the Trainer's own rule, from `IntonationProfile` — orange otherwise).
  */
 @Composable
 fun PitchDiagram(
@@ -128,7 +124,7 @@ fun PitchDiagram(
                 for (note in notes) {
                     val y = yOf(note.moria, bottomMoria, topMoria, size.height)
                     drawRoundRect(
-                        color = if (abs(note.deviationMoria) <= IN_TUNE_MORIA) inTuneColor else offTuneColor,
+                        color = if (note.isInTune) inTuneColor else offTuneColor,
                         topLeft = Offset(note.startMs * pxPerMs, y - barHeight / 2f),
                         size = Size(max(barHeight, (note.endMs - note.startMs) * pxPerMs), barHeight),
                         cornerRadius = CornerRadius(barHeight / 2f),

@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
 import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
+import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 import com.johnchourp.learnbyzantinemusic.music.ModeLadder
 import kotlin.math.abs
 
@@ -43,13 +44,13 @@ object LadderPitchMirror {
         /** The φθόγγος label to show, decorations and all. */
         val label: String get() = step.phthong.label
 
-        /** Within this many μόρια the singer is on the φθόγγος. 3 μόρια ≈ 50 cents. */
-        fun isInTune(toleranceMoria: Double = IN_TUNE_MORIA): Boolean =
-            abs(deviationMoria) <= toleranceMoria
+        /**
+         * On the φθόγγος by the app's one rule, [IntonationProfile.isInTune] (±3 μόρια ≈ 50 cents),
+         * so this screen, the Trainer and the recording analysis cannot disagree about a voice.
+         */
+        fun isInTune(toleranceMoria: Double = IntonationProfile.IN_TUNE_MORIA): Boolean =
+            IntonationProfile.isInTune(deviationMoria, toleranceMoria)
     }
-
-    /** Default tolerance, in μόρια, for "you are on it". */
-    const val IN_TUNE_MORIA: Double = 3.0
 
     /**
      * The rung of [ladder] closest to [frequencyHz], or null when the input is not a usable pitch

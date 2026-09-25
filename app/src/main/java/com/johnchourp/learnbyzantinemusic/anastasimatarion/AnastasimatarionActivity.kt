@@ -10,7 +10,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.ui.AnastasimatarionScreen
-import com.johnchourp.learnbyzantinemusic.calendar.LiturgicalToneCycle
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +22,9 @@ import java.time.LocalDate
 
 /**
  * «Αναστασιματάριο» page: the eight modes → services → hymns, with how many recordings the user
- * keeps for each hymn. Opens on the mode of the current week (LiturgicalToneCycle); tapping a
- * hymn opens [HymnActivity].
+ * keeps for each hymn. Opens on the mode of the current week ([AnastasimatarionWeekMode]: the day's
+ * own tone in Bright Week, the first mode in the weeks that have no tone); tapping a hymn opens
+ * [HymnActivity].
  */
 class AnastasimatarionActivity : BaseActivity() {
     private val viewModel: AnastasimatarionViewModel by viewModels()
@@ -66,9 +66,7 @@ class AnastasimatarionViewModel(application: Application) : AndroidViewModel(app
     val uiState: StateFlow<AnastasimatarionUiState> = _uiState.asStateFlow()
 
     init {
-        val weekModeKey = runCatching {
-            AnastasimatarionLabels.MODE_ORDER[LiturgicalToneCycle().resolveTone(LocalDate.now()).toneIndex]
-        }.getOrNull()
+        val weekModeKey = runCatching { AnastasimatarionWeekMode.weekModeKey(LocalDate.now()) }.getOrNull()
         _uiState.update { state ->
             state.copy(selectedModeKey = weekModeKey ?: state.selectedModeKey, weekModeKey = weekModeKey)
         }

@@ -629,6 +629,9 @@
     <string name="weekly_mode_calendar_subtitle">The tone of the week, feasts and readings for every day</string>
     <string name="weekly_mode_calendar_tone_section_title">Tone of the week</string>
     <string name="weekly_mode_calendar_tone_explainer">The tone changes every week (Sunday–Saturday) following the cycle of the 8 tones.</string>
+    <string name="weekly_mode_calendar_tone_none_holy_week">Palm Sunday – Holy Week: no tone of the week</string>
+    <string name="weekly_mode_calendar_tone_bright_week">Bright Week – tone of the day: %1$s</string>
+    <string name="weekly_mode_calendar_tone_none_pentecost_week">Week of Pentecost: no tone of the week</string>
     <string name="weekly_mode_calendar_week_range_template">Week: %1$s – %2$s</string>
     <string name="weekly_mode_calendar_legend_title">Legend</string>
     <string name="weekly_mode_calendar_legend_intro">What the calendar colors and markers mean:</string>
@@ -650,8 +653,8 @@
     <string name="weekly_mode_calendar_readings_section_title">Daily readings</string>
     <string name="weekly_mode_calendar_apostle_label">Apostle</string>
     <string name="weekly_mode_calendar_gospel_label">Gospel</string>
-    <string name="weekly_mode_calendar_coverage_partial">For this month we have recorded only the fixed feasts. If a day shows no feast, it has not been filled in yet — it does not necessarily mean nothing is celebrated. The tone of the week is always calculated correctly.</string>
-    <string name="weekly_mode_calendar_coverage_none">There is no feast-calendar data for this month yet. The tone of the week is always calculated correctly.</string>
+    <string name="weekly_mode_calendar_coverage_partial">For this month we have recorded only the fixed feasts. If a day shows no feast, it has not been filled in yet — it does not necessarily mean nothing is celebrated. The tone of the week does not depend on this data; it is calculated from Pascha.</string>
+    <string name="weekly_mode_calendar_coverage_none">There is no feast-calendar data for this month yet. The tone of the week does not depend on this data; it is calculated from Pascha.</string>
     <string name="weekly_mode_calendar_coverage_readings_missing">This month\'s feast calendar is complete, but the readings have not been filled in for every day yet.</string>
     <string name="weekly_mode_calendar_readings_empty">No readings found for this day.</string>
     <string name="weekly_mode_calendar_readings_none_for_kind">No entry available.</string>
@@ -1098,7 +1101,7 @@
     <string name="analysis_retry">Try again</string>
     <string name="analysis_status_no_pitch">No steady phthong was recognised. Sing more clearly and closer to the microphone.</string>
     <string name="analysis_sung_title">What you sang</string>
-    <string name="analysis_sung_summary">%1$d phthongs in %2$s · %3$d in tune (±4 moria)</string>
+    <string name="analysis_sung_summary">%1$d phthongs in %2$s · %3$d in tune (±%4$d moria)</string>
     <string name="analysis_diagram_title">Diagram</string>
     <string name="analysis_diagram_cd">Pitch-over-time diagram with %1$d phthongs</string>
     <string name="analysis_diagram_legend">Dots: the pitch of your voice. Bars: the recognised phthongs — green in tune, orange off.</string>
