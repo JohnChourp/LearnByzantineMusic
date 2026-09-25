@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
 import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -14,21 +15,21 @@ class ComboPitchGateTest {
 
     @Test
     fun `in-tune pitch returns its phthong`() {
-        val match = PitchMatch(TrainerPhthong.DI, deviationMoria = 1.5)
-        assertEquals(TrainerPhthong.DI, ComboPitchGate.inTunePhthong(match))
+        val match = PitchMatch(PhthongName.DI, deviationMoria = 1.5)
+        assertEquals(PhthongName.DI, ComboPitchGate.inTunePhthong(match))
     }
 
     @Test
     fun `out-of-tune pitch returns null`() {
-        val match = PitchMatch(TrainerPhthong.DI, deviationMoria = 6.0)
+        val match = PitchMatch(PhthongName.DI, deviationMoria = 6.0)
         assertNull(ComboPitchGate.inTunePhthong(match))
     }
 
     @Test
     fun `flat pitch just inside tolerance still returns its phthong`() {
         // Exactly on the boundary, which is inclusive: -3 now, where it was -4.
-        val match = PitchMatch(TrainerPhthong.KE, deviationMoria = -IntonationProfile.IN_TUNE_MORIA)
-        assertEquals(TrainerPhthong.KE, ComboPitchGate.inTunePhthong(match))
+        val match = PitchMatch(PhthongName.KE, deviationMoria = -IntonationProfile.IN_TUNE_MORIA)
+        assertEquals(PhthongName.KE, ComboPitchGate.inTunePhthong(match))
     }
 
     @Test

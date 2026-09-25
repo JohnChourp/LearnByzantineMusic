@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
 import com.johnchourp.learnbyzantinemusic.music.Beats
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.summary_theory.ui.TimePageEquations
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -31,7 +32,7 @@ class MelodyTotalIsTheSumOfItsNotesTest {
             MelodySequence(
                 List(random.nextInt(1, 13)) { index ->
                     val note = TrainerNote(
-                        phthong = TrainerPhthong.ascending[random.nextInt(TrainerPhthong.ascending.size)],
+                        phthong = PhthongName.entries[random.nextInt(PhthongName.entries.size)],
                         baseDurationBeats = MelodySequence.LENGTH_STEP_BEATS * random.nextInt(1, 9),
                     )
                     if (index > 0 && random.nextInt(3) == 0) note.withGorgo(true) else note
@@ -43,7 +44,7 @@ class MelodyTotalIsTheSumOfItsNotesTest {
     /** Every example of the «Χαρακτήρες Χρόνου» page, played as a melody. */
     private val pageMelodies: List<MelodySequence> by lazy {
         TimePageEquations.all.values.map { equation ->
-            MelodySequence(equation.rhythm.map { TrainerNote(TrainerPhthong.NI, signs = it.signs) })
+            MelodySequence(equation.rhythm.map { TrainerNote(PhthongName.NI, signs = it.signs) })
         }
     }
 

@@ -361,6 +361,11 @@
     <string name="eight_modes_ison_card_title">Ισοκράτημα</string>
     <string name="eight_modes_ison_hint">Άναψε το ισοκράτημα για να ψάλλεις πάνω σε σταθερή βάση.</string>
     <string name="eight_modes_ison_active">Ισοκράτημα στον φθόγγο %1$s</string>
+    <string name="eight_modes_ison_selector_label">Ίσον σε</string>
+    <string name="eight_modes_ison_selector_base_value">%1$s (βάση)</string>
+    <string name="eight_modes_ison_selector_dominants">Δεσπόζοντες φθόγγοι</string>
+    <string name="eight_modes_ison_selector_others">Άλλοι φθόγγοι</string>
+    <string name="eight_modes_ison_reset_to_base">Επαναφορά στη βάση (%1$s)</string>
     <string name="eight_modes_scale_card_title">Η κλίμακα</string>
     <string name="eight_modes_scale_card_hint">Κράτα πατημένο έναν φθόγγο για να ακούσεις τον τόνο — σύρε πάνω-κάτω για γλίστρημα.</string>
     <string name="eight_modes_scale_moria_legend">οι αριθμοί δείχνουν τα μόρια κάθε διαστήματος</string>
@@ -763,6 +768,12 @@
     <string name="recordings_saved_ok">Η ηχογράφηση αποθηκεύτηκε επιτυχώς.</string>
     <string name="recordings_error_start">Αποτυχία εκκίνησης ηχογράφησης.</string>
     <string name="recordings_error_save">Αποτυχία αποθήκευσης ηχογράφησης.</string>
+    <string name="recordings_saved_as_wav_template">Η μετατροπή σε %1$s απέτυχε — αποθηκεύτηκε ως WAV: %2$s</string>
+    <string name="recordings_kept_in_app">Ο φάκελος δεν είναι διαθέσιμος — η ηχογράφηση κρατήθηκε στην εφαρμογή.</string>
+    <string name="recordings_pending_title">Δεν αποθηκεύτηκαν ακόμη</string>
+    <string name="recordings_pending_hint">Κρατήθηκαν μέσα στην εφαρμογή γιατί δεν γράφτηκαν στον φάκελο. Με «Αποθήκευση» μπαίνουν στον τρέχοντα φάκελο.</string>
+    <string name="recordings_pending_save">Αποθήκευση</string>
+    <string name="recordings_pending_delete_confirm_message">Η ηχογράφηση %1$s υπάρχει μόνο μέσα στην εφαρμογή. Να διαγραφεί οριστικά;</string>
     <string name="recordings_microphone_permission_required">Χρειάζεται άδεια μικροφώνου για ηχογράφηση.</string>
     <string name="recordings_format_label">Μορφή αποθήκευσης</string>
     <string name="recordings_format_flac">FLAC (.flac)</string>
@@ -1050,6 +1061,8 @@
     <string name="anastasimatarion_title">Αναστασιματάριο</string>
     <string name="anastasimatarion_subtitle">Οι αναστάσιμοι ύμνοι της Κυριακής στους 8 ήχους, με τις ηχογραφήσεις σου για τον καθένα</string>
     <string name="anastasimatarion_week_mode_template">Ήχος της εβδομάδας: %1$s</string>
+    <string name="anastasimatarion_day_mode_template">Ήχος της ημέρας: %1$s</string>
+    <string name="anastasimatarion_vespers_mode_template">Από τον εσπερινό απόψε: %1$s</string>
     <string name="anastasimatarion_service_vespers">Εσπερινός</string>
     <string name="anastasimatarion_service_orthros">Όρθρος</string>
     <string name="anastasimatarion_service_liturgy">Θεία Λειτουργία</string>
@@ -1118,6 +1131,9 @@
     <string name="learning_path_step">Βήμα %1$d από %2$d</string>
     <string name="learning_path_start">Ξεκίνα</string>
     <string name="learning_path_continue">Συνέχεια</string>
+    <string name="home_weekly_tone_this_week">Αυτή την εβδομάδα: %1$s</string>
+    <string name="home_weekly_tone_from_vespers">Από τον εσπερινό απόψε: %1$s</string>
+    <string name="home_weekly_tone_open_eight_modes">Άνοιξε στους 8 Ήχους</string>
     <!-- Ζωντανός καθρέφτης φωνής (E1) -->
     <string name="eight_modes_mirror_card_title">Πού είμαι</string>
     <string name="eight_modes_mirror_hint">Άνοιξε το μικρόφωνο και ψάλε: σου λέει σε ποιον φθόγγο είσαι και πόσα μόρια μακριά.</string>

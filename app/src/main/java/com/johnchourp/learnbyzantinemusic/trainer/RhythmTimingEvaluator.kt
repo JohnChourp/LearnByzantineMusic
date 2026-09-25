@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import kotlin.math.abs
 
 /** Timing verdict for one target note in the rhythm exercise. */
@@ -42,7 +43,7 @@ class RhythmTimingEvaluator(
     private var singing = false
     private var segmentStart = -1L
     private var segmentNote = -1
-    private var segmentPhthong: TrainerPhthong? = null
+    private var segmentPhthong: PhthongName? = null
 
     val isComplete: Boolean get() = judgedCount >= plan.size
 
@@ -54,7 +55,7 @@ class RhythmTimingEvaluator(
      * One analysis frame. [phthong] is the in-tune detected phthong (null = silent/off-tune);
      * it is only used when [requirePitch] is true.
      */
-    fun onFrame(elapsedMillis: Long, voicedNow: Boolean, phthong: TrainerPhthong? = null): RhythmVerdict? {
+    fun onFrame(elapsedMillis: Long, voicedNow: Boolean, phthong: PhthongName? = null): RhythmVerdict? {
         val singingNow = if (requirePitch) voicedNow && phthong != null else voicedNow
         var verdict: RhythmVerdict? = null
 
@@ -100,7 +101,7 @@ class RhythmTimingEvaluator(
         return verdict
     }
 
-    private fun startSegment(onsetMillis: Long, phthong: TrainerPhthong?) {
+    private fun startSegment(onsetMillis: Long, phthong: PhthongName?) {
         segmentStart = onsetMillis
         segmentNote = chooseNote(onsetMillis)
         segmentPhthong = phthong
@@ -144,7 +145,7 @@ class RhythmTimingEvaluator(
         onsetMillis: Long,
         offsetMillis: Long,
         noteIndex: Int,
-        phthong: TrainerPhthong?
+        phthong: PhthongName?
     ): RhythmVerdict? {
         if (noteIndex < 0 || onsetMillis < 0L || judged[noteIndex]) return null
         judged[noteIndex] = true

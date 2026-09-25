@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.PhthongSegmenter
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.PitchTrack
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.SungNote
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
 import com.johnchourp.learnbyzantinemusic.ui.theme.AccentGreenContent
 import com.johnchourp.learnbyzantinemusic.ui.theme.AccentOrangeContent
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmBrown
@@ -138,13 +137,8 @@ fun PitchDiagram(
 private fun yOf(moria: Double, bottom: Double, top: Double, height: Float): Float =
     (height * (1.0 - (moria - bottom) / (top - bottom))).toFloat()
 
-/** Phthong name with an octave mark: «΄» above the starting octave, «͵» below. */
-fun phthongLabel(degree: Int): String {
-    val octave = Math.floorDiv(degree, 7)
-    val name = TrainerPhthong.ascending[Math.floorMod(degree, 7)].displayName
-    return when {
-        octave > 0 -> name + "΄".repeat(octave)
-        octave < 0 -> name + "͵".repeat(-octave)
-        else -> name
-    }
-}
+/**
+ * Phthong name with an octave mark — «΄» above the starting octave, «,» below — from the app's one
+ * renderer, `Phthong.label`. It used to draw its own, with «͵» for the low octave (ClickUp `869f5x291`).
+ */
+fun phthongLabel(degree: Int): String = PhthongSegmenter.phthongAt(degree).label

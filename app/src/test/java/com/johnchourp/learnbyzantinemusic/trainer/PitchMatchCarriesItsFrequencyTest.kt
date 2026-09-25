@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
 import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
@@ -55,7 +56,7 @@ class PitchMatchCarriesItsFrequencyTest {
     fun theDeviationIsUnchangedByTheNewField() {
         // The field must not have altered what the trainer already relied on.
         val onNi = TrainerPitchTable.nearestPhthong(ByzantineTuning.NI_BASE_HZ)!!
-        assertEquals(TrainerPhthong.NI, onNi.phthong)
+        assertEquals(PhthongName.NI, onNi.phthong)
         assertTrue(abs(onNi.deviationMoria) < 1e-6)
     }
 }

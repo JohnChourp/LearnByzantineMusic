@@ -1,6 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
 import com.johnchourp.learnbyzantinemusic.music.ByzantineRhythmMapper
+import com.johnchourp.learnbyzantinemusic.music.Phthong
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.music.TimeSign
 
 /**
@@ -10,12 +12,18 @@ import com.johnchourp.learnbyzantinemusic.music.TimeSign
  * «Χαρακτήρες Χρόνου» page is checked against too; the Trainer offers only the γοργόν.
  */
 data class TrainerNote(
-    val phthong: TrainerPhthong,
+    val phthong: PhthongName,
     val octaveShift: Int = 0,
     val baseDurationBeats: Float = 1f,
     val signs: Set<TimeSign> = emptySet()
 ) {
     val frequencyHz: Double get() = TrainerPitchTable.frequencyHz(phthong, octaveShift)
+
+    /**
+     * The φθόγγος with its octave, as the app's one model. The Trainer shows `pitch.label`, the same
+     * renderer as every other screen, instead of the copy it used to build by hand.
+     */
+    val pitch: Phthong get() = Phthong(phthong, octaveShift)
 
     val hasGorgo: Boolean get() = TimeSign.GORGON in signs
 

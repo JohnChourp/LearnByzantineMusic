@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.anastasimatarion
 
+import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -13,6 +14,7 @@ import java.io.File
 class AnastasimatarionCatalogTest {
 
     companion object {
+        private const val CODE_LOCK = "scripts/anastasimatarion-codes.lock.json"
         private lateinit var catalog: HymnCatalog
 
         @BeforeClass
@@ -52,11 +54,24 @@ class AnastasimatarionCatalogTest {
         }
     }
 
+    /**
+     * Codes are permanent keys, not positions (ClickUp `869f5x2a9`). A hymn added early in a mode
+     * takes the next free code at the END, so codes need not follow the display order: the rule
+     * this replaces — 01..N in display order — demanded exactly the renumbering that re-attaches
+     * recordings to another hymn. Which hymn each code names is AnastasimatarionCodeLockTest's job.
+     */
     @Test
-    fun codesAreTwoDigitSequentialAndUniquePerMode() {
+    fun codesAreTwoDigitUniquePerModeAndLocked() {
+        val lockFile = listOf(File("../$CODE_LOCK"), File(CODE_LOCK)).firstOrNull { it.isFile }
+            ?: error("$CODE_LOCK not found from ${File("").absolutePath}")
+        val lockModes = JSONObject(lockFile.readText()).getJSONObject("modes")
         for (mode in catalog.modes) {
             val codes = mode.hymns.map { it.code }
-            assertEquals(mode.key, (1..codes.size).map { "%02d".format(it) }, codes)
+            assertEquals("${mode.key}: not two digits", emptyList<String>(), codes.filterNot { Regex("""\d{2}""").matches(it) })
+            assertEquals("${mode.key}: a code given twice", codes.size, codes.toSet().size)
+            val lockedHymns = lockModes.getJSONObject(mode.key).getJSONArray("hymns")
+            val locked = (0 until lockedHymns.length()).map { lockedHymns.getJSONObject(it).optString("code") }.toSet()
+            assertEquals("${mode.key}: codes missing from the lock", emptyList<String>(), codes.filterNot { it in locked })
         }
     }
 

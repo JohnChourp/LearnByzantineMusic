@@ -2,12 +2,13 @@ package com.johnchourp.learnbyzantinemusic.trainer
 
 import com.johnchourp.learnbyzantinemusic.docs.KotlinSource
 import com.johnchourp.learnbyzantinemusic.music.Beats
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.NI
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.PA
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.VOU
 import com.johnchourp.learnbyzantinemusic.music.RhythmProblem
 import com.johnchourp.learnbyzantinemusic.music.RhythmProblem.Reason
 import com.johnchourp.learnbyzantinemusic.music.TimeSign
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.NI
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.PA
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.VOU
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerNoteUi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -25,7 +26,7 @@ class TrainerInputRulesTest {
 
     private val half = Beats.of(1, 2)
 
-    private fun note(phthong: TrainerPhthong = NI, beats: Float = 1f) = TrainerNote(phthong, baseDurationBeats = beats)
+    private fun note(phthong: PhthongName = NI, beats: Float = 1f) = TrainerNote(phthong, baseDurationBeats = beats)
 
     private fun melody(vararg notes: TrainerNote) = MelodySequence(notes.toList())
 

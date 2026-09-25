@@ -1,7 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
-import java.text.Normalizer
-import java.util.Locale
+import com.johnchourp.learnbyzantinemusic.search.SearchNormalizer
 
 /**
  * The one rule for matching theory text (ClickUp `869f4tph0`).
@@ -11,15 +10,12 @@ import java.util.Locale
  * Two things need to agree about what "matching" means: the menu that decides a page is a **result**,
  * and the page that then **highlights** the term inside it. If they normalised differently, the user
  * would tap a row the search found and see nothing lit — which reads as a broken page rather than a
- * near-miss in the matcher. So the normalisation lives here and both go through it.
+ * near-miss in the matcher. So both go through here.
  *
  * ## What normalising does
  *
- * Lowercases, then strips diacritics by decomposing (NFD) and dropping the combining marks. That is
- * what makes «πεταστή» findable by typing `πεταστη`, and `Έλξη` by `ελξη` — Greek learners very often
- * type without accents, and the tonos is exactly the key people skip.
- *
- * Latin gets the same treatment, so the English side of the bilingual content behaves identically.
+ * Lowercase, no diacritics, `ς` = `σ` — [SearchNormalizer] does it, the same function the notes search
+ * uses, so a word is findable the same way on a theory page and in a note.
  *
  * ## Mapping back to the original text
  *
@@ -31,10 +27,8 @@ import java.util.Locale
  */
 object TheorySearch {
 
-    private val COMBINING_MARKS = Regex("\\p{Mn}+")
-
     /** Normalised form of a whole string, for comparison. Trimmed, because queries carry spaces. */
-    fun normalize(value: String): String = normalizeUntrimmed(value).trim()
+    fun normalize(value: String): String = SearchNormalizer.normalize(value)
 
     /** True when [haystack] contains [query] under [normalize]. A blank query matches everything. */
     fun matches(haystack: String, query: String): Boolean {
@@ -55,7 +49,7 @@ object TheorySearch {
         // sourceIndex[i] is the index in `text` that produced normalized[i].
         val sourceIndex = ArrayList<Int>(text.length)
         text.forEachIndexed { index, char ->
-            normalizeUntrimmed(char.toString()).forEach { normalizedChar ->
+            SearchNormalizer.normalizeUntrimmed(char.toString()).forEach { normalizedChar ->
                 normalized.append(normalizedChar)
                 sourceIndex.add(index)
             }
@@ -76,22 +70,4 @@ object TheorySearch {
         }
         return ranges
     }
-
-    private fun normalizeUntrimmed(value: String): String =
-        COMBINING_MARKS.replace(
-            Normalizer.normalize(value.lowercase(Locale.getDefault()), Normalizer.Form.NFD),
-            "",
-        ).replace(FINAL_SIGMA, SIGMA)
-
-    /**
-     * Greek lowercasing turns a word-final `Σ` into `ς`, but a user typing the word gets `σ` — the
-     * keyboard has one sigma key. Without folding the two, «ΤΡΟΧΟΣ» is not findable by typing
-     * `τροχοσ`, which is what everyone types. Measured, not assumed: this is what made
-     * `finalSigmaAndCaseAreHandled` fail before the fold existed.
-     *
-     * Folding is one character to one character, so it cannot disturb the index mapping that
-     * [matchRanges] relies on.
-     */
-    private const val FINAL_SIGMA = 'ς'
-    private const val SIGMA = 'σ'
 }

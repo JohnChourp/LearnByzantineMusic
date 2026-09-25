@@ -16,9 +16,19 @@ import org.json.JSONObject
  * the εορτολόγιο dataset follows (ClickUp `869dbkkwf`, decided 2026-09-22). `AnastasimatarionAssetSchemaTest`
  * enforces it, so it cannot come back by accident.
  *
- * Every hymn has a two-digit [Hymn.code], unique within its mode and stable across catalog
- * versions: [HymnFolders] names a hymn's recordings folder after it, so a code must never be
- * reused for a different hymn.
+ * Every hymn has a two-digit [Hymn.code], unique within its mode. It is a **permanent key** on the
+ * user's device, in two places:
+ * - the hymn's recordings folder, `<code> <incipit>`, which [HymnFolders] finds again by its
+ *   `"<code> "` prefix;
+ * - the hymn's analysis settings (expected melody, mode, starting phthong), which
+ *   `AnalysisSettingsStore.hymnKey` stores under `hymn:<mode>:<code>`.
+ *
+ * A code that moved would re-attach both to a different hymn, silently. So codes are not a
+ * display-order counter (ClickUp `869f5x2a9`): they come from the committed lock
+ * `scripts/anastasimatarion-codes.lock.json` (not shipped), which the generator honours. A new
+ * hymn gets the next free code at the end, however early it is displayed, and a removed hymn's
+ * code is retired for good. Codes therefore need not follow the display order.
+ * `AnastasimatarionCodeLockTest` holds this asset to the lock.
  */
 data class Hymn(
     val code: String,

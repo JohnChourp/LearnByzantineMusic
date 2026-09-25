@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Stairs
 import androidx.compose.material.icons.filled.Timer
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionActivity
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyModeCalendarActivity
+import com.johnchourp.learnbyzantinemusic.calendar.WeeklyToneAnnouncement
 import com.johnchourp.learnbyzantinemusic.home.HomeInfo
 import com.johnchourp.learnbyzantinemusic.home.HomeScreen
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ import com.johnchourp.learnbyzantinemusic.home.HomeTile
 import com.johnchourp.learnbyzantinemusic.learning.LearningPath
 import com.johnchourp.learnbyzantinemusic.learning.LearningProgress
 import com.johnchourp.learnbyzantinemusic.home.TileAccent
+import com.johnchourp.learnbyzantinemusic.home.WeeklyToneUi
 import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
 import com.johnchourp.learnbyzantinemusic.modes.EightModesNavigation
 import com.johnchourp.learnbyzantinemusic.notes.NotesActivity
@@ -51,8 +53,13 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
  * has to have advanced by the time they see it again. Reading only in `onCreate` would leave it stale
  * until the process restarted.
  *
+ * **The tone of the week** (ClickUp `869f5x24r`) is the first card: [WeeklyToneAnnouncement] decides
+ * it from the clock and `LiturgicalToneCycle`, and it is recomputed in `onResume` too, because the
+ * tone moves at the vespers hour and at midnight while the app stays open. Its «Άνοιξε στους 8 Ήχους»
+ * opens that mode one-shot, without touching the 8 Ήχοι page's saved mode.
+ *
  * **Inputs:** none — this is the launcher entry point.
- * **Opens:** every other screen, by explicit Intent.
+ * **Opens:** every other screen, by explicit Intent; the 8 Ήχοι also on a given mode, one-shot.
  * **Touches:** `learning_completed_step_ids` (read + write), `app_language_code` and
  * `app_language_onboarding_completed` (read + write, through the onboarding dialogs).
  *
@@ -63,9 +70,15 @@ class MainActivity : BaseActivity() {
     /** Re-read in [onResume] so the card advances after the learner comes back from a lesson. */
     private val completedSteps = mutableStateOf<Set<String>>(emptySet())
 
+    private val toneAnnouncement = WeeklyToneAnnouncement()
+
+    /** Recomputed in [onResume]: the tone moves at the vespers hour and at midnight. */
+    private val toneNow = mutableStateOf<WeeklyToneAnnouncement.Announcement?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         completedSteps.value = LearningProgress.completedSteps(this)
+        toneNow.value = currentTone()
         setContent {
             LbmTheme(palette = currentPalette()) {
                 val sections = remember { withProgressTracking(buildHomeSections()) }
@@ -75,6 +88,7 @@ class MainActivity : BaseActivity() {
                     version = BuildConfig.VERSION_NAME,
                     sections = sections,
                     learningPath = learningPathUi(sections, completedSteps.value),
+                    weeklyTone = toneNow.value?.let(::weeklyToneUi),
                     // canOpenEightModesHome: from here the «8 Ήχοι» row must actually navigate.
                     // Inside that screen it is where you already are, so it does nothing there.
                     onOpenSearch = {
@@ -94,7 +108,19 @@ class MainActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         completedSteps.value = LearningProgress.completedSteps(this)
+        toneNow.value = currentTone()
     }
+
+    /** Null hides the card: the home screen never fails over a date it cannot resolve. */
+    private fun currentTone(): WeeklyToneAnnouncement.Announcement? =
+        runCatching { toneAnnouncement.now() }.getOrNull()
+
+    private fun weeklyToneUi(announcement: WeeklyToneAnnouncement.Announcement): WeeklyToneUi =
+        WeeklyToneUi.from(
+            announcement = announcement,
+            openEightModes = { modeKey -> startActivity(EightModesActivity.intent(this, modeKey)) },
+            openAnastasimatarion = ::openAnastasimatarion,
+        )
 
     /**
      * Wraps the click of every tile that is a path step so opening the lesson records it.
