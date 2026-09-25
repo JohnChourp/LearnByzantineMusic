@@ -129,6 +129,21 @@ object IsonDrone {
     }
 
     /**
+     * What the ison should hold: a [mode], that mode's «Μεταφορά βάσης», and the φθόγγος «Ίσον σε…»
+     * chose — null for the base (ClickUp `869f5x2dq`). Everything needed to find the pitch, and
+     * nothing that could disagree with it: whoever plays the ison — the page, or the service that
+     * keeps it going in the background — turns this into a frequency with [held], never by hand.
+     */
+    data class Request(val mode: Mode, val baseShiftMoria: Int, val choice: Phthong? = null)
+
+    /**
+     * The rung [request] holds: [step] on the very ladder the page draws ([ModeLadders]), so the
+     * background ison sounds exactly the page's pitch. Null when the ladder does not hold it.
+     */
+    fun held(request: Request): ModeLadder.Step? =
+        step(ModeLadders.ladder(request.mode, request.baseShiftMoria), request.choice ?: base(request.mode))
+
+    /**
      * The rung the drone holds for [phthong] on [ladder], or null when the ladder does not contain
      * it — in which case the caller must not start a drone rather than guess.
      *
