@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.music
 
+import com.johnchourp.learnbyzantinemusic.docs.KotlinSource
 import com.johnchourp.learnbyzantinemusic.lessons.ui.PhthongScale
 import com.johnchourp.learnbyzantinemusic.modes.EightModeScaleDefinitions
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.PhthongSegmenter
@@ -22,18 +23,20 @@ import java.io.File
 class OnePhthongModelTest {
 
     private val mainSources: List<File> by lazy {
-        val root = listOf(File("app/src/main/java"), File("src/main/java")).firstOrNull { it.isDirectory }
-            ?: error("Cannot locate the main source root from ${File("").absolutePath}")
-        root.walkTopDown().filter { it.isFile && it.extension == "kt" }.toList()
+        KotlinSource.mainRoot.walkTopDown().filter { it.isFile && it.extension == "kt" }.toList()
     }
 
     /**
-     * An enum whose first constant is NI: a list of the seven φθόγγοι. Anchored to the start of a
-     * line, so a commented-out declaration (`//` or ` * `) is not one.
+     * An enum whose first constant is NI: a list of the seven φθόγγοι. Read with the comments
+     * removed (`KotlinSource`) and anchored to the start of a line, so a declaration that is only
+     * mentioned or commented out is not one.
      */
-    private val phthongEnum = Regex("""(?m)^[ \t]*(?:(?:public|internal|private)\s+)?enum\s+class\s+(\w+)[^{]*\{\s*NI\b""")
+    private val phthongEnum = Regex(
+        """(?m)^[ \t]*(?:(?:public|internal|private)\s+)?enum\s+class\s+(\w+)[^{]*\{\s*NI\b"""
+    )
 
-    private fun enumsIn(text: String): List<String> = phthongEnum.findAll(text).map { it.groupValues[1] }.toList()
+    private fun enumsIn(source: String): List<String> =
+        phthongEnum.findAll(KotlinSource.withoutComments(source)).map { it.groupValues[1] }.toList()
 
     @Test
     fun onlyOneEnumListsTheSevenPhthongs() {
@@ -53,6 +56,7 @@ class OnePhthongModelTest {
         """.trimIndent()
         assertEquals(listOf("TrainerPhthong", "Phthong"), enumsIn(before))
         assertEquals("a commented-out enum is not one", emptyList<String>(), enumsIn("// enum class Old {\n//     NI,\n"))
+        assertEquals("nor one in a block comment", emptyList<String>(), enumsIn("/*\nenum class Old {\n    NI,\n*/\n"))
     }
 
     @Test
@@ -78,8 +82,8 @@ class OnePhthongModelTest {
     fun theMarksAreOnePerDirection() {
         assertEquals("Ζω,", TrainerNote(PhthongName.ZO, octaveShift = -1).pitch.label)
         assertEquals("Δι,,", PhthongSegmenter.phthongAt(-2 * 7 + PhthongName.DI.ordinal).label)
-        assertEquals("Νη΄", PhthongSegmenter.phthongAt(7).label)
-        assertEquals("Πα΄΄", TrainerNote(PhthongName.PA, octaveShift = 2).pitch.label)
+        assertEquals("Νη\u0384", PhthongSegmenter.phthongAt(7).label)
+        assertEquals("Πα\u0384\u0384", TrainerNote(PhthongName.PA, octaveShift = 2).pitch.label)
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.music
 
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.HymnFolders
+import com.johnchourp.learnbyzantinemusic.docs.KotlinSource
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -21,18 +22,17 @@ import java.io.File
  *    assembled around a variable, with no φθόγγος name in the text for rule 1 to see;
  * 3. an octave mark repeated anywhere but `Phthong.label`, which is how a second renderer looks.
  *
- * Code means Kotlin with the comments removed and the string literals kept: a comment explaining the
- * history is not a mark on screen, while a literal is exactly what the scan hunts.
+ * Code means Kotlin with the comments removed and the string literals kept — the shared
+ * `KotlinSource.withoutComments` — because a comment explaining the history is not a mark on
+ * screen, while a literal is exactly what the scan hunts. The marks below are written as `\u`
+ * escapes because two of them, U+02B9 and U+0374, cannot be told apart on screen.
  *
  * The `΄` in «Ήχος Α΄» is a Greek numeral sign after a mode letter, not an octave mark after a
  * φθόγγος — and those names are folders on users' devices. The last test pins them byte for byte.
  */
 class OneOctaveMarkPerDirectionTest {
 
-    private val appRoot: File by lazy {
-        listOf(File("app/src/main"), File("src/main")).firstOrNull { File(it, "java").isDirectory }
-            ?: error("Cannot locate app/src/main from ${File("").absolutePath}")
-    }
+    private val appRoot: File get() = File(KotlinSource.srcDir, "main")
 
     private val kotlinSources: List<File> by lazy {
         File(appRoot, "java").walkTopDown().filter { it.isFile && it.extension == "kt" }.toList()
@@ -49,7 +49,7 @@ class OneOctaveMarkPerDirectionTest {
         listOf("Ni", "Pa", "Vou", "Bou", "Ga", "Di", "Ke", "Zo")
 
     /** U+0375 ͵, U+2032 ′, U+02B9 ʹ, U+0374 ʹ, U+00B4 ´, U+2019 ’ — every look-alike of the two marks. */
-    private val foreignMarks = "͵′ʹʹ´’"
+    private val foreignMarks = "\u0375\u2032\u02B9\u0374\u00B4\u2019"
 
     /** Rule 1: a φθόγγος name, as a whole word, followed by a foreign mark. */
     private val nameThenForeignMark = Regex(
@@ -57,13 +57,16 @@ class OneOctaveMarkPerDirectionTest {
     )
 
     /** Rule 2: the look-alikes that have no other use in the app's code. */
-    private val foreignMarkInCode = Regex("[͵′ʹʹ]")
+    private val foreignMarkInCode = Regex("[\u0375\u2032\u02B9\u0374]")
 
     /** Rule 3: an octave mark, as a literal, being repeated — a renderer. */
-    private val repeatedMark = Regex("[\"'][,΄" + foreignMarks + "][\"']\\s*\\.repeat\\(")
+    private val repeatedMark = Regex("[\"'][,\u0384" + foreignMarks + "][\"']\\s*\\.repeat\\(")
 
     private fun codeOffenders(pattern: Regex): List<String> =
-        kotlinSources.filter { pattern.containsMatchIn(codeOnly(it.readText())) }.map { it.name }.sorted()
+        kotlinSources
+            .filter { pattern.containsMatchIn(KotlinSource.withoutComments(it.readText())) }
+            .map { it.name }
+            .sorted()
 
     private fun stringOffenders(pattern: Regex): List<String> =
         stringFiles.flatMap { file ->
@@ -78,7 +81,7 @@ class OneOctaveMarkPerDirectionTest {
         assertEquals("values and values-en", setOf("values", "values-en"), stringFiles.map { it.parentFile.name }.toSet())
         // And the canonical high mark is really there to be seen, in both languages.
         stringFiles.forEach { file ->
-            assertTrue("${file.parentFile.name} spells Νη΄/Ni΄ with U+0384", file.readText().contains("΄</string>"))
+            assertTrue("${file.parentFile.name} spells Νη\u0384/Ni\u0384 with U+0384", file.readText().contains("\u0384</string>"))
         }
     }
 
@@ -113,8 +116,8 @@ class OneOctaveMarkPerDirectionTest {
                 }
             }
         """.trimIndent()
-        assertTrue("rule 2 sees the analysis's ͵", foreignMarkInCode.containsMatchIn(codeOnly(analysisBefore)))
-        assertTrue("rule 3 sees its renderer", repeatedMark.containsMatchIn(codeOnly(analysisBefore)))
+        assertTrue("rule 2 sees the analysis's \u0375", foreignMarkInCode.containsMatchIn(KotlinSource.withoutComments(analysisBefore)))
+        assertTrue("rule 3 sees its renderer", repeatedMark.containsMatchIn(KotlinSource.withoutComments(analysisBefore)))
 
         val trainerBefore = """
             private fun phthongDisplay(note: TrainerNote): String {
@@ -126,28 +129,28 @@ class OneOctaveMarkPerDirectionTest {
                 return note.phthong.displayName + suffix
             }
         """.trimIndent()
-        assertTrue("rule 3 sees the Trainer's renderer", repeatedMark.containsMatchIn(codeOnly(trainerBefore)))
+        assertTrue("rule 3 sees the Trainer's renderer", repeatedMark.containsMatchIn(KotlinSource.withoutComments(trainerBefore)))
 
-        assertTrue("rule 1 sees the English prime", nameThenForeignMark.containsMatchIn("<string name=\"phthong_ni_high\">Ni′</string>"))
-        listOf("Νη͵", "Παʹ", "Διʹ", "Κε´", "Ζω’").forEach {
+        assertTrue("rule 1 sees the English prime", nameThenForeignMark.containsMatchIn("<string name=\"phthong_ni_high\">Ni\u2032</string>"))
+        listOf("Νη\u0375", "Πα\u02B9", "Δι\u0374", "Κε\u00B4", "Ζω\u2019").forEach {
             assertTrue("rule 1 sees $it", nameThenForeignMark.containsMatchIn(it))
         }
 
         val after = "fun phthongLabel(degree: Int): String = PhthongSegmenter.phthongAt(degree).label\n" +
             "val label = note.pitch.label\n" +
             "private const val LOW_SUFFIX = \",\"\n" +
-            "private const val HIGH_SUFFIX = \"΄\"\n" +
+            "private const val HIGH_SUFFIX = \"\u0384\"\n" +
             "else -> HIGH_SUFFIX.repeat(octave)\n"
         listOf(nameThenForeignMark, foreignMarkInCode, repeatedMark).forEach {
-            assertFalse("$it flagged the corrected code", it.containsMatchIn(codeOnly(after)))
+            assertFalse("$it flagged the corrected code", it.containsMatchIn(KotlinSource.withoutComments(after)))
         }
-        listOf("<string name=\"phthong_ni_high\">Ni΄</string>", "Νη΄", "Πα,", "Α’ Ήχος", "don’t").forEach {
+        listOf("<string name=\"phthong_ni_high\">Ni\u0384</string>", "Νη\u0384", "Πα,", "Α\u2019 Ήχος", "don\u2019t").forEach {
             assertFalse("rule 1 flagged «$it»", nameThenForeignMark.containsMatchIn(it))
         }
 
-        val history = "/** The analysis drew Νη͵ with `\"͵\".repeat(-octave)`. */\n// Ni′ was English\nval x = 1\n"
+        val history = "/** The analysis drew Νη\u0375 with `\"\u0375\".repeat(-octave)`. */\n// Ni\u2032 was English\nval x = 1\n"
         listOf(nameThenForeignMark, foreignMarkInCode, repeatedMark).forEach {
-            assertFalse("$it flagged a comment", it.containsMatchIn(codeOnly(history)))
+            assertFalse("$it flagged a comment", it.containsMatchIn(KotlinSource.withoutComments(history)))
         }
     }
 
@@ -155,80 +158,17 @@ class OneOctaveMarkPerDirectionTest {
     fun theAnastasimatarionFolderNamesAreUntouched() {
         // Stored on users' devices as folder names: an octave-mark clean-up must never reach them.
         val expected = mapOf(
-            "first" to "Ήχος Α΄",
-            "second" to "Ήχος Β΄",
-            "third" to "Ήχος Γ΄",
-            "fourth" to "Ήχος Δ΄",
-            "plagal_first" to "Ήχος πλ. Α΄",
-            "plagal_second" to "Ήχος πλ. Β΄",
+            "first" to "Ήχος Α\u0384",
+            "second" to "Ήχος Β\u0384",
+            "third" to "Ήχος Γ\u0384",
+            "fourth" to "Ήχος Δ\u0384",
+            "plagal_first" to "Ήχος πλ. Α\u0384",
+            "plagal_second" to "Ήχος πλ. Β\u0384",
             "varys" to "Ήχος Βαρύς",
-            "plagal_fourth" to "Ήχος πλ. Δ΄",
+            "plagal_fourth" to "Ήχος πλ. Δ\u0384",
         )
         assertEquals(expected.keys, HymnFolders.modeKeys)
         expected.forEach { (modeKey, folder) -> assertEquals(modeKey, folder, HymnFolders.modeFolder(modeKey)) }
         expected.values.forEach { assertFalse("the scan would flag «$it»", nameThenForeignMark.containsMatchIn(it)) }
-    }
-
-    /**
-     * [text] with every comment (line, block, KDoc — Kotlin block comments nest) replaced by spaces,
-     * and every string and char literal **kept**. Newlines are kept, so nothing moves lines.
-     */
-    private fun codeOnly(text: String): String {
-        val out = StringBuilder(text.length)
-        fun keep(from: Int, to: Int) = out.append(text, from, to)
-        fun blank(from: Int, to: Int) {
-            for (k in from until to) out.append(if (text[k] == '\n') '\n' else ' ')
-        }
-        var i = 0
-        while (i < text.length) {
-            when {
-                text.startsWith("//", i) -> {
-                    val end = text.indexOf('\n', i).let { if (it < 0) text.length else it }
-                    blank(i, end)
-                    i = end
-                }
-                text.startsWith("/*", i) -> {
-                    var depth = 0
-                    var j = i
-                    while (j < text.length) {
-                        if (text.startsWith("/*", j)) {
-                            depth++
-                            j += 2
-                        } else if (text.startsWith("*/", j)) {
-                            depth--
-                            j += 2
-                            if (depth == 0) break
-                        } else {
-                            j++
-                        }
-                    }
-                    val end = minOf(j, text.length)
-                    blank(i, end)
-                    i = end
-                }
-                text.startsWith("\"\"\"", i) -> {
-                    val close = text.indexOf("\"\"\"", i + 3)
-                    val end = if (close < 0) text.length else close + 3
-                    keep(i, end)
-                    i = end
-                }
-                text[i] == '"' || text[i] == '\'' || text[i] == '`' -> {
-                    // A literal (or a backticked name) is copied whole, so a `//` inside it is not a comment.
-                    val quote = text[i]
-                    var j = i + 1
-                    while (j < text.length && text[j] != quote && text[j] != '\n') {
-                        j += if (text[j] == '\\' && quote != '`') 2 else 1
-                    }
-                    val end = if (j < text.length && text[j] == quote) j + 1 else minOf(j, text.length)
-                    keep(i, end)
-                    i = end
-                }
-                else -> {
-                    out.append(text[i])
-                    i++
-                }
-            }
-        }
-        return out.toString()
     }
 }
