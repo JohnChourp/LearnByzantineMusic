@@ -1,7 +1,5 @@
 package com.johnchourp.learnbyzantinemusic.notes
 
-import java.util.Locale
-
 data class NotesSyncState(
     val folderName: String?,
     val folderUri: String?,
@@ -62,16 +60,4 @@ data class NotesUiState(
 enum class SaveTrigger {
     AUTO,
     MANUAL
-}
-
-fun String.toNotesSearchPattern(): String {
-    val normalized = trim().lowercase(Locale.getDefault())
-    if (normalized.isBlank()) {
-        return "%"
-    }
-    val escaped = normalized
-        .replace("\\", "\\\\")
-        .replace("%", "\\%")
-        .replace("_", "\\_")
-    return "%$escaped%"
 }

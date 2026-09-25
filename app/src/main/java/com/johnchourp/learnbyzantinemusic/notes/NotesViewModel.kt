@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
@@ -14,11 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class NotesViewModel(
     private val repository: NotesRepository,
     private val prefs: NotesPrefs
@@ -47,8 +47,13 @@ class NotesViewModel(
                 exitFlush.join()
                 _uiState.update { it.copy(isSaving = false) }
             }
-            searchQueryFlow
-                .flatMapLatest { search -> repository.observeNotes(search) }
+            // Each list from the database is normalised once; a keystroke in the search box then only
+            // filters it. Both off the main thread: a long note is not cheap to normalise.
+            combine(
+                repository.observeNotes().map { notes -> NotesSearch.index(notes) },
+                searchQueryFlow
+            ) { indexed, search -> NotesSearch.filter(indexed, search) }
+                .flowOn(Dispatchers.Default)
                 .collectLatest { notes ->
                     _uiState.update { NotesEditorSync.onNotesChanged(it, notes) }
                 }
