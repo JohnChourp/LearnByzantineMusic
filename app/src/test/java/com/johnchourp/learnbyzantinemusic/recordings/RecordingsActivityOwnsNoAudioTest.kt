@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.recordings
 
+import com.johnchourp.learnbyzantinemusic.docs.KotlinSource
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -12,22 +13,16 @@ import java.io.File
  * `onCreate` forced the state to IDLE — so any re-creation lost the recording and hid that it had.
  *
  * An Activity cannot run in a JVM test, so this checks how the screen is *built*, like
- * `ShareUsesCacheCopyOnlyTest`: comments are stripped first (a comment explaining the old bug must
- * not trip it), each check reads only the function it is about, and [theChecksCatchTheOldScreen]
- * proves every check fails on the code this replaced.
+ * `ShareUsesCacheCopyOnlyTest`: comments are stripped first with [KotlinSource] (a comment explaining
+ * the old bug must not trip it), each check reads only the function it is about, and
+ * [theChecksCatchTheOldScreen] proves every check fails on the code this replaced.
  */
 class RecordingsActivityOwnsNoAudioTest {
 
     private val code: String by lazy {
-        val file = listOf(
-            File("app/src/main/java/com/johnchourp/learnbyzantinemusic/recordings/RecordingsActivity.kt"),
-            File("src/main/java/com/johnchourp/learnbyzantinemusic/recordings/RecordingsActivity.kt"),
-        ).firstOrNull { it.exists() } ?: error("RecordingsActivity.kt not found from ${File("").absolutePath}")
-        stripComments(file.readText())
+        val file = File(KotlinSource.mainRoot, "com/johnchourp/learnbyzantinemusic/recordings/RecordingsActivity.kt")
+        KotlinSource.withoutComments(file.readText())
     }
-
-    private fun stripComments(text: String): String =
-        text.replace(Regex("""(?s)/\*.*?\*/"""), "").replace(Regex("""//[^\n]*"""), "")
 
     /** From the declaration to the next class-level member; null when the function does not exist. */
     private fun bodyOf(text: String, declaration: String): String? {
