@@ -131,3 +131,12 @@ val EIGHT_MODES: List<EightModeUiModel> = listOf(
         scale = EightModeScaleDefinitions.HARD_CHROMATIC,
     ),
 )
+
+/**
+ * Row of [EIGHT_MODES] for a stored or passed mode key; null when the key names none.
+ *
+ * [EIGHT_MODES] is in GENUS order, not in the order of the liturgical cycle, so a tone index is never
+ * a row index here — tone Β΄ is row 6. Always go through the key (ClickUp `869f5x24r`).
+ */
+fun eightModesIndexOf(theoryKey: String?): Int? =
+    EIGHT_MODES.indexOfFirst { it.theoryKey == theoryKey }.takeIf { it >= 0 }
