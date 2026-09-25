@@ -3,7 +3,6 @@ package com.johnchourp.learnbyzantinemusic.modes.ui
 import com.johnchourp.learnbyzantinemusic.modes.EightModeScaleDefinitions
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 /**
@@ -20,17 +19,14 @@ class EightModeUiModelsTest {
     fun theScreenListsAllEightModesExactlyOnce() {
         assertEquals(8, EIGHT_MODES.size)
         val modes = EIGHT_MODES.map { it.mode }
-        modes.forEachIndexed { index, mode ->
-            assertNotNull("row $index has a theoryKey that is not a mode", mode)
-        }
-        assertEquals("every ήχος appears once", Mode.entries.toSet(), modes.filterNotNull().toSet())
+        assertEquals("every ήχος appears once", Mode.entries.toSet(), modes.toSet())
         assertEquals("no duplicates", EIGHT_MODES.size, modes.distinct().size)
     }
 
     @Test
     fun everyRowUsesTheScaleTheCanonicalTableAssignsThatMode() {
         EIGHT_MODES.forEach { row ->
-            val mode = row.mode!!
+            val mode = row.mode
             assertEquals(
                 "${mode.key}: the screen and the canonical table disagree about the scale",
                 EightModeScaleDefinitions.SCALE_BY_MODE.getValue(mode),
@@ -43,7 +39,7 @@ class EightModeUiModelsTest {
     fun theDisplayOrderIsDeliberateAndNotTheTheoryOrder() {
         // Pins the fact that these two orders differ on purpose — the selector groups by γένος.
         // If someone "aligns" them, this fails and they have to mean it.
-        val displayOrder = EIGHT_MODES.mapNotNull { it.mode }
+        val displayOrder = EIGHT_MODES.map { it.mode }
         assertEquals(
             listOf(
                 Mode.FIRST, Mode.FOURTH, Mode.PLAGAL_FIRST, Mode.PLAGAL_FOURTH,
@@ -65,6 +61,6 @@ class EightModeUiModelsTest {
             ),
             Mode.entries.map { it.key },
         )
-        EIGHT_MODES.forEach { row -> assertEquals(row.theoryKey, row.mode!!.key) }
+        EIGHT_MODES.forEach { row -> assertEquals(row.theoryKey, row.mode.key) }
     }
 }

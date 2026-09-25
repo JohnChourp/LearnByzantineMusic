@@ -5,6 +5,7 @@ import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.calendar.LiturgicalToneCycle
 import com.johnchourp.learnbyzantinemusic.calendar.LiturgicalToneKind
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyToneAnnouncement
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -21,23 +22,23 @@ import java.time.LocalDateTime
  * is true in every kind: «Ήχος της εβδομάδας», «Ήχος της ημέρας» (Bright Week), «Από τον εσπερινό
  * απόψε». [weekModeKey] stays for a whole date, with no time of day.
  *
- * The tone index becomes a mode key through [AnastasimatarionLabels.MODE_ORDER], which is in the
- * order of the liturgical cycle. The 8 Ήχοι screen lists the modes by genus, so the same index there
- * names a different mode.
+ * The tone index becomes a mode key through [Mode.ofToneIndex] — the mode whose number is the index
+ * plus one (ClickUp `869f5x299`). The 8 Ήχοι screen lists the modes by genus, so the same index
+ * there names a different mode.
  */
 object AnastasimatarionWeekMode {
     private val toneCycle = LiturgicalToneCycle()
     private val announcement = WeeklyToneAnnouncement(toneCycle = toneCycle)
 
     fun weekModeKey(date: LocalDate): String? =
-        toneCycle.resolveTone(date).toneIndex?.let { AnastasimatarionLabels.MODE_ORDER[it] }
+        toneCycle.resolveTone(date).toneIndex?.let { Mode.ofToneIndex(it).key }
 
     fun currentMode(moment: LocalDateTime): CurrentMode? {
         val now = announcement.at(moment)
         val fromVespers = now.fromVespers?.toneIndex
         if (fromVespers != null) {
             return CurrentMode(
-                AnastasimatarionLabels.MODE_ORDER[fromVespers],
+                Mode.ofToneIndex(fromVespers).key,
                 R.string.anastasimatarion_vespers_mode_template,
             )
         }
@@ -47,7 +48,7 @@ object AnastasimatarionWeekMode {
         } else {
             R.string.anastasimatarion_week_mode_template
         }
-        return CurrentMode(AnastasimatarionLabels.MODE_ORDER[today], badge)
+        return CurrentMode(Mode.ofToneIndex(today).key, badge)
     }
 
     /** A mode key, and the badge template that names it (formatted with the mode's name). */
