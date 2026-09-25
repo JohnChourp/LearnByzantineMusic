@@ -17,8 +17,8 @@ typealias ModeScaleGenus = Genus
  * The φθόγγος a scale is built from.
  *
  * [phthong] stays a String because it is what call sites compare against labels; [base] is the typed
- * value the arithmetic uses. Both describe the same note, and `ModeScaleBaseTest` pins them together
- * so they cannot drift.
+ * value the arithmetic uses. Both describe the same note and cannot drift: [phthong] is computed
+ * from [base], not stored beside it, so there is nothing for a test to pin.
  */
 enum class ModeScaleBase(val base: Phthong) {
     PA(Phthong(PhthongName.PA)),

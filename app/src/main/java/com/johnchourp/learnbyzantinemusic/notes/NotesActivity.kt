@@ -158,6 +158,7 @@ class NotesActivity : BaseActivity() {
             "notes_status_sync_failed_local_saved" -> getString(R.string.notes_status_sync_failed_local_saved)
             "notes_status_sync_partial_pending" -> getString(R.string.notes_status_sync_partial_pending)
             "notes_status_import_invalid_json" -> getString(R.string.notes_status_import_invalid_json)
+            "notes_status_import_newer_version" -> getString(R.string.notes_status_import_newer_version)
             "notes_status_import_read_failed" -> getString(R.string.notes_status_import_read_failed)
             "notes_status_folder_selected" -> getString(R.string.notes_status_folder_selected)
             else -> statusKey

@@ -759,6 +759,11 @@
     <string name="recordings_pause">Παύση</string>
     <string name="recordings_resume">Συνέχεια</string>
     <string name="recordings_stop">Σταμάτημα</string>
+    <string name="recordings_notification_channel_name">Ηχογράφηση</string>
+    <string name="recordings_notification_channel_description">Η ηχογράφηση σε εξέλιξη, με Παύση και Στάση.</string>
+    <string name="recordings_notification_recording">Ηχογράφηση…</string>
+    <string name="recordings_notification_paused">Ηχογράφηση σε παύση</string>
+    <string name="recordings_notification_stop">Στάση</string>
     <string name="recordings_status_recording">Γίνεται ηχογράφηση...</string>
     <string name="recordings_status_paused">Η ηχογράφηση είναι σε παύση.</string>
     <string name="recordings_status_saving">Αποθήκευση ηχογράφησης...</string>
@@ -853,6 +858,7 @@
     <string name="notes_status_sync_failed_local_saved">Αποθηκεύτηκε τοπικά, αλλά το sync φακέλου απέτυχε. Θα γίνει retry.</string>
     <string name="notes_status_sync_partial_pending">Αποθηκεύτηκε και έγινε μερικό sync. Υπάρχουν εκκρεμή backup.</string>
     <string name="notes_status_import_invalid_json">Μη έγκυρο backup αρχείο.</string>
+    <string name="notes_status_import_newer_version">Το backup φτιάχτηκε από νεότερη έκδοση της εφαρμογής. Ενημέρωσε την εφαρμογή και ξαναδοκίμασε· οι σημειώσεις σου δεν άλλαξαν.</string>
     <string name="notes_status_import_read_failed">Αποτυχία ανάγνωσης backup αρχείου.</string>
     <string name="notes_status_folder_selected">Ο φάκελος backup επιλέχθηκε.</string>
     <!-- Notes redesign (v1.14.0) — section titles, empty/a11y states -->

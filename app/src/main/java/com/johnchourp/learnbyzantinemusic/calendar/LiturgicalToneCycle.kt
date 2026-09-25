@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.calendar
 
-import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.modes.ModeResources
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -28,17 +29,6 @@ import java.time.temporal.ChronoUnit
  * liturgical charts; the fixtures are in LiturgicalTonePentecostarionTest.
  */
 class LiturgicalToneCycle {
-    private val toneNameResIds = listOf(
-        R.string.mode_first,
-        R.string.mode_second,
-        R.string.mode_third,
-        R.string.mode_fourth,
-        R.string.mode_plagal_first,
-        R.string.mode_plagal_second,
-        R.string.mode_varys,
-        R.string.mode_plagal_fourth
-    )
-
     fun resolveTone(date: LocalDate): WeeklyToneResult {
         val weekStart = startOfWeekSunday(date)
         val weekEnd = weekStart.plusDays(6)
@@ -54,7 +44,7 @@ class LiturgicalToneCycle {
         val toneIndex = when (kind) {
             LiturgicalToneKind.WEEKLY -> {
                 val weeksBetween = ChronoUnit.WEEKS.between(computeCycleStartForDate(date), weekStart).toInt()
-                Math.floorMod(weeksBetween, toneNameResIds.size)
+                Math.floorMod(weeksBetween, Mode.entries.size)
             }
             LiturgicalToneKind.BRIGHT_WEEK_DAY -> BRIGHT_WEEK_DAY_TONES[daysFromPascha.toInt()]
             LiturgicalToneKind.HOLY_WEEK, LiturgicalToneKind.PENTECOST_WEEK -> null
@@ -66,7 +56,7 @@ class LiturgicalToneCycle {
             weekEnd = weekEnd,
             kind = kind,
             toneIndex = toneIndex,
-            toneNameRes = toneIndex?.let { toneNameResIds[it] }
+            toneNameRes = toneIndex?.let { ModeResources.nameRes(Mode.ofToneIndex(it)) }
         )
     }
 
@@ -122,6 +112,7 @@ data class WeeklyToneResult(
     /**
      * 0 = Α΄ … 7 = Πλ. Δ΄, in the order of the liturgical cycle: the tone of the week, or the day's own
      * tone in Bright Week. Null when [kind] has no tone — never index a list of modes without checking.
+     * The mode is `Mode.ofToneIndex(toneIndex)` (its `number` is `toneIndex + 1`).
      */
     val toneIndex: Int?,
     /** String resource of [toneIndex]'s name; null with it. */
