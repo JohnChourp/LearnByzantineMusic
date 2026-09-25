@@ -62,6 +62,9 @@ object AppPrefs {
          * file, so resetting the learning path's progress never touches the streak.
          */
         PRACTICE("learn_byzantine_music_practice"),
+
+        /** The Melody Trainer: the user's saved exercises and the last melody (ClickUp `869f5x261`). */
+        TRAINER("learn_byzantine_music_trainer"),
     }
 
     /** What a key holds, so a reader cannot ask for the wrong accessor. */
@@ -446,6 +449,35 @@ object AppPrefs {
         export = Export.NO,
     )
 
+    // ---- TRAINER ------------------------------------------------------------------------------
+    // Both values are JSON the Trainer's own codecs write and read; their formats, and what happens to
+    // a value a newer app wrote, are documented in TrainerMelodyCodec and ExerciseBook. Both are the
+    // learner's own work, so both travel in the «Δεδομένα μάθησης» file.
+
+    val TrainerExercises = Key(
+        name = "trainer_exercises",
+        store = Store.TRAINER,
+        type = Type.STRING,
+        default = "absent — no exercise has been saved yet",
+        allowed = "a JSON object {schemaVersion, exercises[]}, at most ExerciseBook.MAX_EXERCISES; " +
+            "an entry that cannot be read is kept as it is, and the Trainer never writes over a newer schemaVersion",
+        writtenBy = "«Αποθήκευση ως…», rename and delete in «Οι ασκήσεις μου» on the Melody Trainer",
+        readBy = "the «Οι ασκήσεις μου» list, and «Άνοιγμα» of one exercise",
+        export = Export.YES,
+    )
+
+    val TrainerLastMelody = Key(
+        name = "trainer_last_melody",
+        store = Store.TRAINER,
+        type = Type.STRING,
+        default = "absent — the Trainer opens with an empty melody",
+        allowed = "a JSON melody {schemaVersion, bpm, mode?, baseShift?, notes[]}; one that cannot be read " +
+            "is not restored",
+        writtenBy = "the Melody Trainer's autosave, after every edit of the melody and in onStop",
+        readBy = "MelodyTrainerActivity.onCreate, which puts the melody back after a close or a process death",
+        export = Export.YES,
+    )
+
     /** Every registered key. A new key must appear here, or `AppPrefsRegistryTest` fails. */
     val all: List<Key> = listOf(
         FontStep,
@@ -475,6 +507,8 @@ object AppPrefs {
         PracticeLogJson,
         PracticeReminderEnabled,
         PracticeReminderMinuteOfDay,
+        TrainerExercises,
+        TrainerLastMelody,
     )
 
     /** Opens [store]. The only place the app names a preferences file. */

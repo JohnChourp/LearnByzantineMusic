@@ -614,7 +614,7 @@
     <string name="settings_language_current_badge">Current</string>
     <!-- «Learning data» (ClickUp 869f5x25w) -->
     <string name="settings_learning_data_label">Learning data</string>
-    <string name="settings_learning_data_hint">Take your favourites, your \"From scratch\" progress, your practice history and your settings to another phone, in one file. Folders (notes, recordings) are not in the file; on the new phone you pick them again.</string>
+    <string name="settings_learning_data_hint">Take your favourites, your \"From scratch\" progress, your practice history, your Melody Trainer exercises and your settings to another phone, in one file. Folders (notes, recordings) are not in the file; on the new phone you pick them again.</string>
     <string name="settings_learning_data_export">Export</string>
     <string name="settings_learning_data_import">Import</string>
     <string name="settings_learning_data_reset_hint">A lesson of the \"From scratch\" path counts as done as soon as you open it. Resetting starts the path over.</string>
@@ -637,6 +637,8 @@
     <string name="learning_data_item_base_shift">Base shift, in modes: %1$d</string>
     <string name="learning_data_item_recording_format">Recording format</string>
     <string name="learning_data_item_analysis">Hymn analysis settings: %1$d</string>
+    <string name="learning_data_item_trainer_exercises">My exercises, in the Melody Trainer: %1$d</string>
+    <string name="learning_data_item_trainer_last_melody">The Melody Trainer\'s last melody</string>
     <string name="learning_data_import_failed_title">Nothing was imported</string>
     <string name="learning_data_import_unfinished_title">The import did not finish</string>
     <string name="learning_data_import_read_failed">The file could not be read. Nothing changed.</string>
@@ -1012,6 +1014,30 @@
     <string name="melody_trainer_base_shift_higher">Higher base</string>
     <string name="melody_trainer_base_shift_shared">Shared with the «8 Modes» page: a change here applies there too, for this mode.</string>
     <string name="melody_trainer_base_shift_diatonic">Diatonic always stays at Νη = 220 Hz. To shift the base, choose a mode.</string>
+    <string name="melody_trainer_notes_limit">Up to %1$d phthongs in one melody.</string>
+    <string name="melody_trainer_exercises_title">My exercises</string>
+    <string name="melody_trainer_exercises_hint">Save a melody under a name to find it again. The last melody is kept on its own, even when you close the app.</string>
+    <string name="melody_trainer_exercises_empty">No saved exercises yet.</string>
+    <string name="melody_trainer_exercises_newer">Your exercises were written by a newer version of the app. Update it to see them; they are not changed here.</string>
+    <string name="melody_trainer_exercise_save_as">Save as…</string>
+    <string name="melody_trainer_exercise_save_title">Save exercise</string>
+    <string name="melody_trainer_exercise_rename_title">Rename exercise</string>
+    <string name="melody_trainer_exercise_name_label">Name</string>
+    <string name="melody_trainer_exercise_save">Save</string>
+    <string name="melody_trainer_exercise_rename">Rename</string>
+    <string name="melody_trainer_exercise_open">Open</string>
+    <string name="melody_trainer_exercise_delete">Delete</string>
+    <string name="melody_trainer_exercise_cancel">Cancel</string>
+    <string name="melody_trainer_exercise_summary">%1$d phthongs · %2$s · %3$d beats/min</string>
+    <string name="melody_trainer_exercise_open_cd">Open: %1$s</string>
+    <string name="melody_trainer_exercise_rename_cd">Rename: %1$s</string>
+    <string name="melody_trainer_exercise_delete_cd">Delete: %1$s</string>
+    <string name="melody_trainer_exercise_open_confirm">Open “%1$s”? The melody you are writing now will be replaced.</string>
+    <string name="melody_trainer_exercise_delete_confirm">Delete “%1$s”? This cannot be undone.</string>
+    <string name="melody_trainer_exercise_name_blank">Write a name.</string>
+    <string name="melody_trainer_exercise_name_too_long">At most %1$d characters.</string>
+    <string name="melody_trainer_exercise_name_taken">An exercise with this name already exists.</string>
+    <string name="melody_trainer_exercise_full">You already have %1$d exercises; delete one to save another.</string>
     <string name="melody_trainer_practice_title">Practice with your voice</string>
     <string name="melody_trainer_practice_intro">Pick a practice mode, sing, and the correct phthongi turn green.</string>
     <string name="melody_trainer_correct_progress">Correct: %1$d/%2$d</string>
