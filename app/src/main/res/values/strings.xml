@@ -762,6 +762,12 @@
     <string name="recordings_saved_ok">Η ηχογράφηση αποθηκεύτηκε επιτυχώς.</string>
     <string name="recordings_error_start">Αποτυχία εκκίνησης ηχογράφησης.</string>
     <string name="recordings_error_save">Αποτυχία αποθήκευσης ηχογράφησης.</string>
+    <string name="recordings_saved_as_wav_template">Η μετατροπή σε %1$s απέτυχε — αποθηκεύτηκε ως WAV: %2$s</string>
+    <string name="recordings_kept_in_app">Ο φάκελος δεν είναι διαθέσιμος — η ηχογράφηση κρατήθηκε στην εφαρμογή.</string>
+    <string name="recordings_pending_title">Δεν αποθηκεύτηκαν ακόμη</string>
+    <string name="recordings_pending_hint">Κρατήθηκαν μέσα στην εφαρμογή γιατί δεν γράφτηκαν στον φάκελο. Με «Αποθήκευση» μπαίνουν στον τρέχοντα φάκελο.</string>
+    <string name="recordings_pending_save">Αποθήκευση</string>
+    <string name="recordings_pending_delete_confirm_message">Η ηχογράφηση %1$s υπάρχει μόνο μέσα στην εφαρμογή. Να διαγραφεί οριστικά;</string>
     <string name="recordings_microphone_permission_required">Χρειάζεται άδεια μικροφώνου για ηχογράφηση.</string>
     <string name="recordings_format_label">Μορφή αποθήκευσης</string>
     <string name="recordings_format_flac">FLAC (.flac)</string>

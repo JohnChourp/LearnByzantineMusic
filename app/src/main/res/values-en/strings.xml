@@ -763,6 +763,12 @@
     <string name="recordings_saved_ok">Recording saved successfully.</string>
     <string name="recordings_error_start">Failed to start recording.</string>
     <string name="recordings_error_save">Failed to save recording.</string>
+    <string name="recordings_saved_as_wav_template">Conversion to %1$s failed — saved as WAV: %2$s</string>
+    <string name="recordings_kept_in_app">The folder is not available — the recording was kept in the app.</string>
+    <string name="recordings_pending_title">Not saved yet</string>
+    <string name="recordings_pending_hint">Kept inside the app because they could not be written to the folder. “Save” puts them in the current folder.</string>
+    <string name="recordings_pending_save">Save</string>
+    <string name="recordings_pending_delete_confirm_message">The recording %1$s exists only inside the app. Delete it permanently?</string>
     <string name="recordings_microphone_permission_required">Microphone permission is required to record.</string>
     <string name="recordings_format_label">Storage format</string>
     <string name="recordings_format_flac">FLAC (.flac)</string>

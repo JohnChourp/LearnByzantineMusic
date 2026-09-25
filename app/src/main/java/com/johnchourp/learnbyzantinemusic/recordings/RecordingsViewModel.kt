@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.johnchourp.learnbyzantinemusic.recordings.index.RecordingsRepository
+import com.johnchourp.learnbyzantinemusic.recordings.session.PendingState
+import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingSessionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,6 +76,25 @@ class RecordingsViewModel(
 
     fun setRecordingTarget(label: String?) {
         _uiState.update { state -> state.copy(targetLabel = label) }
+    }
+
+    /** Shows the process-wide recording session; a null [statusMessage] leaves the status line as it is. */
+    fun applySession(session: RecordingSessionState, statusMessage: String?, targetLabel: String?) {
+        _uiState.update { state ->
+            state.copy(
+                recordingState = session.phase,
+                statusMessage = statusMessage ?: state.statusMessage,
+                targetLabel = targetLabel,
+                recordingElapsedBeforeMs = session.elapsedBeforeMs,
+                recordingSince = session.recordingSince,
+            )
+        }
+    }
+
+    fun setPending(pending: PendingState) {
+        _uiState.update { state ->
+            state.copy(pendingRecordings = pending.recordings, pendingBusyIds = pending.busyIds)
+        }
     }
 
     fun renameItem(item: RecordingListItem, targetName: String, onCompleted: (RenameOutcome) -> Unit) {
