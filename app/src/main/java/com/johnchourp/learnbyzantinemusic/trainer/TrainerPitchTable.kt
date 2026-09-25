@@ -1,10 +1,11 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
 import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import kotlin.math.abs
 
 /**
- * Converts between [TrainerPhthong]s and concrete frequencies in Hz on the natural diatonic scale.
+ * Converts between [PhthongName]s and concrete frequencies in Hz on the natural diatonic scale.
  *
  * It does not carry its own tuning: both directions go through [ByzantineTuning], the one place that
  * knows where Νη sounds and how many μόρια an octave holds. That is what guarantees the trainer
@@ -16,7 +17,7 @@ object TrainerPitchTable {
     const val MORIA_PER_OCTAVE = ByzantineTuning.MORIA_PER_OCTAVE
 
     /** Absolute frequency of [phthong], raised/lowered by [octaveShift] whole octaves. */
-    fun frequencyHz(phthong: TrainerPhthong, octaveShift: Int = 0): Double {
+    fun frequencyHz(phthong: PhthongName, octaveShift: Int = 0): Double {
         val moriaFromNi = phthong.diatonicMoriaFromNi + octaveShift * MORIA_PER_OCTAVE
         return ByzantineTuning.frequencyHz(moriaFromNi)
     }
@@ -38,9 +39,9 @@ object TrainerPitchTable {
         val moria = moriaFromNi(frequencyHz)
         val octaveMoria = MORIA_PER_OCTAVE.toDouble()
         val withinOctave = ((moria % octaveMoria) + octaveMoria) % octaveMoria
-        var best = TrainerPhthong.NI
+        var best = PhthongName.NI
         var bestDeviation = Double.MAX_VALUE
-        for (phthong in TrainerPhthong.ascending) {
+        for (phthong in PhthongName.entries) {
             // Compare against the phthong and its upper-octave image so pitches near the
             // octave seam (Ζω ↔ Νη') resolve to the genuinely closest phthong.
             val candidates = doubleArrayOf(
@@ -59,9 +60,34 @@ object TrainerPitchTable {
     }
 }
 
+/**
+ * Where [this] φθόγγος sits in the natural diatonic scale, in μόρια above base Νη — the Trainer's
+ * own table (it was a field of the Trainer's former `TrainerPhthong` enum, ClickUp `869f5x291`).
+ *
+ * Byzantine theory divides the octave into 72 moria. In the natural diatonic scale the phthongi
+ * sit at these cumulative moria above Νη:
+ *
+ *     Νη 0, Πα 12, Βου 22, Γα 30, Δι 42, Κε 54, Ζω 64   (Νη' = 72 closes the octave)
+ *
+ * These positions match the diatonic genus used by the 8 Ήχοι screen (`ModeScalePositionsTest`).
+ * It lives here, beside the one table that reads it, rather than on [PhthongName]: which pitch a
+ * φθόγγος sounds depends on the screen's scale, not on its name. ClickUp `869f5x24v` (F2) moves the
+ * Trainer onto the mode's own ladder.
+ */
+val PhthongName.diatonicMoriaFromNi: Int
+    get() = when (this) {
+        PhthongName.NI -> 0
+        PhthongName.PA -> 12
+        PhthongName.VOU -> 22
+        PhthongName.GA -> 30
+        PhthongName.DI -> 42
+        PhthongName.KE -> 54
+        PhthongName.ZO -> 64
+    }
+
 /** Result of matching a detected frequency to the nearest phthong. */
 data class PitchMatch(
-    val phthong: TrainerPhthong,
+    val phthong: PhthongName,
     /** Signed moria deviation from [phthong]: positive = sharp, negative = flat. */
     val deviationMoria: Double,
     /**

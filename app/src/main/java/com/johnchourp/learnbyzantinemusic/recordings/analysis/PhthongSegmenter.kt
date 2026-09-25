@@ -1,7 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
 import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
+import com.johnchourp.learnbyzantinemusic.music.Phthong
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.log2
@@ -13,7 +14,7 @@ import kotlin.math.pow
  * (positive = sharp).
  */
 data class SungNote(
-    val phthong: TrainerPhthong,
+    val phthong: PhthongName,
     val octave: Int,
     val startMs: Long,
     val endMs: Long,
@@ -21,6 +22,9 @@ data class SungNote(
     val moria: Double,
 ) {
     val degree: Int get() = octave * 7 + phthong.ordinal
+
+    /** The φθόγγος with its octave, as the app's one model: [PhthongSegmenter.phthongAt] of [degree]. */
+    val pitch: Phthong get() = Phthong(phthong, octave)
 
     /**
      * Green or orange in the analysis — its summary, its chips and its diagram — by the same rule
@@ -34,8 +38,8 @@ data class SungNote(
  * Turns a [PitchTrack] into the notes that were sung, on the scale of a mode.
  *
  * The recording has no absolute reference, so it is calibrated to the singer: the first steady
- * voiced stretch is taken to be [TrainerPhthong] the user says the melody starts on, and every
- * other pitch is placed on the mode's scale ([ModeScalePositions]) relative to it.
+ * voiced stretch is taken to be the φθόγγος ([PhthongName]) the user says the melody starts on, and
+ * every other pitch is placed on the mode's scale ([ModeScalePositions]) relative to it.
  *
  * A note is a run of frames on the same degree lasting at least [MIN_NOTE_FRAMES]. Shorter runs
  * (glides, consonants, detection blips) are dropped; a gap of at most [MAX_GAP_FRAMES] inside a
@@ -58,7 +62,7 @@ object PhthongSegmenter {
     private const val OCTAVE = ModeScalePositions.MORIA_PER_OCTAVE.toDouble()
 
     /** Frequency of the starting phthong's Νη such that the first steady pitch is [startPhthong]. */
-    fun calibrate(track: PitchTrack, positions: IntArray, startPhthong: TrainerPhthong): Double? {
+    fun calibrate(track: PitchTrack, positions: IntArray, startPhthong: PhthongName): Double? {
         val voiced = track.frames.map { it.frequencyHz }
         var run = ArrayList<Double>()
         for (hz in voiced) {
@@ -77,8 +81,16 @@ object PhthongSegmenter {
         return niFrequency(2.0.pow(median(firstVoiced) / OCTAVE), positions, startPhthong)
     }
 
-    private fun niFrequency(startHz: Double, positions: IntArray, startPhthong: TrainerPhthong): Double =
+    private fun niFrequency(startHz: Double, positions: IntArray, startPhthong: PhthongName): Double =
         startHz / 2.0.pow(positions[startPhthong.ordinal] / OCTAVE)
+
+    /**
+     * The φθόγγος at scale [degree] (octave × 7 + index, octave 0 holding the calibrated Νη). The
+     * diagram labels its lines with this, so they render through [Phthong.label] like its notes and
+     * like every other screen — `,` below the home octave and `΄` above it.
+     */
+    fun phthongAt(degree: Int): Phthong =
+        Phthong(PhthongName.entries[Math.floorMod(degree, 7)], Math.floorDiv(degree, 7))
 
     /** Nearest scale degree to [moria] above the calibrated Νη, with the signed deviation. */
     fun nearestDegree(moria: Double, positions: IntArray): Pair<Int, Double> {
@@ -142,7 +154,7 @@ object PhthongSegmenter {
             val octave = Math.floorDiv(run.degree, 7)
             val index = Math.floorMod(run.degree, 7)
             SungNote(
-                phthong = TrainerPhthong.ascending[index],
+                phthong = PhthongName.entries[index],
                 octave = octave,
                 startMs = frames[run.start].timeMs,
                 endMs = frames[run.end].timeMs + track.hopMs.toLong(),

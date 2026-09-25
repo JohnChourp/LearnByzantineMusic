@@ -1,10 +1,10 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.DI
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.GA
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.KE
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.PA
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong.VOU
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.DI
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.GA
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.KE
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.PA
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.VOU
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
