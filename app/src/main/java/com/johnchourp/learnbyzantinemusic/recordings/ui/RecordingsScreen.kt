@@ -32,6 +32,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.FolderOpen
@@ -40,6 +41,7 @@ import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -55,9 +57,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
@@ -80,6 +80,7 @@ import com.johnchourp.learnbyzantinemusic.recordings.RecordingFormatOption
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingListItem
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingStateUi
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingsUiState
+import com.johnchourp.learnbyzantinemusic.recordings.session.PendingRecording
 import com.johnchourp.learnbyzantinemusic.recordings.ui.components.RecordingListItemRow
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonChip
@@ -100,8 +101,9 @@ import java.util.Locale
 /**
  * Redesigned «Ηχογραφήσεις» main screen. A pure renderer of [RecordingsUiState] + callbacks built on
  * the shared design system (hero, [StaggeredAppear] + [LessonCard] sections, [LessonChip] format
- * picker) with state-aware recording feedback (pulsing dot + MM:SS timer). All recording, folder
- * (SAF), transcoding and indexing logic stays in the host Activity — this only changes rendering.
+ * picker) with state-aware recording feedback (pulsing dot + MM:SS timer). Recording and saving
+ * belong to the recording session, folder (SAF) and indexing logic to the host Activity — this only
+ * renders. Recordings the folder could not take are listed under «Δεν αποθηκεύτηκαν ακόμη».
  */
 @Composable
 fun RecordingsScreen(
@@ -114,6 +116,8 @@ fun RecordingsScreen(
     onStartRecording: () -> Unit,
     onPauseResume: () -> Unit,
     onStopRecording: () -> Unit,
+    onSavePending: (PendingRecording) -> Unit,
+    onDeletePending: (PendingRecording) -> Unit,
     onFormatChanged: (RecordingFormatOption) -> Unit,
     onOpenRecording: (RecordingListItem) -> Unit,
     onShareRecording: (RecordingListItem) -> Unit,
@@ -172,12 +176,27 @@ fun RecordingsScreen(
             StaggeredAppear(delayMillis = 120, modifier = Modifier.padding(horizontal = 16.dp)) {
                 RecordSection(
                     recordingState = uiState.recordingState,
+                    elapsedBeforeMs = uiState.recordingElapsedBeforeMs,
+                    recordingSince = uiState.recordingSince,
                     statusMessage = uiState.statusMessage,
                     targetLabel = uiState.targetLabel,
                     onStartRecording = onStartRecording,
                     onPauseResume = onPauseResume,
                     onStopRecording = onStopRecording,
                 )
+            }
+        }
+
+        if (uiState.pendingRecordings.isNotEmpty()) {
+            item(key = "pending") {
+                StaggeredAppear(delayMillis = 150, modifier = Modifier.padding(horizontal = 16.dp)) {
+                    PendingSection(
+                        recordings = uiState.pendingRecordings,
+                        busyIds = uiState.pendingBusyIds,
+                        onSave = onSavePending,
+                        onDelete = onDeletePending,
+                    )
+                }
             }
         }
 
@@ -320,13 +339,15 @@ private fun FolderSection(
 @Composable
 private fun RecordSection(
     recordingState: RecordingStateUi,
+    elapsedBeforeMs: Long,
+    recordingSince: Long?,
     statusMessage: String,
     targetLabel: String?,
     onStartRecording: () -> Unit,
     onPauseResume: () -> Unit,
     onStopRecording: () -> Unit,
 ) {
-    val elapsedMs = rememberRecordingElapsed(recordingState)
+    val elapsedMs = rememberRecordingElapsed(recordingState, elapsedBeforeMs, recordingSince)
     val isActive = recordingState == RecordingStateUi.RECORDING ||
         recordingState == RecordingStateUi.PAUSED ||
         recordingState == RecordingStateUi.SAVING
@@ -516,6 +537,111 @@ private fun StaticDot(color: Color) {
     )
 }
 
+/**
+ * Recordings kept inside the app because the folder could not take them. They exist nowhere else, so
+ * each has its own «Αποθήκευση» (into the folder picked now) and «Διαγραφή» (confirmed by the host),
+ * and each stays listed until the user uses one of the two.
+ */
+@Composable
+private fun PendingSection(
+    recordings: List<PendingRecording>,
+    busyIds: Set<String>,
+    onSave: (PendingRecording) -> Unit,
+    onDelete: (PendingRecording) -> Unit,
+) {
+    LessonCard(title = stringResource(R.string.recordings_pending_title)) {
+        Text(
+            text = stringResource(R.string.recordings_pending_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = LbmTextSecondary,
+        )
+        recordings.forEach { recording ->
+            Spacer(Modifier.height(12.dp))
+            PendingRow(
+                recording = recording,
+                busy = recording.id in busyIds,
+                onSave = onSave,
+                onDelete = onDelete,
+            )
+        }
+    }
+}
+
+@Composable
+private fun PendingRow(
+    recording: PendingRecording,
+    busy: Boolean,
+    onSave: (PendingRecording) -> Unit,
+    onDelete: (PendingRecording) -> Unit,
+) {
+    val label = recording.meta.target.label?.let { stringResource(R.string.recordings_target_template, it) }
+    Surface(
+        shape = RoundedCornerShape(14.dp),
+        color = LbmSurfaceVariant,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.GraphicEq,
+                    contentDescription = null,
+                    tint = LbmBrown,
+                )
+                Spacer(Modifier.width(10.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = recording.baseName,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = LbmTextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = listOfNotNull(formatElapsed(recording.durationMs), label).joinToString(" · "),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = LbmTextSecondary,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                if (busy) {
+                    Spacer(Modifier.width(8.dp))
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = LbmBrown)
+                }
+            }
+            Spacer(Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                FilledTonalButton(
+                    onClick = { onSave(recording) },
+                    enabled = !busy,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = AccentGoldContainer,
+                        contentColor = AccentGoldContent,
+                    ),
+                ) {
+                    ButtonContent(Icons.Filled.Save, stringResource(R.string.recordings_pending_save))
+                }
+                OutlinedButton(
+                    onClick = { onDelete(recording) },
+                    enabled = !busy,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = AccentCrimsonContent),
+                ) {
+                    ButtonContent(Icons.Filled.DeleteOutline, stringResource(R.string.recordings_action_delete_short))
+                }
+            }
+        }
+    }
+}
+
 @Composable
 private fun FormatSection(
     selectedFormat: RecordingFormatOption,
@@ -677,41 +803,22 @@ private fun ButtonContent(icon: ImageVector, label: String) {
 }
 
 /**
- * Recording stopwatch derived from the monotonic clock ([SystemClock.elapsedRealtime]) so the
- * displayed duration stays correct even though it lives in a virtualized lazy item: the anchors are
- * kept in [rememberSaveable] (retained when the card scrolls off-screen) and the value is recomputed
- * from the clock — which keeps advancing while the app is backgrounded and the capture thread runs —
- * rather than accumulated from frame deltas. Counts up while [RecordingStateUi.RECORDING], holds the
- * accumulated active time while PAUSED/SAVING, resets on IDLE/ERROR. Pure UI — no capture-engine change.
+ * Recording stopwatch on the monotonic clock ([SystemClock.elapsedRealtime]). Its anchors come from
+ * the recording session — the time recorded before the current stretch, and the clock reading that
+ * stretch began at — so the value is right on any screen that shows the recording: a re-created one,
+ * or one opened from the launcher while it runs. Counts up while [RecordingStateUi.RECORDING], holds
+ * while PAUSED/SAVING; the caller shows it only while recording or paused.
  */
 @Composable
-private fun rememberRecordingElapsed(recordingState: RecordingStateUi): Long {
-    var anchorRealtime by rememberSaveable { mutableStateOf(0L) }
-    var accumulatedMs by rememberSaveable { mutableStateOf(0L) }
-    var prevOrdinal by rememberSaveable { mutableStateOf(RecordingStateUi.IDLE.ordinal) }
+private fun rememberRecordingElapsed(
+    recordingState: RecordingStateUi,
+    elapsedBeforeMs: Long,
+    recordingSince: Long?,
+): Long {
     var tick by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
 
-    LaunchedEffect(recordingState) {
-        val now = SystemClock.elapsedRealtime()
-        val prev = RecordingStateUi.entries[prevOrdinal]
-        // Commit the active segment when leaving RECORDING (pause/stop), but not on a recomposition
-        // that re-enters with the same state (e.g. the lazy item scrolling back into view).
-        if (prev == RecordingStateUi.RECORDING && recordingState != RecordingStateUi.RECORDING) {
-            accumulatedMs += (now - anchorRealtime).coerceAtLeast(0L)
-        }
-        when (recordingState) {
-            RecordingStateUi.IDLE, RecordingStateUi.ERROR -> {
-                accumulatedMs = 0L
-                anchorRealtime = 0L
-            }
-            RecordingStateUi.RECORDING -> if (prev != RecordingStateUi.RECORDING) anchorRealtime = now
-            else -> Unit // PAUSED, SAVING — hold the accumulated value
-        }
-        prevOrdinal = recordingState.ordinal
-    }
-
-    LaunchedEffect(recordingState) {
-        if (recordingState == RecordingStateUi.RECORDING) {
+    LaunchedEffect(recordingState, recordingSince) {
+        if (recordingState == RecordingStateUi.RECORDING && recordingSince != null) {
             while (true) {
                 withFrameMillis { }
                 tick = SystemClock.elapsedRealtime()
@@ -719,10 +826,11 @@ private fun rememberRecordingElapsed(recordingState: RecordingStateUi): Long {
         }
     }
 
-    return if (recordingState == RecordingStateUi.RECORDING) {
-        accumulatedMs + (tick - anchorRealtime).coerceAtLeast(0L)
+    val since = recordingSince
+    return if (recordingState == RecordingStateUi.RECORDING && since != null) {
+        elapsedBeforeMs + (tick - since).coerceAtLeast(0L)
     } else {
-        accumulatedMs
+        elapsedBeforeMs
     }
 }
 

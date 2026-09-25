@@ -2,6 +2,8 @@ package com.johnchourp.learnbyzantinemusic.modes
 
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -15,6 +17,7 @@ import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.trainer.TrainerPitchEngine
 import com.johnchourp.learnbyzantinemusic.modes.ui.EIGHT_MODES
 import com.johnchourp.learnbyzantinemusic.modes.ui.EightModesScreen
+import com.johnchourp.learnbyzantinemusic.modes.ui.eightModesIndexOf
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 
 /**
@@ -25,6 +28,12 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
  * It also owns the **microphone** for the live pitch mirror (ClickUp `869f4tqad`): the RECORD_AUDIO
  * permission, the [TrainerPitchEngine] and its lifecycle. The screen never touches any of that —
  * it says whether it wants to listen, and reads back a frequency.
+ *
+ * **Opening on a given mode is one-shot** (decision of ClickUp `869f5x24r`). [intent] with a mode key
+ * — the home card's «Άνοιξε στους 8 Ήχους» — shows that mode for this opening only. It is NOT written
+ * to the saved «last selected mode»: that is saved only when the user taps a mode here, so following
+ * the card never changes where the page opens next time from its own tile. The mode on screen is kept
+ * in the instance state, so a recreation (a theme change) shows it again instead of the saved one.
  */
 class EightModesActivity : BaseActivity() {
 
@@ -74,15 +83,23 @@ class EightModesActivity : BaseActivity() {
     private lateinit var prefs: SharedPreferences
     private var activeTimbre: ToneTimbre = ToneTimbre.CLEAN
 
+    /** The mode on screen: kept across a recreation, and saved to prefs only by a tap. */
+    private var shownModeKey: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefs = AppPrefs.open(this, AppPrefs.Store.EIGHT_MODES)
         activeTimbre = loadSavedTimbre()
+        // What was on screen before a recreation; else the mode this opening asked for; else the
+        // last one the user picked here.
+        shownModeKey = savedInstanceState?.getString(STATE_SHOWN_MODE_KEY)
+            ?: intent.getStringExtra(EXTRA_MODE_KEY)
+            ?: prefs.getString(SELECTED_MODE_KEY_PREF_KEY, null)
 
         setContent {
             LbmTheme(palette = currentPalette()) {
                 EightModesScreen(
-                    initialModeIndex = loadSavedModeIndex(),
+                    initialModeIndex = eightModesIndexOf(shownModeKey) ?: 0,
                     initialTimbre = activeTimbre,
                     initialBaseShifts = loadSavedBaseShifts(),
                     onSelectMode = ::persistSelectedMode,
@@ -114,9 +131,9 @@ class EightModesActivity : BaseActivity() {
                 .coerceIn(BASE_SHIFT_MORIA_MIN, BASE_SHIFT_MORIA_MAX)
         }
 
-    private fun loadSavedModeIndex(): Int {
-        val savedKey = prefs.getString(SELECTED_MODE_KEY_PREF_KEY, null)
-        return EIGHT_MODES.indexOfFirst { it.theoryKey == savedKey }.takeIf { it >= 0 } ?: 0
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        shownModeKey?.let { outState.putString(STATE_SHOWN_MODE_KEY, it) }
     }
 
     private fun loadSavedTimbre(): ToneTimbre {
@@ -126,6 +143,7 @@ class EightModesActivity : BaseActivity() {
 
     private fun persistSelectedMode(modeIndex: Int) {
         val key = EIGHT_MODES.getOrNull(modeIndex)?.theoryKey ?: return
+        shownModeKey = key
         prefs.edit().putString(SELECTED_MODE_KEY_PREF_KEY, key).apply()
     }
 
@@ -217,12 +235,18 @@ class EightModesActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    private companion object {
-        const val BASE_SHIFT_MORIA_MIN = -12
-        const val BASE_SHIFT_MORIA_MAX = 12
-        const val BASE_SHIFT_DEFAULT_MORIA = 0
-        const val BASE_SHIFT_PREF_KEY_PREFIX = AppPrefs.BASE_SHIFT_KEY_PREFIX
-        val TONE_TIMBRE_PREF_KEY = AppPrefs.SelectedToneTimbre.name
-        val SELECTED_MODE_KEY_PREF_KEY = AppPrefs.SelectedModeKey.name
+    companion object {
+        private const val BASE_SHIFT_MORIA_MIN = -12
+        private const val BASE_SHIFT_MORIA_MAX = 12
+        private const val BASE_SHIFT_DEFAULT_MORIA = 0
+        private const val BASE_SHIFT_PREF_KEY_PREFIX = AppPrefs.BASE_SHIFT_KEY_PREFIX
+        private val TONE_TIMBRE_PREF_KEY = AppPrefs.SelectedToneTimbre.name
+        private val SELECTED_MODE_KEY_PREF_KEY = AppPrefs.SelectedModeKey.name
+        private const val EXTRA_MODE_KEY = "com.johnchourp.learnbyzantinemusic.modes.EXTRA_MODE_KEY"
+        private const val STATE_SHOWN_MODE_KEY = "shown_mode_key"
+
+        /** Opens the page on [modeKey] for this opening only; see the class KDoc. */
+        fun intent(context: Context, modeKey: String): Intent =
+            Intent(context, EightModesActivity::class.java).putExtra(EXTRA_MODE_KEY, modeKey)
     }
 }

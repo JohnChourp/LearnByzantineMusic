@@ -768,6 +768,12 @@
     <string name="recordings_saved_ok">Recording saved successfully.</string>
     <string name="recordings_error_start">Failed to start recording.</string>
     <string name="recordings_error_save">Failed to save recording.</string>
+    <string name="recordings_saved_as_wav_template">Conversion to %1$s failed — saved as WAV: %2$s</string>
+    <string name="recordings_kept_in_app">The folder is not available — the recording was kept in the app.</string>
+    <string name="recordings_pending_title">Not saved yet</string>
+    <string name="recordings_pending_hint">Kept inside the app because they could not be written to the folder. “Save” puts them in the current folder.</string>
+    <string name="recordings_pending_save">Save</string>
+    <string name="recordings_pending_delete_confirm_message">The recording %1$s exists only inside the app. Delete it permanently?</string>
     <string name="recordings_microphone_permission_required">Microphone permission is required to record.</string>
     <string name="recordings_format_label">Storage format</string>
     <string name="recordings_format_flac">FLAC (.flac)</string>
@@ -1054,6 +1060,8 @@
     <string name="anastasimatarion_title">Anastasimatarion</string>
     <string name="anastasimatarion_subtitle">The Sunday resurrection hymns in the 8 modes, with your recordings for each one</string>
     <string name="anastasimatarion_week_mode_template">Mode of the week: %1$s</string>
+    <string name="anastasimatarion_day_mode_template">Mode of the day: %1$s</string>
+    <string name="anastasimatarion_vespers_mode_template">From vespers tonight: %1$s</string>
     <string name="anastasimatarion_service_vespers">Vespers</string>
     <string name="anastasimatarion_service_orthros">Orthros (Matins)</string>
     <string name="anastasimatarion_service_liturgy">Divine Liturgy</string>
@@ -1122,6 +1130,9 @@
     <string name="learning_path_step">Step %1$d of %2$d</string>
     <string name="learning_path_start">Start</string>
     <string name="learning_path_continue">Continue</string>
+    <string name="home_weekly_tone_this_week">This week: %1$s</string>
+    <string name="home_weekly_tone_from_vespers">From vespers tonight: %1$s</string>
+    <string name="home_weekly_tone_open_eight_modes">Open in the 8 Modes</string>
     <!-- Live voice mirror (E1) -->
     <string name="eight_modes_mirror_card_title">Where am I</string>
     <string name="eight_modes_mirror_hint">Turn the microphone on and chant: it tells you which phthong you are on, and how many moria away.</string>
