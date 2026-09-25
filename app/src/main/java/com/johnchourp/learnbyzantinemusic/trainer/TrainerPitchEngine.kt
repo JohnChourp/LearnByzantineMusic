@@ -9,13 +9,15 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import androidx.annotation.RequiresPermission
+import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 import kotlin.math.sqrt
 
 /**
  * Captures the microphone, slices it into analysis windows, runs [YinPitchDetector] on
  * each, maps the result to the nearest phthong, and delivers it on the main thread. A
  * loudness gate suppresses background hiss so silence reads as "no pitch" rather than a
- * spurious note. The caller must hold RECORD_AUDIO before calling [start].
+ * spurious note. The window length and the gate are the recording analysis's too: both come
+ * from [IntonationProfile]. The caller must hold RECORD_AUDIO before calling [start].
  *
  * [onPitch] receives the detected match together with the `SystemClock.elapsedRealtime()`
  * captured on the audio thread when the window was read — the rhythm exercise needs that
@@ -112,7 +114,7 @@ class TrainerPitchEngine(
             }
 
             val capturedAtMillis = SystemClock.elapsedRealtime()
-            val match = if (rootMeanSquare(floatBuffer) < SILENCE_RMS) {
+            val match = if (rootMeanSquare(floatBuffer) < IntonationProfile.SILENCE_RMS) {
                 null
             } else {
                 val frequency = YinPitchDetector.detect(floatBuffer, sampleRate)
@@ -161,9 +163,10 @@ class TrainerPitchEngine(
 
     companion object {
         const val DEFAULT_SAMPLE_RATE = 44_100
-        const val DEFAULT_WINDOW_SIZE = 2_048
+
+        /** [IntonationProfile.WINDOW_MS] at [DEFAULT_SAMPLE_RATE]: 2048 samples. */
+        val DEFAULT_WINDOW_SIZE: Int = IntonationProfile.samplesIn(IntonationProfile.WINDOW_MS, DEFAULT_SAMPLE_RATE)
         private const val SHORT_FULL_SCALE = 32_768f
-        private const val SILENCE_RMS = 0.012
         private const val CAPTURE_JOIN_TIMEOUT_MS = 300L
     }
 }

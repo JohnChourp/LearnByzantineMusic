@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
+import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 import com.johnchourp.learnbyzantinemusic.trainer.YinPitchDetector
 import kotlin.math.sqrt
 
@@ -18,11 +19,16 @@ data class PitchTrack(val frames: List<PitchFrame>, val hopMs: Double, val durat
  * Pitch over time for a whole recording: [WINDOW]-sample windows every [HOP] samples, a silence
  * gate on RMS, then the Melody Trainer's [YinPitchDetector]. At the 22 050 Hz the decoder writes,
  * a frame is 46 ms of audio every 23 ms — the same window length the live trainer listens with.
+ *
+ * Window, hop and silence gate all come from [IntonationProfile], in milliseconds. The sample counts
+ * are taken at [RecordingDecoder.SAMPLE_RATE] because every WAV this reads was written by it.
  */
 object PitchTrackAnalyzer {
-    const val WINDOW = 1024
-    const val HOP = 512
-    const val SILENCE_RMS = 0.012f
+    /** [IntonationProfile.WINDOW_MS] at the decoder's rate: 1024 samples. */
+    val WINDOW: Int = IntonationProfile.samplesIn(IntonationProfile.WINDOW_MS, RecordingDecoder.SAMPLE_RATE)
+
+    /** [IntonationProfile.OFFLINE_HOP_MS] at the decoder's rate: 512 samples, half a window. */
+    val HOP: Int = IntonationProfile.samplesIn(IntonationProfile.OFFLINE_HOP_MS, RecordingDecoder.SAMPLE_RATE)
 
     /** Streams [reader] to the end; [onProgress] gets 0..1 when the length is known. */
     fun analyze(reader: WavPcmReader, onProgress: ((Float) -> Unit)? = null): PitchTrack {
@@ -90,7 +96,7 @@ object PitchTrackAnalyzer {
     private fun detect(window: FloatArray, sampleRate: Int): Float {
         var sumSquares = 0.0
         for (sample in window) sumSquares += sample * sample
-        if (sqrt(sumSquares / window.size) < SILENCE_RMS) return PitchFrame.UNVOICED
+        if (sqrt(sumSquares / window.size) < IntonationProfile.SILENCE_RMS) return PitchFrame.UNVOICED
         val hz = YinPitchDetector.detect(window, sampleRate)
         return if (hz > 0f) hz else PitchFrame.UNVOICED
     }

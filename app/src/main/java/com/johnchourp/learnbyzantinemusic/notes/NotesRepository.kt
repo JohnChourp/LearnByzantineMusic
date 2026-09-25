@@ -24,7 +24,7 @@ class NotesRepository private constructor(
         return dao.observeBySearch(searchQuery.toNotesSearchPattern())
     }
 
-    suspend fun createNote(): NotesMutationResult = mutationMutex.withLock {
+    suspend fun createNote(): CreatedNote = mutationMutex.withLock {
         val now = System.currentTimeMillis()
         val note = NoteEntity(
             id = UUID.randomUUID().toString(),
@@ -36,23 +36,13 @@ class NotesRepository private constructor(
         withContext(Dispatchers.IO) {
             dao.upsert(note)
         }
-        return@withLock runSnapshotSync(messageOnSuccess = "created")
+        return@withLock CreatedNote(noteId = note.id, result = runSnapshotSync(messageOnSuccess = "created"))
     }
 
-    suspend fun saveNote(noteId: String, title: String, body: String): NotesMutationResult = mutationMutex.withLock {
+    suspend fun saveNote(request: NoteSaveRequest): NotesMutationResult = mutationMutex.withLock {
         withContext(Dispatchers.IO) {
-            val now = System.currentTimeMillis()
-            val existing = dao.getById(noteId)
-            val normalizedTitle = title.trim()
-            val normalizedBody = body.trimEnd()
-            val note = NoteEntity(
-                id = noteId,
-                title = normalizedTitle,
-                body = normalizedBody,
-                createdAtEpochMs = existing?.createdAtEpochMs ?: now,
-                updatedAtEpochMs = now
-            )
-            dao.upsert(note)
+            val existing = dao.getById(request.noteId)
+            dao.upsert(NotesEditorSync.noteToStore(request, existing, System.currentTimeMillis()))
         }
         return@withLock runSnapshotSync(messageOnSuccess = "saved")
     }

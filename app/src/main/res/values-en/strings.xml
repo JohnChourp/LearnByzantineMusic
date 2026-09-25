@@ -1098,7 +1098,7 @@
     <string name="analysis_retry">Try again</string>
     <string name="analysis_status_no_pitch">No steady phthong was recognised. Sing more clearly and closer to the microphone.</string>
     <string name="analysis_sung_title">What you sang</string>
-    <string name="analysis_sung_summary">%1$d phthongs in %2$s · %3$d in tune (±4 moria)</string>
+    <string name="analysis_sung_summary">%1$d phthongs in %2$s · %3$d in tune (±%4$d moria)</string>
     <string name="analysis_diagram_title">Diagram</string>
     <string name="analysis_diagram_cd">Pitch-over-time diagram with %1$d phthongs</string>
     <string name="analysis_diagram_legend">Dots: the pitch of your voice. Bars: the recognised phthongs — green in tune, orange off.</string>
