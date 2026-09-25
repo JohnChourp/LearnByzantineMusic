@@ -55,6 +55,14 @@ data class RecordingSessionState(
     val isActive: Boolean
         get() = phase == RecordingStateUi.RECORDING || phase == RecordingStateUi.PAUSED || phase == RecordingStateUi.SAVING
 
+    /**
+     * The screen stays on while a recording runs or is paused (ClickUp `869f5x273`): with the display
+     * off the app drops to the background, where Android 9+ hands it silence instead of the microphone.
+     * Read from the session, so a re-created screen keeps it too. Not while saving: nothing listens then.
+     */
+    val keepsScreenOn: Boolean
+        get() = phase == RecordingStateUi.RECORDING || phase == RecordingStateUi.PAUSED
+
     fun elapsedAt(now: Long): Long =
         elapsedBeforeMs + (recordingSince?.let { (now - it).coerceAtLeast(0L) } ?: 0L)
 }
@@ -83,7 +91,9 @@ data class PendingState(
  * **Threads.** Taps arrive on the main thread; capture runs on its own thread, as it always has;
  * saving runs in [scope], which outlives every screen, one save at a time. `RecordingSessions` holds
  * the process's instance and wires the real microphone, FFmpeg and the SAF folder; the tests wire
- * fakes. A future foreground service (G3) can own this object as it is.
+ * fakes. While a recording is active, `RecordingService` — a foreground service of type microphone —
+ * keeps the process in the foreground, so the microphone is not silenced with the screen off
+ * (ClickUp `869f5x273`); it controls the session only through [RecordingControls].
  */
 class RecordingSession(
     private val scope: CoroutineScope,
@@ -100,7 +110,7 @@ class RecordingSession(
     private val wallClock: () -> Long,
     /** A save finished, whether or not any screen is left to show it (the toast). */
     private val onEvent: (RecordingEvent) -> Unit = {},
-) {
+) : RecordingControls {
     private val lock = Any()
 
     /** One transcode and one folder write at a time. */
@@ -112,7 +122,7 @@ class RecordingSession(
     private var capture: Capture? = null
 
     private val _state = MutableStateFlow(RecordingSessionState())
-    val state: StateFlow<RecordingSessionState> = _state.asStateFlow()
+    override val state: StateFlow<RecordingSessionState> = _state.asStateFlow()
 
     private val _pending = MutableStateFlow(PendingState())
     val pendingState: StateFlow<PendingState> = _pending.asStateFlow()
@@ -163,7 +173,7 @@ class RecordingSession(
         }
     }
 
-    fun pause() {
+    override fun pause() {
         synchronized(lock) {
             val current = capture ?: return
             val state = _state.value
@@ -177,7 +187,7 @@ class RecordingSession(
         }
     }
 
-    fun resume() {
+    override fun resume() {
         synchronized(lock) {
             val current = capture ?: return
             val state = _state.value
@@ -191,7 +201,7 @@ class RecordingSession(
      * Stops and saves. Returns at once; the save runs in [scope] and ends in IDLE (saved) or ERROR
      * (kept in the app, or failed), with [RecordingSessionState.lastEvent] and [onEvent] saying which.
      */
-    fun stop(): Boolean {
+    override fun stop(): Boolean {
         val stopped: Capture
         synchronized(lock) {
             val state = _state.value

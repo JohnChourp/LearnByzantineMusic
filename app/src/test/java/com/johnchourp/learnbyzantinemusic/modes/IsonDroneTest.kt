@@ -1,6 +1,13 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
+import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MAX
+import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MIN
+import com.johnchourp.learnbyzantinemusic.modes.ui.EIGHT_MODES
+import com.johnchourp.learnbyzantinemusic.modes.ui.SCALE_OCTAVES
 import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
+import com.johnchourp.learnbyzantinemusic.music.Mode
+import com.johnchourp.learnbyzantinemusic.music.Moria
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -13,7 +20,7 @@ import org.junit.Test
  */
 class IsonDroneTest {
 
-    private val octaves = 3
+    private val octaves = SCALE_OCTAVES
     private val reference = "Νη"
 
     private fun labels(scale: ModeScaleDefinition) =
@@ -29,7 +36,9 @@ class IsonDroneTest {
     @Test
     fun theBaseResolvesForEveryOneOfTheEightModes() {
         EightModeScaleDefinitions.MODE_SCALES.forEach { (key, scale) ->
-            val hz = IsonDrone.frequencyHz(labels(scale), frequencies(scale, 0), scale.base.phthong)
+            // The ison's base, which since ClickUp `869f5x251` is the end of the απήχημα.
+            val base = IsonDrone.base(Mode.fromKey(key)!!).label
+            val hz = IsonDrone.frequencyHz(labels(scale), frequencies(scale, 0), base)
             assertNotNull("no ison resolved for $key", hz)
             assertTrue("$key ison out of audible range: $hz", hz!! > 60.0 && hz < 900.0)
         }
@@ -52,19 +61,33 @@ class IsonDroneTest {
     }
 
     @Test
-    fun theDroneIsExactlyTheDiagramsBaseKeyNotASecondCalculation() {
-        val scale = EightModeScaleDefinitions.MODE_SCALES.getValue("first")
-        (-12..12).forEach { shift ->
-            val all = labels(scale)
-            val freqs = frequencies(scale, shift)
-            val index = IsonDrone.baseLabelIndex(all, scale.base.phthong)
-            assertEquals(
-                "shift=$shift",
-                freqs[index],
-                IsonDrone.frequencyHz(all, freqs, scale.base.phthong)!!,
-                0.0, // bit-for-bit: it is a lookup, so any difference means a second calculation crept in
-            )
+    fun theDroneIsExactlyTheDiagramsKeyForEverySelectablePhthongNotASecondCalculation() {
+        // ClickUp `869f5x251`: the ison can now sit on any φθόγγος «Ίσον σε…» offers, so the lookup
+        // is held to the diagram's own key for all of them, in every mode, across the whole range
+        // the «Μεταφορά βάσης» slider offers.
+        var compared = 0
+        EIGHT_MODES.forEach { row ->
+            val mode = row.mode
+            (BASE_SHIFT_MIN..BASE_SHIFT_MAX).forEach { shift ->
+                val all = labels(row.scale)
+                val freqs = frequencies(row.scale, shift)
+                val ladder = row.scale.ladder(octaves = SCALE_OCTAVES, baseShift = Moria(shift))
+                IsonDrone.choices(mode, ladder)!!.all.forEach { choice ->
+                    val index = all.indexOf(choice.label)
+                    assertTrue("${mode.key}: ${choice.label} is not on the diagram", index >= 0)
+                    val where = "${mode.key} shift=$shift ${choice.label}"
+                    // bit-for-bit: it is a lookup, so any difference means a second calculation crept in
+                    assertEquals(where, freqs[index], IsonDrone.step(ladder, choice)!!.frequencyHz, 0.0)
+                    assertEquals(where, freqs[index], IsonDrone.frequencyHz(all, freqs, choice.label)!!, 0.0)
+                    compared++
+                }
+            }
         }
+        // Guards the sweep: every mode × every shift × every φθόγγος, or it proves nothing.
+        assertEquals(
+            EIGHT_MODES.size * (BASE_SHIFT_MAX - BASE_SHIFT_MIN + 1) * PhthongName.entries.size,
+            compared,
+        )
     }
 
     @Test

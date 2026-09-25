@@ -1,0 +1,176 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "127925a6521a3e41cb70f5c4cac46d22",
+    "entities": [
+      {
+        "tableName": "recordings_index",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`docUri` TEXT NOT NULL, `rootUri` TEXT NOT NULL, `parentUri` TEXT NOT NULL, `relativePath` TEXT NOT NULL, `name` TEXT NOT NULL, `nameNormalized` TEXT NOT NULL, `isDirectory` INTEGER NOT NULL, `isAudio` INTEGER NOT NULL, `mimeType` TEXT, `createdTs` INTEGER NOT NULL, `updatedTs` INTEGER NOT NULL, `fileExtension` TEXT, PRIMARY KEY(`docUri`))",
+        "fields": [
+          {
+            "fieldPath": "docUri",
+            "columnName": "docUri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rootUri",
+            "columnName": "rootUri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parentUri",
+            "columnName": "parentUri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relativePath",
+            "columnName": "relativePath",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameNormalized",
+            "columnName": "nameNormalized",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDirectory",
+            "columnName": "isDirectory",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isAudio",
+            "columnName": "isAudio",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mimeType",
+            "columnName": "mimeType",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdTs",
+            "columnName": "createdTs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedTs",
+            "columnName": "updatedTs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fileExtension",
+            "columnName": "fileExtension",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "docUri"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_recordings_index_rootUri",
+            "unique": false,
+            "columnNames": [
+              "rootUri"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_recordings_index_rootUri` ON `${TABLE_NAME}` (`rootUri`)"
+          },
+          {
+            "name": "index_recordings_index_rootUri_parentUri",
+            "unique": false,
+            "columnNames": [
+              "rootUri",
+              "parentUri"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_recordings_index_rootUri_parentUri` ON `${TABLE_NAME}` (`rootUri`, `parentUri`)"
+          },
+          {
+            "name": "index_recordings_index_rootUri_relativePath",
+            "unique": true,
+            "columnNames": [
+              "rootUri",
+              "relativePath"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_recordings_index_rootUri_relativePath` ON `${TABLE_NAME}` (`rootUri`, `relativePath`)"
+          },
+          {
+            "name": "index_recordings_index_rootUri_isDirectory",
+            "unique": false,
+            "columnNames": [
+              "rootUri",
+              "isDirectory"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_recordings_index_rootUri_isDirectory` ON `${TABLE_NAME}` (`rootUri`, `isDirectory`)"
+          },
+          {
+            "name": "index_recordings_index_rootUri_isAudio",
+            "unique": false,
+            "columnNames": [
+              "rootUri",
+              "isAudio"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_recordings_index_rootUri_isAudio` ON `${TABLE_NAME}` (`rootUri`, `isAudio`)"
+          },
+          {
+            "name": "index_recordings_index_rootUri_nameNormalized",
+            "unique": false,
+            "columnNames": [
+              "rootUri",
+              "nameNormalized"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_recordings_index_rootUri_nameNormalized` ON `${TABLE_NAME}` (`rootUri`, `nameNormalized`)"
+          },
+          {
+            "name": "index_recordings_index_rootUri_createdTs",
+            "unique": false,
+            "columnNames": [
+              "rootUri",
+              "createdTs"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_recordings_index_rootUri_createdTs` ON `${TABLE_NAME}` (`rootUri`, `createdTs`)"
+          },
+          {
+            "name": "index_recordings_index_rootUri_updatedTs",
+            "unique": false,
+            "columnNames": [
+              "rootUri",
+              "updatedTs"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_recordings_index_rootUri_updatedTs` ON `${TABLE_NAME}` (`rootUri`, `updatedTs`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '127925a6521a3e41cb70f5c4cac46d22')"
+    ]
+  }
+}

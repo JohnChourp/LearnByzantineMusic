@@ -3,21 +3,34 @@ package com.johnchourp.learnbyzantinemusic.modes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.music.Mode
 
+/**
+ * The theory page of one [mode]. Its key, title and martyria sign are derived from [Mode] and
+ * [ModeResources] (ClickUp `869f5x299`); what is written here is only the theory itself.
+ */
 data class ModeTheory(
-    val key: String,
-    @StringRes val titleRes: Int,
+    val mode: Mode,
     @StringRes val subtitleRes: Int,
     @StringRes val apichimaRes: Int,
     @StringRes val heroSummaryRes: Int,
-    @DrawableRes val signRes: Int,
-    @StringRes val signDescriptionRes: Int,
     val styleRows: List<ModeTheoryStyleRow>,
     @StringRes val modulationsRes: Int,
     @StringRes val attractionsRes: Int,
     @StringRes val phthoresRes: Int,
     @StringRes val ethosRes: Int
-)
+) {
+    val key: String get() = mode.key
+
+    @get:StringRes
+    val titleRes: Int get() = ModeResources.nameRes(mode)
+
+    @get:DrawableRes
+    val signRes: Int get() = ModeResources.martyriaSignRes(mode)
+
+    @get:StringRes
+    val signDescriptionRes: Int get() = ModeResources.martyriaDescriptionRes(mode)
+}
 
 data class ModeTheoryStyleRow(
     @StringRes val styleNameRes: Int,
@@ -30,35 +43,12 @@ data class ModeTheoryStyleRow(
 object ModeTheoryCatalog {
     const val EXTRA_MODE_KEY = "mode_key"
 
-    private const val FIRST = "first"
-    private const val SECOND = "second"
-    private const val THIRD = "third"
-    private const val FOURTH = "fourth"
-    private const val PLAGAL_FIRST = "plagal_first"
-    private const val PLAGAL_SECOND = "plagal_second"
-    private const val VARYS = "varys"
-    private const val PLAGAL_FOURTH = "plagal_fourth"
-
-    private val orderedKeys = listOf(
-        FIRST,
-        FOURTH,
-        PLAGAL_FIRST,
-        PLAGAL_FOURTH,
-        THIRD,
-        VARYS,
-        SECOND,
-        PLAGAL_SECOND
-    )
-
     val modes: List<ModeTheory> = listOf(
         ModeTheory(
-            key = FIRST,
-            titleRes = R.string.mode_first,
+            mode = Mode.FIRST,
             subtitleRes = R.string.mode_theory_subtitle_first,
             apichimaRes = R.string.mode_theory_apichima_first_source,
             heroSummaryRes = R.string.mode_theory_summary_first,
-            signRes = R.drawable.diatonic_intermediates_testimonial_pa,
-            signDescriptionRes = R.string.mode_theory_sign_first_desc,
             styleRows = rows(
                 eirmologic(
                     system = R.string.mode_theory_system_octave_pentachord,
@@ -80,13 +70,10 @@ object ModeTheoryCatalog {
             ethosRes = R.string.mode_theory_ethos_diatonic
         ),
         ModeTheory(
-            key = SECOND,
-            titleRes = R.string.mode_second,
+            mode = Mode.SECOND,
             subtitleRes = R.string.mode_theory_subtitle_second,
             apichimaRes = R.string.mode_theory_apichima_second_source,
             heroSummaryRes = R.string.mode_theory_summary_second,
-            signRes = R.drawable.diatonic_intermediates_testimonial_pa,
-            signDescriptionRes = R.string.mode_theory_sign_second_desc,
             styleRows = rows(
                 eirmologic(
                     system = R.string.mode_theory_system_pentachord_trochos,
@@ -108,13 +95,10 @@ object ModeTheoryCatalog {
             ethosRes = R.string.mode_theory_ethos_chromatic
         ),
         ModeTheory(
-            key = THIRD,
-            titleRes = R.string.mode_third,
+            mode = Mode.THIRD,
             subtitleRes = R.string.mode_theory_subtitle_third,
             apichimaRes = R.string.mode_theory_apichima_third_source,
             heroSummaryRes = R.string.mode_theory_summary_third,
-            signRes = R.drawable.diatonic_intermediates_testimonial_ga,
-            signDescriptionRes = R.string.mode_theory_sign_third_desc,
             styleRows = rows(
                 eirmologic(
                     system = R.string.mode_theory_system_tetrachord_triphonia,
@@ -136,13 +120,10 @@ object ModeTheoryCatalog {
             ethosRes = R.string.mode_theory_ethos_enharmonic
         ),
         ModeTheory(
-            key = FOURTH,
-            titleRes = R.string.mode_fourth,
+            mode = Mode.FOURTH,
             subtitleRes = R.string.mode_theory_subtitle_fourth,
             apichimaRes = R.string.mode_theory_apichima_fourth_source,
             heroSummaryRes = R.string.mode_theory_summary_fourth,
-            signRes = R.drawable.diatonic_intermediates_testimonial_bou,
-            signDescriptionRes = R.string.mode_theory_sign_fourth_desc,
             styleRows = rows(
                 eirmologic(
                     system = R.string.mode_theory_system_octave_diapason,
@@ -164,13 +145,10 @@ object ModeTheoryCatalog {
             ethosRes = R.string.mode_theory_ethos_diatonic
         ),
         ModeTheory(
-            key = PLAGAL_FIRST,
-            titleRes = R.string.mode_plagal_first,
+            mode = Mode.PLAGAL_FIRST,
             subtitleRes = R.string.mode_theory_subtitle_plagal_first,
             apichimaRes = R.string.mode_theory_apichima_plagal_first_source,
             heroSummaryRes = R.string.mode_theory_summary_plagal_first,
-            signRes = R.drawable.diatonic_intermediates_testimonial_ke,
-            signDescriptionRes = R.string.mode_theory_sign_plagal_first_desc,
             styleRows = rows(
                 eirmologic(
                     system = R.string.mode_theory_system_pentachord,
@@ -192,13 +170,10 @@ object ModeTheoryCatalog {
             ethosRes = R.string.mode_theory_ethos_diatonic
         ),
         ModeTheory(
-            key = PLAGAL_SECOND,
-            titleRes = R.string.mode_plagal_second,
+            mode = Mode.PLAGAL_SECOND,
             subtitleRes = R.string.mode_theory_subtitle_plagal_second,
             apichimaRes = R.string.mode_theory_apichima_plagal_second_source,
             heroSummaryRes = R.string.mode_theory_summary_plagal_second,
-            signRes = R.drawable.diatonic_intermediates_testimonial_di,
-            signDescriptionRes = R.string.mode_theory_sign_plagal_second_desc,
             styleRows = rows(
                 eirmologic(
                     system = R.string.mode_theory_system_pentachord_trochos,
@@ -220,13 +195,10 @@ object ModeTheoryCatalog {
             ethosRes = R.string.mode_theory_ethos_chromatic
         ),
         ModeTheory(
-            key = VARYS,
-            titleRes = R.string.mode_varys,
+            mode = Mode.VARYS,
             subtitleRes = R.string.mode_theory_subtitle_varys,
             apichimaRes = R.string.mode_theory_apichima_varys_source,
             heroSummaryRes = R.string.mode_theory_summary_varys,
-            signRes = R.drawable.diatonic_filamentous_testimonial_zo,
-            signDescriptionRes = R.string.mode_theory_sign_varys_desc,
             styleRows = rows(
                 eirmologic(
                     system = R.string.mode_theory_system_tetrachord_triphonia,
@@ -248,13 +220,10 @@ object ModeTheoryCatalog {
             ethosRes = R.string.mode_theory_ethos_enharmonic
         ),
         ModeTheory(
-            key = PLAGAL_FOURTH,
-            titleRes = R.string.mode_plagal_fourth,
+            mode = Mode.PLAGAL_FOURTH,
             subtitleRes = R.string.mode_theory_subtitle_plagal_fourth,
             apichimaRes = R.string.mode_theory_apichima_plagal_fourth_source,
             heroSummaryRes = R.string.mode_theory_summary_plagal_fourth,
-            signRes = R.drawable.diatonic_filamentous_testimonial_ni,
-            signDescriptionRes = R.string.mode_theory_sign_plagal_fourth_desc,
             styleRows = rows(
                 eirmologic(
                     system = R.string.mode_theory_system_octave,
@@ -276,9 +245,6 @@ object ModeTheoryCatalog {
             ethosRes = R.string.mode_theory_ethos_diatonic
         )
     )
-
-    fun keyForPosition(position: Int): String =
-        orderedKeys.getOrElse(position) { FIRST }
 
     fun byKey(key: String?): ModeTheory =
         modes.firstOrNull { it.key == key } ?: modes.first()
