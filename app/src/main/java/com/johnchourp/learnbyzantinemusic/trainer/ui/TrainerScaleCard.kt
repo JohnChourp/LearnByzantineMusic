@@ -148,7 +148,6 @@ private fun ScalePicker(selected: Mode?, enabled: Boolean, onSelect: (Mode?) -> 
                 },
             )
             EIGHT_MODES.forEach { row ->
-                val mode = row.mode ?: return@forEach
                 DropdownMenuItem(
                     text = {
                         ScaleOption(
@@ -158,7 +157,7 @@ private fun ScalePicker(selected: Mode?, enabled: Boolean, onSelect: (Mode?) -> 
                     },
                     onClick = {
                         expanded = false
-                        onSelect(mode)
+                        onSelect(row.mode)
                     },
                 )
             }

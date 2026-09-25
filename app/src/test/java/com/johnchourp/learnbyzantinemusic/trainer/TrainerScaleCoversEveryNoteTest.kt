@@ -66,8 +66,7 @@ class TrainerScaleCoversEveryNoteTest {
         var compared = 0
         Mode.entries.forEach { mode ->
             listOf(BaseShift.MIN_MORIA, -5, 0, 7, BaseShift.MAX_MORIA).forEach { shift ->
-                val diagram = EightModeScaleDefinitions.SCALE_BY_MODE.getValue(mode)
-                    .ladder(octaves = 3, baseShift = Moria(shift))
+                val diagram = mode.scale.ladder(octaves = 3, baseShift = Moria(shift))
                 val trainer = TrainerScale(mode, shift).ladder
                 diagram.steps.forEach { step ->
                     val onTrainer = trainer.stepFor(step.phthong)!!.frequencyHz

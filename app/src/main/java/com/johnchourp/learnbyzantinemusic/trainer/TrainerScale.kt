@@ -60,10 +60,9 @@ data class TrainerScale(
         }
     }
 
-    /** The interval table: the mode's own, or the natural diatonic one for the default. */
+    /** The interval table: the mode's own ([Mode.scale]), or the natural diatonic one for the default. */
     val definition: ModeScaleDefinition
-        get() = mode?.let { EightModeScaleDefinitions.SCALE_BY_MODE.getValue(it) }
-            ?: EightModeScaleDefinitions.DIATONIC
+        get() = mode?.scale ?: EightModeScaleDefinitions.DIATONIC
 
     /** The ladder every pitch of this scale comes from, built once. */
     val ladder: ModeLadder by lazy {
