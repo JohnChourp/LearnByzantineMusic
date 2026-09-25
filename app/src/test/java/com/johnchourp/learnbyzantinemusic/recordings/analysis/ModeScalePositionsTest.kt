@@ -1,7 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
 import com.johnchourp.learnbyzantinemusic.modes.EightModeScaleDefinitions
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
+import com.johnchourp.learnbyzantinemusic.trainer.diatonicMoriaFromNi
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -11,7 +12,7 @@ class ModeScalePositionsTest {
 
     @Test
     fun diatonicMatchesTheTrainerTable() {
-        val expected = TrainerPhthong.ascending.map { it.diatonicMoriaFromNi }.toIntArray()
+        val expected = PhthongName.entries.map { it.diatonicMoriaFromNi }.toIntArray()
         assertArrayEquals(expected, ModeScalePositions.forMode("first"))
         assertArrayEquals(expected, ModeScalePositions.forMode("plagal_fourth"))
     }
@@ -38,12 +39,12 @@ class ModeScalePositionsTest {
 
     @Test
     fun defaultStartPhthongsFollowTheModeSigns() {
-        assertEquals(TrainerPhthong.PA, ModeScalePositions.defaultStartPhthong("first"))
-        assertEquals(TrainerPhthong.GA, ModeScalePositions.defaultStartPhthong("third"))
-        assertEquals(TrainerPhthong.VOU, ModeScalePositions.defaultStartPhthong("fourth"))
-        assertEquals(TrainerPhthong.KE, ModeScalePositions.defaultStartPhthong("plagal_first"))
-        assertEquals(TrainerPhthong.DI, ModeScalePositions.defaultStartPhthong("plagal_second"))
-        assertEquals(TrainerPhthong.ZO, ModeScalePositions.defaultStartPhthong("varys"))
-        assertEquals(TrainerPhthong.NI, ModeScalePositions.defaultStartPhthong("plagal_fourth"))
+        assertEquals(PhthongName.PA, ModeScalePositions.defaultStartPhthong("first"))
+        assertEquals(PhthongName.GA, ModeScalePositions.defaultStartPhthong("third"))
+        assertEquals(PhthongName.VOU, ModeScalePositions.defaultStartPhthong("fourth"))
+        assertEquals(PhthongName.KE, ModeScalePositions.defaultStartPhthong("plagal_first"))
+        assertEquals(PhthongName.DI, ModeScalePositions.defaultStartPhthong("plagal_second"))
+        assertEquals(PhthongName.ZO, ModeScalePositions.defaultStartPhthong("varys"))
+        assertEquals(PhthongName.NI, ModeScalePositions.defaultStartPhthong("plagal_fourth"))
     }
 }

@@ -1,16 +1,17 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class MelodySequenceTest {
 
-    private fun note(phthong: TrainerPhthong, beats: Float = 1f) =
+    private fun note(phthong: PhthongName, beats: Float = 1f) =
         TrainerNote(phthong = phthong, baseDurationBeats = beats)
 
     @Test
     fun `plain notes keep their base durations`() {
-        val sequence = MelodySequence(listOf(note(TrainerPhthong.NI), note(TrainerPhthong.PA, 2f)))
+        val sequence = MelodySequence(listOf(note(PhthongName.NI), note(PhthongName.PA, 2f)))
         assertEquals(listOf(1f, 2f), sequence.effectiveDurationsBeats())
         assertEquals(3f, sequence.totalBeats())
     }
@@ -19,8 +20,8 @@ class MelodySequenceTest {
     fun `gorgo halves its note and shortens the previous one`() {
         val sequence = MelodySequence(
             listOf(
-                note(TrainerPhthong.NI),
-                note(TrainerPhthong.PA).withGorgo(true)
+                note(PhthongName.NI),
+                note(PhthongName.PA).withGorgo(true)
             )
         )
         // Two phthongi share one χρόνο: previous shrinks to 0.5, gorgo note is 0.5.
@@ -30,7 +31,7 @@ class MelodySequenceTest {
 
     @Test
     fun `fraction adds a whole beat`() {
-        val sequence = MelodySequence(listOf(note(TrainerPhthong.DI).withFraction(true)))
+        val sequence = MelodySequence(listOf(note(PhthongName.DI).withFraction(true)))
         assertEquals(listOf(2f), sequence.effectiveDurationsBeats())
         assertEquals(2f, sequence.totalBeats())
     }

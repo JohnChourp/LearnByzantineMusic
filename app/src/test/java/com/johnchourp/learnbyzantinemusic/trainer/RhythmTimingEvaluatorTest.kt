@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -11,7 +12,7 @@ class RhythmTimingEvaluatorTest {
     // Two notes, 1 beat each at 60 bpm -> note0 [0,1000), note1 [1000,2000).
     private fun twoNotePlan(): List<PlannedNoteEvent> {
         val sequence = MelodySequence(
-            listOf(TrainerNote(TrainerPhthong.NI), TrainerNote(TrainerPhthong.PA))
+            listOf(TrainerNote(PhthongName.NI), TrainerNote(PhthongName.PA))
         )
         return MelodyPlaybackPlanner.plan(sequence, MelodyTempo(60))
     }
@@ -66,7 +67,7 @@ class RhythmTimingEvaluatorTest {
     fun `a note still voiced at the safety cutoff is not counted correct`() {
         // One 8 s note (4 beats at 30 bpm); duration tolerance is a generous 4 s.
         val plan = MelodyPlaybackPlanner.plan(
-            MelodySequence(listOf(TrainerNote(TrainerPhthong.NI, baseDurationBeats = 4f))),
+            MelodySequence(listOf(TrainerNote(PhthongName.NI, baseDurationBeats = 4f))),
             MelodyTempo(30)
         )
         val evaluator = RhythmTimingEvaluator(plan)
@@ -172,7 +173,7 @@ class RhythmTimingEvaluatorTest {
     private fun RhythmTimingEvaluator.singCombo(
         onset: Long,
         offset: Long,
-        phthong: TrainerPhthong
+        phthong: PhthongName
     ): RhythmVerdict? {
         onFrame(onset, true, phthong)
         return onFrame(offset, false, null)
@@ -181,10 +182,10 @@ class RhythmTimingEvaluatorTest {
     @Test
     fun `combo greens the right phthong sung at the right time`() {
         val evaluator = comboEvaluator()
-        val first = evaluator.singCombo(0, 975, TrainerPhthong.NI)
+        val first = evaluator.singCombo(0, 975, PhthongName.NI)
         assertEquals(0, first?.noteIndex)
         assertTrue(first!!.matched)
-        val second = evaluator.singCombo(1000, 1975, TrainerPhthong.PA)
+        val second = evaluator.singCombo(1000, 1975, PhthongName.PA)
         assertEquals(1, second?.noteIndex)
         assertTrue(second!!.matched)
     }
@@ -193,7 +194,7 @@ class RhythmTimingEvaluatorTest {
     fun `combo does not green the wrong phthong even with perfect timing`() {
         val evaluator = comboEvaluator()
         // Sing Πα where Νη is expected, perfectly on time.
-        val verdict = evaluator.singCombo(0, 975, TrainerPhthong.PA)
+        val verdict = evaluator.singCombo(0, 975, PhthongName.PA)
         assertEquals(0, verdict?.noteIndex)
         assertFalse(verdict!!.matched)
     }
@@ -201,7 +202,7 @@ class RhythmTimingEvaluatorTest {
     @Test
     fun `combo does not green the right phthong sung at the wrong time`() {
         val evaluator = comboEvaluator()
-        val verdict = evaluator.singCombo(400, 1300, TrainerPhthong.NI) // right phthong, 400 ms late
+        val verdict = evaluator.singCombo(400, 1300, PhthongName.NI) // right phthong, 400 ms late
         assertEquals(0, verdict?.noteIndex)
         assertFalse(verdict!!.matched)
     }
@@ -211,10 +212,10 @@ class RhythmTimingEvaluatorTest {
         val evaluator = comboEvaluator()
         val verdicts = mutableListOf<RhythmVerdict>()
         // Legato: hold Νη from 0, switch to Πα 150 ms early (at 850), release at 2000.
-        evaluator.onFrame(0, true, TrainerPhthong.NI)?.let { verdicts.add(it) }
-        evaluator.onFrame(800, true, TrainerPhthong.NI)?.let { verdicts.add(it) }
-        evaluator.onFrame(850, true, TrainerPhthong.PA)?.let { verdicts.add(it) }
-        evaluator.onFrame(1975, true, TrainerPhthong.PA)?.let { verdicts.add(it) }
+        evaluator.onFrame(0, true, PhthongName.NI)?.let { verdicts.add(it) }
+        evaluator.onFrame(800, true, PhthongName.NI)?.let { verdicts.add(it) }
+        evaluator.onFrame(850, true, PhthongName.PA)?.let { verdicts.add(it) }
+        evaluator.onFrame(1975, true, PhthongName.PA)?.let { verdicts.add(it) }
         evaluator.onFrame(2000, false, null)?.let { verdicts.add(it) }
 
         assertEquals(listOf(0, 1), verdicts.map { it.noteIndex })
