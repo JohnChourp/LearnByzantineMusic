@@ -73,6 +73,20 @@ class PracticeStreakTest {
     }
 
     @Test
+    fun theBestStreakIsTheLongestRunEvenWhenItEndedLongAgo() {
+        // Four in a row in August, then two, then today alone: the best is the August run, not the last one.
+        val days = setOf(
+            day("2026-08-01"), day("2026-08-02"), day("2026-08-03"), day("2026-08-04"),
+            day("2026-09-10"), day("2026-09-11"),
+            day("2026-09-25"),
+        )
+        assertEquals(4, PracticeStreak.best(days))
+        assertEquals(1, PracticeStreak.current(days, day("2026-09-25")))
+        // The end of a month is just another day.
+        assertEquals(3, PracticeStreak.best(setOf(day("2026-08-30"), day("2026-08-31"), day("2026-09-01"))))
+    }
+
+    @Test
     fun theSpringForwardNightNeitherBreaksNorMergesDays() {
         // Athens, 29 March 2026: 03:00 becomes 04:00. The first two sessions are 23 hours apart, the
         // last two only one hour — yet they are three calendar days, so three days in a row.
