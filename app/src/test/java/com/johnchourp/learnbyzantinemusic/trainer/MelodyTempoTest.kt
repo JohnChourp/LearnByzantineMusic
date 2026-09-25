@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
+import com.johnchourp.learnbyzantinemusic.music.Beats
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -14,15 +15,15 @@ class MelodyTempoTest {
     @Test
     fun `beats convert to milliseconds`() {
         val tempo = MelodyTempo(120) // 500 ms per beat
-        assertEquals(500L, tempo.beatsToMillis(1f))
-        assertEquals(250L, tempo.beatsToMillis(0.5f))
-        assertEquals(1000L, tempo.beatsToMillis(2f))
-        assertEquals(0L, tempo.beatsToMillis(0f))
+        assertEquals(500L, tempo.beatsToMillis(Beats.ONE))
+        assertEquals(250L, tempo.beatsToMillis(Beats.of(1, 2)))
+        assertEquals(1000L, tempo.beatsToMillis(Beats.whole(2)))
+        assertEquals(0L, tempo.beatsToMillis(Beats.ZERO))
     }
 
     @Test
     fun `negative beats clamp to zero`() {
-        assertEquals(0L, MelodyTempo(120).beatsToMillis(-3f))
+        assertEquals(0L, MelodyTempo(120).beatsToMillis(Beats.whole(-3)))
     }
 
     @Test

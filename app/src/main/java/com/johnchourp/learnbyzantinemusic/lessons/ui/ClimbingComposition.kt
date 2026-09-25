@@ -2,6 +2,9 @@ package com.johnchourp.learnbyzantinemusic.lessons.ui
 
 import androidx.annotation.StringRes
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.music.ByzantineRhythmMapper
+import com.johnchourp.learnbyzantinemusic.music.RhythmNote
+import com.johnchourp.learnbyzantinemusic.music.TimeSign
 import com.johnchourp.learnbyzantinemusic.summary_theory.ui.Neume
 import com.johnchourp.learnbyzantinemusic.summary_theory.ui.NeumeAlign
 import com.johnchourp.learnbyzantinemusic.summary_theory.ui.NeumeForm
@@ -204,7 +207,7 @@ object ClimbingCompositions {
         ),
     )
 
-    /** The δίγοργον (¼ χρόνος / triple speed) composition, written as two characters. */
+    /** The δίγοργον (⅓ χρόνου each / triple speed) composition, written as two characters. */
     val digorgo: List<Composition> = listOf(
         // Ίσον · (Ολίγον + κεντήματα + δίγοργον) ⇒ Ίσον · (Κεντήματα με δίγοργον) · Ολίγον
         Composition(
@@ -226,6 +229,21 @@ object ClimbingCompositions {
             emphasis = Emphasis.DIGORGON,
         ),
     )
+
+    /**
+     * The δίγοργον example as sung, for the time rules: ίσον, κεντήματα carrying the δίγοργον, ολίγον —
+     * the plain δίγοργον, so ⅓ each. The «Ο χρόνος της σύνθεσης» strip prints what
+     * [ByzantineRhythmMapper] makes of it, and `ClimbingDigorgonTimingTest` checks that it does (ClickUp
+     * `869f5x29r`, H5: the strip and three sentences used to say ¼).
+     */
+    val digorgoRhythm: List<RhythmNote> =
+        listOf(RhythmNote(), RhythmNote(setOf(TimeSign.DIGORGON)), RhythmNote())
+
+    /** The strip's «Σύνθετο» row: one beat value per written character — the ίσον, then κεντήματα + ολίγον. */
+    val digorgoTimingCombined: List<Int> = listOf(R.string.time_1_by_3, R.string.time_2_by_3)
+
+    /** The strip's «Ανάλυση» row: one beat value per note of [digorgoRhythm]. */
+    val digorgoTimingParts: List<Int> = listOf(R.string.time_1_by_3, R.string.time_1_by_3, R.string.time_1_by_3)
 
     /** All compositions in display order. */
     val all: List<Composition> = simple + gorgo + digorgo

@@ -434,11 +434,11 @@ private fun TimingStrip() {
             )
             TimingRow(
                 labelRes = R.string.climbing_timing_combined_label,
-                values = listOf(R.string.time_1_by_2, R.string.time_1_by_2),
+                values = ClimbingCompositions.digorgoTimingCombined,
             )
             TimingRow(
                 labelRes = R.string.climbing_timing_parts_label,
-                values = listOf(R.string.time_1_by_2, R.string.time_1_by_4, R.string.time_1_by_4),
+                values = ClimbingCompositions.digorgoTimingParts,
             )
             Text(
                 text = stringResource(R.string.climbing_timing_caption),

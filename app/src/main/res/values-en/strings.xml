@@ -172,6 +172,7 @@
     <string name="time_1_by_4">¼</string>
     <string name="digorgo">Digorgo</string>
     <string name="time_1_by_3">⅓</string>
+    <string name="time_2_by_3">⅔</string>
     <string name="trigorgo">Trigorgo</string>
     <string name="presented_digorgo">Present Digorgos</string>
     <string name="digorgo_in_climbing_compositions">The digorgo in climbing compositions</string>
@@ -935,16 +936,30 @@
     <string name="melody_trainer_add_note_hint">Tap phthongi to build your melody.</string>
     <string name="melody_trainer_octave_hint">The octave places new phthongi higher (΄) or lower (,).</string>
     <string name="melody_trainer_rule_default_title">Default</string>
-    <string name="melody_trainer_rule_default_body">Each phthong lasts 1 beat.</string>
+    <!-- The numbers of the three rule bodies are arguments read from the time rules (TimingRulesHelp): never type one in. -->
+    <string name="melody_trainer_rule_default_body">Each phthong lasts %1$s beat.</string>
     <string name="melody_trainer_rule_gorgo_title">Gorgon</string>
-    <string name="melody_trainer_rule_gorgo_body">The phthong becomes half a beat (0.5) and takes 0.5 from the previous one — two phthongi in one beat.</string>
+    <string name="melody_trainer_rule_gorgo_body">The phthong becomes half a beat (%1$s) and takes %2$s from the previous one — two phthongi in one beat.</string>
     <string name="melody_trainer_rule_klasma_title">Klasma (apli)</string>
-    <string name="melody_trainer_rule_klasma_body">Adds one whole beat to the phthong.</string>
+    <string name="melody_trainer_rule_klasma_body">Adds %1$s whole beat to the phthong.</string>
     <string name="melody_trainer_rule_speed_title">Speed</string>
     <string name="melody_trainer_rule_speed_body">Sets how fast the timer counts (beats per minute).</string>
     <string name="melody_trainer_now_playing">Playing: %1$s</string>
     <string name="melody_trainer_tempo_slow">Slow</string>
     <string name="melody_trainer_tempo_fast">Fast</string>
+    <string name="melody_trainer_scale_title">Mode and base</string>
+    <string name="melody_trainer_scale_hint">The scale the Trainer plays and listens on: the same one as on the «8 Modes» page.</string>
+    <string name="melody_trainer_scale_default">Diatonic</string>
+    <string name="melody_trainer_scale_default_detail">Νη = 220 Hz — the Trainer as it always was</string>
+    <string name="melody_trainer_scale_open">Open the mode picker</string>
+    <string name="melody_trainer_base_shift_title">Base transposition</string>
+    <string name="melody_trainer_base_shift_value">%1$+d moria</string>
+    <string name="melody_trainer_base_shift_zero">0 moria</string>
+    <string name="melody_trainer_base_shift_reset">Reset</string>
+    <string name="melody_trainer_base_shift_lower">Lower base</string>
+    <string name="melody_trainer_base_shift_higher">Higher base</string>
+    <string name="melody_trainer_base_shift_shared">Shared with the «8 Modes» page: a change here applies there too, for this mode.</string>
+    <string name="melody_trainer_base_shift_diatonic">Diatonic always stays at Νη = 220 Hz. To shift the base, choose a mode.</string>
     <string name="melody_trainer_practice_title">Practice with your voice</string>
     <string name="melody_trainer_practice_intro">Pick a practice mode, sing, and the correct phthongi turn green.</string>
     <string name="melody_trainer_correct_progress">Correct: %1$d/%2$d</string>
@@ -974,14 +989,14 @@
     <string name="climbing_legend_embroideries">Kentimata: ornament that lifts the voice.</string>
     <string name="climbing_legend_underflow">Yporroi: a quick descending run.</string>
     <string name="climbing_legend_gorgo">Gorgon: the notes read fast, at half the time (½).</string>
-    <string name="climbing_legend_digorgo">Digorgon: faster still — the notes at a quarter of the time (¼).</string>
+    <string name="climbing_legend_digorgo">Digorgon: faster still — the notes at a third of the time (⅓).</string>
     <string name="climbing_legend_simple_dot">Simple dot: a timing mark.</string>
     <string name="climbing_legend_fraction">Fraction: a small timing addition.</string>
 
     <string name="gorgo_section_intro">The gorgon is a small mark placed on a composition that makes its notes read fast — each in half the time (½).</string>
-    <string name="digorgo_section_intro">The digorgon speeds things up even more: it splits the beat into smaller parts so the notes read at ¼ — the composition\'s total time stays the same.</string>
+    <string name="digorgo_section_intro">The digorgon speeds things up even more: it splits one beat into three equal parts so the notes read at ⅓ — the composition\'s total time stays the same.</string>
     <string name="climbing_gorgo_badge">½ time</string>
-    <string name="climbing_digorgo_badge">¼ time</string>
+    <string name="climbing_digorgo_badge">⅓ time</string>
 
     <string name="climbing_timing_title">The timing of the composition</string>
     <string name="climbing_timing_combined_label">Compound</string>
@@ -1002,7 +1017,7 @@
     <string name="climbing_reading_gorgo_3">Ison and kentimata with a gorgon: the composition runs at ½ time.</string>
     <string name="climbing_reading_gorgo_4">Apostrophos and kentimata with a gorgon — fast ornament.</string>
     <string name="climbing_reading_gorgo_5">Yporroi with a gorgon: apostrophos with a gorgon and apostrophos, in half the time.</string>
-    <string name="climbing_reading_digorgo_1">With a digorgon: ison, kentimata with a digorgon and Oligon — at ¼ of the time.</string>
+    <string name="climbing_reading_digorgo_1">With a digorgon: ison, kentimata with a digorgon and Oligon — ⅓ of the time each.</string>
 
     <string name="cd_gorgo">Neume: Gorgon</string>
     <string name="cd_digorgo">Neume: Digorgon</string>
