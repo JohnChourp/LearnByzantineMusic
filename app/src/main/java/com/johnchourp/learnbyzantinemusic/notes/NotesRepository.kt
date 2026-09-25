@@ -71,6 +71,12 @@ class NotesRepository private constructor(
 
         val importedNotes = try {
             NotesBackupCodec.decodeSnapshot(rawJson)
+        } catch (_: NotesBackupCodec.NewerVersionException) {
+            // Not a broken file: one from a newer app. The user needs to update, not to look for another file.
+            return@withLock NotesMutationResult(
+                syncState = getSyncState(),
+                message = "import_newer_version"
+            )
         } catch (_: IllegalArgumentException) {
             return@withLock NotesMutationResult(
                 syncState = getSyncState(),
