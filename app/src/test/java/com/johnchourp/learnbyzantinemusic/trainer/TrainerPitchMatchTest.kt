@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
 import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -12,7 +13,7 @@ class TrainerPitchMatchTest {
 
     @Test
     fun `exact phthong frequencies match with no deviation`() {
-        for (phthong in TrainerPhthong.ascending) {
+        for (phthong in PhthongName.entries) {
             val match = TrainerPitchTable.nearestPhthong(TrainerPitchTable.frequencyHz(phthong))
             assertEquals(phthong, match?.phthong)
             assertTrue("deviation ${match?.deviationMoria}", abs(match!!.deviationMoria) < 1e-6)
@@ -21,9 +22,9 @@ class TrainerPitchMatchTest {
 
     @Test
     fun `octaves fold onto the same phthong`() {
-        assertEquals(TrainerPhthong.NI, TrainerPitchTable.nearestPhthong(440.0)?.phthong)
-        assertEquals(TrainerPhthong.NI, TrainerPitchTable.nearestPhthong(110.0)?.phthong)
-        assertEquals(TrainerPhthong.DI, TrainerPitchTable.nearestPhthong(TrainerPitchTable.frequencyHz(TrainerPhthong.DI, 1))?.phthong)
+        assertEquals(PhthongName.NI, TrainerPitchTable.nearestPhthong(440.0)?.phthong)
+        assertEquals(PhthongName.NI, TrainerPitchTable.nearestPhthong(110.0)?.phthong)
+        assertEquals(PhthongName.DI, TrainerPitchTable.nearestPhthong(TrainerPitchTable.frequencyHz(PhthongName.DI, 1))?.phthong)
     }
 
     @Test
@@ -31,7 +32,7 @@ class TrainerPitchMatchTest {
         // 2 moria above Νη.
         val twoMoriaSharp = ByzantineTuning.frequencyHz(2.0)
         val match = TrainerPitchTable.nearestPhthong(twoMoriaSharp)
-        assertEquals(TrainerPhthong.NI, match?.phthong)
+        assertEquals(PhthongName.NI, match?.phthong)
         assertEquals(2.0, match!!.deviationMoria, 0.05)
     }
 

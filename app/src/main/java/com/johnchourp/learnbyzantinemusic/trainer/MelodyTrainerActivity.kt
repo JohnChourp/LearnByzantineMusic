@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.trainer.ui.MelodyTrainerScreen
 import com.johnchourp.learnbyzantinemusic.trainer.ui.MelodyTrainerUiState
 import com.johnchourp.learnbyzantinemusic.trainer.ui.PracticeModeUi
@@ -77,7 +78,7 @@ class MelodyTrainerActivity : BaseActivity() {
     private var pendingMicGrant: (() -> Unit)? = null
     private var pendingMicDeny: (() -> Unit)? = null
 
-    private val phthongLabels = TrainerPhthong.ascending.map { it.displayName }
+    private val phthongLabels = PhthongName.entries.map { it.displayName }
 
     private var uiState by mutableStateOf(MelodyTrainerUiState())
 
@@ -112,7 +113,7 @@ class MelodyTrainerActivity : BaseActivity() {
                     state = uiState,
                     phthongLabels = phthongLabels,
                     onBack = ::finish,
-                    onAddPhthong = { index -> TrainerPhthong.ascending.getOrNull(index)?.let(::addNote) },
+                    onAddPhthong = { index -> PhthongName.entries.getOrNull(index)?.let(::addNote) },
                     onOctaveDown = ::octaveDown,
                     onOctaveUp = ::octaveUp,
                     onDecrementDuration = { index -> changeDuration(index, -DURATION_STEP) },
@@ -141,7 +142,7 @@ class MelodyTrainerActivity : BaseActivity() {
 
     private val isBusy: Boolean get() = isPlaybackActive || isVoiceActive || isRhythmActive
 
-    private fun addNote(phthong: TrainerPhthong) {
+    private fun addNote(phthong: PhthongName) {
         if (isBusy) return
         notes.add(TrainerNote(phthong = phthong, octaveShift = currentOctaveShift))
         rebuildState()
@@ -448,7 +449,7 @@ class MelodyTrainerActivity : BaseActivity() {
         if (active in notes.indices && !matchedIndices.contains(active)) {
             activeIndex = active
             setActiveRhythmStatus(
-                getString(R.string.melody_trainer_rhythm_running, phthongDisplay(notes[active]))
+                getString(R.string.melody_trainer_rhythm_running, notes[active].pitch.label)
             )
         } else {
             activeIndex = -1
@@ -530,7 +531,7 @@ class MelodyTrainerActivity : BaseActivity() {
             val beats = effective.getOrElse(index) { note.baseDurationBeats }
             TrainerNoteUi(
                 index = index,
-                phthongLabel = phthongDisplay(note),
+                phthongLabel = note.pitch.label,
                 beatsLabel = formatBeats(beats),
                 hasGorgo = note.hasGorgo,
                 editable = !isBusy,
@@ -539,7 +540,7 @@ class MelodyTrainerActivity : BaseActivity() {
             )
         }
         val nowPlaying = if (isPlaybackActive && activeIndex in notes.indices) {
-            phthongDisplay(notes[activeIndex])
+            notes[activeIndex].pitch.label
         } else {
             null
         }
@@ -579,15 +580,6 @@ class MelodyTrainerActivity : BaseActivity() {
     }
 
     // endregion
-
-    private fun phthongDisplay(note: TrainerNote): String {
-        val suffix = when {
-            note.octaveShift > 0 -> "΄".repeat(note.octaveShift)
-            note.octaveShift < 0 -> ",".repeat(-note.octaveShift)
-            else -> ""
-        }
-        return note.phthong.displayName + suffix
-    }
 
     private fun octaveLabel(shift: Int): String = if (shift > 0) "+$shift" else shift.toString()
 

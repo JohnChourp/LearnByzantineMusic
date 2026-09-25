@@ -1,6 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
 import com.johnchourp.learnbyzantinemusic.analysis.ByzantineRhythmMapper
+import com.johnchourp.learnbyzantinemusic.music.Phthong
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 
 /**
  * One entry in a trainer melody: a phthong at an octave shift, a base duration in
@@ -9,12 +11,18 @@ import com.johnchourp.learnbyzantinemusic.analysis.ByzantineRhythmMapper
  * the notation analyzer interpret rhythm identically.
  */
 data class TrainerNote(
-    val phthong: TrainerPhthong,
+    val phthong: PhthongName,
     val octaveShift: Int = 0,
     val baseDurationBeats: Float = 1f,
     val modifiers: List<String> = emptyList()
 ) {
     val frequencyHz: Double get() = TrainerPitchTable.frequencyHz(phthong, octaveShift)
+
+    /**
+     * The φθόγγος with its octave, as the app's one model. The Trainer shows `pitch.label`, the same
+     * renderer as every other screen, instead of the copy it used to build by hand.
+     */
+    val pitch: Phthong get() = Phthong(phthong, octaveShift)
 
     val hasGorgo: Boolean get() = modifiers.contains(ByzantineRhythmMapper.MODIFIER_GORGO)
     val hasFraction: Boolean get() = modifiers.contains(ByzantineRhythmMapper.MODIFIER_FRACTION)

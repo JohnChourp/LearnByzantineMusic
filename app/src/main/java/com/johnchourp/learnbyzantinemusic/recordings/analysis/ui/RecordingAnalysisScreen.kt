@@ -36,12 +36,12 @@ import androidx.compose.ui.unit.dp
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionLabels
 import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AlignmentResult
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AlignmentStep
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AnalysisStatus
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.RecordingAnalysisUiState
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.SungNote
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonChip
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
@@ -64,8 +64,8 @@ fun RecordingAnalysisScreen(
     uiState: RecordingAnalysisUiState,
     onBack: () -> Unit,
     onSelectMode: (String) -> Unit,
-    onSelectStart: (TrainerPhthong) -> Unit,
-    onAddExpected: (TrainerPhthong) -> Unit,
+    onSelectStart: (PhthongName) -> Unit,
+    onAddExpected: (PhthongName) -> Unit,
     onRemoveLastExpected: () -> Unit,
     onClearExpected: () -> Unit,
     onRetry: () -> Unit,
@@ -148,7 +148,7 @@ fun RecordingAnalysisScreen(
 private fun ScaleCard(
     uiState: RecordingAnalysisUiState,
     onSelectMode: (String) -> Unit,
-    onSelectStart: (TrainerPhthong) -> Unit,
+    onSelectStart: (PhthongName) -> Unit,
 ) {
     LessonCard(title = stringResource(R.string.analysis_scale_title)) {
         Text(stringResource(R.string.analysis_mode_label), style = MaterialTheme.typography.labelLarge, color = LbmBrown)
@@ -176,7 +176,7 @@ private fun ScaleCard(
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            TrainerPhthong.ascending.forEach { phthong ->
+            PhthongName.entries.forEach { phthong ->
                 LessonChip(
                     label = phthong.displayName,
                     selected = phthong == uiState.startPhthong,
@@ -261,10 +261,10 @@ private fun SungCard(notes: List<SungNote>, durationMs: Long) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CompareCard(
-    expected: List<TrainerPhthong>,
+    expected: List<PhthongName>,
     notes: List<SungNote>,
     alignment: AlignmentResult?,
-    onAdd: (TrainerPhthong) -> Unit,
+    onAdd: (PhthongName) -> Unit,
     onRemoveLast: () -> Unit,
     onClear: () -> Unit,
 ) {
@@ -276,7 +276,7 @@ private fun CompareCard(
         )
         Spacer(Modifier.height(10.dp))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            TrainerPhthong.ascending.forEach { phthong ->
+            PhthongName.entries.forEach { phthong ->
                 OutlinedButton(onClick = { onAdd(phthong) }, contentPadding = PaddingValues(horizontal = 12.dp)) {
                     Text(phthong.displayName, color = LbmTextPrimary)
                 }
