@@ -129,12 +129,22 @@ class ExerciseBook private constructor(
 
         val EMPTY = ExerciseBook(emptyList(), emptyList(), isNewerFormat = false)
 
-        fun decode(raw: String?): ExerciseBook {
-            if (raw.isNullOrBlank()) return EMPTY
+        fun decode(raw: String?): ExerciseBook = read(raw) ?: EMPTY
+
+        /**
+         * [raw] exactly as the Trainer would write it back, or null when it writes nothing from it: a
+         * value that is not a list at all, or a list in a newer format. This is what the «Δεδομένα
+         * μάθησης» file carries, and the only form its import accepts (ClickUp `869f5x25w`).
+         */
+        fun normalized(raw: String): String? = read(raw)?.takeUnless { it.isNewerFormat }?.encode()
+
+        /** The book [raw] holds; null when it is not JSON at all, so there is nothing to keep. */
+        private fun read(raw: String?): ExerciseBook? {
+            if (raw.isNullOrBlank()) return null
             val root = try {
                 JSONObject(raw)
             } catch (_: JSONException) {
-                return EMPTY
+                return null
             }
             if (root.opt(SCHEMA_VERSION_FIELD) != SCHEMA_VERSION) {
                 return ExerciseBook(emptyList(), emptyList(), isNewerFormat = true)

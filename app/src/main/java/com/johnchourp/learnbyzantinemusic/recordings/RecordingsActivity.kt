@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +27,9 @@ import com.johnchourp.learnbyzantinemusic.notifications.AppNotifications
 import com.johnchourp.learnbyzantinemusic.recordings.index.RecordingsRepository
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AnalysisSettingsStore
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.RecordingAnalysisActivity
+import com.johnchourp.learnbyzantinemusic.recordings.player.InAppPlayerViewModel
+import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerItem
+import com.johnchourp.learnbyzantinemusic.recordings.player.cardActions
 import com.johnchourp.learnbyzantinemusic.recordings.session.PendingRecording
 import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingService
 import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingEventText
@@ -58,8 +62,11 @@ import kotlinx.coroutines.launch
  * page must open instantly even when the folder holds thousands of files, and a full SAF walk cannot
  * promise that. Browsing everything is [RecordingsManagerActivity]'s job.
  *
- * **Opening a file** goes through [RecordingExternalOpener], which copies into cache and hands out a
- * `FileProvider` URI, because many external players cannot read a foreign SAF URI directly.
+ * **Listening** happens in the in-app player under the title (A-B loop, slower at the same pitch,
+ * shift in μόρια — ClickUp `869f5x268`), which waits while a recording is in progress and is
+ * released in `onStop`. **Another app** is one tap away on the player card, through
+ * [RecordingExternalOpener], which copies into cache and hands out a `FileProvider` URI, because
+ * many external players cannot read a foreign SAF URI directly.
  *
  * **Requires** `RECORD_AUDIO` and a persisted SAF tree grant; changing the folder is confirmed first,
  * so a mis-tap cannot silently orphan the current one.
@@ -88,6 +95,7 @@ class RecordingsActivity : BaseActivity() {
 
     // The process's recording: it outlives this screen (see the class KDoc).
     private val session by lazy { RecordingSessions.get(applicationContext) }
+    private val player: InAppPlayerViewModel by viewModels()
     private var sessionShown = false
 
     private var selectedFolderUri: Uri? = null
@@ -191,9 +199,12 @@ class RecordingsActivity : BaseActivity() {
             LbmTheme(palette = currentPalette()) {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val recentItems = viewModel.recentItemsFlow.collectAsLazyPagingItems()
+                val playerState by player.state.collectAsStateWithLifecycle()
 
                 RecordingsScreen(
                     uiState = uiState,
+                    player = playerState,
+                    playerActions = remember { player.cardActions(this@RecordingsActivity, ::openRecordingExternally) },
                     recentItems = recentItems,
                     onBack = { handleBackRequested() },
                     onChangeFolder = { showChangeFolderConfirmationDialog() },
@@ -205,7 +216,7 @@ class RecordingsActivity : BaseActivity() {
                     onSavePending = { savePendingRecording(it) },
                     onDeletePending = { showDeletePendingDialog(it) },
                     onFormatChanged = { viewModel.setSelectedFormat(it) },
-                    onOpenRecording = { openRecordingInExternalPlayer(it) },
+                    onOpenRecording = { playRecording(it) },
                     onShareRecording = { shareRecording(it) },
                     onRenameRecording = { showRenameRecordingDialog(it) },
                     onDeleteRecording = { showDeleteRecordingDialog(it) },
@@ -222,6 +233,13 @@ class RecordingsActivity : BaseActivity() {
                 )
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // No sound in the background: the player is released here and prepared again on the next
+        // play. The recording is the session's, not this screen's — it is not touched.
+        player.onScreenStopped()
     }
 
     /**
@@ -364,6 +382,7 @@ class RecordingsActivity : BaseActivity() {
             .setMessage(getString(R.string.recordings_delete_confirm_message, item.name))
             .setPositiveButton(getString(R.string.recordings_delete_confirm_button)) { _, _ ->
                 viewModel.deleteItem(item) { result ->
+                    if (result != DeleteOutcome.FAILED) closePlayerIfHolding(item.uri)
                     when (result) {
                         DeleteOutcome.SUCCESS -> {
                             setStatus(getString(R.string.recordings_status_deleted_template, item.name))
@@ -417,6 +436,7 @@ class RecordingsActivity : BaseActivity() {
                 }
 
                 viewModel.renameItem(item, targetName) { result ->
+                    if (result == RenameOutcome.SUCCESS || result == RenameOutcome.REMOVED) closePlayerIfHolding(item.uri)
                     when (result) {
                         RenameOutcome.SUCCESS -> {
                             setStatus(getString(R.string.recordings_status_renamed_template, targetName))
@@ -475,26 +495,46 @@ class RecordingsActivity : BaseActivity() {
         }
     }
 
-    private fun openRecordingInExternalPlayer(item: RecordingListItem) {
+    /** A recording from the list opens in the in-app player; one that has disappeared is dropped. */
+    private fun playRecording(item: RecordingListItem) {
         lifecycleScope.launch {
-            val exists = recordingsRepository.checkRecordingExists(item.uri)
+            if (!recordingsRepository.checkRecordingExists(item.uri)) {
+                handleRemovedRecording(item.uri)
+                return@launch
+            }
+            player.open(PlayerItem(item.uri, item.name, resolvePlaybackMimeType(item)))
+        }
+    }
+
+    /** «Άνοιγμα σε άλλη εφαρμογή» on the player card — the only way out when the device cannot play the file. */
+    private fun openRecordingExternally() {
+        val recording = player.current ?: return
+        openRecordingInExternalPlayer(recording.uri, recording.name, recording.mimeType ?: "audio/*")
+    }
+
+    private fun closePlayerIfHolding(uri: Uri) {
+        if (player.current?.uri == uri) player.close()
+    }
+
+    private fun openRecordingInExternalPlayer(uri: Uri, name: String, mimeType: String) {
+        lifecycleScope.launch {
+            val exists = recordingsRepository.checkRecordingExists(uri)
             if (!exists) {
-                handleRemovedRecording(item)
+                handleRemovedRecording(uri)
                 return@launch
             }
 
-            setStatus(getString(R.string.recordings_status_opening_template, item.name))
-            val resolvedMimeType = resolvePlaybackMimeType(item)
+            setStatus(getString(R.string.recordings_status_opening_template, name))
             recordingExternalOpener.openRecordingWithChooser(
-                sourceUri = item.uri,
-                fileName = item.name,
-                mimeType = resolvedMimeType,
+                sourceUri = uri,
+                fileName = name,
+                mimeType = mimeType,
                 chooserTitle = getString(R.string.recordings_open_recording_with),
                 onFailure = {
                     lifecycleScope.launch {
-                        val stillExists = recordingsRepository.checkRecordingExists(item.uri)
+                        val stillExists = recordingsRepository.checkRecordingExists(uri)
                         if (!stillExists) {
-                            handleRemovedRecording(item)
+                            handleRemovedRecording(uri)
                         } else {
                             setStatus(getString(R.string.recordings_open_recording_no_app))
                             Toast.makeText(
@@ -551,6 +591,9 @@ class RecordingsActivity : BaseActivity() {
     }
 
     private fun startRecordingSession() {
+        // Nothing may play into the microphone: the player pauses before capture starts, not a
+        // moment later when the session's state reaches it (ClickUp 869f5x268).
+        player.holdForRecording()
         // The session refuses while a recording runs or saves; the result — recording, or
         // «Αποτυχία εκκίνησης» — arrives through its state.
         val started = session.start(
@@ -565,6 +608,8 @@ class RecordingsActivity : BaseActivity() {
             // while this screen is visible, as a microphone foreground service requires. If it
             // cannot start, the recording goes on exactly as before, on this screen, which stays on.
             RecordingService.start(this)
+        } else {
+            player.releaseHold()
         }
     }
 
@@ -605,11 +650,14 @@ class RecordingsActivity : BaseActivity() {
             .show()
     }
 
-    private fun handleRemovedRecording(item: RecordingListItem) {
+    private fun handleRemovedRecording(item: RecordingListItem) = handleRemovedRecording(item.uri)
+
+    private fun handleRemovedRecording(uri: Uri) {
         setStatus(getString(R.string.recordings_error_removed))
         Toast.makeText(this, R.string.recordings_error_removed, Toast.LENGTH_SHORT).show()
+        closePlayerIfHolding(uri)
         lifecycleScope.launch {
-            recordingsRepository.removeOwnedRecording(item.uri)
+            recordingsRepository.removeOwnedRecording(uri)
         }
     }
 
