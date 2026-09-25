@@ -610,7 +610,7 @@
     <string name="settings_language_current_badge">Current</string>
     <!-- «Learning data» (ClickUp 869f5x25w) -->
     <string name="settings_learning_data_label">Learning data</string>
-    <string name="settings_learning_data_hint">Take your favourites, your \"From scratch\" progress and your settings to another phone, in one file. Folders (notes, recordings) are not in the file; on the new phone you pick them again.</string>
+    <string name="settings_learning_data_hint">Take your favourites, your \"From scratch\" progress, your practice history and your settings to another phone, in one file. Folders (notes, recordings) are not in the file; on the new phone you pick them again.</string>
     <string name="settings_learning_data_export">Export</string>
     <string name="settings_learning_data_import">Import</string>
     <string name="settings_learning_data_reset_hint">A lesson of the \"From scratch\" path counts as done as soon as you open it. Resetting starts the path over.</string>
@@ -626,6 +626,7 @@
     <string name="learning_data_item_metronome">Metronome: tempo and switches</string>
     <string name="learning_data_item_favourites">Favourite pages: %1$d</string>
     <string name="learning_data_item_progress">\"From scratch\" progress: %1$d of %2$d</string>
+    <string name="learning_data_item_practice">Practice history, days: %1$d</string>
     <string name="learning_data_item_selected_mode">The mode 8 Modes opens on</string>
     <string name="learning_data_item_timbre">Tone timbre</string>
     <string name="learning_data_item_ison_background">The ison in the background</string>
@@ -642,7 +643,7 @@
     <string name="learning_data_import_empty">The file has nothing to import.</string>
     <string name="learning_data_import_write_failed">Writing failed; only some of the settings may have changed. Try the import again.</string>
     <string name="learning_data_reset_title">Reset progress?</string>
-    <string name="learning_data_reset_message">The \"From scratch\" path will start over: no step will count as done. A lesson counts as done as soon as you open it, so it counts again the next time you open it. Favourites and settings do not change.</string>
+    <string name="learning_data_reset_message">The \"From scratch\" path will start over: no step will count as done. A lesson counts as done as soon as you open it, so it counts again the next time you open it. Favourites, your practice history and settings do not change.</string>
     <string name="learning_data_reset_confirm">Reset</string>
     <string name="learning_data_reset_done">Progress reset.</string>
     <string name="learning_data_cancel">Cancel</string>
@@ -1195,6 +1196,51 @@
     <string name="home_weekly_tone_this_week">This week: %1$s</string>
     <string name="home_weekly_tone_from_vespers">From vespers tonight: %1$s</string>
     <string name="home_weekly_tone_open_eight_modes">Open in the 8 Modes</string>
+    <!-- Five minutes a day (ClickUp 869f5x2dy) -->
+    <string name="practice_daily_title">Five minutes a day</string>
+    <string name="practice_daily_subtitle">Apichima, voice, rhythm and the next lesson — five minutes.</string>
+    <string name="home_practice_status_done">Today ✓ · Day streak: %1$d</string>
+    <string name="home_practice_status_pending">Not yet today · Day streak: %1$d</string>
+    <string name="practice_step_counter">Step %1$d of %2$d · %3$d′</string>
+    <string name="practice_step_apichima_title">Apichima and ison</string>
+    <string name="practice_step_apichima_body">Mode: %1$s. Listen to the apichima, then hold a phthong over the ison.</string>
+    <string name="practice_step_voice_title">Voice</string>
+    <string name="practice_step_voice_body">Mode: %1$s. With the ison sounding, chant and see in «Where am I» which phthong you are on.</string>
+    <string name="practice_step_voice_action">Open «Where am I»</string>
+    <string name="practice_step_rhythm_title">Rhythm</string>
+    <string name="practice_step_rhythm_body">Start the metronome and keep the beat with your hand for a minute.</string>
+    <string name="practice_step_rhythm_action">Open the metronome</string>
+    <string name="practice_step_lesson_title">The next lesson</string>
+    <string name="practice_step_lesson_body">From scratch: %1$s</string>
+    <string name="practice_step_lesson_action">Open the lesson</string>
+    <string name="practice_no_tone_note">This week no mode of the Octoechos is chanted, so we practise the First Mode, where the cycle begins.</string>
+    <string name="practice_next">Next</string>
+    <string name="practice_end">End</string>
+    <string name="practice_counts_at_end_hint">The day counts once you reach the last step.</string>
+    <string name="practice_last_step_hint">Last step: «Next» or «End», and today\'s practice counts.</string>
+    <string name="practice_done_title">Well done — today\'s practice counts.</string>
+    <string name="practice_streak_days">Day streak: %1$d</string>
+    <string name="practice_open_history">Practice history</string>
+    <string name="practice_close">Close</string>
+    <string name="practice_history_subtitle">The days you completed the five minutes, and a reminder if you want one.</string>
+    <string name="practice_history_streak_title">Streak</string>
+    <string name="practice_history_today_done">Today: done</string>
+    <string name="practice_history_today_pending">Today: not yet</string>
+    <string name="practice_history_best">Best streak: %1$d</string>
+    <string name="practice_history_week_title">The last 7 days</string>
+    <string name="practice_history_week_total">Days: %1$d · Minutes: %2$d</string>
+    <string name="practice_history_bar_cd">%1$s — minutes: %2$d</string>
+    <string name="practice_reminder_title">Reminder</string>
+    <string name="practice_reminder_switch">Remind me if I have not practised</string>
+    <string name="practice_reminder_time">Time: %1$s</string>
+    <string name="practice_reminder_change_time">Change time</string>
+    <string name="practice_reminder_note">Around this time, and only if you have not completed today\'s five minutes yet.</string>
+    <string name="practice_reminder_blocked">The app\'s notifications are off, so the reminder will not show.</string>
+    <string name="practice_reminder_open_settings">Notification settings</string>
+    <string name="practice_reminder_channel_name">Practice reminder</string>
+    <string name="practice_reminder_channel_description">Once a day, at the time you chose, if you have not practised yet.</string>
+    <string name="practice_reminder_notification_text">You have not practised yet today — five minutes are enough.</string>
+    <string name="practice_reminder_notification_text_streak">Day streak: %1$d — five minutes keep it going.</string>
     <!-- Live voice mirror (E1) -->
     <string name="eight_modes_mirror_card_title">Where am I</string>
     <string name="eight_modes_mirror_hint">Turn the microphone on and chant: it tells you which phthong you are on, and how many moria away.</string>

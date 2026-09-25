@@ -609,7 +609,7 @@
     <string name="settings_language_current_badge">Τρέχουσα</string>
     <!-- «Δεδομένα μάθησης» (ClickUp 869f5x25w) -->
     <string name="settings_learning_data_label">Δεδομένα μάθησης</string>
-    <string name="settings_learning_data_hint">Πάρε σε άλλο κινητό τα αγαπημένα, την πρόοδο «Από το μηδέν» και τις ρυθμίσεις σου, σε ένα αρχείο. Οι φάκελοι (σημειώσεις, ηχογραφήσεις) δεν μπαίνουν στο αρχείο· στο νέο κινητό τους ξαναδιαλέγεις.</string>
+    <string name="settings_learning_data_hint">Πάρε σε άλλο κινητό τα αγαπημένα, την πρόοδο «Από το μηδέν», το ιστορικό εξάσκησης και τις ρυθμίσεις σου, σε ένα αρχείο. Οι φάκελοι (σημειώσεις, ηχογραφήσεις) δεν μπαίνουν στο αρχείο· στο νέο κινητό τους ξαναδιαλέγεις.</string>
     <string name="settings_learning_data_export">Εξαγωγή</string>
     <string name="settings_learning_data_import">Εισαγωγή</string>
     <string name="settings_learning_data_reset_hint">Ένα μάθημα της διαδρομής «Από το μηδέν» μετρά ως ολοκληρωμένο μόλις το ανοίξεις. Ο μηδενισμός την ξεκινά από την αρχή.</string>
@@ -625,6 +625,7 @@
     <string name="learning_data_item_metronome">Μετρονόμος: tempo και διακόπτες</string>
     <string name="learning_data_item_favourites">Αγαπημένες σελίδες: %1$d</string>
     <string name="learning_data_item_progress">Πρόοδος «Από το μηδέν»: %1$d από %2$d</string>
+    <string name="learning_data_item_practice">Ιστορικό εξάσκησης, ημέρες: %1$d</string>
     <string name="learning_data_item_selected_mode">Ο ήχος που ανοίγουν οι 8 Ήχοι</string>
     <string name="learning_data_item_timbre">Χροιά ήχου</string>
     <string name="learning_data_item_ison_background">Το ισοκράτημα στο παρασκήνιο</string>
@@ -641,7 +642,7 @@
     <string name="learning_data_import_empty">Το αρχείο δεν έχει τίποτα για εισαγωγή.</string>
     <string name="learning_data_import_write_failed">Η εγγραφή απέτυχε· ίσως άλλαξαν μόνο κάποιες από τις ρυθμίσεις. Ξαναδοκίμασε την εισαγωγή.</string>
     <string name="learning_data_reset_title">Μηδενισμός προόδου;</string>
-    <string name="learning_data_reset_message">Η διαδρομή «Από το μηδέν» θα ξεκινήσει από την αρχή: κανένα βήμα δεν θα μετρά ως ολοκληρωμένο. Ένα μάθημα μετρά ως ολοκληρωμένο μόλις το ανοίξεις, οπότε ξαναμετρά την επόμενη φορά που θα το ανοίξεις. Τα αγαπημένα και οι ρυθμίσεις δεν αλλάζουν.</string>
+    <string name="learning_data_reset_message">Η διαδρομή «Από το μηδέν» θα ξεκινήσει από την αρχή: κανένα βήμα δεν θα μετρά ως ολοκληρωμένο. Ένα μάθημα μετρά ως ολοκληρωμένο μόλις το ανοίξεις, οπότε ξαναμετρά την επόμενη φορά που θα το ανοίξεις. Τα αγαπημένα, το ιστορικό εξάσκησης και οι ρυθμίσεις δεν αλλάζουν.</string>
     <string name="learning_data_reset_confirm">Μηδενισμός</string>
     <string name="learning_data_reset_done">Η πρόοδος μηδενίστηκε.</string>
     <string name="learning_data_cancel">Άκυρο</string>
@@ -1194,6 +1195,51 @@
     <string name="home_weekly_tone_this_week">Αυτή την εβδομάδα: %1$s</string>
     <string name="home_weekly_tone_from_vespers">Από τον εσπερινό απόψε: %1$s</string>
     <string name="home_weekly_tone_open_eight_modes">Άνοιξε στους 8 Ήχους</string>
+    <!-- Πεντάλεπτο της ημέρας (ClickUp 869f5x2dy) -->
+    <string name="practice_daily_title">Πεντάλεπτο της ημέρας</string>
+    <string name="practice_daily_subtitle">Απήχημα, φωνή, ρυθμός και το επόμενο μάθημα — πέντε λεπτά.</string>
+    <string name="home_practice_status_done">Σήμερα ✓ · Συνέχεια ημερών: %1$d</string>
+    <string name="home_practice_status_pending">Όχι ακόμη σήμερα · Συνέχεια ημερών: %1$d</string>
+    <string name="practice_step_counter">Βήμα %1$d από %2$d · %3$d′</string>
+    <string name="practice_step_apichima_title">Απήχημα και ίσον</string>
+    <string name="practice_step_apichima_body">Ήχος: %1$s. Άκου το απήχημα και κράτα έναν φθόγγο πάνω στο ίσο.</string>
+    <string name="practice_step_voice_title">Φωνή</string>
+    <string name="practice_step_voice_body">Ήχος: %1$s. Με το ίσο να ηχεί, ψάλε και δες στο «Πού είμαι» σε ποιον φθόγγο βρίσκεσαι.</string>
+    <string name="practice_step_voice_action">Άνοιξε το «Πού είμαι»</string>
+    <string name="practice_step_rhythm_title">Ρυθμός</string>
+    <string name="practice_step_rhythm_body">Βάλε τον μετρονόμο και κράτα τον χρόνο με το χέρι για ένα λεπτό.</string>
+    <string name="practice_step_rhythm_action">Άνοιξε τον μετρονόμο</string>
+    <string name="practice_step_lesson_title">Το επόμενο μάθημα</string>
+    <string name="practice_step_lesson_body">Από το μηδέν: %1$s</string>
+    <string name="practice_step_lesson_action">Άνοιξε το μάθημα</string>
+    <string name="practice_no_tone_note">Αυτή την εβδομάδα δεν ψάλλεται ήχος της Οκτωήχου· εξασκούμαστε στον Α’ Ήχο, όπου αρχίζει ο κύκλος.</string>
+    <string name="practice_next">Επόμενο</string>
+    <string name="practice_end">Τέλος</string>
+    <string name="practice_counts_at_end_hint">Η ημέρα μετρά όταν φτάσεις στο τελευταίο βήμα.</string>
+    <string name="practice_last_step_hint">Τελευταίο βήμα: με «Επόμενο» ή «Τέλος» η σημερινή εξάσκηση μετρά.</string>
+    <string name="practice_done_title">Μπράβο — η σημερινή εξάσκηση μετρά.</string>
+    <string name="practice_streak_days">Συνέχεια ημερών: %1$d</string>
+    <string name="practice_open_history">Ιστορικό εξάσκησης</string>
+    <string name="practice_close">Κλείσιμο</string>
+    <string name="practice_history_subtitle">Οι ημέρες που ολοκλήρωσες το πεντάλεπτο, και μια υπενθύμιση αν τη θέλεις.</string>
+    <string name="practice_history_streak_title">Συνέχεια</string>
+    <string name="practice_history_today_done">Σήμερα: ολοκληρώθηκε</string>
+    <string name="practice_history_today_pending">Σήμερα: όχι ακόμη</string>
+    <string name="practice_history_best">Καλύτερη συνέχεια: %1$d</string>
+    <string name="practice_history_week_title">Οι τελευταίες 7 ημέρες</string>
+    <string name="practice_history_week_total">Ημέρες: %1$d · Λεπτά: %2$d</string>
+    <string name="practice_history_bar_cd">%1$s — λεπτά: %2$d</string>
+    <string name="practice_reminder_title">Υπενθύμιση</string>
+    <string name="practice_reminder_switch">Υπενθύμισέ μου αν δεν έχω εξασκηθεί</string>
+    <string name="practice_reminder_time">Ώρα: %1$s</string>
+    <string name="practice_reminder_change_time">Αλλαγή ώρας</string>
+    <string name="practice_reminder_note">Κοντά σε αυτή την ώρα, και μόνο αν δεν έχεις ολοκληρώσει ακόμη το πεντάλεπτο της ημέρας.</string>
+    <string name="practice_reminder_blocked">Οι ειδοποιήσεις της εφαρμογής είναι κλειστές, οπότε η υπενθύμιση δεν θα φαίνεται.</string>
+    <string name="practice_reminder_open_settings">Ρυθμίσεις ειδοποιήσεων</string>
+    <string name="practice_reminder_channel_name">Υπενθύμιση εξάσκησης</string>
+    <string name="practice_reminder_channel_description">Μία φορά την ημέρα, στην ώρα που διάλεξες, αν δεν έχεις εξασκηθεί ακόμη.</string>
+    <string name="practice_reminder_notification_text">Δεν έχεις εξασκηθεί ακόμη σήμερα — πέντε λεπτά αρκούν.</string>
+    <string name="practice_reminder_notification_text_streak">Συνέχεια ημερών: %1$d — πέντε λεπτά για να συνεχίσει.</string>
     <!-- Ζωντανός καθρέφτης φωνής (E1) -->
     <string name="eight_modes_mirror_card_title">Πού είμαι</string>
     <string name="eight_modes_mirror_hint">Άνοιξε το μικρόφωνο και ψάλε: σου λέει σε ποιον φθόγγο είσαι και πόσα μόρια μακριά.</string>

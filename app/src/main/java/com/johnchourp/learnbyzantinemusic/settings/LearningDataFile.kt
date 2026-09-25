@@ -7,6 +7,7 @@ import com.johnchourp.learnbyzantinemusic.lessons.ui.MetronomeSchedule
 import com.johnchourp.learnbyzantinemusic.modes.ToneTimbre
 import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.Mode
+import com.johnchourp.learnbyzantinemusic.practice.PracticeLogCodec
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingFormatOption
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.StoredPhthongs
@@ -17,8 +18,8 @@ import org.json.JSONObject
 import java.time.LocalDate
 
 /**
- * The «Δεδομένα μάθησης» file: the favourites, the «Από το μηδέν» progress and the settings, in one
- * file the learner saves and opens through the system pickers to take them to another phone
+ * The «Δεδομένα μάθησης» file: the favourites, the «Από το μηδέν» progress, the practice history and
+ * the settings, in one file the learner saves and opens through the system pickers to take them to another phone
  * (ClickUp `869f5x25w`). Pure — no Android — so every rule here runs in plain JVM tests; the Settings
  * screen reads and writes the preferences around it ([LearningDataPrefs]).
  *
@@ -33,7 +34,8 @@ import java.time.LocalDate
  * **One rule for both directions: [normalized].** For every key it gives the value the app itself
  * would use when it reads that key — through the app's own rules: [AppFontScale.normalizeStep],
  * [MetronomeSchedule.clampBpm], the shared «Μεταφορά βάσης» range [BaseShift.clamp] (so the file
- * follows it when it widens), [LearningPath.isStep], [Mode.fromKey], [StoredPhthongs] and the enums. The
+ * follows it when it widens), [LearningPath.isStep], [Mode.fromKey], [StoredPhthongs],
+ * [PracticeLogCodec] (the practice history behind the streak, ClickUp `869f5x2dy`) and the enums. The
  * export writes normalised values; the import accepts a value only when it is already in that form.
  * So whatever the app exports, it can import back.
  *
@@ -169,7 +171,7 @@ object LearningDataFile {
     // ---- what the confirmation dialog lists ------------------------------------------------------
 
     /** The kinds of change an import can make, in the order the dialog lists them. */
-    enum class Item { FONT_SIZE, LANGUAGE, THEME, METRONOME, FAVOURITES, PROGRESS, SELECTED_MODE, TIMBRE, ISON_BACKGROUND, BASE_SHIFT, RECORDING_FORMAT, ANALYSIS }
+    enum class Item { FONT_SIZE, LANGUAGE, THEME, METRONOME, FAVOURITES, PROGRESS, PRACTICE, SELECTED_MODE, TIMBRE, ISON_BACKGROUND, BASE_SHIFT, RECORDING_FORMAT, ANALYSIS }
 
     /** One line of the dialog; [count] is how many pages, steps, modes or hymns, where that matters. */
     data class Line(val item: Item, val count: Int)
@@ -183,6 +185,7 @@ object LearningDataFile {
                 val bucket = things.getOrPut(item) { mutableSetOf() }
                 when (item) {
                     Item.FAVOURITES, Item.PROGRESS -> (value as Set<*>).forEach { bucket += it.toString() }
+                    Item.PRACTICE -> PracticeLogCodec.decode(value as String).practisedDays.forEach { bucket += it.toString() }
                     Item.BASE_SHIFT -> bucket += name.removePrefix(AppPrefs.BASE_SHIFT_KEY_PREFIX)
                     Item.ANALYSIS -> bucket += analysisContext(name)
                     else -> bucket += name
@@ -200,6 +203,7 @@ object LearningDataFile {
         AppPrefs.MetronomeBpm, AppPrefs.MetronomeVibrate, AppPrefs.MetronomeSilent, AppPrefs.MetronomeFootMode -> Item.METRONOME
         AppPrefs.FavoriteTopicIds -> Item.FAVOURITES
         AppPrefs.LearningCompletedStepIds -> Item.PROGRESS
+        AppPrefs.PracticeLogJson -> Item.PRACTICE
         AppPrefs.SelectedModeKey -> Item.SELECTED_MODE
         AppPrefs.SelectedToneTimbre -> Item.TIMBRE
         AppPrefs.IsonInBackground -> Item.ISON_BACKGROUND
@@ -260,6 +264,9 @@ object LearningDataFile {
         AppPrefs.RecordingsOutputFormat -> (value as? String)?.let { RecordingFormatOption.fromStoredValue(it).name }
         AppPrefs.AnalysisExpectedMelody -> (value as? String)?.let { StoredPhthongs.encodeList(StoredPhthongs.decodeList(it)) }
         AppPrefs.AnalysisStartPhthong -> StoredPhthongs.decode(value as? String)?.let(StoredPhthongs::encode)
+        // An empty or unreadable history is not carried, so an import never replaces a history with nothing.
+        AppPrefs.PracticeLogJson -> (value as? String)?.let(PracticeLogCodec::decode)
+            ?.takeIf { it.days.isNotEmpty() }?.let(PracticeLogCodec::encode)
         // A key the file may not carry has no value in it.
         else -> null
     }
