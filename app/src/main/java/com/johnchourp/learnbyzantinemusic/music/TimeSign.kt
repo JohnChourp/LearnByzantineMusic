@@ -10,7 +10,9 @@ package com.johnchourp.learnbyzantinemusic.music
  * - an **additive** sign lengthens the note it is written on by [addsBeats] χρόνοι;
  * - a **divider** makes a group of neighbouring notes share **one** χρόνο, in the proportions of
  *   [shares], in sung order. The group starts [firstShareOffset] notes away from the sign's own
- *   note: −1 is the previous note, −2 the one before it.
+ *   note: −1 is the previous note, −2 the one before it;
+ * - a **rest** (the βαρεία with κουκίδες) stands where a note would: that note is silent and lasts
+ *   exactly [restBeats] χρόνοι (ClickUp `869f5x25n`, F4).
  *
  * The αργόν family is both: the two notes before it share a χρόνο, and its own note is lengthened.
  *
@@ -23,6 +25,7 @@ enum class TimeSign(
     val addsBeats: Int = 0,
     val shares: List<Beats> = emptyList(),
     val firstShareOffset: Int = 0,
+    val restBeats: Int = 0,
 ) {
     /** Κλάσμα: +1 χρόνος. */
     KLASMA("fraction", addsBeats = 1),
@@ -83,10 +86,22 @@ enum class TimeSign(
     DIARGON("diargo", addsBeats = 2, shares = listOf(Beats.of(1, 2), Beats.of(1, 2)), firstShareOffset = -2),
 
     /** Τρίαργον: as αργόν, and its own note lasts 4. */
-    TRIARGON("triargo", addsBeats = 3, shares = listOf(Beats.of(1, 2), Beats.of(1, 2)), firstShareOffset = -2);
+    TRIARGON("triargo", addsBeats = 3, shares = listOf(Beats.of(1, 2), Beats.of(1, 2)), firstShareOffset = -2),
+
+    /** Βαρεία with απλή: a rest of one χρόνος. On a rest the dots count the χρόνοι; on a note they add them. */
+    VAREIA_APLI("vareia_apli", restBeats = 1),
+
+    /** Βαρεία with διπλή: a rest of two χρόνοι. */
+    VAREIA_DIPLI("vareia_dipli", restBeats = 2),
+
+    /** Βαρεία with τριπλή: a rest of three χρόνοι. */
+    VAREIA_TRIPLI("vareia_tripli", restBeats = 3);
 
     /** True for the signs that share one χρόνο among a group of notes. */
     val isDivider: Boolean get() = shares.isNotEmpty()
+
+    /** True for the rests: the note they stand for is silent. */
+    val isRest: Boolean get() = restBeats > 0
 
     /** How many notes a divider needs before its own: 1 for the γοργόν family, 2 for the αργόν. */
     val notesBefore: Int get() = if (isDivider) -firstShareOffset else 0

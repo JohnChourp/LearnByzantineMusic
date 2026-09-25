@@ -53,10 +53,12 @@ data class TrainerMelody(
  * | `notes[].phthong` | `PhthongName` constant name, frozen by H2 | unknown: rejected |
  * | `notes[].octave` | [TrainerScale.MIN_NOTE_OCTAVE] … [TrainerScale.MAX_NOTE_OCTAVE] | clamped; missing: rejected |
  * | `notes[].length` | the note's own length in χρόνοι | clamped to ½ … 4; missing: rejected |
- * | `notes[].signs` | `TimeSign.id`s — `gorgo` and `fraction` are the Trainer's, frozen by H5 | an id no sign has: rejected |
+ * | `notes[].signs` | `TimeSign.id`s — `gorgo` and `fraction` are the Trainer's, frozen by H5 | an id no sign has, or a rest's: rejected |
  *
  * **Rejected** means [decode] returns null: never a crash, and never half a melody — a note with a sign
  * the app does not know would play with the wrong timing, so the whole melody is refused instead.
+ * So is a rest (the βαρεία signs of F4, ClickUp `869f5x25n`): the Trainer's notes are sung and its
+ * player has no silence, so a rest read onto one would sound. Before F4 their ids were unknown here.
  * Clamping only brings a value back into the range the app itself writes.
  *
  * On the way in the notes also go through `MelodySequence.normalised`, the rule of H5: a γοργόν that
@@ -142,7 +144,7 @@ object TrainerMelodyCodec {
         val signsJson = json.optJSONArray(SIGNS)
         if (signsJson != null) {
             for (index in 0 until signsJson.length()) {
-                signs += (signsJson.opt(index) as? String)?.let(TimeSign::fromId) ?: return null
+                signs += (signsJson.opt(index) as? String)?.let(TimeSign::fromId)?.takeUnless { it.isRest } ?: return null
             }
         }
         return TrainerNote(

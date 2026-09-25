@@ -35,6 +35,7 @@ import com.johnchourp.learnbyzantinemusic.music.RhythmProblem.Reason
  * | αργόν | the two notes before the carrier share one χρόνο; the carrier (the ολίγον) is lengthened | ½ + ½ + 2 |
  * | δίαργον | as αργόν | ½ + ½ + 3 |
  * | τρίαργον | as αργόν | ½ + ½ + 4 |
+ * | βαρεία with απλή / διπλή / τριπλή — a rest | the rest itself, silent | 1 / 2 / 3 |
  *
  * **Sharing keeps the rest.** A note that shares a χρόνο gives that one χρόνος to the group and keeps
  * whatever it lasts beyond it. The notes before the carrier give their *last* χρόνο, the carrier and
@@ -58,6 +59,8 @@ import com.johnchourp.learnbyzantinemusic.music.RhythmProblem.Reason
  * | two dividers on one note | **invalid** ([Reason.TWO_DIVIDERS]) |
  * | a divider asking for a χρόνο that is already shared (a δίγοργον right after a γοργόν note) | **invalid** ([Reason.NO_BEAT_TO_SHARE]); only the plain γοργόν continues a run |
  * | shorter than ½ | **allowed**: ⅓ and ¼ are ordinary lengths here. The ½ floor is the Trainer's input rule — what its ± buttons let you write — and lives in `MelodySequence` |
+ * | any other sign on a rest | **invalid** ([Reason.SIGN_ON_A_REST]); the rest keeps its own length |
+ * | a divider that would share a χρόνο with a rest (a γοργόν right after a rest) | **invalid** ([Reason.REST_IN_GROUP]): a silence has no χρόνο to share |
  *
  * An invalid divider is listed by [problems] and shares nothing; the χρόνοι a sign adds always count.
  * Whoever builds a melody decides what to do about a problem: the Trainer never keeps one.
@@ -79,15 +82,24 @@ object ByzantineRhythmMapper {
         val problems: List<RhythmProblem>
 
         init {
-            val length = notes.map { note ->
-                note.signs.fold(note.base) { sum, sign -> sum + Beats.whole(sign.addsBeats) }
+            val found = mutableListOf<RhythmProblem>()
+            val rest = BooleanArray(notes.size) { notes[it].isRest }
+            val length = notes.mapIndexed { i, note ->
+                if (rest[i]) {
+                    // A rest lasts what its sign says, whatever else the note carries.
+                    val sign = note.signs.filter { it.isRest }.minBy { it.ordinal }
+                    note.signs.filter { it != sign }.sortedBy { it.ordinal }
+                        .forEach { found += RhythmProblem(i, it, Reason.SIGN_ON_A_REST) }
+                    Beats.whole(sign.restBeats)
+                } else {
+                    note.signs.fold(note.base) { sum, sign -> sum + Beats.whole(sign.addsBeats) }
+                }
             }.toMutableList()
             // The whole χρόνοι a note can still give to a shared one: its first and its last. Under two
-            // χρόνοι they are the same χρόνος, so giving it either way gives it away.
+            // χρόνοι they are the same χρόνος, so giving it either way gives it away. A rest has none.
             val single = BooleanArray(notes.size) { length[it] < Beats.whole(2) }
-            val firstFree = BooleanArray(notes.size) { length[it] >= Beats.ONE }
+            val firstFree = BooleanArray(notes.size) { !rest[it] && length[it] >= Beats.ONE }
             val lastFree = firstFree.copyOf()
-            val found = mutableListOf<RhythmProblem>()
 
             fun give(index: Int, last: Boolean) {
                 if (single[index] || last) lastFree[index] = false
@@ -95,6 +107,7 @@ object ByzantineRhythmMapper {
             }
 
             notes.forEachIndexed { i, note ->
+                if (rest[i]) return@forEachIndexed // its other signs are already reported
                 val dividers = note.signs.filter { it.isDivider }.sortedBy { it.ordinal }
                 if (dividers.size > 1) {
                     dividers.forEach { found += RhythmProblem(i, it, Reason.TWO_DIVIDERS) }
@@ -112,6 +125,10 @@ object ByzantineRhythmMapper {
                 }
                 val first = i + sign.firstShareOffset
                 val group = sign.shares.indices.map { first + it }
+                if (group.any { rest[it] }) {
+                    found += RhythmProblem(i, sign, Reason.REST_IN_GROUP)
+                    return@forEachIndexed
+                }
                 // A γοργόν after a note with no whole χρόνος left to give — a γοργόν note itself, or a
                 // note shorter than a χρόνος — takes nothing from it: the run of halves goes on.
                 val givers = if (sign == TimeSign.GORGON && !lastFree[i - 1]) listOf(i) else group
@@ -130,7 +147,10 @@ object ByzantineRhythmMapper {
     }
 }
 
-/** One sung note for the time rules: the [TimeSign]s written on it and its own length before them. */
+/**
+ * One sung note for the time rules: the [TimeSign]s written on it and its own length before them —
+ * or, when it carries a rest sign, a silence of that rest's length ([isRest]).
+ */
 data class RhythmNote(
     val signs: Set<TimeSign> = emptySet(),
     /** One χρόνος in written music. The Melody Trainer lets you set others: its input rules, `MelodySequence`. */
@@ -139,6 +159,9 @@ data class RhythmNote(
     init {
         require(base > Beats.ZERO) { "a note lasts some time, not $base" }
     }
+
+    /** A rest: nothing sounds for its χρόνοι. */
+    val isRest: Boolean get() = signs.any { it.isRest }
 }
 
 /** A sign that cannot do its work where it is written, and why. [noteIndex] is the note it is written on. */
@@ -155,5 +178,11 @@ data class RhythmProblem(val noteIndex: Int, val sign: TimeSign, val reason: Rea
 
         /** A note it would take a χρόνο from has already given that χρόνος to another shared one. */
         NO_BEAT_TO_SHARE,
+
+        /** A second sign on a rest: a silence cannot be lengthened or divided. */
+        SIGN_ON_A_REST,
+
+        /** Its group would share a χρόνο with a rest. */
+        REST_IN_GROUP,
     }
 }

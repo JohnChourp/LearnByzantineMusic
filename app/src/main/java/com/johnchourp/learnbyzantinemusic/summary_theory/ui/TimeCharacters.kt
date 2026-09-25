@@ -37,7 +37,13 @@ data class TimeSymbolRow(
     val form: NeumeForm,
     @StringRes val meaningRes: Int,
     val names: Neume? = null,
-)
+) {
+    /**
+     * The row as «Άκου» plays it: one note carrying the row's sign — or, for a βαρεία with κουκίδες, a
+     * rest. Read off the glyph through the sign table, so the row cannot play another sign than it draws.
+     */
+    val rhythm: List<RhythmNote> get() = listOf(RhythmNote(setOfNotNull(form.glyphs.single().neume.timeSign)))
+}
 
 /**
  * One term of a time equation: a glyph [form] with an optional [labelRes] beat value shown beneath
@@ -63,7 +69,28 @@ data class TimeEquation(
     val terms: List<TimeTerm>,
     val highlight: Set<Neume>,
     val rhythm: List<RhythmNote>,
-)
+) {
+    /**
+     * Where in [terms] each note of [rhythm] is drawn, one per note: the labelled terms before the «=»,
+     * or — when nothing before it is labelled, as in the αργόν family — the labelled terms after it.
+     * «Άκου» lights these while their note sounds.
+     */
+    val noteTermIndices: List<Int>
+        get() {
+            val equalsAt = terms.indexOfFirst { it.isEquals }
+            val before = terms.indices.filter { it < equalsAt && terms[it].labelRes != 0 }
+            return before.ifEmpty { terms.indices.filter { it > equalsAt && terms[it].labelRes != 0 } }
+        }
+
+    /**
+     * For each note of [rhythm], the sign that moves the voice — the ίσον, ολίγον or κεντήματα drawn in
+     * its term — or null when its term draws none. «Άκου» follows these φωνές for the melody.
+     */
+    val quantitySigns: List<Neume?>
+        get() = noteTermIndices.map { index ->
+            terms[index].form?.glyphs?.map { it.neume }?.firstOrNull { it.kind == NeumeKind.QUANTITY }
+        }
+}
 
 /* ---- Glyph atoms (sizes mirror the ImageView styles in res/values/styles.xml) ---- */
 

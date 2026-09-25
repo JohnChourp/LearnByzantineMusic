@@ -30,7 +30,7 @@ import com.johnchourp.learnbyzantinemusic.music.TimeSign
  * | [voices] | φωνές | quantity signs only: + up, − down |
  * | [timeSign] | what it does to time | time signs only: the [TimeSign] the time rules apply — never a second copy of a duration |
  *
- * The rests (βαρεία with κουκίδες) have no [timeSign] yet: the time rules do not model silence.
+ * The rests (βαρεία with κουκίδες) carry the time rules' rest signs: silent for 1, 2 or 3 χρόνοι.
  *
  * **Nothing stores a constant name.** Checked on 2026-09-26: no preference, file or database holds
  * a neume's name — the only stored ids nearby are the learning path's page ids and the 8 Ήχοι
@@ -94,13 +94,13 @@ enum class Neume(
     TRIARGON(R.drawable.triargo, R.string.triargo, NeumeKind.TIME, 27, 18, timeSign = TimeSign.TRIARGON),
 
     /** Βαρεία with απλή: a rest of one χρόνο. The page names the rests by what they do. */
-    VAREIA_APLI(R.drawable.heavy_simple_dot, 0, NeumeKind.TIME, 36, 54),
+    VAREIA_APLI(R.drawable.heavy_simple_dot, 0, NeumeKind.TIME, 36, 54, timeSign = TimeSign.VAREIA_APLI),
 
     /** Βαρεία with διπλή: a rest of two χρόνοι. */
-    VAREIA_DIPLI(R.drawable.heavy_double_dots, 0, NeumeKind.TIME, 50, 54),
+    VAREIA_DIPLI(R.drawable.heavy_double_dots, 0, NeumeKind.TIME, 50, 54, timeSign = TimeSign.VAREIA_DIPLI),
 
     /** Βαρεία with τριπλή: a rest of three χρόνοι. */
-    VAREIA_TRIPLI(R.drawable.heavy_triple_dots, 0, NeumeKind.TIME, 66, 54),
+    VAREIA_TRIPLI(R.drawable.heavy_triple_dots, 0, NeumeKind.TIME, 66, 54, timeSign = TimeSign.VAREIA_TRIPLI),
 
     // Ποιότητος — they change how a note is sung.
     VAREIA(R.drawable.heavy, R.string.heavy, NeumeKind.QUALITY, 36, 54),
