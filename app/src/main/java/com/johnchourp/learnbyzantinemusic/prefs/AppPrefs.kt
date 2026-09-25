@@ -137,6 +137,37 @@ object AppPrefs {
         readBy = "the same page, which reopens at the tempo the learner was practising at",
     )
 
+    val MetronomeVibrate = Key(
+        name = "metronome_vibrate",
+        store = Store.SETTINGS,
+        type = Type.BOOLEAN,
+        default = "true — the metronome vibrated on every beat before the switch existed",
+        allowed = "true, false; on a device without a vibrator it is ignored and its switch is hidden",
+        writtenBy = "the «Δόνηση» switch of the metronome on the «Δίσημος/Τρίσημος/Τετράσημος» page",
+        readBy = "the same metronome, via MetronomePrefs.savedOptions",
+    )
+
+    val MetronomeSilent = Key(
+        name = "metronome_silent",
+        store = Store.SETTINGS,
+        type = Type.BOOLEAN,
+        default = "false",
+        allowed = "true, false; applies only while vibration is on and available, so the metronome " +
+            "can never end up neither sounding nor vibrating",
+        writtenBy = "the «Σιωπηλά» switch of the same metronome",
+        readBy = "the same metronome, via MetronomePrefs.savedOptions",
+    )
+
+    val MetronomeFootMode = Key(
+        name = "metronome_foot_mode",
+        store = Store.SETTINGS,
+        type = Type.BOOLEAN,
+        default = "false",
+        allowed = "true, false; true marks only the θέσεις",
+        writtenBy = "the «Πόδι» switch of the same metronome",
+        readBy = "the same metronome, via MetronomePrefs.savedOptions",
+    )
+
     val ThemeMode = Key(
         name = "app_theme_mode",
         store = Store.SETTINGS,
@@ -319,6 +350,9 @@ object AppPrefs {
         LearningCompletedStepIds,
         FavoriteTopicIds,
         MetronomeBpm,
+        MetronomeVibrate,
+        MetronomeSilent,
+        MetronomeFootMode,
         ThemeMode,
         NotificationsPermissionAsked,
         RecordingsFolderTreeUri,
