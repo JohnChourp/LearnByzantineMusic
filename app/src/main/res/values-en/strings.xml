@@ -117,6 +117,13 @@
     <string name="duotrio_tempo_label">Tempo: %1$d beats per minute</string>
     <string name="duotrio_beat_counter">Beat %1$d of %2$d</string>
     <string name="duotrio_beat_cell_cd">Beat %1$d</string>
+    <string name="duotrio_vibration_label">Vibration</string>
+    <string name="duotrio_vibration_hint">Strong on the thesis, light on the arsis</string>
+    <string name="duotrio_silent_label">Silent</string>
+    <string name="duotrio_silent_hint">No sound, vibration only — for inside the church</string>
+    <string name="duotrio_foot_label">Foot</string>
+    <string name="duotrio_foot_hint">Theses only: count from thesis to thesis</string>
+    <string name="duotrio_hand_cd">Chironomy: the hand goes round once per group and reaches the bottom on the thesis</string>
     <string name="cd_disimos">Disimos: two phthongs between two red measure bars.</string>
     <string name="cd_trisimos">Trisimos: three phthongs between two red measure bars.</string>
     <string name="cd_tetrasimos">Tetrasimos: four phthongs between two red measure bars.</string>
