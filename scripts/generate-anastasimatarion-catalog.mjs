@@ -28,13 +28,45 @@
  * Skipped on purpose: Small Vespers, the Midnight Office, repeated Apolytikia, the Theotokia of
  * the other seven modes that every page lists, the troparia of the canons, the Οίκος.
  *
- * Each hymn gets a two-digit code in display order ("01", "02", …). The app names a hymn's
- * recordings folder "<code> <incipit>" and finds it again by the code prefix, so codes must stay
- * stable: regenerate only to fix text, and check the codes did not move (the script prints a
- * per-mode summary; compare it with git diff before committing).
+ * ## Hymn codes are permanent, and locked (ClickUp `869f5x2a9`)
+ *
+ * Each hymn has a two-digit code, unique in its mode. On the user's device the code is a
+ * PERMANENT key in two places:
+ *   - the hymn's recordings folder "<code> <incipit>" (HymnFolders), found again by its
+ *     "<code> " prefix;
+ *   - the hymn's analysis settings, stored under "hymn:<mode>:<code>" (AnalysisSettingsStore).
+ * A code that moves re-attaches the user's recordings and settings to a DIFFERENT hymn, silently.
+ * The codes used to be a display-order counter, so one hymn added early in a mode would have
+ * moved every code after it.
+ *
+ * So codes come from the committed lock scripts/anastasimatarion-codes.lock.json (not shipped in
+ * the APK). It maps each hymn's identity — service, group, incipit and occurrence (the n-th hymn
+ * sharing all three; always 1 today, because selectHymns drops a repeated incipit inside a group)
+ * — to its code. Βαρύς 02 and 42 share the incipit «Δεῦτε ἀγαλλιασώμεθα τῷ Κυρίῳ»; their groups
+ * tell them apart. On every run:
+ *   - a hymn in the lock keeps its code, wherever it is now displayed;
+ *   - a new hymn gets the next free code (highest code ever given + 1, retired codes included):
+ *     at the END, however early it is displayed;
+ *   - a locked hymn the source no longer yields STOPS the run. Resolve it in the lock, under the
+ *     mode, and run again:
+ *       "rename": [{"code": "05", "service": "…", "group": "…", "incipit": "<the corrected text>"}]
+ *           the same code now names that hymn: an incipit fix, or a deliberate reassignment;
+ *       "retire": [{"code": "05"}]
+ *           the hymn left the catalog; its code moves to "retired" and is never given again.
+ *     The run applies them, records them under "renamed" / "retired", and removes the
+ *     instructions. Any other change to an incipit — even one accent — is refused the same way;
+ *   - nothing is written unless every mode succeeds.
+ * AnastasimatarionCodeLockTest (JVM, run by CI) fails whenever the shipped asset and the lock
+ * disagree. CI runs no Node, so that test — not this script — is the gate.
+ * scripts/tests/test_anastasimatarion_codes.mjs tests the locking rules (node --test).
+ *
+ * The lock was created once from the asset as it shipped, so no code moved when it was introduced:
+ *   node scripts/generate-anastasimatarion-catalog.mjs --init-lock-from-asset
+ * That command refuses to overwrite an existing lock: the lock is the record of every code ever
+ * given, and an asset cannot tell which codes were retired.
  *
  * Usage (Node 18+, no dependencies):
- *   node scripts/generate-anastasimatarion-catalog.mjs [--cache-dir DIR] [--out FILE]
+ *   node scripts/generate-anastasimatarion-catalog.mjs [--cache-dir DIR] [--out FILE] [--lock FILE]
  * --cache-dir reads/writes ToneNSun.html there instead of downloading every time.
  */
 import fs from 'node:fs';
@@ -65,10 +97,17 @@ const SERVICES = [
 const KEKRAGARION_INCIPIT = 'Κύριε ἐκέκραξα πρὸς σέ, εἰσάκουσόν μου';
 
 function parseArgs(argv) {
-  const args = { cacheDir: null, out: path.join(ROOT, 'app/src/main/assets/anastasimatarion_v1.json') };
+  const args = {
+    cacheDir: null,
+    out: path.join(ROOT, 'app/src/main/assets/anastasimatarion_v1.json'),
+    lock: path.join(ROOT, 'scripts/anastasimatarion-codes.lock.json'),
+    initLock: false,
+  };
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--cache-dir') args.cacheDir = argv[++i];
     else if (argv[i] === '--out') args.out = argv[++i];
+    else if (argv[i] === '--lock') args.lock = argv[++i];
+    else if (argv[i] === '--init-lock-from-asset') args.initLock = true;
     else throw new Error(`Unknown argument: ${argv[i]}`);
   }
   return args;
@@ -332,6 +371,208 @@ export function selectHymns(blocks, mode) {
   return groups;
 }
 
+// ---- The code lock (see "Hymn codes are permanent" in the header) --------------------------------
+
+const CODE = /^\d{2}$/;
+const LOCK_ABOUT = 'The code of every Anastasimatarion hymn, locked: recordings folders and analysis settings '
+  + 'are keyed by it. Written by scripts/generate-anastasimatarion-catalog.mjs and checked by '
+  + 'AnastasimatarionCodeLockTest. Read the header of that script before editing.';
+
+/** What a hymn is, never where it is displayed. Lock entries without `occurrence` are the first. */
+export function identityKey({ service, group, incipit, occurrence = 1 }) {
+  return `${service}/${group}/${incipit}#${occurrence}`;
+}
+
+/** Numbers hymns that share service, group and incipit: 1 for the first, 2 for the second, … */
+export function withOccurrences(hymns) {
+  const seen = new Map();
+  return hymns.map((hymn) => {
+    const base = `${hymn.service}/${hymn.group}/${hymn.incipit}`;
+    const occurrence = (seen.get(base) ?? 0) + 1;
+    seen.set(base, occurrence);
+    return { ...hymn, occurrence };
+  });
+}
+
+/** A lock entry: the code and the identity, `occurrence` only when it is not the first. */
+function lockEntry({ code, service, group, incipit, occurrence = 1 }) {
+  return { code, service, group, incipit, ...(occurrence > 1 ? { occurrence } : {}) };
+}
+
+function withoutCode({ code, ...identity }) {
+  return identity;
+}
+
+function describe(hymn) {
+  const occurrence = hymn.occurrence ?? 1;
+  return `«${hymn.incipit}» (${hymn.service}/${hymn.group}${occurrence > 1 ? `, occurrence ${occurrence}` : ''})`;
+}
+
+const byCode = (a, b) => a.code.localeCompare(b.code);
+
+/**
+ * One mode's codes, from its lock entry. Pure: `hymns` are the mode's hymns in display order, each
+ * { service, group, incipit }. Returns each hymn's code (same order), the lock entry to write back
+ * and what changed. Throws — having decided nothing — when the lock cannot be honoured.
+ *
+ * A code is only ever looked up by identity, so the display order cannot move one; the only way a
+ * code comes to name another hymn is an explicit "rename" in the lock.
+ */
+export function assignCodes(modeKey, hymns, entry = {}) {
+  const problems = [];
+  const locked = new Map(); // code → lock entry
+  const codeOf = new Map(); // identity → code
+  for (const hymn of entry.hymns ?? []) {
+    if (!CODE.test(hymn.code)) problems.push(`${modeKey}: locked code "${hymn.code}" is not two digits`);
+    if (locked.has(hymn.code)) problems.push(`${modeKey} ${hymn.code}: locked twice`);
+    const id = identityKey(hymn);
+    if (codeOf.has(id)) problems.push(`${modeKey}: ${describe(hymn)} is locked twice, as ${codeOf.get(id)} and ${hymn.code}`);
+    locked.set(hymn.code, lockEntry(hymn));
+    codeOf.set(id, hymn.code);
+  }
+  const retired = [...(entry.retired ?? [])];
+  const retiredCodes = new Set();
+  for (const hymn of retired) {
+    if (!CODE.test(hymn.code)) problems.push(`${modeKey}: retired code "${hymn.code}" is not two digits`);
+    if (retiredCodes.has(hymn.code)) problems.push(`${modeKey} ${hymn.code}: retired twice`);
+    if (locked.has(hymn.code)) problems.push(`${modeKey} ${hymn.code}: both locked and retired — a retired code is never used again`);
+    retiredCodes.add(hymn.code);
+  }
+  const renamed = [...(entry.renamed ?? [])];
+  const report = { added: [], renamed: [], retired: [] };
+
+  for (const rename of entry.rename ?? []) {
+    const before = locked.get(rename.code);
+    if (!before) { problems.push(`${modeKey} rename ${rename.code}: not a locked code`); continue; }
+    if (!rename.service || !rename.group || !rename.incipit) {
+      problems.push(`${modeKey} rename ${rename.code}: needs "service", "group" and "incipit"`);
+      continue;
+    }
+    const after = lockEntry(rename);
+    if (identityKey(after) === identityKey(before)) continue; // already applied
+    const holder = codeOf.get(identityKey(after));
+    if (holder) {
+      problems.push(`${modeKey} rename ${rename.code}: ${describe(after)} already has code ${holder}`);
+      continue;
+    }
+    codeOf.delete(identityKey(before));
+    codeOf.set(identityKey(after), rename.code);
+    locked.set(rename.code, after);
+    renamed.push({ code: rename.code, from: withoutCode(before), to: withoutCode(after) });
+    report.renamed.push(rename.code);
+  }
+
+  const toRetire = new Set();
+  for (const retire of entry.retire ?? []) {
+    if (!locked.has(retire.code)) { problems.push(`${modeKey} retire ${retire.code}: not a locked code`); continue; }
+    toRetire.add(retire.code);
+  }
+
+  const current = withOccurrences(hymns);
+  const produced = new Set(current.map(identityKey));
+  for (const code of toRetire) {
+    if (produced.has(identityKey(locked.get(code)))) {
+      problems.push(`${modeKey} retire ${code}: ${describe(locked.get(code))} is still in the source`);
+    }
+  }
+  const unlocked = current.filter((hymn) => !codeOf.has(identityKey(hymn)));
+  for (const hymn of locked.values()) {
+    if (toRetire.has(hymn.code) || produced.has(identityKey(hymn))) continue;
+    problems.push(
+      `${modeKey} ${hymn.code}: the locked hymn ${describe(hymn)} is no longer in the source. `
+      + `Resolve it in the lock, under modes.${modeKey}, and run again:\n`
+      + `  its text was corrected → "rename": [{"code": "${hymn.code}", "service": "${hymn.service}", `
+      + `"group": "${hymn.group}", "incipit": "<the new text>"}]\n`
+      + `  it left the catalog    → "retire": [{"code": "${hymn.code}"}] (the code is never given again)`
+      + (unlocked.length ? `\n  this mode's hymns not in the lock: ${unlocked.map(describe).join(', ')}` : ''),
+    );
+  }
+  if (problems.length) throw new Error(problems.join('\n'));
+
+  // Locked hymns keep their code; a new hymn takes the next free one, at the end.
+  let last = Math.max(0, ...[...locked.keys(), ...retiredCodes].map(Number));
+  const codes = current.map((hymn) => {
+    const id = identityKey(hymn);
+    if (codeOf.has(id)) return codeOf.get(id);
+    last += 1;
+    const code = String(last).padStart(2, '0');
+    locked.set(code, lockEntry({ ...hymn, code }));
+    codeOf.set(id, code);
+    report.added.push(code);
+    return code;
+  });
+  if (last > 99) throw new Error(`${modeKey}: more than 99 codes — folder names and the lock assume two digits`);
+  if (new Set(codes).size !== codes.length) throw new Error(`${modeKey}: a code was given to two hymns`);
+
+  for (const code of toRetire) {
+    retired.push(locked.get(code));
+    locked.delete(code);
+    report.retired.push(code);
+  }
+  return {
+    codes,
+    entry: { hymns: [...locked.values()].sort(byCode), renamed, retired: retired.sort(byCode) },
+    report,
+  };
+}
+
+/** The lock that keeps an existing asset's codes exactly as they are. */
+export function lockFromAsset(asset) {
+  const modes = {};
+  for (const mode of asset.modes) {
+    const hymns = withOccurrences(mode.services.flatMap((service) => service.groups.flatMap((group) => group.hymns
+      .map((hymn) => ({ code: hymn.code, service: service.key, group: group.key, incipit: hymn.incipit })))));
+    const codes = hymns.map((hymn) => hymn.code);
+    const bad = codes.filter((code, i) => !CODE.test(code) || codes.indexOf(code) !== i);
+    if (bad.length) throw new Error(`${mode.key}: codes not two-digit or not unique: ${bad.join(', ')}`);
+    modes[mode.key] = { hymns: hymns.map(lockEntry).sort(byCode), renamed: [], retired: [] };
+  }
+  return { version: 1, about: LOCK_ABOUT, modes };
+}
+
+/** One lock entry per line, so a changed code or incipit is a one-line diff. */
+export function formatLock(lock) {
+  const inline = (value) => (value && typeof value === 'object' && !Array.isArray(value)
+    ? `{${Object.entries(value).map(([k, v]) => `${JSON.stringify(k)}: ${inline(v)}`).join(', ')}}`
+    : JSON.stringify(value));
+  const list = (items, indent) => (items.length
+    ? `[\n${items.map((item) => `${indent} ${inline(item)}`).join(',\n')}\n${indent}]`
+    : '[]');
+  const modes = Object.entries(lock.modes).map(([key, entry]) => [
+    `  ${JSON.stringify(key)}: {`,
+    `   "hymns": ${list(entry.hymns, '   ')},`,
+    `   "renamed": ${list(entry.renamed, '   ')},`,
+    `   "retired": ${list(entry.retired, '   ')}`,
+    '  }',
+  ].join('\n'));
+  return `{\n "version": ${lock.version},\n "about": ${JSON.stringify(lock.about)},\n "modes": {\n${modes.join(',\n')}\n }\n}\n`;
+}
+
+export function readLock(file) {
+  if (!fs.existsSync(file)) {
+    throw new Error(`No code lock at ${file}. Create it once, from the shipped asset: --init-lock-from-asset`);
+  }
+  const lock = JSON.parse(fs.readFileSync(file, 'utf8'));
+  if (lock.version !== 1 || !lock.modes || typeof lock.modes !== 'object') throw new Error(`${file}: not a version 1 code lock`);
+  const unknown = Object.keys(lock.modes).filter((key) => !MODES.some((mode) => mode.key === key));
+  if (unknown.length) throw new Error(`${file}: modes the catalog does not have: ${unknown.join(', ')}`);
+  // A mode missing from the lock would restart its codes at 01: restore it from git instead.
+  const missing = MODES.filter((mode) => !lock.modes[mode.key]).map((mode) => mode.key);
+  if (missing.length) throw new Error(`${file}: no entry for ${missing.join(', ')} — restore it from git history`);
+  return lock;
+}
+
+function initLockFromAsset(args) {
+  if (fs.existsSync(args.lock)) {
+    throw new Error(`${args.lock} already exists. It records every code ever given, retired ones included, `
+      + 'and an asset cannot say which were retired: it is never rebuilt from an asset.');
+  }
+  const lock = lockFromAsset(JSON.parse(fs.readFileSync(args.out, 'utf8')));
+  fs.writeFileSync(args.lock, formatLock(lock));
+  for (const [key, entry] of Object.entries(lock.modes)) console.log(`${key.padEnd(14)} ${String(entry.hymns.length).padStart(2)} codes locked`);
+  console.log(`wrote ${path.relative(ROOT, args.lock)} from ${path.relative(ROOT, args.out)}`);
+}
+
 async function loadPage(mode, cacheDir) {
   const cached = cacheDir ? path.join(cacheDir, mode.page) : null;
   if (cached && fs.existsSync(cached)) return fs.readFileSync(cached, 'utf8');
@@ -350,27 +591,37 @@ async function loadPage(mode, cacheDir) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  if (args.initLock) { initLockFromAsset(args); return; }
+  const lock = readLock(args.lock);
   // No `source` block: the asset must carry no source and no URL (see the file header).
   const catalog = {
     version: 1,
     modes: [],
   };
+  const nextLock = { version: 1, about: LOCK_ABOUT, modes: {} };
   for (const mode of MODES) {
     const groups = selectHymns(toBlocks(toLines(await loadPage(mode, args.cacheDir))), mode);
-    let code = 0;
+    const hymns = SERVICES.flatMap((service) => service.groups.flatMap((g) => groups[g]
+      .map((hymn) => ({ service: service.key, group: g, incipit: hymn.incipit }))));
+    // Codes from the lock, never from the display order. Throws before anything is written.
+    const { codes, entry, report } = assignCodes(mode.key, hymns, lock.modes[mode.key]);
+    let next = 0;
     const services = SERVICES.map((service) => ({
       key: service.key,
       groups: service.groups.filter((g) => groups[g].length).map((g) => ({
         key: g,
-        hymns: groups[g].map((hymn) => ({ code: String(++code).padStart(2, '0'), ...hymn })),
+        hymns: groups[g].map((hymn) => ({ code: codes[next++], ...hymn })),
       })),
     }));
     catalog.modes.push({ key: mode.key, services });
+    nextLock.modes[mode.key] = entry;
     const summary = SERVICES.flatMap((s) => s.groups.map((g) => `${g}=${groups[g].length}`)).join(' ');
-    console.log(`${mode.key.padEnd(14)} ${String(code).padStart(2)} hymns | ${summary}`);
+    const changes = Object.entries(report).filter(([, list]) => list.length).map(([kind, list]) => `${kind} ${list.join(',')}`);
+    console.log(`${mode.key.padEnd(14)} ${String(codes.length).padStart(2)} hymns | ${summary}${changes.length ? ` | ${changes.join(' ')}` : ''}`);
   }
   fs.writeFileSync(args.out, `${JSON.stringify(catalog, null, 1)}\n`);
-  console.log(`wrote ${path.relative(ROOT, args.out)}`);
+  fs.writeFileSync(args.lock, formatLock(nextLock));
+  console.log(`wrote ${path.relative(ROOT, args.out)} and ${path.relative(ROOT, args.lock)}`);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
