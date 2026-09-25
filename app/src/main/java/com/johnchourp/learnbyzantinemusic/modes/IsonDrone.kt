@@ -4,6 +4,13 @@ import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.ModeLadder
 import com.johnchourp.learnbyzantinemusic.music.Phthong
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.DI
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.GA
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.KE
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.NI
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.PA
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.VOU
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.ZO
 import kotlin.math.abs
 
 /**
@@ -51,41 +58,52 @@ object IsonDrone {
      * from Πα to Νη. `IsonChoicesTest` pins every entry to the last step of the Greek απήχημα.
      */
     fun base(mode: Mode): Phthong = when (mode) {
-        Mode.FIRST -> Phthong(PhthongName.PA)
-        Mode.SECOND -> Phthong(PhthongName.DI)
-        Mode.THIRD -> Phthong(PhthongName.GA)
-        Mode.FOURTH -> Phthong(PhthongName.DI)
-        Mode.PLAGAL_FIRST -> Phthong(PhthongName.KE)
-        Mode.PLAGAL_SECOND -> Phthong(PhthongName.NI)
-        Mode.VARYS -> Phthong(PhthongName.ZO)
-        Mode.PLAGAL_FOURTH -> Phthong(PhthongName.NI)
+        Mode.FIRST -> Phthong(PA)
+        Mode.SECOND -> Phthong(DI)
+        Mode.THIRD -> Phthong(GA)
+        Mode.FOURTH -> Phthong(DI)
+        Mode.PLAGAL_FIRST -> Phthong(KE)
+        Mode.PLAGAL_SECOND -> Phthong(NI)
+        Mode.VARYS -> Phthong(ZO)
+        Mode.PLAGAL_FOURTH -> Phthong(NI)
     }
 
     /**
-     * The mode's δεσπόζοντες φθόγγοι: the heirmologic ones and then the sticheraric ones, each once,
-     * in the order the theory page lists them, with the bracketed ones last. Names only — the octave
-     * each is sounded at is chosen on the ladder by [choices]. `IsonChoicesTest` pins these to the
-     * Greek `mode_theory_dominants_*` strings.
+     * The mode's δεσπόζοντες φθόγγοι, each at the octave the ison sounds it: the heirmologic ones and
+     * then the sticheraric ones, each once, in the order the theory page lists them, bracketed last.
+     *
+     * **The octaves are data, not a rule** (owner decision, 2026-09-25), counted like [base]'s:
+     * octave 0 is the middle octave the απήχημα uses. A "nearest rung to the base" rule put the
+     * plagal modes' dominants in the wrong place — Πλ.Β΄'s «(Ζω΄)» came out as the Ζω 4 μόρια under
+     * its Νη, Πλ.Α΄'s Πα as the Πα΄ above its Κε. The placement follows where each mode's melody
+     * lives. In Β΄, Γ΄ and Δ΄ the base sits inside the melodic range, so their dominants lie on both
+     * sides of it; Α΄'s lie above its Πα. In Πλ.Β΄ and Πλ.Δ΄ the range rises from the low base, so
+     * all of their dominants lie above it. Πλ.Α΄ holds its drone on Κε while its sticheraric range
+     * rises from Πα, so its Πα (that lower base) and its Δι lie below Κε and its Νη΄ above; Βαρύς
+     * has its Γα and Δι under its Ζω. The written marks are respected: ΄ lies above the base, `,`
+     * below it — Πλ.Β΄'s «(Ζω΄)» is the Ζω just under Νη΄, above Δι.
+     *
+     * `IsonChoicesTest` pins every list, octaves included, and holds the names to the Greek
+     * `mode_theory_dominants_*` strings.
      */
-    fun dominants(mode: Mode): List<PhthongName> = when (mode) {
-        Mode.FIRST -> listOf(PhthongName.PA, PhthongName.DI, PhthongName.GA)
-        Mode.SECOND -> listOf(PhthongName.PA, PhthongName.DI, PhthongName.VOU, PhthongName.ZO)
-        Mode.THIRD -> listOf(PhthongName.PA, PhthongName.GA, PhthongName.KE)
-        Mode.FOURTH -> listOf(PhthongName.VOU, PhthongName.DI, PhthongName.PA, PhthongName.ZO)
-        Mode.PLAGAL_FIRST -> listOf(PhthongName.KE, PhthongName.NI, PhthongName.PA, PhthongName.DI)
-        Mode.PLAGAL_SECOND -> listOf(PhthongName.DI, PhthongName.VOU, PhthongName.PA, PhthongName.ZO)
-        Mode.VARYS -> listOf(PhthongName.GA, PhthongName.DI, PhthongName.ZO)
-        Mode.PLAGAL_FOURTH -> listOf(PhthongName.NI, PhthongName.VOU, PhthongName.DI, PhthongName.GA)
+    fun dominants(mode: Mode): List<Phthong> = when (mode) {
+        Mode.FIRST -> listOf(Phthong(PA), Phthong(DI), Phthong(GA))
+        Mode.SECOND -> listOf(Phthong(PA), Phthong(DI), Phthong(VOU), Phthong(ZO))
+        Mode.THIRD -> listOf(Phthong(PA), Phthong(GA), Phthong(KE))
+        Mode.FOURTH -> listOf(Phthong(VOU), Phthong(DI), Phthong(PA), Phthong(ZO))
+        Mode.PLAGAL_FIRST -> listOf(Phthong(KE), Phthong(NI, octave = 1), Phthong(PA), Phthong(DI))
+        Mode.PLAGAL_SECOND -> listOf(Phthong(DI), Phthong(VOU), Phthong(PA), Phthong(ZO))
+        Mode.VARYS -> listOf(Phthong(GA), Phthong(DI), Phthong(ZO))
+        Mode.PLAGAL_FOURTH -> listOf(Phthong(NI), Phthong(VOU), Phthong(DI), Phthong(GA))
     }
 
     /**
      * The selector's options for [mode] on [ladder], or null when the ladder does not hold the base.
      *
-     * Each φθόγγος is offered at the rung **nearest the base in μόρια** (owner decision), so the ison
-     * never leaves the base's register: Πλ.Α΄'s «Νη΄» is the Νη just above Κε, not the one an octave
-     * lower. A tie — only Βαρύς's Βου, exactly 36 μόρια either way — goes to the lower rung, because
-     * an ison sits under the voice. The base shift moves every rung alike, so the choice of octave
-     * does not depend on it.
+     * The dominants are offered at their typed octaves ([dominants]). Every other φθόγγος is offered
+     * at the rung **nearest the base in μόρια**, so the rest of the menu stays in the base's register;
+     * a tie — only Βαρύς's Βου, exactly 36 μόρια either way — goes to the lower rung, because an ison
+     * sits under the voice. The base shift moves every rung alike, so no octave depends on it.
      */
     fun choices(mode: Mode, ladder: ModeLadder): Choices? {
         val base = base(mode)
@@ -98,12 +116,12 @@ object IsonDrone {
         fun nearestRung(name: PhthongName): ModeLadder.Step? =
             ladder.steps.filter { it.phthong.name == name }.minWithOrNull(nearest)
 
-        val dominantNames = dominants(mode)
-        val dominants = dominantNames
-            .filter { it != base.name }
-            .mapNotNull { nearestRung(it)?.phthong }
+        val dominants = dominants(mode)
+            .filter { it != base }
+            .mapNotNull { ladder.stepFor(it)?.phthong }
+        val taken = dominants.map { it.name }.toSet() + base.name
         val others = PhthongName.entries
-            .filter { it != base.name && it !in dominantNames }
+            .filter { it !in taken }
             .mapNotNull(::nearestRung)
             .sortedBy { it.moriaFromNi }
             .map { it.phthong }

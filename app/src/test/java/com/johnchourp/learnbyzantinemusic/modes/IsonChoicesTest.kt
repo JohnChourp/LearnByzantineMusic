@@ -19,6 +19,7 @@ import org.w3c.dom.Element
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.math.abs
+import kotlin.math.sign
 
 /**
  * Where the ison starts and where «Ίσον σε…» can move it (ClickUp `869f5x251`).
@@ -101,27 +102,30 @@ class IsonChoicesTest {
 
     // ---- the dominants ---------------------------------------------------------------------------
 
-    /**
-     * What the theory page lists for [mode]: heirmologic then sticheraric, each φθόγγος once in the
-     * order it first appears, and the bracketed ones last. Octave marks name the same φθόγγος.
-     */
-    private fun dominantsInTheText(mode: Mode): List<PhthongName> {
+    /** One dominant as the theory page writes it: the φθόγγος, its octave mark, its brackets. */
+    private data class Written(val name: PhthongName, val mark: Char?, val bracketed: Boolean)
+
+    /** Heirmologic then sticheraric, exactly as the Greek theory strings list them. */
+    private fun dominantsAsWritten(mode: Mode): List<Written> {
         val theory = ModeTheoryCatalog.modes.single { it.key == mode.key }
-        val plain = mutableListOf<PhthongName>()
-        val bracketed = mutableListOf<PhthongName>()
-        theory.styleRows
+        return theory.styleRows
             .map { it.dominantsCadencesRes }
             .filter { it != R.string.mode_theory_not_specified }
-            .forEach { id ->
-                greekText(id).split(",").map { it.trim() }.forEach { item ->
-                    val inBrackets = item.startsWith("(") && item.endsWith(")")
-                    val name = Phthong.parse(item.removePrefix("(").removeSuffix(")"))?.name
-                        ?: error("${mode.key}: «$item» names no φθόγγος")
-                    if (inBrackets) bracketed += name else plain += name
-                }
+            // ", " and not ",": a lower-octave mark is a comma too, and must stay on its φθόγγος.
+            .flatMap { id -> greekText(id).split(", ").map { it.trim() } }
+            .map { item ->
+                val bracketed = item.startsWith("(") && item.endsWith(")")
+                val label = item.removePrefix("(").removeSuffix(")")
+                val phthong = Phthong.parse(label) ?: error("${mode.key}: «$item» names no φθόγγος")
+                Written(phthong.name, label.last().takeIf { it == '΄' || it == ',' }, bracketed)
             }
-        val order = plain.distinct()
-        return order + bracketed.distinct().filterNot { it in order }
+    }
+
+    /** Each φθόγγος once, in the order it first appears, the bracketed ones last. */
+    private fun dominantsInTheText(mode: Mode): List<PhthongName> {
+        val written = dominantsAsWritten(mode)
+        val plain = written.filterNot { it.bracketed }.map { it.name }.distinct()
+        return plain + written.filter { it.bracketed }.map { it.name }.distinct().filterNot { it in plain }
     }
 
     @Test
@@ -129,14 +133,76 @@ class IsonChoicesTest {
         Mode.entries.forEach { mode ->
             val fromText = dominantsInTheText(mode)
             assertTrue("${mode.key}: no dominants found in the text", fromText.isNotEmpty())
-            assertEquals("${mode.key}", fromText, IsonDrone.dominants(mode))
+            assertEquals("${mode.key}", fromText, IsonDrone.dominants(mode).map { it.name })
+        }
+    }
+
+    /**
+     * The owner's decision (2026-09-25), written out in full so that moving any one dominant to
+     * another octave fails here. Octave 0 is the απήχημα's middle octave, so it prints bare; ΄ is the
+     * octave above it.
+     */
+    private val decidedDominants = mapOf(
+        Mode.FIRST to "Πα Δι Γα",
+        Mode.SECOND to "Πα Δι Βου Ζω",
+        Mode.THIRD to "Πα Γα Κε",
+        Mode.FOURTH to "Βου Δι Πα Ζω",
+        Mode.PLAGAL_FIRST to "Κε Νη΄ Πα Δι",
+        Mode.PLAGAL_SECOND to "Δι Βου Πα Ζω",
+        Mode.VARYS to "Γα Δι Ζω",
+        Mode.PLAGAL_FOURTH to "Νη Βου Δι Γα",
+    )
+
+    @Test
+    fun everyModesDominantsSitAtTheDecidedOctaves() {
+        assertEquals(Mode.entries.toSet(), decidedDominants.keys)
+        Mode.entries.forEach { mode ->
+            assertEquals(
+                "${mode.key}",
+                decidedDominants.getValue(mode),
+                IsonDrone.dominants(mode).joinToString(" ") { it.label },
+            )
+        }
+    }
+
+    /** +1 when [phthong] lies above [mode]'s base, -1 below, 0 on it. */
+    private fun sideOfTheBase(mode: Mode, phthong: Phthong): Int {
+        val ladder = ladder(mode)
+        val base = ladder.stepFor(IsonDrone.base(mode))!!.moriaFromNi
+        return (ladder.stepFor(phthong)!!.moriaFromNi - base).value.sign
+    }
+
+    @Test
+    fun theWrittenOctaveMarksAreRespected() {
+        // ΄ lies above the base and `,` below it. Only ΄ is written today: Πλ.Α΄'s Νη΄ and Πλ.Β΄'s
+        // «(Ζω΄)» — the Ζω just under Νη΄, never the one 4 μόρια under the base.
+        var marked = 0
+        Mode.entries.forEach { mode ->
+            dominantsAsWritten(mode).filter { it.mark != null }.forEach { written ->
+                val typed = IsonDrone.dominants(mode).single { it.name == written.name }
+                val expected = if (written.mark == '΄') 1 else -1
+                val where = "${mode.key}: ${typed.label} is on the wrong side of the base"
+                assertEquals(where, expected, sideOfTheBase(mode, typed))
+                marked++
+            }
+        }
+        assertTrue("expected the marks of Πλ.Α΄ and Πλ.Β΄, found $marked", marked >= 2)
+    }
+
+    @Test
+    fun thePlagalSecondAndFourthRiseFromTheirBaseSoEveryDominantLiesAboveIt() {
+        listOf(Mode.PLAGAL_SECOND, Mode.PLAGAL_FOURTH).forEach { mode ->
+            IsonDrone.dominants(mode).filter { it != IsonDrone.base(mode) }.forEach { phthong ->
+                val where = "${mode.key}: ${phthong.label} lies below the base"
+                assertEquals(where, 1, sideOfTheBase(mode, phthong))
+            }
         }
     }
 
     // ---- the menu --------------------------------------------------------------------------------
 
     @Test
-    fun everyPhthongIsOfferedOnceAndNearTheBase() {
+    fun everyPhthongIsOfferedOnceAndTheOthersNearTheBase() {
         Mode.entries.forEach { mode ->
             val ladder = ladder(mode)
             val choices = IsonDrone.choices(mode, ladder)!!
@@ -144,14 +210,14 @@ class IsonChoicesTest {
             assertEquals("${mode.key}: every φθόγγος once", PhthongName.entries.toSet(), names.toSet())
             assertEquals("${mode.key}: no φθόγγος twice", PhthongName.entries.size, names.size)
             assertEquals(
-                "${mode.key}: the dominants come first, in the typed order, without the base",
-                IsonDrone.dominants(mode).filter { it != choices.base.name },
-                choices.dominants.map { it.name },
+                "${mode.key}: the dominants come first, at their typed octaves, without the base",
+                IsonDrone.dominants(mode).filter { it != choices.base },
+                choices.dominants,
             )
             val baseMoria = ladder.stepFor(choices.base)!!.moriaFromNi
             val othersMoria = choices.others.map { ladder.stepFor(it)!!.moriaFromNi }
             assertEquals("${mode.key}: the others run low to high", othersMoria.sorted(), othersMoria)
-            choices.all.forEach { phthong ->
+            choices.others.forEach { phthong ->
                 val distance = abs((ladder.stepFor(phthong)!!.moriaFromNi - baseMoria).value)
                 // Every rung of that name elsewhere on the ladder is at least as far from the base.
                 val nearest = ladder.steps.filter { it.phthong.name == phthong.name }
@@ -175,13 +241,9 @@ class IsonChoicesTest {
     }
 
     @Test
-    fun theDecisionsExamplesHold() {
-        // «Νη΄» in Πλ.Α΄ is the Νη just above its base Κε, not the one an octave below.
-        val plagalFirst = IsonDrone.choices(Mode.PLAGAL_FIRST, ladder(Mode.PLAGAL_FIRST))!!
-        assertTrue(plagalFirst.all.toString(), Phthong(PhthongName.NI, octave = 1) in plagalFirst.dominants)
-
-        // The one tie: Βαρύς's Βου is 36 μόρια below and above its base Ζω. The lower one wins,
-        // because an ison sits under the voice.
+    fun theOneTieAmongTheOthersGoesToTheLowerRung() {
+        // Βαρύς's Βου is 36 μόρια below and above its base Ζω. The lower one wins, because an ison
+        // sits under the voice.
         val varys = IsonDrone.choices(Mode.VARYS, ladder(Mode.VARYS))!!
         assertTrue(varys.all.toString(), Phthong(PhthongName.VOU, octave = 0) in varys.others)
     }
