@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -80,7 +81,12 @@ import com.johnchourp.learnbyzantinemusic.recordings.RecordingFormatOption
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingListItem
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingStateUi
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingsUiState
+import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerPhase
+import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerState
 import com.johnchourp.learnbyzantinemusic.recordings.session.PendingRecording
+import com.johnchourp.learnbyzantinemusic.recordings.ui.components.RecordingPlayerActions
+import com.johnchourp.learnbyzantinemusic.recordings.ui.components.RecordingPlayerCard
+import com.johnchourp.learnbyzantinemusic.recordings.ui.components.ScrollToPlayerOnOpen
 import com.johnchourp.learnbyzantinemusic.recordings.ui.components.RecordingListItemRow
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonChip
@@ -103,12 +109,15 @@ import java.util.Locale
  * the shared design system (hero, [StaggeredAppear] + [LessonCard] sections, [LessonChip] format
  * picker) with state-aware recording feedback (pulsing dot + MM:SS timer). Recording and saving
  * belong to the recording session, folder (SAF) and indexing logic to the host Activity — this only
- * renders. Recordings the folder could not take are listed under «Δεν αποθηκεύτηκαν ακόμη».
+ * renders. Recordings the folder could not take are listed under «Δεν αποθηκεύτηκαν ακόμη». A
+ * recording from the list plays in the in-app player right under the title ([RecordingPlayerCard]).
  */
 @Composable
 fun RecordingsScreen(
     uiState: RecordingsUiState,
     recentItems: LazyPagingItems<RecordingListItem>,
+    player: PlayerState,
+    playerActions: RecordingPlayerActions,
     onBack: () -> Unit,
     onChangeFolder: () -> Unit,
     onOpenFolder: () -> Unit,
@@ -136,7 +145,11 @@ fun RecordingsScreen(
         recentItems.itemCount == 0 &&
         refreshState !is LoadState.Error
 
+    val listState = rememberLazyListState()
+    ScrollToPlayerOnOpen(player.openCount, listState)
+
     LazyColumn(
+        state = listState,
         modifier = modifier
             .fillMaxSize()
             .background(LbmPageBg),
@@ -158,6 +171,12 @@ fun RecordingsScreen(
                         trackColor = LbmSurfaceVariant,
                     )
                 }
+            }
+        }
+
+        if (player.phase != PlayerPhase.EMPTY) {
+            item(key = "player") {
+                RecordingPlayerCard(player, playerActions, modifier = Modifier.padding(horizontal = 16.dp))
             }
         }
 

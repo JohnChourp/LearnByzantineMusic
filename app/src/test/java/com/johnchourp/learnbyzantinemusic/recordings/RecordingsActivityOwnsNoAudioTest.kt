@@ -38,12 +38,16 @@ class RecordingsActivityOwnsNoAudioTest {
 
     private fun captureMachineryIn(text: String) = machinery.filter { it in text }
 
-    /** What a lifecycle callback must never do to a recording: stop it, or delete anything. */
+    /**
+     * What a lifecycle callback must never do to a recording: reach the session, or clean up or delete
+     * anything. Releasing the in-app player in `onStop` is allowed — that is the player's rule
+     * (ClickUp `869f5x268`) — so the check names the recording's machinery, not the word "stop".
+     */
     private fun destructionIn(text: String): List<String> =
         listOf("override fun onDestroy(", "override fun onStop(", "override fun onPause(").flatMap { callback ->
             val body = bodyOf(text, callback) ?: return@flatMap emptyList()
-            listOf("stop", "cleanup", "discard", "delete", "release")
-                .filter { body.contains(it, ignoreCase = true) }
+            listOf("session.", "RecordingSessions", "discard", "delete", "cleanup", "stopCapture")
+                .filter { body.contains(it) }
                 .map { "$callback … $it" }
         }
 
@@ -106,8 +110,18 @@ class RecordingsActivityOwnsNoAudioTest {
         """.trimIndent()
         assertEquals(listOf("FileOutputStream", ".delete("), captureMachineryIn(old))
         assertEquals(
-            listOf("override fun onDestroy( … stop", "override fun onDestroy( … cleanup"),
+            listOf("override fun onDestroy( … cleanup", "override fun onDestroy( … stopCapture"),
             destructionIn(old),
+        )
+        // The same shape, reaching the session instead: the discard G2 removed from onDestroy.
+        assertEquals(
+            listOf("override fun onStop( … session.", "override fun onStop( … discard"),
+            destructionIn("    override fun onStop() {\n        super.onStop()\n        session.discard()\n    }\n"),
+        )
+        // And what the in-app player legitimately does there is not mistaken for it.
+        assertEquals(
+            emptyList<String>(),
+            destructionIn("    override fun onStop() {\n        super.onStop()\n        player.onScreenStopped()\n    }\n"),
         )
         assertTrue(forcesIdleOnCreate(old))
     }
