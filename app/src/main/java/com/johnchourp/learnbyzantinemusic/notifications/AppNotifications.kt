@@ -18,8 +18,8 @@ import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
  *
  * The app has no server and sends nothing: these are local notifications. The first is the
  * «Ηχογράφηση…» of a recording in progress (`RecordingService`); the second the ison playing in the
- * background (`IsonPlaybackService`, ClickUp `869f5x2dq`). The reminder is meant to add a [Channel]
- * and an id here too, not a second helper.
+ * background (`IsonPlaybackService`, ClickUp `869f5x2dq`); the third the daily practice reminder
+ * (`PracticeReminderNotification`, ClickUp `869f5x2dy`).
  *
  * **Stored for good by the system:** a channel's id — the user's settings for that channel hang on
  * it — so an id is never renamed. Names and descriptions follow the app's language each time a
@@ -34,6 +34,9 @@ object AppNotifications {
     /** One id per notification the app can show; they only have to differ. */
     const val RECORDING_NOTIFICATION_ID = 1
     const val ISON_NOTIFICATION_ID = 2
+
+    /** The daily practice reminder of «Πεντάλεπτο της ημέρας» (ClickUp `869f5x2dy`). */
+    const val PRACTICE_REMINDER_NOTIFICATION_ID = 3
 
     enum class Channel(
         val id: String,
@@ -55,6 +58,18 @@ object AppNotifications {
             nameRes = R.string.eight_modes_ison_notification_channel,
             descriptionRes = R.string.eight_modes_ison_notification_channel_description,
             importance = NotificationManagerCompat.IMPORTANCE_LOW,
+        ),
+
+        /**
+         * The opt-in daily practice reminder (ClickUp `869f5x2dy`): at most one a day, and only when
+         * the day has no completed practice yet. Default importance, so it shows in the status bar —
+         * still without sound, like every channel here.
+         */
+        PRACTICE_REMINDER(
+            id = "practice_reminder",
+            nameRes = R.string.practice_reminder_channel_name,
+            descriptionRes = R.string.practice_reminder_channel_description,
+            importance = NotificationManagerCompat.IMPORTANCE_DEFAULT,
         ),
     }
 
