@@ -4,13 +4,14 @@ import com.johnchourp.learnbyzantinemusic.modes.EightModeScaleDefinitions
 import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleBase
 import com.johnchourp.learnbyzantinemusic.modes.ModeScaleDefinition
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 
 /**
  * Where the seven phthongs sit in a mode's scale, in moria above Νη (0 ≤ position < 72), taken
  * from the same interval tables the 8 Ήχοι screen uses ([EightModeScaleDefinitions]). Indexed by
- * [TrainerPhthong.ordinal] (Νη, Πα, Βου, Γα, Δι, Κε, Ζω). For the diatonic genus this is exactly
- * [TrainerPhthong.diatonicMoriaFromNi].
+ * [PhthongName.ordinal] (Νη, Πα, Βου, Γα, Δι, Κε, Ζω) — which is why that order is frozen. For the
+ * diatonic genus this is exactly the Melody Trainer's table (`diatonicMoriaFromNi` in
+ * `TrainerPitchTable.kt`).
  */
 object ModeScalePositions {
     /** The octave size is declared once, in ByzantineTuning — never re-stated here. */
@@ -38,13 +39,13 @@ object ModeScalePositions {
      * the mode's martyria in the app's mode theory (Α΄/Β΄ Πα, Γ΄ Γα, Δ΄ Βου, πλ. Α΄ Κε, πλ. Β΄ Δι,
      * Βαρύς Ζω, πλ. Δ΄ Νη).
      */
-    fun defaultStartPhthong(modeKey: String): TrainerPhthong = when (modeKey) {
-        "first", "second" -> TrainerPhthong.PA
-        "third" -> TrainerPhthong.GA
-        "fourth" -> TrainerPhthong.VOU
-        "plagal_first" -> TrainerPhthong.KE
-        "plagal_second" -> TrainerPhthong.DI
-        "varys" -> TrainerPhthong.ZO
-        else -> TrainerPhthong.NI
+    fun defaultStartPhthong(modeKey: String): PhthongName = when (modeKey) {
+        "first", "second" -> PhthongName.PA
+        "third" -> PhthongName.GA
+        "fourth" -> PhthongName.VOU
+        "plagal_first" -> PhthongName.KE
+        "plagal_second" -> PhthongName.DI
+        "varys" -> PhthongName.ZO
+        else -> PhthongName.NI
     }
 }

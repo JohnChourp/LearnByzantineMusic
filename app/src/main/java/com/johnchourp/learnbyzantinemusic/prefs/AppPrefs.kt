@@ -267,7 +267,8 @@ object AppPrefs {
         store = Store.RECORDING_ANALYSIS,
         type = Type.STRING,
         default = "empty — no expected melody has been typed for this context",
-        allowed = "comma-separated TrainerPhthong names; unknown names are dropped on read",
+        allowed = "comma-separated PhthongName constant names (NI … ZO, frozen: see StoredPhthongs); " +
+            "unknown names are dropped on read",
         writtenBy = "the «αναμενόμενη μελωδία» field on the analysis screen",
         readBy = "SequenceAligner, to score what was chanted against what was expected",
     )
@@ -287,7 +288,7 @@ object AppPrefs {
         store = Store.RECORDING_ANALYSIS,
         type = Type.STRING,
         default = "unset — calibration falls back to the first steady note",
-        allowed = "a TrainerPhthong name",
+        allowed = "a PhthongName constant name (NI … ZO, frozen: see StoredPhthongs)",
         writtenBy = "the starting-phthong picker on the analysis screen",
         readBy = "the analysis, to calibrate the singer's voice from a declared phthong",
     )

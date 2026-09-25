@@ -1,6 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
-import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
 
 /** One step of lining the sung notes up with the expected melody. */
 sealed interface AlignmentStep {
@@ -34,7 +34,7 @@ data class AlignmentResult(
  * Trainer's voice check; order matters, timing does not.
  */
 object SequenceAligner {
-    fun align(expected: List<TrainerPhthong>, sung: List<TrainerPhthong>): AlignmentResult {
+    fun align(expected: List<PhthongName>, sung: List<PhthongName>): AlignmentResult {
         val rows = expected.size + 1
         val cols = sung.size + 1
         val cost = Array(rows) { IntArray(cols) }
