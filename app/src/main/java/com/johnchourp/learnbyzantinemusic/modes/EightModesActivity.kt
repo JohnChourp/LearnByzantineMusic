@@ -91,7 +91,8 @@ class EightModesActivity : BaseActivity() {
                         persistTimbre(timbre)
                         tonePlayer.stop()
                         // Re-voice a sounding drone, otherwise it keeps the old timbre until toggled.
-                        droneFrequencyHz?.let { setDroneFrequency(it) }
+                        // A restart, not a retune: a glide keeps the timbre it started with.
+                        droneFrequencyHz?.let { dronePlayer.start(it, activeTimbre) }
                     },
                     onBaseShiftChange = ::persistBaseShift,
                     onTonePress = { frequencyHz -> tonePlayer.start(frequencyHz, activeTimbre) },
@@ -141,14 +142,17 @@ class EightModesActivity : BaseActivity() {
     private fun baseShiftPrefKey(modeKey: String): String = AppPrefs.baseShiftKeyName(modeKey)
 
     /**
-     * Starts, retunes or stops the ison. Retuning is a stop-then-start on the same player, so a base
-     * shift while the drone sounds moves it instead of layering a second voice.
+     * Starts, moves or stops the ison. A sounding drone is **moved** — to another φθόγγος, by a base
+     * shift, or to a new ήχος — with a glide inside the same stream, so it neither clicks nor gaps
+     * (ClickUp `869f5x251`). Only a silent drone is started afresh, and it is always the one player,
+     * so a move can never layer a second voice.
      */
     private fun setDroneFrequency(frequencyHz: Double?) {
         droneFrequencyHz = frequencyHz
-        dronePlayer.stop()
-        if (frequencyHz != null) {
-            dronePlayer.start(frequencyHz, activeTimbre)
+        when {
+            frequencyHz == null -> dronePlayer.stop()
+            dronePlayer.retune(frequencyHz) -> Unit
+            else -> dronePlayer.start(frequencyHz, activeTimbre)
         }
     }
 
