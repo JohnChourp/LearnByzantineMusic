@@ -759,6 +759,11 @@
     <string name="recordings_pause">Pause</string>
     <string name="recordings_resume">Continue</string>
     <string name="recordings_stop">Stop</string>
+    <string name="recordings_notification_channel_name">Recording</string>
+    <string name="recordings_notification_channel_description">The recording in progress, with Pause and Stop.</string>
+    <string name="recordings_notification_recording">Recording…</string>
+    <string name="recordings_notification_paused">Recording paused</string>
+    <string name="recordings_notification_stop">Stop</string>
     <string name="recordings_status_recording">Recording in progress...</string>
     <string name="recordings_status_paused">Recording is paused.</string>
     <string name="recordings_status_saving">Saving recording...</string>
