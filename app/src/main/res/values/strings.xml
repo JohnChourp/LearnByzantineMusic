@@ -636,6 +636,7 @@
     <string name="learning_data_item_progress">Πρόοδος «Από το μηδέν»: %1$d από %2$d</string>
     <string name="learning_data_item_selected_mode">Ο ήχος που ανοίγουν οι 8 Ήχοι</string>
     <string name="learning_data_item_timbre">Χροιά ήχου</string>
+    <string name="learning_data_item_ison_background">Το ισοκράτημα στο παρασκήνιο</string>
     <string name="learning_data_item_base_shift">Μεταφορά βάσης, σε ήχους: %1$d</string>
     <string name="learning_data_item_recording_format">Μορφή ηχογράφησης</string>
     <string name="learning_data_item_analysis">Ρυθμίσεις ανάλυσης ύμνων: %1$d</string>

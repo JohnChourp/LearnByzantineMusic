@@ -46,6 +46,7 @@ class LearningDataFileTest {
         EIGHT_MODES to mapOf(
             "selected_mode_key" to "plagal_first",
             "selected_tone_timbre" to "CRYSTAL",
+            "ison_in_background" to true,
             "mode_base_shift_moria_first" to -3,
             "mode_base_shift_moria_varys" to 12,
             "mode_base_shift_moria_plagal_fourth" to -12,
@@ -330,6 +331,7 @@ class LearningDataFileTest {
                 Line(Item.PROGRESS, 3),
                 Line(Item.SELECTED_MODE, 1),
                 Line(Item.TIMBRE, 1),
+                Line(Item.ISON_BACKGROUND, 1),
                 Line(Item.BASE_SHIFT, 3),
                 Line(Item.RECORDING_FORMAT, 1),
                 Line(Item.ANALYSIS, 2),

@@ -30,6 +30,7 @@ class ExportPolicyTest {
         "selected_mode_key" to YES,
         "selected_tone_timbre" to YES,
         "mode_base_shift_moria_<modeKey>" to YES,
+        "ison_in_background" to YES,
         "recordings_output_format" to YES,
         // Per hymn only: a recording's analysis settings are keyed by that recording's URI.
         "<analysisContext>|expected" to HYMN_CONTEXTS_ONLY,

@@ -344,6 +344,7 @@ object AppPrefs {
         default = "false — the ison stops when you leave the 8 Ήχοι page",
         writtenBy = "the «Συνέχισε στο παρασκήνιο» switch of the ison card",
         readBy = "EightModesActivity, to decide whether the page or IsonPlaybackService plays the ison",
+        export = Export.YES,
     )
 
     /**

@@ -169,7 +169,7 @@ object LearningDataFile {
     // ---- what the confirmation dialog lists ------------------------------------------------------
 
     /** The kinds of change an import can make, in the order the dialog lists them. */
-    enum class Item { FONT_SIZE, LANGUAGE, THEME, METRONOME, FAVOURITES, PROGRESS, SELECTED_MODE, TIMBRE, BASE_SHIFT, RECORDING_FORMAT, ANALYSIS }
+    enum class Item { FONT_SIZE, LANGUAGE, THEME, METRONOME, FAVOURITES, PROGRESS, SELECTED_MODE, TIMBRE, ISON_BACKGROUND, BASE_SHIFT, RECORDING_FORMAT, ANALYSIS }
 
     /** One line of the dialog; [count] is how many pages, steps, modes or hymns, where that matters. */
     data class Line(val item: Item, val count: Int)
@@ -202,6 +202,7 @@ object LearningDataFile {
         AppPrefs.LearningCompletedStepIds -> Item.PROGRESS
         AppPrefs.SelectedModeKey -> Item.SELECTED_MODE
         AppPrefs.SelectedToneTimbre -> Item.TIMBRE
+        AppPrefs.IsonInBackground -> Item.ISON_BACKGROUND
         AppPrefs.BaseShiftMoria -> Item.BASE_SHIFT
         AppPrefs.RecordingsOutputFormat -> Item.RECORDING_FORMAT
         AppPrefs.AnalysisExpectedMelody, AppPrefs.AnalysisModeKey, AppPrefs.AnalysisStartPhthong -> Item.ANALYSIS
@@ -247,7 +248,8 @@ object LearningDataFile {
         AppPrefs.LanguageCode -> (value as? String)?.let(AppLanguage::normalizeLanguageCode)
         AppPrefs.ThemeMode -> (value as? String)?.let { AppThemeMode.fromStored(it).storedValue }
         AppPrefs.MetronomeBpm -> (value as? Int)?.let(MetronomeSchedule::clampBpm)
-        AppPrefs.MetronomeVibrate, AppPrefs.MetronomeSilent, AppPrefs.MetronomeFootMode -> value as? Boolean
+        AppPrefs.MetronomeVibrate, AppPrefs.MetronomeSilent, AppPrefs.MetronomeFootMode,
+        AppPrefs.IsonInBackground -> value as? Boolean
         // Ids the path no longer has count for nothing (LearningPath.completedCount ignores them).
         AppPrefs.LearningCompletedStepIds -> stringSet(value)?.filter(LearningPath::isStep)?.toSet()
         // The registry keeps unknown topic ids on purpose: a star survives a topic briefly missing.

@@ -637,6 +637,7 @@
     <string name="learning_data_item_progress">\"From scratch\" progress: %1$d of %2$d</string>
     <string name="learning_data_item_selected_mode">The mode 8 Modes opens on</string>
     <string name="learning_data_item_timbre">Tone timbre</string>
+    <string name="learning_data_item_ison_background">The ison in the background</string>
     <string name="learning_data_item_base_shift">Base shift, in modes: %1$d</string>
     <string name="learning_data_item_recording_format">Recording format</string>
     <string name="learning_data_item_analysis">Hymn analysis settings: %1$d</string>
