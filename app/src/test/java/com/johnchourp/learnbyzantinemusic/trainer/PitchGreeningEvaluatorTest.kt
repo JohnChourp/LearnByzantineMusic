@@ -53,9 +53,10 @@ class PitchGreeningEvaluatorTest {
 
     @Test
     fun `intonation outside tolerance is not matched`() {
+        // This passed toleranceMoria = 4.0, the Trainer's own value until ClickUp 869f5x28t (H1). It now
+        // uses the default, the one tolerance of IntonationProfile (±3 μόρια), which is what the app runs.
         val evaluator = PitchGreeningEvaluator(
             listOf(TrainerPhthong.NI),
-            toleranceMoria = 4.0,
             minStableFrames = stableFrames
         )
         val result = evaluator.sing(TrainerPhthong.NI, deviation = 6.0) // right phthong, too sharp

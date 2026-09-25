@@ -6,7 +6,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 /**
- * Known date → ήχος pairs for the weekly tone cycle (ClickUp `869f4tpqn`).
+ * Known date → ήχος pairs for the weekly tone cycle (ClickUp `869f4tpqn`, corrected by `869f5x26r`).
  *
  * ## Why this file used to prove nothing
  *
@@ -14,26 +14,30 @@ import java.time.LocalDate
  * nothing at all. A test that passes when the fixtures are missing is worse than no test: it occupies
  * the slot where a real one would go.
  *
- * ## Where the expected values come from
+ * ## Why it then pinned a bug, for six of its lines
  *
- * Not from the production code — that would only prove it agrees with itself. The anchor is the
- * **published Gregorian date of Orthodox Pascha**, a calendar fact independent of this app. Those
- * dates are listed in [PASCHA] and cross-checked against [OrthodoxPaschaCalculator] by
- * [paschaCalculatorMatchesThePublishedDates] below, for eight consecutive years including leap years.
+ * The Pascha dates in [PASCHA] are published calendar facts, cross-checked against
+ * [OrthodoxPaschaCalculator] by [paschaCalculatorMatchesThePublishedDates]. The tones, though, were
+ * worked out by hand from a rule this header used to state — "the 2nd Sunday after Pentecost is Α΄,
+ * and every date before it continues the previous year's cycle". That was the production code's own
+ * rule, so the file could only agree with the code, and the rule is wrong in the Pentecostarion: the
+ * cycle restarts at Thomas Sunday every year. Six lines below (the Holy Fathers Sunday and the
+ * All Saints week of each year) pinned the wrong tone until `869f5x26r`.
  *
- * From each Pascha the cycle follows by the documented rule, written out here by hand rather than
- * called from production code:
+ * ## Where the expected values come from now
  *
- *     Pentecost   = Pascha + 49 days
- *     cycle start = the Sunday of the week two weeks after Pentecost  → Α΄ Ήχος
- *     tone        = whole weeks since the cycle start, mod 8
+ * An independent source: the Tone column of published Sunday liturgical charts for 2024, 2025 and
+ * 2026. Every tone below was checked against those charts; a weekday takes the tone of the Sunday
+ * that begins its week. The six corrected lines say so. The Pentecostarion itself — Bright Week, the
+ * weeks with no tone, the rule over two centuries — is covered by LiturgicalTonePentecostarionTest.
  *
  * ## What the fixtures cover
  *
- * Three cycles (2024, 2025, 2026) × eight dates each, chosen where off-by-ones actually live: the
- * cycle start itself, a midweek day, the last week of the eight-tone round, the wrap back to Α΄, the
- * Saturday *before* a cycle start (which must fall back to the previous year's cycle), a Sunday
- * before Pentecost, and a 31 Dec / 1 Jan pair that shares a liturgical week across the year boundary.
+ * Three years (2024, 2025, 2026) × eight dates each, chosen where off-by-ones actually live: the
+ * 2nd Sunday after Pentecost (Α΄ again, eight weeks after Thomas Sunday), a midweek day, the last
+ * week of the eight-tone round, the wrap back to Α΄, the Saturday before that Sunday (the All Saints
+ * week), the Sunday before Pentecost, and a 31 Dec / 1 Jan pair that shares a liturgical week across
+ * the year boundary.
  */
 class LiturgicalToneCycleKnownFixturesTest {
 
@@ -57,34 +61,38 @@ class LiturgicalToneCycleKnownFixturesTest {
         val why: String,
     )
 
+    // The six lines marked "corrected" held 6 and 4 (2024), 1 and 7 (2025), 2 and 0 (2026): the
+    // output of the old "continue last year's cycle" rule. They now carry what the published charts
+    // print for those years: Πλ. Β΄ (index 5) on the Holy Fathers Sunday and Πλ. Δ΄ (index 7) for the
+    // All Saints week, the same in all three years because the cycle restarts at every Pascha.
     private val knownFixtures: List<KnownToneFixture> = listOf(
-        // ---- cycle beginning 2024-07-07
-        KnownToneFixture(LocalDate.of(2024, 7, 7), 0, "cycle start → Α΄ Ήχος"),
+        // ---- 2024, Pascha 5 May: Thomas Sunday 12 May is Α΄, the 2nd after Pentecost 7 Jul is Α΄ again
+        KnownToneFixture(LocalDate.of(2024, 7, 7), 0, "2nd Sunday after Pentecost → Α΄ Ήχος"),
         KnownToneFixture(LocalDate.of(2024, 7, 10), 0, "midweek keeps its Sunday's tone"),
         KnownToneFixture(LocalDate.of(2024, 8, 25), 7, "eighth week → Πλ. Δ΄, end of the round"),
         KnownToneFixture(LocalDate.of(2024, 9, 1), 0, "ninth week wraps back to Α΄"),
-        KnownToneFixture(LocalDate.of(2024, 7, 6), 6, "Saturday before the start → previous cycle"),
-        KnownToneFixture(LocalDate.of(2024, 6, 16), 4, "Sunday before Pentecost → previous cycle"),
+        KnownToneFixture(LocalDate.of(2024, 7, 6), 7, "corrected: Saturday of the All Saints week → Πλ. Δ΄"),
+        KnownToneFixture(LocalDate.of(2024, 6, 16), 5, "corrected: Holy Fathers, the Sunday before Pentecost → Πλ. Β΄"),
         KnownToneFixture(LocalDate.of(2024, 12, 31), 1, "31 Dec"),
         KnownToneFixture(LocalDate.of(2025, 1, 1), 1, "1 Jan, same liturgical week as 31 Dec"),
 
-        // ---- cycle beginning 2025-06-22
-        KnownToneFixture(LocalDate.of(2025, 6, 22), 0, "cycle start → Α΄ Ήχος"),
+        // ---- 2025, Pascha 20 Apr: Thomas Sunday 27 Apr is Α΄, the 2nd after Pentecost 22 Jun is Α΄ again
+        KnownToneFixture(LocalDate.of(2025, 6, 22), 0, "2nd Sunday after Pentecost → Α΄ Ήχος"),
         KnownToneFixture(LocalDate.of(2025, 6, 25), 0, "midweek keeps its Sunday's tone"),
         KnownToneFixture(LocalDate.of(2025, 8, 10), 7, "eighth week → Πλ. Δ΄, end of the round"),
         KnownToneFixture(LocalDate.of(2025, 8, 17), 0, "ninth week wraps back to Α΄"),
-        KnownToneFixture(LocalDate.of(2025, 6, 21), 1, "Saturday before the start → previous cycle"),
-        KnownToneFixture(LocalDate.of(2025, 6, 1), 7, "Sunday before Pentecost → previous cycle"),
+        KnownToneFixture(LocalDate.of(2025, 6, 21), 7, "corrected: Saturday of the All Saints week → Πλ. Δ΄"),
+        KnownToneFixture(LocalDate.of(2025, 6, 1), 5, "corrected: Holy Fathers, the Sunday before Pentecost → Πλ. Β΄"),
         KnownToneFixture(LocalDate.of(2025, 12, 31), 3, "31 Dec"),
         KnownToneFixture(LocalDate.of(2026, 1, 1), 3, "1 Jan, same liturgical week as 31 Dec"),
 
-        // ---- cycle beginning 2026-06-14
-        KnownToneFixture(LocalDate.of(2026, 6, 14), 0, "cycle start → Α΄ Ήχος"),
+        // ---- 2026, Pascha 12 Apr: Thomas Sunday 19 Apr is Α΄, the 2nd after Pentecost 14 Jun is Α΄ again
+        KnownToneFixture(LocalDate.of(2026, 6, 14), 0, "2nd Sunday after Pentecost → Α΄ Ήχος"),
         KnownToneFixture(LocalDate.of(2026, 6, 17), 0, "midweek keeps its Sunday's tone"),
         KnownToneFixture(LocalDate.of(2026, 8, 2), 7, "eighth week → Πλ. Δ΄, end of the round"),
         KnownToneFixture(LocalDate.of(2026, 8, 9), 0, "ninth week wraps back to Α΄"),
-        KnownToneFixture(LocalDate.of(2026, 6, 13), 2, "Saturday before the start → previous cycle"),
-        KnownToneFixture(LocalDate.of(2026, 5, 24), 0, "Sunday before Pentecost → previous cycle"),
+        KnownToneFixture(LocalDate.of(2026, 6, 13), 7, "corrected: Saturday of the All Saints week → Πλ. Δ΄"),
+        KnownToneFixture(LocalDate.of(2026, 5, 24), 5, "corrected: Holy Fathers, the Sunday before Pentecost → Πλ. Β΄"),
         KnownToneFixture(LocalDate.of(2026, 12, 31), 4, "31 Dec"),
         KnownToneFixture(LocalDate.of(2027, 1, 1), 4, "1 Jan, same liturgical week as 31 Dec"),
     )
@@ -124,7 +132,7 @@ class LiturgicalToneCycleKnownFixturesTest {
     fun theWholeWeekCarriesOneTone() {
         // Sunday through Saturday is one liturgical week; a date's tone must not change midweek.
         val sunday = LocalDate.of(2025, 6, 22)
-        val expected = toneCycle.resolveTone(sunday).toneIndex
+        val expected = checkNotNull(toneCycle.resolveTone(sunday).toneIndex) { "$sunday is an ordinary week" }
         (0..6).forEach { offset ->
             val day = sunday.plusDays(offset.toLong())
             assertEquals("$day belongs to the week of $sunday", expected, toneCycle.resolveTone(day).toneIndex)

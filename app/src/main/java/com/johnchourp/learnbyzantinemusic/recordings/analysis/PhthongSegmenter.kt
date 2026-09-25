@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
+import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 import com.johnchourp.learnbyzantinemusic.trainer.TrainerPhthong
 import kotlin.math.abs
 import kotlin.math.floor
@@ -20,6 +21,13 @@ data class SungNote(
     val moria: Double,
 ) {
     val degree: Int get() = octave * 7 + phthong.ordinal
+
+    /**
+     * Green or orange in the analysis — its summary, its chips and its diagram — by the same rule
+     * the Trainer and «Πού είμαι» use: [IntonationProfile.isInTune]. Until ClickUp `869f5x28t` the
+     * analysis allowed ±4 μόρια while «Πού είμαι» allowed ±3.
+     */
+    val isInTune: Boolean get() = IntonationProfile.isInTune(deviationMoria)
 }
 
 /**
@@ -33,11 +41,19 @@ data class SungNote(
  * (glides, consonants, detection blips) are dropped; a gap of at most [MAX_GAP_FRAMES] inside a
  * note is bridged, while a longer silence ends it — so a repeated note counts twice only when the
  * singer separates the repetitions audibly.
+ *
+ * Those thresholds are durations in [IntonationProfile], counted here in frames that start
+ * [IntonationProfile.OFFLINE_HOP_MS] apart, the hop of the [PitchTrackAnalyzer] every track comes from.
  */
 object PhthongSegmenter {
-    const val MIN_NOTE_FRAMES = 4
-    const val MAX_GAP_FRAMES = 2
-    private const val STEADY_FRAMES = 5
+    /** [IntonationProfile.OFFLINE_MIN_NOTE_MS] in recording frames: 4. */
+    val MIN_NOTE_FRAMES: Int = offlineFrames(IntonationProfile.OFFLINE_MIN_NOTE_MS)
+
+    /** [IntonationProfile.OFFLINE_MAX_GAP_MS] in recording frames: 2. */
+    val MAX_GAP_FRAMES: Int = offlineFrames(IntonationProfile.OFFLINE_MAX_GAP_MS)
+
+    /** [IntonationProfile.OFFLINE_STEADY_MS] in recording frames: 5. */
+    internal val STEADY_FRAMES: Int = offlineFrames(IntonationProfile.OFFLINE_STEADY_MS)
     private const val STEADY_SPREAD_MORIA = 3.0
     private const val OCTAVE = ModeScalePositions.MORIA_PER_OCTAVE.toDouble()
 
@@ -157,6 +173,9 @@ object PhthongSegmenter {
         val middle = sorted.size / 2
         return if (sorted.size % 2 == 1) sorted[middle] else (sorted[middle - 1] + sorted[middle]) / 2.0
     }
+
+    private fun offlineFrames(durationMs: Double): Int =
+        IntonationProfile.framesIn(durationMs, IntonationProfile.OFFLINE_HOP_MS)
 
     private const val NO_DEGREE = Int.MIN_VALUE
 }

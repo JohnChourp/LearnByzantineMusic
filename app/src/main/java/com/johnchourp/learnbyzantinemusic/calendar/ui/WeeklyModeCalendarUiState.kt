@@ -10,8 +10,9 @@ import com.johnchourp.learnbyzantinemusic.calendar.CalendarCelebrationType
  * interaction; the Compose [WeeklyModeCalendarScreen] is a pure function of it. Because it is a data
  * class the screen only recomposes when something actually changed (structural equality).
  *
- * All locale-dependent text (month label, full date, week range, month names) is pre-formatted by the
- * Activity, which holds the locale-wrapped context — the screen never touches `java.time` formatting.
+ * All locale-dependent text (month label, full date, tone label, week range, month names) is
+ * pre-formatted by the Activity, which holds the locale-wrapped context — the screen never touches
+ * `java.time` formatting.
  */
 @Immutable
 data class WeeklyModeCalendarUiState(
@@ -29,8 +30,11 @@ data class WeeklyModeCalendarUiState(
     val monthGrid: MonthGridUi = MonthGridUi(),
     /** Day-of-month of the selected date within the visible month (always inside it). */
     val selectedDay: Int = 1,
-    /** @StringRes id of the resolved weekly tone name. */
-    val toneNameRes: Int = 0,
+    /**
+     * Headline of the tone card: the tone's name, or what the period is when it has no tone of the
+     * week (Holy Week, Bright Week, the week of Pentecost). Never empty for a real date.
+     */
+    val toneLabel: String = "",
     /** Pre-formatted week range, e.g. "28 Ιουν 2026 – 4 Ιουλ 2026". */
     val weekRangeLabel: String = "",
     /** Pre-formatted full selected date, e.g. "Κυριακή, 28 Ιουνίου 2026". */

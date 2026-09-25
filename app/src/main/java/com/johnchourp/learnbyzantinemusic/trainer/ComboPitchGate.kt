@@ -1,6 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.trainer
 
-import kotlin.math.abs
+import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 
 /**
  * Intonation gate for the combined "phthong + time" exercise (Mode 3). It turns a raw
@@ -11,11 +11,9 @@ import kotlin.math.abs
  * time.
  */
 object ComboPitchGate {
-    /** Reuses the voice-check intonation window so the two pitch modes agree. */
-    const val DEFAULT_TOLERANCE_MORIA = PitchGreeningEvaluator.DEFAULT_TOLERANCE_MORIA
-
-    fun inTunePhthong(match: PitchMatch?, toleranceMoria: Double = DEFAULT_TOLERANCE_MORIA): TrainerPhthong? {
+    /** The default is the app's one tolerance, [IntonationProfile]: the voice check and every other screen agree. */
+    fun inTunePhthong(match: PitchMatch?, toleranceMoria: Double = IntonationProfile.IN_TUNE_MORIA): TrainerPhthong? {
         if (match == null) return null
-        return if (abs(match.deviationMoria) <= toleranceMoria) match.phthong else null
+        return if (IntonationProfile.isInTune(match.deviationMoria, toleranceMoria)) match.phthong else null
     }
 }

@@ -623,6 +623,9 @@
     <string name="weekly_mode_calendar_subtitle">Ο ήχος της εβδομάδας, οι εορτές και τα αναγνώσματα για κάθε ημέρα</string>
     <string name="weekly_mode_calendar_tone_section_title">Ήχος εβδομάδας</string>
     <string name="weekly_mode_calendar_tone_explainer">Ο ήχος αλλάζει κάθε εβδομάδα (Κυριακή–Σάββατο) ακολουθώντας τον κύκλο των 8 ήχων.</string>
+    <string name="weekly_mode_calendar_tone_none_holy_week">Κυριακή των Βαΐων – Μεγάλη Εβδομάδα: χωρίς ήχο εβδομάδας</string>
+    <string name="weekly_mode_calendar_tone_bright_week">Διακαινήσιμος – ήχος ημέρας: %1$s</string>
+    <string name="weekly_mode_calendar_tone_none_pentecost_week">Εβδομάδα της Πεντηκοστής: χωρίς ήχο εβδομάδας</string>
     <string name="weekly_mode_calendar_week_range_template">Εβδομάδα: %1$s – %2$s</string>
     <string name="weekly_mode_calendar_legend_title">Υπόμνημα</string>
     <string name="weekly_mode_calendar_legend_intro">Τι σημαίνουν τα χρώματα και οι ενδείξεις στο ημερολόγιο:</string>
@@ -644,8 +647,8 @@
     <string name="weekly_mode_calendar_readings_section_title">Αναγνώσματα ημέρας</string>
     <string name="weekly_mode_calendar_apostle_label">Απόστολος</string>
     <string name="weekly_mode_calendar_gospel_label">Ευαγγέλιο</string>
-    <string name="weekly_mode_calendar_coverage_partial">Για αυτόν τον μήνα έχουμε καταγράψει μόνο τις σταθερές γιορτές. Αν μια ημέρα δεν δείχνει γιορτή, σημαίνει ότι δεν έχει συμπληρωθεί ακόμη — όχι απαραίτητα ότι δεν γιορτάζεται κάτι. Ο ήχος της εβδομάδας υπολογίζεται πάντα σωστά.</string>
-    <string name="weekly_mode_calendar_coverage_none">Δεν υπάρχουν ακόμη δεδομένα εορτολογίου για αυτόν τον μήνα. Ο ήχος της εβδομάδας υπολογίζεται πάντα σωστά.</string>
+    <string name="weekly_mode_calendar_coverage_partial">Για αυτόν τον μήνα έχουμε καταγράψει μόνο τις σταθερές γιορτές. Αν μια ημέρα δεν δείχνει γιορτή, σημαίνει ότι δεν έχει συμπληρωθεί ακόμη — όχι απαραίτητα ότι δεν γιορτάζεται κάτι. Ο ήχος της εβδομάδας δεν εξαρτάται από αυτά τα δεδομένα· υπολογίζεται από το Πάσχα.</string>
+    <string name="weekly_mode_calendar_coverage_none">Δεν υπάρχουν ακόμη δεδομένα εορτολογίου για αυτόν τον μήνα. Ο ήχος της εβδομάδας δεν εξαρτάται από αυτά τα δεδομένα· υπολογίζεται από το Πάσχα.</string>
     <string name="weekly_mode_calendar_coverage_readings_missing">Το εορτολόγιο αυτού του μήνα είναι πλήρες, αλλά τα αναγνώσματα δεν έχουν συμπληρωθεί ακόμη για όλες τις ημέρες.</string>
     <string name="weekly_mode_calendar_readings_empty">Δεν βρέθηκαν αναγνώσματα για την ημέρα.</string>
     <string name="weekly_mode_calendar_readings_none_for_kind">Δεν υπάρχει καταχώρηση.</string>
@@ -1098,7 +1101,7 @@
     <string name="analysis_retry">Δοκίμασε ξανά</string>
     <string name="analysis_status_no_pitch">Δεν αναγνωρίστηκε κανένας σταθερός φθόγγος. Ψάλε πιο καθαρά και πιο κοντά στο μικρόφωνο.</string>
     <string name="analysis_sung_title">Τι έψαλες</string>
-    <string name="analysis_sung_summary">%1$d φθόγγοι σε %2$s · %3$d εντός τόνου (±4 μόρια)</string>
+    <string name="analysis_sung_summary">%1$d φθόγγοι σε %2$s · %3$d εντός τόνου (±%4$d μόρια)</string>
     <string name="analysis_diagram_title">Διάγραμμα</string>
     <string name="analysis_diagram_cd">Διάγραμμα του ύψους στον χρόνο με %1$d φθόγγους</string>
     <string name="analysis_diagram_legend">Κουκκίδες: το ύψος της φωνής σου. Μπάρες: οι φθόγγοι που αναγνωρίστηκαν — πράσινες εντός τόνου, πορτοκαλί εκτός.</string>
