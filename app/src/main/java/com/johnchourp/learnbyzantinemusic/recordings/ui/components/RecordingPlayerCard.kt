@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.recordings.player.PlaybackTuning
 import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerPhase
 import com.johnchourp.learnbyzantinemusic.recordings.player.PlayerState
@@ -245,8 +246,8 @@ private fun PlayerControls(state: PlayerState, actions: RecordingPlayerActions) 
             dragShift?.let(actions.onShiftChange)
             dragShift = null
         },
-        valueRange = -PlaybackTuning.MAX_SHIFT_MORIA.toFloat()..PlaybackTuning.MAX_SHIFT_MORIA.toFloat(),
-        steps = PlaybackTuning.MAX_SHIFT_MORIA * 2 - 1,
+        valueRange = BaseShift.MIN_MORIA.toFloat()..BaseShift.MAX_MORIA.toFloat(),
+        steps = BaseShift.MAX_MORIA - BaseShift.MIN_MORIA - 1,
         enabled = enabled,
         colors = sliderColors(),
     )

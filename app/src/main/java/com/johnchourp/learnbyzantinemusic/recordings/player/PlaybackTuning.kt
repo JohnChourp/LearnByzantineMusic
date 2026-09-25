@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.recordings.player
 
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
 
 /**
@@ -11,8 +12,8 @@ import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
  *
  * **Shift** moves the whole recording by whole μόρια, so a teacher's recording can meet the
  * learner's voice. The factor comes from [ByzantineTuning.ratioForMoria] — the app's one conversion
- * of μόρια — never from a second copy of the 72. The ±[MAX_SHIFT_MORIA] range is the one the
- * «Μεταφορά βάσης» of the 8 Ήχοι uses.
+ * of μόρια — never from a second copy of the 72. The range is the «Μεταφορά βάσης» range,
+ * [BaseShift], declared once for every screen that moves a pitch.
  *
  * Values are clamped, never rejected: a slider cannot hand in anything the player refuses.
  */
@@ -29,12 +30,11 @@ data class PlaybackTuning(
 
     fun withSpeed(value: Float): PlaybackTuning = copy(speed = clampSpeed(value))
 
-    fun withShift(moria: Int): PlaybackTuning = copy(shiftMoria = moria.coerceIn(-MAX_SHIFT_MORIA, MAX_SHIFT_MORIA))
+    fun withShift(moria: Int): PlaybackTuning = copy(shiftMoria = BaseShift.clamp(moria))
 
     companion object {
         const val MIN_SPEED = 0.5f
         const val MAX_SPEED = 1f
-        const val MAX_SHIFT_MORIA = 12
 
         fun clampSpeed(value: Float): Float =
             if (value.isNaN()) MAX_SPEED else value.coerceIn(MIN_SPEED, MAX_SPEED)

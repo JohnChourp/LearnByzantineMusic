@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.recordings.player
 
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -8,8 +9,9 @@ import org.junit.Test
 
 /**
  * The in-app player's speed and shift (ClickUp `869f5x268`): speed stays between ½× and 1×, the shift
- * within ±12 μόρια, and the shift becomes a pitch factor only through [ByzantineTuning]. Out-of-range
- * values are clamped, never rejected — a slider cannot hand in anything the player refuses.
+ * within the «Μεταφορά βάσης» range ([BaseShift], today ±12 μόρια), and the shift becomes a pitch
+ * factor only through [ByzantineTuning]. Out-of-range values are clamped, never rejected — a slider
+ * cannot hand in anything the player refuses.
  */
 class PlaybackTuningTest {
 
@@ -23,11 +25,11 @@ class PlaybackTuningTest {
     }
 
     @Test
-    fun theShiftStaysWithinTwelveMoriaEitherWay() {
-        assertEquals(12, PlaybackTuning().withShift(30).shiftMoria)
-        assertEquals(-12, PlaybackTuning().withShift(-30).shiftMoria)
+    fun theShiftStaysWithinTheBaseShiftRange() {
+        assertEquals(BaseShift.MAX_MORIA, PlaybackTuning().withShift(BaseShift.MAX_MORIA + 30).shiftMoria)
+        assertEquals(BaseShift.MIN_MORIA, PlaybackTuning().withShift(BaseShift.MIN_MORIA - 30).shiftMoria)
         assertEquals(5, PlaybackTuning().withShift(5).shiftMoria)
-        assertEquals(12, PlaybackTuning.MAX_SHIFT_MORIA)
+        assertEquals("the edges themselves are allowed", BaseShift.MAX_MORIA, PlaybackTuning().withShift(BaseShift.MAX_MORIA).shiftMoria)
     }
 
     @Test
