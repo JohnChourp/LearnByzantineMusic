@@ -1095,7 +1095,7 @@
     <string name="analysis_retry">Δοκίμασε ξανά</string>
     <string name="analysis_status_no_pitch">Δεν αναγνωρίστηκε κανένας σταθερός φθόγγος. Ψάλε πιο καθαρά και πιο κοντά στο μικρόφωνο.</string>
     <string name="analysis_sung_title">Τι έψαλες</string>
-    <string name="analysis_sung_summary">%1$d φθόγγοι σε %2$s · %3$d εντός τόνου (±4 μόρια)</string>
+    <string name="analysis_sung_summary">%1$d φθόγγοι σε %2$s · %3$d εντός τόνου (±%4$d μόρια)</string>
     <string name="analysis_diagram_title">Διάγραμμα</string>
     <string name="analysis_diagram_cd">Διάγραμμα του ύψους στον χρόνο με %1$d φθόγγους</string>
     <string name="analysis_diagram_legend">Κουκκίδες: το ύψος της φωνής σου. Μπάρες: οι φθόγγοι που αναγνωρίστηκαν — πράσινες εντός τόνου, πορτοκαλί εκτός.</string>
