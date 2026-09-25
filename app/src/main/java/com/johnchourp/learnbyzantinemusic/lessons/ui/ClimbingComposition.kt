@@ -26,6 +26,12 @@ import com.johnchourp.learnbyzantinemusic.summary_theory.ui.NeumeGlyph
 /** Which timing accent a composition demonstrates; drives the section highlight in the UI. */
 enum class Emphasis { NONE, GORGON, DIGORGON }
 
+/** One sign of the page's legend, with what it does there; its name, glyph and TalkBack text come from [Neume]. */
+data class ClimbingLegendItem(
+    val neume: Neume,
+    @StringRes val meaningRes: Int,
+)
+
 /**
  * One ascending composition: the written character ([combined] — usually one stacked form, but the
  * δίγοργον example is written as two) and the simpler neumes it is read as ([parts]). [readingRes]
@@ -47,29 +53,42 @@ private fun ison(w: Int = 62, h: Int = 18, align: NeumeAlign = NeumeAlign.CENTER
     NeumeGlyph(Neume.ISON, w, h, align, dx, dy)
 
 private fun apostrophe(align: NeumeAlign = NeumeAlign.CENTER, dx: Int = 0, dy: Int = 0) =
-    NeumeGlyph(Neume.APOSTROPHE, 30, 18, align, dx, dy)
+    NeumeGlyph(Neume.APOSTROPHOS, 30, 18, align, dx, dy)
 
 private fun embroideries(w: Int = 30, h: Int = 18, align: NeumeAlign = NeumeAlign.CENTER, dx: Int = 0, dy: Int = 0) =
-    NeumeGlyph(Neume.EMBROIDERIES, w, h, align, dx, dy)
+    NeumeGlyph(Neume.KENTIMATA, w, h, align, dx, dy)
 
 private fun underflow(align: NeumeAlign = NeumeAlign.CENTER, dx: Int = 0, dy: Int = 0) =
-    NeumeGlyph(Neume.UNDERFLOW, 19, 18, align, dx, dy)
+    NeumeGlyph(Neume.YPORROI, 19, 18, align, dx, dy)
 
 private fun gorgo(align: NeumeAlign = NeumeAlign.TOP_CENTER, dx: Int = 0, dy: Int = 0) =
-    NeumeGlyph(Neume.GORGO, 18, 9, align, dx, dy)
+    NeumeGlyph(Neume.GORGON, 18, 9, align, dx, dy)
 
 private fun digorgo(align: NeumeAlign = NeumeAlign.TOP_CENTER, dx: Int = 0, dy: Int = 0) =
-    NeumeGlyph(Neume.DIGORGO, 22, 15, align, dx, dy)
+    NeumeGlyph(Neume.DIGORGON, 22, 15, align, dx, dy)
 
 private fun dot(align: NeumeAlign = NeumeAlign.BOTTOM_CENTER, dx: Int = 0, dy: Int = 0) =
-    NeumeGlyph(Neume.SIMPLE_DOT, 9, 6, align, dx, dy)
+    NeumeGlyph(Neume.APLI, 9, 6, align, dx, dy)
 
 private fun fraction(align: NeumeAlign = NeumeAlign.TOP_CENTER, dx: Int = 0, dy: Int = 0) =
-    NeumeGlyph(Neume.FRACTION, 23, 18, align, dx, dy)
+    NeumeGlyph(Neume.KLASMA, 23, 18, align, dx, dy)
 
 private fun form(frameHeight: Int, vararg glyphs: NeumeGlyph) = NeumeForm(frameHeight, glyphs.toList())
 
 object ClimbingCompositions {
+
+    /** «Τα σύμβολα με μια ματιά»: every sign the page's compositions use, in the legend's order. */
+    val legend: List<ClimbingLegendItem> = listOf(
+        ClimbingLegendItem(Neume.OLIGON, R.string.climbing_legend_oligon),
+        ClimbingLegendItem(Neume.ISON, R.string.climbing_legend_ison),
+        ClimbingLegendItem(Neume.APOSTROPHOS, R.string.climbing_legend_apostrophe),
+        ClimbingLegendItem(Neume.KENTIMATA, R.string.climbing_legend_embroideries),
+        ClimbingLegendItem(Neume.YPORROI, R.string.climbing_legend_underflow),
+        ClimbingLegendItem(Neume.GORGON, R.string.climbing_legend_gorgo),
+        ClimbingLegendItem(Neume.DIGORGON, R.string.climbing_legend_digorgo),
+        ClimbingLegendItem(Neume.APLI, R.string.climbing_legend_simple_dot),
+        ClimbingLegendItem(Neume.KLASMA, R.string.climbing_legend_fraction),
+    )
 
     /** The base ascending compositions (no timing accent). */
     val simple: List<Composition> = listOf(

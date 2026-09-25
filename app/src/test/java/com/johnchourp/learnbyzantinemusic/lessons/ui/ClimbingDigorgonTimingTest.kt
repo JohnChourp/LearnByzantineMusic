@@ -34,8 +34,8 @@ class ClimbingDigorgonTimingTest {
     fun theExampleIsAPlainDigorgon() {
         val example = ClimbingCompositions.digorgo.single()
         val drawn = (example.combined + example.parts).flatMap { form -> form.glyphs.map { it.neume } }
-        assertTrue("the example is drawn with the δίγοργον", Neume.DIGORGO in drawn)
-        val dotted = setOf(Neume.PRESENTED_BOTTOM_DIGORGO, Neume.PRESENTED_MIDDLE_DIGORGO, Neume.PRESENTED_TOP_DIGORGO)
+        assertTrue("the example is drawn with the δίγοργον", Neume.DIGORGON in drawn)
+        val dotted = setOf(Neume.DIGORGON_DOT_BOTTOM, Neume.DIGORGON_DOT_MIDDLE, Neume.DIGORGON_DOT_TOP)
         assertFalse("a dotted δίγοργον would give ½ ¼ ¼", drawn.any { it in dotted })
         // Read as ίσον · κεντήματα with the δίγοργον · ολίγον: three notes, the sign on the middle one.
         assertEquals(example.parts.size, ClimbingCompositions.digorgoRhythm.size)
