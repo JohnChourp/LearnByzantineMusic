@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -21,10 +22,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.notifications.AppNotifications
 import com.johnchourp.learnbyzantinemusic.recordings.index.RecordingsRepository
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AnalysisSettingsStore
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.RecordingAnalysisActivity
 import com.johnchourp.learnbyzantinemusic.recordings.session.PendingRecording
+import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingService
 import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingEventText
 import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingSessionState
 import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingSessions
@@ -61,8 +64,15 @@ import kotlinx.coroutines.launch
  * **Requires** `RECORD_AUDIO` and a persisted SAF tree grant; changing the folder is confirmed first,
  * so a mis-tap cannot silently orphan the current one.
  *
- * **Touches:** `recordings_folder_tree_uri`, `recordings_output_format`, `owned_recordings`, and —
- * through the session — `filesDir/recordings_capture/` and `filesDir/recordings_pending/`.
+ * **With the screen off** (ClickUp `869f5x273`): while a recording runs or is paused this screen keeps
+ * the display on, and starting one also starts
+ * [com.johnchourp.learnbyzantinemusic.recordings.session.RecordingService], the microphone foreground
+ * service with the «Ηχογράφηση…» notification. On Android 13+ the first recording asks, once, to show
+ * that notification; a «no» only hides it.
+ *
+ * **Touches:** `recordings_folder_tree_uri`, `recordings_output_format`, `owned_recordings`,
+ * `notifications_permission_asked`, and — through the session — `filesDir/recordings_capture/` and
+ * `filesDir/recordings_pending/`.
  */
 class RecordingsActivity : BaseActivity() {
     private lateinit var recordingsPrefs: RecordingsPrefs
@@ -92,13 +102,18 @@ class RecordingsActivity : BaseActivity() {
     private val requestAudioPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
-                startRecordingSession()
+                startAfterNotificationsPrompt()
             } else {
                 setStatus(getString(R.string.recordings_microphone_permission_required))
                 Toast.makeText(this, R.string.recordings_microphone_permission_required, Toast.LENGTH_SHORT).show()
                 viewModel.setRecordingState(RecordingStateUi.ERROR)
             }
         }
+
+    // Yes or no, the recording starts: without the permission the service still runs, and only its
+    // «Ηχογράφηση…» notification is hidden.
+    private val requestNotificationsPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { startRecordingSession() }
 
     private val pickFolderLauncher =
         registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
@@ -230,6 +245,13 @@ class RecordingsActivity : BaseActivity() {
         sessionShown = true
         val label = if (state.isActive) state.target?.label else intentTargetLabel
         viewModel.applySession(state, status, label)
+        // While recording or paused the display stays on (ClickUp 869f5x273) — from the session, so a
+        // re-created screen keeps it too.
+        if (state.keepsScreenOn) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
     }
 
     private fun restoreSavedFolder() {
@@ -509,22 +531,41 @@ class RecordingsActivity : BaseActivity() {
             Manifest.permission.RECORD_AUDIO
         ) == PackageManager.PERMISSION_GRANTED
         if (granted) {
-            startRecordingSession()
+            startAfterNotificationsPrompt()
         } else {
             requestAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+    /**
+     * Android 13+, once per install, at the first recording: ask to show the «Ηχογράφηση…»
+     * notification. Marked as asked before the prompt, so it is never asked twice.
+     */
+    private fun startAfterNotificationsPrompt() {
+        if (AppNotifications.shouldAskPermission(this)) {
+            AppNotifications.markPermissionAsked(this)
+            requestNotificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            startRecordingSession()
         }
     }
 
     private fun startRecordingSession() {
         // The session refuses while a recording runs or saves; the result — recording, or
         // «Αποτυχία εκκίνησης» — arrives through its state.
-        session.start(
+        val started = session.start(
             RecordingTarget(
                 folderSegments = targetFolderSegments,
                 folderMatchPrefix = targetFolderMatchPrefix,
                 label = intentTargetLabel,
             )
         )
+        if (started) {
+            // Keeps the recording alive with the screen off (ClickUp 869f5x273). Started from here,
+            // while this screen is visible, as a microphone foreground service requires. If it
+            // cannot start, the recording goes on exactly as before, on this screen, which stays on.
+            RecordingService.start(this)
+        }
     }
 
     private fun togglePauseResume() {

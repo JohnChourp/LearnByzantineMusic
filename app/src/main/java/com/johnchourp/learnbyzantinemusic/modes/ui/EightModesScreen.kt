@@ -564,7 +564,7 @@ private fun rememberIson(modeIndex: Int, baseShiftMoria: Int, choice: Phthong?):
     val mode = EIGHT_MODES[modeIndex].mode
     val ladder = rememberLadder(modeIndex, baseShiftMoria)
     return remember(ladder, mode, choice) {
-        val choices = mode?.let { IsonDrone.choices(it, ladder) } ?: return@remember null
+        val choices = IsonDrone.choices(mode, ladder) ?: return@remember null
         IsonDrone.step(ladder, choice ?: choices.base)?.let { held -> IsonState(choices, held) }
     }
 }

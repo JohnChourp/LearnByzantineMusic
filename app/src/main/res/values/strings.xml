@@ -116,6 +116,13 @@
     <string name="duotrio_tempo_label">Ταχύτητα: %1$d χτύποι/λεπτό</string>
     <string name="duotrio_beat_counter">Χρόνος %1$d από %2$d</string>
     <string name="duotrio_beat_cell_cd">Χρόνος %1$d</string>
+    <string name="duotrio_vibration_label">Δόνηση</string>
+    <string name="duotrio_vibration_hint">Δυνατή στη θέση, ελαφριά στην άρση</string>
+    <string name="duotrio_silent_label">Σιωπηλά</string>
+    <string name="duotrio_silent_hint">Χωρίς ήχο, μόνο δόνηση — για μέσα στον ναό</string>
+    <string name="duotrio_foot_label">Πόδι</string>
+    <string name="duotrio_foot_hint">Μόνο οι θέσεις: μέτρα από θέση σε θέση</string>
+    <string name="duotrio_hand_cd">Χειρονομία: το χέρι κάνει έναν κύκλο σε κάθε ομάδα και φτάνει κάτω στη θέση</string>
     <string name="cd_disimos">Δίσημος: δύο φθόγγοι ανάμεσα σε δύο κόκκινες γραμμές μέτρου.</string>
     <string name="cd_trisimos">Τρίσημος: τρεις φθόγγοι ανάμεσα σε δύο κόκκινες γραμμές μέτρου.</string>
     <string name="cd_tetrasimos">Τετράσημος: τέσσερις φθόγγοι ανάμεσα σε δύο κόκκινες γραμμές μέτρου.</string>
@@ -760,6 +767,11 @@
     <string name="recordings_pause">Παύση</string>
     <string name="recordings_resume">Συνέχεια</string>
     <string name="recordings_stop">Σταμάτημα</string>
+    <string name="recordings_notification_channel_name">Ηχογράφηση</string>
+    <string name="recordings_notification_channel_description">Η ηχογράφηση σε εξέλιξη, με Παύση και Στάση.</string>
+    <string name="recordings_notification_recording">Ηχογράφηση…</string>
+    <string name="recordings_notification_paused">Ηχογράφηση σε παύση</string>
+    <string name="recordings_notification_stop">Στάση</string>
     <string name="recordings_status_recording">Γίνεται ηχογράφηση...</string>
     <string name="recordings_status_paused">Η ηχογράφηση είναι σε παύση.</string>
     <string name="recordings_status_saving">Αποθήκευση ηχογράφησης...</string>
@@ -854,6 +866,7 @@
     <string name="notes_status_sync_failed_local_saved">Αποθηκεύτηκε τοπικά, αλλά το sync φακέλου απέτυχε. Θα γίνει retry.</string>
     <string name="notes_status_sync_partial_pending">Αποθηκεύτηκε και έγινε μερικό sync. Υπάρχουν εκκρεμή backup.</string>
     <string name="notes_status_import_invalid_json">Μη έγκυρο backup αρχείο.</string>
+    <string name="notes_status_import_newer_version">Το backup φτιάχτηκε από νεότερη έκδοση της εφαρμογής. Ενημέρωσε την εφαρμογή και ξαναδοκίμασε· οι σημειώσεις σου δεν άλλαξαν.</string>
     <string name="notes_status_import_read_failed">Αποτυχία ανάγνωσης backup αρχείου.</string>
     <string name="notes_status_folder_selected">Ο φάκελος backup επιλέχθηκε.</string>
     <!-- Notes redesign (v1.14.0) — section titles, empty/a11y states -->

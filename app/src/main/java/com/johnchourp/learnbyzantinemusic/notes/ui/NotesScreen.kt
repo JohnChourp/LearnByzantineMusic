@@ -547,6 +547,7 @@ private fun statusVisual(statusKey: String): StatusVisual = when (statusKey) {
     "notes_status_resync_failed",
     "notes_status_sync_failed_local_saved",
     "notes_status_import_invalid_json",
+    "notes_status_import_newer_version",
     "notes_status_import_read_failed",
     "notes_status_folder_permission_error",
     -> StatusVisual(AccentCrimsonContainer, AccentCrimsonContent, Icons.Filled.ErrorOutline)
