@@ -4,9 +4,8 @@ import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.modes.ApichimaSequence
 import com.johnchourp.learnbyzantinemusic.modes.IsonDrone
 import com.johnchourp.learnbyzantinemusic.modes.ModeLadders
-import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MAX
-import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MIN
 import com.johnchourp.learnbyzantinemusic.modes.ui.EIGHT_MODES
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -32,7 +31,7 @@ class LecternIsonTest {
     fun `the ison of a page's setting is the 8 Ήχοι page's pitch for every ήχος, φθόγγος and shift`() {
         var compared = 0
         EIGHT_MODES.forEach { row ->
-            (BASE_SHIFT_MIN..BASE_SHIFT_MAX).forEach { shift ->
+            (BaseShift.MIN_MORIA..BaseShift.MAX_MORIA).forEach { shift ->
                 // Exactly what the 8 Ήχοι page does: its ladder, its choices, its lookup.
                 val pageLadder = ModeLadders.ladder(row.scale, shift)
                 val pageChoices = IsonDrone.choices(row.mode, pageLadder)
@@ -57,7 +56,7 @@ class LecternIsonTest {
             }
         }
         // Guards the sweep: every ήχος × every shift × every φθόγγος, or it proves nothing.
-        assertEquals(EIGHT_MODES.size * (BASE_SHIFT_MAX - BASE_SHIFT_MIN + 1) * PhthongName.entries.size, compared)
+        assertEquals(EIGHT_MODES.size * (BaseShift.MAX_MORIA - BaseShift.MIN_MORIA + 1) * PhthongName.entries.size, compared)
     }
 
     @Test
@@ -67,7 +66,7 @@ class LecternIsonTest {
             val greek = greekStrings.getValue(nameOf(row.apichimaSyllablesRes))
             val steps = ApichimaSequence.playable(greek, greek)
             assertTrue(row.mode.key, steps.isNotEmpty())
-            (BASE_SHIFT_MIN..BASE_SHIFT_MAX).forEach { shift ->
+            (BaseShift.MIN_MORIA..BaseShift.MAX_MORIA).forEach { shift ->
                 val onThePage = ApichimaSequence.frequencies(steps, ModeLadders.ladder(row.scale, shift))
                 assertNotNull("${row.mode.key} shift=$shift", onThePage)
                 val request = PageAssignment(0, row.mode, shift).request
@@ -75,7 +74,7 @@ class LecternIsonTest {
                 compared++
             }
         }
-        assertEquals(EIGHT_MODES.size * (BASE_SHIFT_MAX - BASE_SHIFT_MIN + 1), compared)
+        assertEquals(EIGHT_MODES.size * (BaseShift.MAX_MORIA - BaseShift.MIN_MORIA + 1), compared)
     }
 
     // ---- the Greek strings, as the 8 Ήχοι page reads them ------------------------------------------

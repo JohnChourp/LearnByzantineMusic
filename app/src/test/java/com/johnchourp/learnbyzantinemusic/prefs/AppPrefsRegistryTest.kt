@@ -24,7 +24,9 @@ class AppPrefsRegistryTest {
                 "app_language_code",
                 "app_language_onboarding_completed",
                 "app_theme_mode",
+                "eight_modes_tour_shown",
                 "favorite_topic_ids",
+                "global_base_shift_moria",
                 "ison_in_background",
                 "learning_completed_step_ids",
                 "lectern_library",
@@ -48,6 +50,7 @@ class AppPrefsRegistryTest {
                 "selected_tone_timbre",
                 "trainer_exercises",
                 "trainer_last_melody",
+                "voice_range_offered",
             ),
             AppPrefs.all.map { it.name }.sorted()
         )

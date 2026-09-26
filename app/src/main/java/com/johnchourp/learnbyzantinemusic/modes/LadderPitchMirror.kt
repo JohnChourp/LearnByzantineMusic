@@ -13,7 +13,7 @@ import kotlin.math.abs
  *
  * `TrainerPitchTable.nearestPhthong` answers the same question against the fixed **diatonic**
  * positions with Νη at 220 Hz. On the «8 Ήχοι» page that would be wrong twice over: the page has a
- * per-mode «Μεταφορά βάσης» of ±12 μόρια, and the chromatic and enharmonic modes put their φθόγγοι
+ * «Μεταφορά βάσης» of up to half an octave, and the chromatic and enharmonic modes put their φθόγγοι
  * at genuinely different distances. A singer holding a perfect Δι of the soft chromatic mode would
  * be told they are several μόρια off.
  *

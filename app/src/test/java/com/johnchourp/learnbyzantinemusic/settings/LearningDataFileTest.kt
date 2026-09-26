@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.settings
 
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.practice.PracticeDay
@@ -73,6 +74,8 @@ class LearningDataFileTest {
             // A topic this build may not have: the registry keeps unknown favourites on purpose.
             "favorite_topic_ids" to setOf("first_mode", "a_topic_of_a_newer_build"),
             "learning_completed_step_ids" to setOf("phthongs_names", "ascents", "eight_modes"),
+            // The voice's global shift from «Βρες τη φωνή σου» (ClickUp `869f5x2dd`).
+            "global_base_shift_moria" to -20,
         ),
         EIGHT_MODES to mapOf(
             "selected_mode_key" to "plagal_first",
@@ -119,6 +122,8 @@ class LearningDataFileTest {
         ),
         OWNED_RECORDINGS to mapOf("owned_recordings" to """["content://media/external/audio/1"]"""),
         PRACTICE to mapOf("practice_reminder_enabled" to true, "practice_reminder_minute_of_day" to 1140),
+        // «Βρες τη φωνή σου» offered and the tour shown: once per phone (ClickUp `869f5x2dd`).
+        EIGHT_MODES to mapOf("voice_range_offered" to true, "eight_modes_tour_shown" to true),
         RECORDING_ANALYSIS to mapOf(
             "recording:content://com.android.externalstorage.documents/document/primary%3AMusic%2F1.flac|expected" to "NI,PA",
             "recording:content://com.android.externalstorage.documents/document/primary%3AMusic%2F1.flac|mode" to "first",
@@ -188,8 +193,10 @@ class LearningDataFileTest {
                 "app_font_step" to 55,
                 "metronome_bpm" to 400,
                 "learning_completed_step_ids" to setOf("phthongs_names", "a_step_the_path_no_longer_has"),
+                "global_base_shift_moria" to BaseShift.MIN_MORIA - 9,
             ),
-            EIGHT_MODES to mapOf("mode_base_shift_moria_first" to 30, "selected_tone_timbre" to "NO_SUCH_TIMBRE"),
+            // Past the shared range, which the file follows (±36 since ClickUp `869f5x2dd`).
+            EIGHT_MODES to mapOf("mode_base_shift_moria_first" to BaseShift.MAX_MORIA + 14, "selected_tone_timbre" to "NO_SUCH_TIMBRE"),
             RECORDINGS to mapOf("recordings_output_format" to "opus"),
             RECORDING_ANALYSIS to mapOf("hymn:first:01|expected" to "NI,??,PA"),
         )
@@ -202,8 +209,9 @@ class LearningDataFileTest {
                     "app_font_step" to 60,
                     "metronome_bpm" to 160,
                     "learning_completed_step_ids" to setOf("phthongs_names"),
+                    "global_base_shift_moria" to BaseShift.MIN_MORIA,
                 ),
-                EIGHT_MODES to mapOf("mode_base_shift_moria_first" to 12),
+                EIGHT_MODES to mapOf("mode_base_shift_moria_first" to BaseShift.MAX_MORIA),
                 RECORDINGS to mapOf("recordings_output_format" to "OPUS"),
                 RECORDING_ANALYSIS to mapOf("hymn:first:01|expected" to "NI,PA"),
             ),
@@ -249,7 +257,8 @@ class LearningDataFileTest {
             Triple(settings, "favorite_topic_ids", entry("STRING_SET", JSONArray(listOf("content://x")))),
             Triple(eightModes, "selected_mode_key", entry("STRING", "ninth")),
             Triple(eightModes, "selected_tone_timbre", entry("STRING", "LOUD")),
-            Triple(eightModes, "mode_base_shift_moria_first", entry("INT", 13)),
+            Triple(eightModes, "mode_base_shift_moria_first", entry("INT", BaseShift.MAX_MORIA + 1)),
+            Triple(settings, "global_base_shift_moria", entry("INT", BaseShift.MIN_MORIA - 1)),
             Triple("learn_byzantine_music_recordings", "recordings_output_format", entry("STRING", "ogg")),
             Triple(analysis, "hymn:first:01|expected", entry("STRING", "NI,XX")),
             Triple(analysis, "hymn:first:01|mode", entry("STRING", "ninth")),
@@ -272,6 +281,8 @@ class LearningDataFileTest {
             Triple("recording_analysis_settings", "recording:content://x/1.flac|expected", entry("STRING", "NI")),
             Triple("recording_analysis_settings", "hymn:ninth:01|expected", entry("STRING", "NI")),
             Triple("eight_modes_base_shift_prefs", "mode_base_shift_moria_ninth", entry("INT", 1)),
+            Triple("eight_modes_base_shift_prefs", "voice_range_offered", entry("BOOLEAN", true)),
+            Triple("eight_modes_base_shift_prefs", "eight_modes_tour_shown", entry("BOOLEAN", true)),
         )
         notImportable.forEach { entry ->
             assertEquals(entry.second, Rejected(Reason.NOT_IMPORTABLE, entry.second), LearningDataFile.decode(fileWith(entry)))
@@ -379,6 +390,7 @@ class LearningDataFileTest {
                 Line(Item.TIMBRE, 1),
                 Line(Item.ISON_BACKGROUND, 1),
                 Line(Item.BASE_SHIFT, 3),
+                Line(Item.GLOBAL_BASE_SHIFT, 1),
                 Line(Item.RECORDING_FORMAT, 1),
                 Line(Item.ANALYSIS, 2),
                 Line(Item.TRAINER_EXERCISES, 2),

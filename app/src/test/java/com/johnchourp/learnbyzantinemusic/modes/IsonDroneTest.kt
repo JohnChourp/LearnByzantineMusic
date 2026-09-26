@@ -1,9 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
-import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MAX
-import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MIN
 import com.johnchourp.learnbyzantinemusic.modes.ui.EIGHT_MODES
 import com.johnchourp.learnbyzantinemusic.modes.ui.SCALE_OCTAVES
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.Moria
@@ -68,7 +67,7 @@ class IsonDroneTest {
         var compared = 0
         EIGHT_MODES.forEach { row ->
             val mode = row.mode
-            (BASE_SHIFT_MIN..BASE_SHIFT_MAX).forEach { shift ->
+            (BaseShift.MIN_MORIA..BaseShift.MAX_MORIA).forEach { shift ->
                 val all = labels(row.scale)
                 val freqs = frequencies(row.scale, shift)
                 val ladder = row.scale.ladder(octaves = SCALE_OCTAVES, baseShift = Moria(shift))
@@ -85,7 +84,7 @@ class IsonDroneTest {
         }
         // Guards the sweep: every mode × every shift × every φθόγγος, or it proves nothing.
         assertEquals(
-            EIGHT_MODES.size * (BASE_SHIFT_MAX - BASE_SHIFT_MIN + 1) * PhthongName.entries.size,
+            EIGHT_MODES.size * (BaseShift.MAX_MORIA - BaseShift.MIN_MORIA + 1) * PhthongName.entries.size,
             compared,
         )
     }
@@ -94,7 +93,7 @@ class IsonDroneTest {
     fun theBaseShiftMovesTheDroneByExactlyThatManyMoria() {
         val scale = EightModeScaleDefinitions.MODE_SCALES.getValue("first")
         val unshifted = IsonDrone.frequencyHz(labels(scale), frequencies(scale, 0), scale.base.phthong)!!
-        listOf(-12, -7, -1, 1, 7, 12).forEach { shift ->
+        listOf(BaseShift.MIN_MORIA, -12, -7, -1, 1, 7, 12, BaseShift.MAX_MORIA).forEach { shift ->
             val shifted =
                 IsonDrone.frequencyHz(labels(scale), frequencies(scale, shift), scale.base.phthong)!!
             assertEquals(

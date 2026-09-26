@@ -1,11 +1,10 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
 import com.johnchourp.learnbyzantinemusic.R
-import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MAX
-import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MIN
 import com.johnchourp.learnbyzantinemusic.modes.ui.EIGHT_MODES
 import com.johnchourp.learnbyzantinemusic.modes.ui.EightModeUiModel
 import com.johnchourp.learnbyzantinemusic.modes.ui.SCALE_OCTAVES
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.ModeLadder
 import com.johnchourp.learnbyzantinemusic.music.Moria
@@ -59,7 +58,7 @@ class IsonChoicesTest {
     private fun ladder(mode: Mode, shift: Int = 0): ModeLadder =
         row(mode).scale.ladder(octaves = SCALE_OCTAVES, baseShift = Moria(shift))
 
-    private val shifts: IntRange get() = BASE_SHIFT_MIN..BASE_SHIFT_MAX
+    private val shifts: IntRange get() = BaseShift.MIN_MORIA..BaseShift.MAX_MORIA
 
     // ---- the base --------------------------------------------------------------------------------
 
