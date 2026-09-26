@@ -606,7 +606,6 @@
     <string name="settings_font_size_hint">Σύρε για προεπισκόπηση και πάτησε «Εφαρμογή» για να ισχύσει σε όλη την εφαρμογή. Διαθέσιμα μεγέθη: 20, 40, 60, 80, 100.</string>
     <string name="settings_theme_label">Θέμα εμφάνισης</string>
     <string name="settings_theme_hint">Διάλεξε φωτεινό ή σκούρο. Το σκούρο βοηθά όταν ψάλλεις σε χαμηλό φωτισμό.</string>
-    <string name="settings_theme_option_system">Όπως η συσκευή</string>
     <string name="settings_theme_option_light">Φωτεινό</string>
     <string name="settings_theme_option_dark">Σκούρο</string>
     <string name="settings_theme_option_high_contrast">Σκούρο με υψηλή αντίθεση</string>

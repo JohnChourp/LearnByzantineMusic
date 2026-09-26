@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
-import com.johnchourp.learnbyzantinemusic.ui.theme.isNightMode
 
 /**
  * The base every screen in the app extends, and the reason two global settings work everywhere
@@ -30,8 +29,9 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.isNightMode
  * and several diagrams assume portrait width. The one exception is the digital lectern's reader
  * (ClickUp `869f5x2e7`), whose PDF pages are wide as often as tall: it overrides [screenOrientation].
  *
- * Reads (never writes): `app_language_code`, `app_font_step`, `app_theme_mode` — see
- * [com.johnchourp.learnbyzantinemusic.prefs.AppPrefs].
+ * Reads `app_language_code`, `app_font_step`, `app_theme_mode` — see
+ * [com.johnchourp.learnbyzantinemusic.prefs.AppPrefs]. Writes only once, through
+ * [AppThemeMode.saved], to settle the «Όπως η συσκευή» value that v1.17.4 retired.
  */
 abstract class BaseActivity : ComponentActivity() {
     /** The language, font size and theme this screen was attached with; compared in [onResume]. */
@@ -52,18 +52,14 @@ abstract class BaseActivity : ComponentActivity() {
      * anything inflates, resources must already resolve correctly. A `setDefaultNightMode` call
      * would work too but lives on AppCompat, which these activities deliberately do not extend.
      *
-     * [AppThemeMode.SYSTEM] leaves the incoming configuration untouched — overriding it with the
-     * value we just read from it would be a no-op at best and would fight the system at worst.
+     * Every choice sets the flag: since v1.17.4 none of them follows the device ([AppThemeMode]).
      */
     private fun wrapContextWithThemeMode(baseContext: Context?): Context? {
         if (baseContext == null) return null
         val mode = AppThemeMode.saved(baseContext)
-        if (mode == AppThemeMode.SYSTEM) return baseContext
-
-        val systemIsDark = baseContext.resources.configuration.isNightMode()
         val configuration = Configuration(baseContext.resources.configuration)
         configuration.uiMode = (configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or
-            if (mode.isDark(systemIsDark)) {
+            if (mode.isDark) {
                 Configuration.UI_MODE_NIGHT_YES
             } else {
                 Configuration.UI_MODE_NIGHT_NO
@@ -72,8 +68,7 @@ abstract class BaseActivity : ComponentActivity() {
     }
 
     /** The palette this activity's Compose content should use. */
-    protected fun currentPalette() =
-        AppThemeMode.saved(this).palette(resources.configuration.isNightMode())
+    protected fun currentPalette() = AppThemeMode.saved(this).palette
 
     /** The orientation this screen is held to: portrait, except where a screen overrides it. */
     protected open val screenOrientation: Int get() = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

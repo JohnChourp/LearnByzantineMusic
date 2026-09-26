@@ -229,8 +229,9 @@ object AppPrefs {
         name = "app_theme_mode",
         store = Store.SETTINGS,
         type = Type.STRING,
-        default = "system",
-        allowed = "system, light, dark, high_contrast — an unknown value falls back to system",
+        default = "light",
+        allowed = "light, dark, high_contrast — an unknown value falls back to light; the «system» of " +
+            "v1.16.0–v1.17.3 is settled once to light or dark by AppThemeMode.saved",
         writtenBy = "the theme selector in Ρυθμίσεις",
         readBy = "BaseActivity, which applies it before any screen inflates",
         export = Export.YES,
