@@ -184,6 +184,25 @@ internal class ToneVoice(frequencyHz: Double, private val timbre: ToneTimbre) {
     }
 }
 
+/**
+ * The steps a stopping tone fades through (ClickUp `869f5x2cv`): from the level it is sounding at,
+ * down towards silence, and never above it.
+ *
+ * The fade used to start at full level whatever the tone's level was. Every tone played at full level
+ * then, so nobody could hear it. «Ψάλλε μαζί» plays its guide at 50 %, and a fade from full would jump
+ * up before it fell: a blip at the end of every note of the quieter rounds.
+ */
+internal object ToneFadeOut {
+    const val STEPS = 5
+    const val STEP_MILLIS = 8L
+
+    /** The volumes to step through, loudest first, for a tone sounding at [from] (0 … 1). */
+    fun levels(from: Float): FloatArray {
+        val level = from.coerceIn(0f, 1f)
+        return FloatArray(STEPS) { step -> level * (STEPS - step) / STEPS }
+    }
+}
+
 class PhthongTonePlayer {
     private val lock = Any()
 
@@ -194,19 +213,34 @@ class PhthongTonePlayer {
     private var playbackThread: Thread? = null
     private var voice: ToneVoice? = null
 
-    fun start(frequencyHz: Double, timbre: ToneTimbre = ToneTimbre.CLEAN) {
+    /**
+     * How loud the tone plays, 0 (silent) … 1, the player's full level — the only level it had
+     * before ClickUp `869f5x2cv`. Set by [start] and [setVolume]; [stop] fades out from it.
+     */
+    @Volatile
+    var volume: Float = FULL_VOLUME
+        private set
+
+    /**
+     * Starts a fresh tone — its own stream, with its own attack — at [volume]. Full level unless
+     * asked otherwise, so every caller that never heard of volumes sounds exactly as before.
+     */
+    fun start(frequencyHz: Double, timbre: ToneTimbre = ToneTimbre.CLEAN, volume: Float = FULL_VOLUME) {
         if (!isPlayable(frequencyHz)) {
             return
         }
         stop()
         val track = createAudioTrack() ?: return
+        val level = volume.coerceIn(0f, FULL_VOLUME)
         synchronized(lock) {
             try {
+                track.setVolume(level)
                 track.play()
             } catch (_: IllegalStateException) {
                 track.release()
                 return
             }
+            this.volume = level
             shouldRun = true
             audioTrack = track
             val toneVoice = ToneVoice(frequencyHz, timbre)
@@ -243,9 +277,27 @@ class PhthongTonePlayer {
         }
     }
 
+    /**
+     * Changes how loud the sounding tone plays, without restarting it: 0 (silent) … 1 (full). The
+     * track's own volume changes, which the mixer ramps. A later [start] brings its own level.
+     */
+    fun setVolume(volume: Float) {
+        val level = volume.coerceIn(0f, FULL_VOLUME)
+        synchronized(lock) {
+            this.volume = level
+            val track = audioTrack ?: return
+            try {
+                track.setVolume(level)
+            } catch (_: IllegalStateException) {
+                // A track being torn down: stop() fades it from the level recorded above.
+            }
+        }
+    }
+
     fun stop() {
         val trackToStop: AudioTrack?
         val threadToJoin: Thread?
+        val fadeFrom: Float
         synchronized(lock) {
             if (!shouldRun && audioTrack == null) {
                 return
@@ -256,10 +308,11 @@ class PhthongTonePlayer {
             trackToStop = audioTrack
             audioTrack = null
             voice = null
+            fadeFrom = volume
         }
         threadToJoin?.join(120L)
         if (trackToStop != null) {
-            fadeOut(trackToStop)
+            fadeOut(trackToStop, fadeFrom)
             safeStopAndRelease(trackToStop)
         }
     }
@@ -287,11 +340,12 @@ class PhthongTonePlayer {
         }
     }
 
-    private fun fadeOut(track: AudioTrack) {
-        for (step in FADE_OUT_STEPS downTo 1) {
+    /** Steps [track] down from the level it is sounding at, [from] — see [ToneFadeOut]. */
+    private fun fadeOut(track: AudioTrack, from: Float) {
+        for (level in ToneFadeOut.levels(from)) {
             try {
-                track.setVolume(step.toFloat() / FADE_OUT_STEPS)
-                Thread.sleep(FADE_OUT_SLEEP_MS)
+                track.setVolume(level)
+                Thread.sleep(ToneFadeOut.STEP_MILLIS)
             } catch (_: IllegalStateException) {
                 return
             } catch (_: InterruptedException) {
@@ -347,7 +401,6 @@ class PhthongTonePlayer {
         const val SAMPLES_PER_CHUNK = 1_024
         const val MIN_BUFFER_BYTES = 4_096
         const val AMPLITUDE = 0.18
-        const val FADE_OUT_STEPS = 5
-        const val FADE_OUT_SLEEP_MS = 8L
+        const val FULL_VOLUME = 1f
     }
 }

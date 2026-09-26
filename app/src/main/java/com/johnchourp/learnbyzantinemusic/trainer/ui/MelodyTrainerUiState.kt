@@ -33,6 +33,9 @@ data class MelodyTrainerUiState(
     val nowPlayingLabel: String? = null,
     val scale: TrainerScaleUi = TrainerScaleUi(),
     val exercises: TrainerExercisesUi = TrainerExercisesUi(),
+    val singAlong: SingAlongUi = SingAlongUi(),
+    /** The syllable being typed for one note, or null (ClickUp `869f5x2cv`). */
+    val syllableDialog: SyllableDialogUi? = null,
     val voice: PracticeModeUi = PracticeModeUi(),
     val rhythm: PracticeModeUi = PracticeModeUi(),
     val combo: PracticeModeUi = PracticeModeUi(),
@@ -46,6 +49,12 @@ data class TrainerNoteUi(
     val index: Int,
     /** Phthong name with octave marks, e.g. "Πα΄" or "Δι,". */
     val phthongLabel: String,
+    /** What the line shows for this note: the φθόγγος, or its syllable when «Συλλαβές» is chosen. */
+    val lineLabel: String = phthongLabel,
+    /** The syllable typed for this note, or null. */
+    val syllable: String? = null,
+    /** For a note with a syllable, the label the line is not showing — so both stay visible. */
+    val otherLabel: String? = null,
     /** Locale-formatted effective duration in χρόνοι (e.g. "1" or "1,5"). */
     val beatsLabel: String,
     val hasGorgo: Boolean,
@@ -66,6 +75,43 @@ data class TrainerNoteUi(
     /** The γοργόν chip only while no mode is running and the melody's rules allow it. */
     val gorgoEnabled: Boolean get() = editable && gorgoToggleable
 }
+
+/**
+ * «Ψάλλε μαζί» as the screen draws it (ClickUp `869f5x2cv`). The loop, its timing and its sound are
+ * the Activity's; this is only what to show and what the controls hold.
+ */
+@Immutable
+data class SingAlongUi(
+    val running: Boolean = false,
+    /** There is a line, and no other mode is running. */
+    val startEnabled: Boolean = false,
+    /** The round being played, from 1, while running; null otherwise. */
+    val round: Int? = null,
+    /** The guide's level in that round, as a percentage; 0 is silence. */
+    val guidePercent: Int? = null,
+    /** The lit note as the line shows it, while running — so the card can be read without the line. */
+    val nowLabel: String? = null,
+    /** The line shows syllables instead of φθόγγοι. */
+    val showSyllables: Boolean = false,
+    /** At least one note has a syllable; with none, the card says how to add them. */
+    val hasSyllables: Boolean = false,
+    val melodyPercent: Int = 100,
+    val isonPercent: Int = 100,
+    val metronomePercent: Int = 100,
+    /** The φθόγγος the ison holds, already labelled — the ήχος's base, or Νη for «Διατονικός». */
+    val isonLabel: String = "",
+)
+
+/** The three sounds of «Ψάλλε μαζί» that have a volume of their own. */
+enum class SingAlongSound { MELODY, ISON, METRONOME }
+
+/** The syllable dialog of one note: which note, how it is named, and what is typed so far. */
+@Immutable
+data class SyllableDialogUi(
+    val index: Int,
+    val phthongLabel: String,
+    val syllable: String,
+)
 
 /**
  * The scale the Trainer plays and listens on (ClickUp `869f5x24v`): the ήχος — null for

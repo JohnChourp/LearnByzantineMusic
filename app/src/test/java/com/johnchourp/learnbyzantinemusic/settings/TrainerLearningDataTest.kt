@@ -191,7 +191,10 @@ class TrainerLearningDataTest {
 
     @Test
     fun `the largest list the Trainer keeps still fits in a file the import reads`() {
-        // The longest note the Trainer writes: the longest φθόγγος name, the low octave, a half length, a γοργόν.
+        // The longest note the Trainer writes: the longest φθόγγος name, the low octave, a half length, a
+        // γοργόν — and since J2 (ClickUp `869f5x2cv`) the longest syllable, of the one character JSON
+        // escapes at both levels of the file, the quotation mark.
+        val longestSyllable = Char(34).toString().repeat(TrainerNote.MAX_SYLLABLE_LENGTH)
         val longest = TrainerMelody(
             notes = List(MelodySequence.MAX_NOTES) { index ->
                 TrainerNote(
@@ -199,6 +202,7 @@ class TrainerLearningDataTest {
                     octaveShift = -1,
                     baseDurationBeats = 3.5f,
                     signs = if (index == 0) emptySet() else setOf(TimeSign.GORGON),
+                    syllable = longestSyllable,
                 )
             },
             bpm = 240,
