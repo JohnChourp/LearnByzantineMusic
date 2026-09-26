@@ -459,15 +459,18 @@ private fun IsonBar(state: LecternReaderViewModel.State, actions: LecternReaderA
             if (state.moved != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = stringResource(R.string.lectern_moved_from_notification),
+                        text = stringResource(R.string.lectern_playing_background_ison),
                         style = MaterialTheme.typography.bodySmall,
                         color = LbmTextSecondary,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 4.dp),
                     )
-                    TextButton(onClick = actions.onUsePageSetting) {
-                        Text(stringResource(R.string.lectern_use_page_setting), color = LbmBrown)
+                    // Back to the page's own ison — when the page has one to go back to.
+                    if (state.holding != null) {
+                        TextButton(onClick = actions.onUsePageSetting) {
+                            Text(stringResource(R.string.lectern_use_page_setting), color = LbmBrown)
+                        }
                     }
                 }
             }

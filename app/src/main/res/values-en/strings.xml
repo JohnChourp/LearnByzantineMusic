@@ -1223,7 +1223,7 @@
     <string name="lectern_go_to_page">Go to page</string>
     <string name="lectern_go">Go</string>
     <string name="lectern_map_newer">The modes of this PDF were set in a newer version of the app. Update it to see and change them.</string>
-    <string name="lectern_moved_from_notification">The ison was changed from the notification.</string>
+    <string name="lectern_playing_background_ison">Playing the background ison, as you changed it from the notification or left it in the 8 Modes.</string>
     <string name="lectern_use_page_setting">Page\'s mode</string>
     <string name="lectern_ison_toggle">Ison (drone)</string>
     <string name="lectern_set_mode">Set a mode</string>

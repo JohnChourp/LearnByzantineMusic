@@ -113,6 +113,15 @@ class LecternBackgroundIsonTest {
     }
 
     @Test
+    fun `a page with a setting of its own takes over from an ison put there from outside, a page without keeps it`() {
+        val leftPlaying = IsonDrone.Request(Mode.FOURTH, 0, Phthong(PhthongName.VOU))
+        val setting = PageAssignment(3, Mode.PLAGAL_FIRST, -3)
+        assertEquals("paging through a PDF with no settings", leftPlaying, LecternBackgroundIson.afterPageTurn(leftPlaying, holding = null))
+        assertEquals(null, LecternBackgroundIson.afterPageTurn(leftPlaying, holding = setting))
+        assertEquals(null, LecternBackgroundIson.afterPageTurn(null, holding = null))
+    }
+
+    @Test
     fun `requests that never come back cannot hold the queue`() {
         val sync = LecternBackgroundIson()
         sync.start(null)

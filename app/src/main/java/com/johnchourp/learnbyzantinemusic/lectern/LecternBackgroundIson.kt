@@ -18,9 +18,9 @@ import com.johnchourp.learnbyzantinemusic.modes.IsonDrone
  * «off, on» would switch the ison off again. While a request of the reader's is still on its way,
  * anything else is overtaken by it, and ignored too. Only then does a publication come from outside:
  * [Heard.Stopped] — «Στάση» in the notification, the hour, the headphones, the option turned off — or
- * [Heard.Moved], φθόγγος −/+ in the notification. The reader shows a move until the page changes, and
- * never writes it into the page's own setting: a φθόγγος picked in the shade is not a choice made for
- * that page.
+ * [Heard.Moved], φθόγγος −/+ in the notification, or an ison the 8 Ήχοι page left playing. The reader
+ * sounds a move until it turns to a page with a setting of its own ([afterPageTurn]), and never writes
+ * it into the page's setting: a φθόγγος picked in the shade is not a choice made for that page.
  */
 class LecternBackgroundIson {
 
@@ -83,7 +83,15 @@ class LecternBackgroundIson {
         published = null
     }
 
-    private companion object {
-        const val MAX_PENDING = 16
+    companion object {
+        private const val MAX_PENDING = 16
+
+        /**
+         * What is left of [moved] — an ison put there from outside — once the reader is on a page where
+         * [holding] holds: nothing when that page has a setting, which then sounds; the move itself on a
+         * page with none, so paging through a PDF with no settings never silences an ison left playing.
+         */
+        fun afterPageTurn(moved: IsonDrone.Request?, holding: PageAssignment?): IsonDrone.Request? =
+            moved.takeIf { holding == null }
     }
 }

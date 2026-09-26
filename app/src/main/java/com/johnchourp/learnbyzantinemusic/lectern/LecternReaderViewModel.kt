@@ -60,7 +60,10 @@ class LecternReaderViewModel(application: Application) : AndroidViewModel(applic
         val mapReadOnly: Boolean = false,
         val night: Boolean = false,
         val isonOn: Boolean = false,
-        /** The background ison moved from outside (notification −/+): shown until the page changes. */
+        /**
+         * The background ison as it was put from outside — notification −/+, or left playing by the 8 Ήχοι
+         * page: sounded until a page with a setting of its own ([LecternBackgroundIson.afterPageTurn]).
+         */
         val moved: IsonDrone.Request? = null,
         /** The απήχημα syllable sounding, or -1. */
         val apichimaStep: Int = -1,
@@ -185,8 +188,13 @@ class LecternReaderViewModel(application: Application) : AndroidViewModel(applic
         val target = pageIndex.coerceIn(0, now.pageCount - 1)
         if (target == now.pageIndex) return
         stopApichima()
-        // A move made from outside was for the page it was made on.
-        mutableState.update { it.copy(pageIndex = target, moved = null) }
+        // A page with a setting of its own sounds it; one without keeps an ison put there from outside.
+        mutableState.update {
+            it.copy(
+                pageIndex = target,
+                moved = LecternBackgroundIson.afterPageTurn(it.moved, PageAssignments.resolve(it.assignments, target)),
+            )
+        }
         applyIson()
     }
 

@@ -1222,7 +1222,7 @@
     <string name="lectern_go_to_page">Μετάβαση σε σελίδα</string>
     <string name="lectern_go">Μετάβαση</string>
     <string name="lectern_map_newer">Οι ήχοι αυτού του PDF ορίστηκαν σε νεότερη έκδοση της εφαρμογής. Ενημέρωσέ την για να τους δεις και να τους αλλάξεις.</string>
-    <string name="lectern_moved_from_notification">Το ίσον άλλαξε από την ειδοποίηση.</string>
+    <string name="lectern_playing_background_ison">Παίζει το ίσον του παρασκηνίου, όπως το άλλαξες από την ειδοποίηση ή το άφησες στους 8 Ήχους.</string>
     <string name="lectern_use_page_setting">Ήχος της σελίδας</string>
     <string name="lectern_ison_toggle">Ισοκράτημα</string>
     <string name="lectern_set_mode">Όρισε ήχο</string>
