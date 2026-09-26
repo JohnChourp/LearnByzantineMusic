@@ -21,6 +21,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BUMP_SCRIPT="$SCRIPT_DIR/bump-version.sh"
 SECRETS_GUARD_SCRIPT="$SCRIPT_DIR/check-no-secrets.sh"
 RELEASE_NOTES_SCRIPT="$SCRIPT_DIR/generate-release-notes.sh"
+SIGNER_CHECK_SCRIPT="$SCRIPT_DIR/check-release-signer.sh"
 
 if [[ ! -x "$BUMP_SCRIPT" ]]; then
     echo "ERROR: Δεν βρέθηκε εκτελέσιμο bump script στο $BUMP_SCRIPT" >&2
@@ -34,6 +35,11 @@ fi
 
 if [[ ! -f "$RELEASE_NOTES_SCRIPT" ]]; then
     echo "ERROR: Δεν βρέθηκε το release notes script στο $RELEASE_NOTES_SCRIPT" >&2
+    exit 1
+fi
+
+if [[ ! -f "$SIGNER_CHECK_SCRIPT" ]]; then
+    echo "ERROR: Δεν βρέθηκε το signer check script στο $SIGNER_CHECK_SCRIPT" >&2
     exit 1
 fi
 
@@ -353,6 +359,10 @@ write_release_notes() {
 # Πριν από οτιδήποτε ακριβό ή μη αναστρέψιμο: bump, build, commit, tag.
 ensure_branch_not_behind_remote
 
+# Το κλειδί πρέπει να είναι το κλειδί των releases πριν από bump και build (check-release-signer.sh).
+ensure_release_signing_env
+"$BASH" "$SIGNER_CHECK_SCRIPT" --keystore "$ANDROID_SIGNING_STORE_FILE" "$ANDROID_SIGNING_KEY_ALIAS"
+
 mapfile -t bump_output < <("$BUMP_SCRIPT" "${BUMP_ARGS[@]}")
 printf '%s\n' "${bump_output[@]}"
 
@@ -406,6 +416,9 @@ if [[ -z "$APK_PATH" ]]; then
     echo "ERROR: Δεν βρέθηκε signed APK release artifact." >&2
     exit 1
 fi
+
+# Πριν από αντιγραφή, smoke test, commit και tag: δημοσιεύεται αυτό ακριβώς το αρχείο.
+"$BASH" "$SIGNER_CHECK_SCRIPT" "$APK_PATH"
 
 cp "$APK_PATH" "$RELEASE_DIR/"
 

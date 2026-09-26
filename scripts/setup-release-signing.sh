@@ -133,6 +133,9 @@ if [[ "$SET_GITHUB_SECRETS" -eq 1 ]]; then
         echo "ERROR: Δεν υπάρχει ενεργό gh auth session. Τρέξε 'gh auth login' και ξαναδοκίμασε." >&2
         exit 1
     fi
+    # Τα secrets κρατούν το κλειδί των releases: άλλο κλειδί εκεί αφήνει ορφανή κάθε εγκατάσταση
+    # (check-release-signer.sh). Ένα κλειδί που μόλις δημιουργήθηκε αποτυγχάνει εδώ, σκόπιμα.
+    ANDROID_SIGNING_STORE_PASSWORD="$STORE_PASSWORD" "$BASH" "$SCRIPT_DIR/check-release-signer.sh" --keystore "$KEYSTORE_PATH" "$KEY_ALIAS"
     echo "[signing] Ενημέρωση GitHub Actions Secrets..."
     gh secret set ANDROID_KEYSTORE_BASE64 < "$KEYSTORE_BASE64_PATH"
     gh secret set ANDROID_KEYSTORE_PASSWORD -b "$STORE_PASSWORD"
