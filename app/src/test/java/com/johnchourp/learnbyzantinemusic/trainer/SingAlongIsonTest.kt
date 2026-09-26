@@ -11,22 +11,30 @@ import org.junit.Test
 
 /**
  * The ison under «Ψάλλε μαζί» (ClickUp `869f5x2cv`, J2). With a ήχος chosen it holds that ήχος's base
- * — the end of its απήχημα (F3) — at exactly the pitch the 8 Ήχοι page's ison sounds, «Μεταφορά βάσης»
- * included: the same lookup on the same ladder, never a second calculation. «Διατονικός» is no ήχος,
- * so it holds Νη, the Trainer's own base: 220 Hz.
+ * — the end of its απήχημα (F3) — at exactly the pitch the 8 Ήχοι page's ison sounds: the same lookup
+ * on the same ladder, never a second calculation, with the same shift — the mode's «Μεταφορά βάσης»
+ * plus the voice's global one from «Βρες τη φωνή σου» (J4), combined the way the page combines them.
+ * «Διατονικός» is no ήχος, so it holds Νη, the Trainer's own base: 220 Hz, moved only by the global
+ * shift.
  */
 class SingAlongIsonTest {
 
     private val shifts = listOf(BaseShift.MIN_MORIA, -6, -1, 0, 5, BaseShift.MAX_MORIA)
 
+    /** The voice's global shift: none, some, and enough to push the sum past the range's end. */
+    private val globals = listOf(0, -8, 20)
+
     @Test
     fun inEveryModeItIsThe8ModesPagesIsonToTheHertz() {
         Mode.entries.forEach { mode ->
             shifts.forEach { shift ->
-                val scale = TrainerScale(mode, shift)
-                val page = IsonDrone.held(IsonDrone.Request(mode, shift))!!
-                assertEquals("$mode at $shift", page.frequencyHz, SingAlong.isonFrequencyHz(scale)!!, 0.0)
-                assertEquals(IsonDrone.base(mode), SingAlong.isonPhthong(scale))
+                globals.forEach { global ->
+                    val scale = TrainerScale(mode, shift, global)
+                    // What the 8 Ήχοι page asks for: the mode's shift and the global one, combined.
+                    val page = IsonDrone.held(IsonDrone.Request(mode, BaseShift.combined(shift, global)))!!
+                    assertEquals("$mode at $shift + $global", page.frequencyHz, SingAlong.isonFrequencyHz(scale)!!, 0.0)
+                    assertEquals(IsonDrone.base(mode), SingAlong.isonPhthong(scale))
+                }
             }
         }
     }
@@ -37,9 +45,11 @@ class SingAlongIsonTest {
         // overlap they are one ladder, so the ison is in tune with the guide.
         Mode.entries.forEach { mode ->
             shifts.forEach { shift ->
-                val scale = TrainerScale(mode, shift)
-                val onTrainersLadder = scale.ladder.stepFor(IsonDrone.base(mode))!!.frequencyHz
-                assertEquals("$mode at $shift", onTrainersLadder, SingAlong.isonFrequencyHz(scale)!!, 1e-9)
+                globals.forEach { global ->
+                    val scale = TrainerScale(mode, shift, global)
+                    val onTrainersLadder = scale.ladder.stepFor(IsonDrone.base(mode))!!.frequencyHz
+                    assertEquals("$mode at $shift + $global", onTrainersLadder, SingAlong.isonFrequencyHz(scale)!!, 1e-9)
+                }
             }
         }
     }
@@ -54,8 +64,15 @@ class SingAlongIsonTest {
     }
 
     @Test
-    fun theDiatonicDefaultHoldsNiAt220Hz() {
+    fun theDiatonicDefaultHoldsNiAt220HzMovedOnlyByTheGlobalShift() {
         assertEquals(Phthong(PhthongName.NI), SingAlong.isonPhthong(TrainerScale.DIATONIC))
         assertEquals(ByzantineTuning.NI_BASE_HZ, SingAlong.isonFrequencyHz(TrainerScale.DIATONIC)!!, 1e-9)
+        val lowerVoice = TrainerScale(mode = null, globalShiftMoria = -8)
+        assertEquals(Phthong(PhthongName.NI), SingAlong.isonPhthong(lowerVoice))
+        assertEquals(
+            ByzantineTuning.NI_BASE_HZ * ByzantineTuning.ratioForMoria(-8.0),
+            SingAlong.isonFrequencyHz(lowerVoice)!!,
+            1e-9,
+        )
     }
 }

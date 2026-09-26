@@ -17,8 +17,10 @@ import kotlin.math.roundToInt
  * it is tested without a device:
  *
  * - **The ison** holds the base of the chosen ήχος — the end of its απήχημα ([IsonDrone.base]) — at
- *   the very frequency the 8 Ήχοι page's ison sounds, «Μεταφορά βάσης» included ([IsonDrone.held]).
- *   For «Διατονικός», which is no ήχος, it holds Νη on the Trainer's own ladder: 220 Hz.
+ *   the very frequency the 8 Ήχοι page's ison sounds, with the same shift: the mode's «Μεταφορά
+ *   βάσης» plus the voice's global one (J4), combined as the page combines them
+ *   ([TrainerScale.ladderShiftMoria], [IsonDrone.held]). For «Διατονικός», which is no ήχος, it holds
+ *   Νη on the Trainer's own ladder: 220 Hz, moved only by the voice's global shift.
  * - **What the line shows**: the φθόγγοι, or the syllables of the text once the learner has typed
  *   them ([lineLabel]) — the step from the παραλλαγή to the μέλος.
  * - **The three volumes** — melody, ison, metronome — are separate, and start at [Volumes.DEFAULT].
@@ -34,7 +36,7 @@ object SingAlong {
      */
     fun isonFrequencyHz(scale: TrainerScale): Double? {
         val mode = scale.mode ?: return scale.ladder.stepFor(isonPhthong(scale))?.frequencyHz
-        return IsonDrone.held(IsonDrone.Request(mode, scale.baseShiftMoria))?.frequencyHz
+        return IsonDrone.held(IsonDrone.Request(mode, scale.ladderShiftMoria))?.frequencyHz
     }
 
     /**
