@@ -8,6 +8,7 @@ import com.johnchourp.learnbyzantinemusic.practice.PracticeLog
 import com.johnchourp.learnbyzantinemusic.practice.PracticeLogCodec
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.EIGHT_MODES
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.LECTERN_PAGES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.NOTES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.OWNED_RECORDINGS
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.PRACTICE
@@ -95,6 +96,14 @@ class LearningDataFileTest {
         TRAINER to mapOf(
             "trainer_exercises" to trainerExercises,
             "trainer_last_melody" to TrainerMelodyCodec.encodeString(trainerMelody),
+        ),
+        // Two PDFs' page → ήχος maps (ClickUp 869f5x2e7), named by SHA-256, in their canonical text.
+        LECTERN_PAGES to mapOf(
+            "lectern_pages_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" to
+                """{"schemaVersion":1,"assignments":[{"pageIndex":0,"mode":"first","shiftMoria":0},""" +
+                """{"pageIndex":4,"mode":"plagal_first","shiftMoria":-3,"ison":{"phthong":"PA","octave":0}}]}""",
+            "lectern_pages_ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" to
+                """{"schemaVersion":1,"assignments":[{"pageIndex":2,"mode":"varys","shiftMoria":12}]}""",
         ),
     )
 
@@ -386,6 +395,7 @@ class LearningDataFileTest {
                 Line(Item.ANALYSIS, 2),
                 Line(Item.TRAINER_EXERCISES, 2),
                 Line(Item.TRAINER_LAST_MELODY, 1),
+                Line(Item.LECTERN_PAGES, 2),
             ),
             LearningDataFile.summary(result)
         )

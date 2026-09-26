@@ -324,6 +324,7 @@ class SettingsActivity : BaseActivity() {
         LearningDataFile.Item.ANALYSIS -> getString(R.string.learning_data_item_analysis, line.count)
         LearningDataFile.Item.TRAINER_EXERCISES -> getString(R.string.learning_data_item_trainer_exercises, line.count)
         LearningDataFile.Item.TRAINER_LAST_MELODY -> getString(R.string.learning_data_item_trainer_last_melody)
+        LearningDataFile.Item.LECTERN_PAGES -> getString(R.string.learning_data_item_lectern_pages, line.count)
     }
 
     private fun rejectionMessage(rejected: LearningDataFile.Result.Rejected): String = when (rejected.reason) {

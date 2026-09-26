@@ -33,8 +33,8 @@ import android.content.SharedPreferences
  *
  * Every key also says whether it goes into the «Δεδομένα μάθησης» file that the learner takes to
  * another phone ([Export], ClickUp `869f5x25w`). The field has no default, so a new key does not
- * compile until somebody has decided. Folder URIs never travel: the folder permission stays on the
- * device that granted it.
+ * compile until somebody has decided. Folder URIs never travel, nor the lectern's PDF URIs: the
+ * permission to use them stays on the device that granted it.
  */
 object AppPrefs {
 
@@ -66,6 +66,11 @@ object AppPrefs {
 
         /** The Melody Trainer: the user's saved exercises and the last melody (ClickUp `869f5x261`). */
         TRAINER("learn_byzantine_music_trainer"),
+        /** The digital lectern's library: the user's own PDFs, as this phone's grants to read them. */
+        LECTERN_LIBRARY("learn_byzantine_music_lectern_library"),
+
+        /** The digital lectern's page → ήχος maps, one per PDF, named by the file's SHA-256. */
+        LECTERN_PAGES("learn_byzantine_music_lectern_pages"),
     }
 
     /** What a key holds, so a reader cannot ask for the wrong accessor. */
@@ -243,7 +248,7 @@ object AppPrefs {
             "the modes' own values are never rewritten",
         writtenBy = "«Βρες τη φωνή σου», when its suggestion is accepted, and the reset of the «Φωνή» card in Settings",
         readBy = "the 8 Ήχοι page (diagram, απήχημα, ison, «Πού είμαι») — and through its requests " +
-            "IsonPlaybackService — and the Melody Trainer, «Διατονικός» included",
+            "IsonPlaybackService — the Melody Trainer, «Διατονικός» included, and the lectern's ison bar",
         // The singer's voice, the same on any phone — like the per-mode shifts it is added to.
         export = Export.YES,
     )
@@ -338,7 +343,7 @@ object AppPrefs {
         default = "CLEAN",
         allowed = "a ToneTimbre name; unknown values fall back to CLEAN",
         writtenBy = "the timbre selector on the 8 Ήχοι page",
-        readBy = "PhthongTonePlayer, for touch playback and the ison drone",
+        readBy = "PhthongTonePlayer, for touch playback and the ison drone — the lectern's ison bar too",
         export = Export.YES,
     )
 
@@ -356,7 +361,8 @@ object AppPrefs {
         allowed = "${BaseShift.MIN_MORIA}..+${BaseShift.MAX_MORIA} μόρια (BaseShift.RANGE); values outside are clamped on " +
             "both read and write",
         writtenBy = "the «Μεταφορά βάσης» slider, per mode",
-        readBy = "the scale diagram, touch playback and the ison drone of that mode",
+        readBy = "the scale diagram, touch playback and the ison drone of that mode; the lectern, as " +
+            "the starting shift of that mode when it is newly set on a page (the page then keeps its own)",
         export = Export.YES,
     )
 
@@ -369,7 +375,8 @@ object AppPrefs {
         type = Type.BOOLEAN,
         default = "false — the ison stops when you leave the 8 Ήχοι page",
         writtenBy = "the «Συνέχισε στο παρασκήνιο» switch of the ison card",
-        readBy = "EightModesActivity, to decide whether the page or IsonPlaybackService plays the ison",
+        readBy = "EightModesActivity and the lectern's reader, to decide whether the screen or " +
+            "IsonPlaybackService plays the ison",
         export = Export.YES,
     )
 
@@ -516,6 +523,41 @@ object AppPrefs {
         readBy = "MelodyTrainerActivity.onCreate, which puts the melody back after a close or a process death",
         export = Export.YES,
     )
+    // ---- ΨΗΦΙΑΚΟ ΑΝΑΛΟΓΙΟ ---------------------------------------------------------------------
+
+    val LecternLibraryEntries = Key(
+        name = "lectern_library",
+        store = Store.LECTERN_LIBRARY,
+        type = Type.STRING,
+        default = "absent — the library is empty",
+        allowed = "a LecternLibrary JSON object of up to 100 PDFs: content URIs the app holds a persisted " +
+            "READ grant for, each with its title and the page the reader left it on",
+        writtenBy = "the lectern's library when a PDF is added, opened or removed, and the reader when it leaves a page",
+        readBy = "the lectern's library list, and the reader for the page to reopen on",
+        export = Export.NO,
+    )
+
+    /**
+     * The lectern's page → ήχος map is a **family** of keys, one per PDF: the stored name is this prefix
+     * followed by the SHA-256 of the file, 64 lowercase hex digits — never its URI, which means nothing
+     * on another phone. Use [lecternPagesKeyName]; never build the name inline.
+     */
+    const val LECTERN_PAGES_KEY_PREFIX = "lectern_pages_"
+
+    val LecternPageModes = Key(
+        name = "$LECTERN_PAGES_KEY_PREFIX<sha256>",
+        store = Store.LECTERN_PAGES,
+        type = Type.STRING,
+        default = "absent — no page of that PDF has a ήχος yet",
+        allowed = "LecternPagesCodec JSON, schemaVersion 1: per page, a mode key, a «Μεταφορά βάσης» " +
+            "clamped like the 8 Ήχοι's, and the ison φθόγγος (absent for the base)",
+        writtenBy = "the lectern's ison bar, when a ήχος, a shift or a φθόγγος is set on a page or a page's own setting is removed",
+        readBy = "the lectern's reader: a page sounds the most recent setting at or before it",
+        export = Export.YES,
+    )
+
+    /** Stored name of the page → ήχος key for the PDF whose SHA-256 is [sha256Hex]. */
+    fun lecternPagesKeyName(sha256Hex: String): String = LECTERN_PAGES_KEY_PREFIX + sha256Hex
 
     /** Every registered key. A new key must appear here, or `AppPrefsRegistryTest` fails. */
     val all: List<Key> = listOf(
@@ -551,6 +593,8 @@ object AppPrefs {
         PracticeReminderMinuteOfDay,
         TrainerExercises,
         TrainerLastMelody,
+        LecternLibraryEntries,
+        LecternPageModes,
     )
 
     /** Opens [store]. The only place the app names a preferences file. */
