@@ -521,8 +521,10 @@ private fun barDetail(state: LecternReaderViewModel.State): String {
     val sounding = state.sounding ?: return stringResource(R.string.lectern_set_mode_hint)
     val parts = mutableListOf<String>()
     LecternIson.held(sounding)?.let { parts += stringResource(R.string.lectern_bar_ison, it.phthong.label) }
-    if (sounding.baseShiftMoria != 0) {
-        parts += stringResource(R.string.eight_modes_base_shift_value_template, sounding.baseShiftMoria)
+    // The page's own shift, as the 8 Ήχοι slider shows a mode's own; an ison from outside, as it sounds.
+    val shift = if (state.moved == null) state.holding?.baseShiftMoria ?: sounding.baseShiftMoria else sounding.baseShiftMoria
+    if (shift != 0) {
+        parts += stringResource(R.string.eight_modes_base_shift_value_template, shift)
     }
     val holding = state.holding
     if (state.moved == null && holding != null) {
@@ -602,8 +604,16 @@ private fun PageSettingDialog(state: LecternReaderViewModel.State, actions: Lect
                 if (holding != null) {
                     SettingLabel(R.string.eight_modes_base_shift_title)
                     ShiftSlider(moria = holding.baseShiftMoria, onChange = actions.onChooseShift)
+                    // J4: the voice's global shift is added to the page's own, as to every mode's.
+                    if (state.globalShiftMoria != BaseShift.DEFAULT_MORIA) {
+                        Text(
+                            text = stringResource(R.string.voice_global_shift_note, state.globalShiftMoria),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = LbmBrown,
+                        )
+                    }
                     SettingLabel(R.string.eight_modes_ison_selector_label)
-                    IsonChoiceSelector(request = holding.request, onChoose = actions.onChooseIson)
+                    IsonChoiceSelector(request = holding.request(state.globalShiftMoria), onChoose = actions.onChooseIson)
                     // Only a page's own setting can be removed; the page then follows the pages before it.
                     if (state.setOnThisPage) {
                         TextButton(onClick = actions.onClearPage) {

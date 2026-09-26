@@ -248,7 +248,7 @@ object AppPrefs {
             "the modes' own values are never rewritten",
         writtenBy = "«Βρες τη φωνή σου», when its suggestion is accepted, and the reset of the «Φωνή» card in Settings",
         readBy = "the 8 Ήχοι page (diagram, απήχημα, ison, «Πού είμαι») — and through its requests " +
-            "IsonPlaybackService — and the Melody Trainer, «Διατονικός» included",
+            "IsonPlaybackService — the Melody Trainer, «Διατονικός» included, and the lectern's ison bar",
         // The singer's voice, the same on any phone — like the per-mode shifts it is added to.
         export = Export.YES,
     )

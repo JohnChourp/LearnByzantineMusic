@@ -11,6 +11,7 @@ import com.johnchourp.learnbyzantinemusic.music.Phthong
  *
  * [pageIndex] counts from 0, as `PdfRenderer` does; the screen shows it + 1. [isonChoice] null is the
  * mode's base ([IsonDrone.base]), asked for as «no choice» exactly as the 8 Ήχοι page asks for it.
+ * [baseShiftMoria] is the page's **own** shift, as a mode's own is on the 8 Ήχοι page.
  *
  * **No second pitch calculation.** [request] is the one thing the bar sounds, and only [LecternIson] —
  * the 8 Ήχοι page's own lookup, ladder and choices — turns it into a pitch.
@@ -21,8 +22,14 @@ data class PageAssignment(
     val baseShiftMoria: Int,
     val isonChoice: Phthong? = null,
 ) {
-    /** The ison this assignment sounds. */
-    val request: IsonDrone.Request get() = IsonDrone.Request(mode, baseShiftMoria, isonChoice)
+    /**
+     * The ison this assignment sounds for a voice whose global shift («Βρες τη φωνή σου», ClickUp
+     * `869f5x2dd`) is [globalShiftMoria]: the page's own shift plus the global one, added and clamped
+     * by [BaseShift.combined] at the point of use — exactly how the 8 Ήχοι page builds every ladder.
+     * Neither value is ever written into the other.
+     */
+    fun request(globalShiftMoria: Int): IsonDrone.Request =
+        IsonDrone.Request(mode, BaseShift.combined(baseShiftMoria, globalShiftMoria), isonChoice)
 }
 
 /**

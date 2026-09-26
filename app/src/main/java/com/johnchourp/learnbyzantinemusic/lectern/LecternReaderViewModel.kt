@@ -10,8 +10,10 @@ import com.johnchourp.learnbyzantinemusic.modes.IsonDrone
 import com.johnchourp.learnbyzantinemusic.modes.IsonPlaybackService
 import com.johnchourp.learnbyzantinemusic.modes.PhthongTonePlayer
 import com.johnchourp.learnbyzantinemusic.modes.ToneTimbre
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.Phthong
+import com.johnchourp.learnbyzantinemusic.voice.GlobalShift
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -36,7 +38,8 @@ import java.util.concurrent.atomic.AtomicReference
  *
  * **The ison.** The bar sounds [State.sounding]: the setting that holds on the page
  * ([PageAssignments.resolve]), or a move of the background ison made from outside. Every pitch comes
- * from [LecternIson] — the 8 Ήχοι page's own lookup. Who plays it follows J5's decision exactly
+ * from [LecternIson] — the 8 Ήχοι page's own lookup — on the page's own shift plus the voice's global
+ * one (J4, re-read on every start, as the 8 Ήχοι page does). Who plays it follows J5's decision exactly
  * (`IsonPlaybackService`): with «Συνέχισε στο παρασκήνιο» off, this reader plays it and silences it in
  * onStop — leaving the reader stops it; with it on, the service plays it from the first moment and the
  * reader only sends requests ([LecternBackgroundIson] keeps the two in step), so it plays on after the
@@ -67,14 +70,19 @@ class LecternReaderViewModel(application: Application) : AndroidViewModel(applic
         val moved: IsonDrone.Request? = null,
         /** The απήχημα syllable sounding, or -1. */
         val apichimaStep: Int = -1,
+        /** The voice's global shift (J4), added to the page's own where the ison is built. */
+        val globalShiftMoria: Int = BaseShift.DEFAULT_MORIA,
     ) {
         /** The setting that holds on this page: its own, or the latest one before it. */
         val holding: PageAssignment? get() = PageAssignments.resolve(assignments, pageIndex)
 
         val setOnThisPage: Boolean get() = PageAssignments.isSetOn(assignments, pageIndex)
 
+        /** The ison of the page's setting, with the voice's global shift. */
+        val pageRequest: IsonDrone.Request? get() = holding?.request(globalShiftMoria)
+
         /** What the ison sounds while it is on. */
-        val sounding: IsonDrone.Request? get() = moved ?: holding?.request
+        val sounding: IsonDrone.Request? get() = moved ?: pageRequest
     }
 
     private val prefs = LecternPrefs(application)
@@ -279,10 +287,12 @@ class LecternReaderViewModel(application: Application) : AndroidViewModel(applic
 
     // ---- the screen's lifecycle ------------------------------------------------------------------
 
-    /** onStart: the choices of the 8 Ήχοι page may have changed while the reader was hidden. */
+    /** onStart: the choices of the 8 Ήχοι page, and the voice's global shift, may have changed meanwhile. */
     fun onScreenStarted() {
         started = true
         timbre = prefs.timbre()
+        val global = GlobalShift.load(getApplication())
+        if (global != mutableState.value.globalShiftMoria) mutableState.update { it.copy(globalShiftMoria = global) }
         val wasInBackground = inBackground
         inBackground = prefs.isonInBackground()
         if (!inBackground) {
@@ -358,7 +368,7 @@ class LecternReaderViewModel(application: Application) : AndroidViewModel(applic
             LecternBackgroundIson.Heard.Nothing -> Unit
             LecternBackgroundIson.Heard.Stopped -> mutableState.update { it.copy(isonOn = false, moved = null) }
             is LecternBackgroundIson.Heard.Moved -> mutableState.update {
-                it.copy(isonOn = true, moved = heard.request.takeIf { request -> request != it.holding?.request })
+                it.copy(isonOn = true, moved = heard.request.takeIf { request -> request != it.pageRequest })
             }
         }
     }
