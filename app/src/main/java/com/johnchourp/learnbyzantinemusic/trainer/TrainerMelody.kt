@@ -54,6 +54,7 @@ data class TrainerMelody(
  * | `notes[].octave` | [TrainerScale.MIN_NOTE_OCTAVE] … [TrainerScale.MAX_NOTE_OCTAVE] | clamped; missing: rejected |
  * | `notes[].length` | the note's own length in χρόνοι | clamped to ½ … 4; missing: rejected |
  * | `notes[].signs` | `TimeSign.id`s — `gorgo` and `fraction` are the Trainer's, frozen by H5 | an id no sign has, or a rest's: rejected |
+ * | `notes[].syllable` | optional: the syllable sung on the note (J2); absent when there is none | cleaned by `TrainerNote.cleanSyllable`: trimmed, cut to 12 characters, blank = none |
  *
  * **Rejected** means [decode] returns null: never a crash, and never half a melody — a note with a sign
  * the app does not know would play with the wrong timing, so the whole melody is refused instead.
@@ -63,6 +64,11 @@ data class TrainerMelody(
  *
  * On the way in the notes also go through `MelodySequence.normalised`, the rule of H5: a γοργόν that
  * can never stand on the first note is taken off, exactly as a deletion in the Trainer would.
+ *
+ * **`syllable` did not raise the version** (ClickUp `869f5x2cv`). It is optional, and every reader of
+ * version 1 takes only the fields it knows, through `opt`: a melody without syllables is written
+ * exactly as before, and a version 1 reader that meets one with syllables loads its notes and
+ * leaves the syllables out — it never refuses the melody.
  */
 object TrainerMelodyCodec {
 
@@ -77,6 +83,7 @@ object TrainerMelodyCodec {
     private const val OCTAVE = "octave"
     private const val LENGTH = "length"
     private const val SIGNS = "signs"
+    private const val SYLLABLE = "syllable"
 
     fun encode(melody: TrainerMelody): JSONObject = JSONObject().apply {
         put(SCHEMA_VERSION_FIELD, SCHEMA_VERSION)
@@ -133,6 +140,7 @@ object TrainerMelodyCodec {
         put(OCTAVE, note.octaveShift)
         put(LENGTH, note.baseDurationBeats.toDouble())
         if (note.signs.isNotEmpty()) put(SIGNS, JSONArray(note.signs.map { it.id }.sorted()))
+        note.syllable?.let { put(SYLLABLE, it) }
     }
 
     private fun decodeNote(json: JSONObject?): TrainerNote? {
@@ -153,6 +161,7 @@ object TrainerMelodyCodec {
             baseDurationBeats = length.toFloat()
                 .coerceIn(MelodySequence.MIN_LENGTH_BEATS, MelodySequence.MAX_LENGTH_BEATS),
             signs = signs,
+            syllable = TrainerNote.cleanSyllable(json.opt(SYLLABLE) as? String),
         )
     }
 }

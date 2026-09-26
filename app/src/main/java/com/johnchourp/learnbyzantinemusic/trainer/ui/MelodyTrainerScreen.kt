@@ -46,6 +46,7 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Spellcheck
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -109,8 +110,9 @@ private val ActiveGlowBorder = Color(0xFFE0A100)
  * Redesigned «Γυμναστής Μελωδίας» screen. A pure renderer of [MelodyTrainerUiState] + callbacks:
  * a hero, a visual timing-rules card, the note picker + octave stepper, the editable sequence
  * with animated match/active feedback, «Οι ασκήσεις μου» ([TrainerExercisesCard]), the ήχος and
- * «Μεταφορά βάσης» ([TrainerScaleCard]), a tempo slider, the transport row, and the three
- * voice-practice mode cards. All audio / mic / timing logic stays in the host Activity.
+ * «Μεταφορά βάσης» ([TrainerScaleCard]), a tempo slider, the transport row, «Ψάλλε μαζί»
+ * ([SingAlongCard]) and the three voice-practice mode cards. All audio / mic / timing logic stays
+ * in the host Activity.
  */
 @Composable
 fun MelodyTrainerScreen(
@@ -139,6 +141,13 @@ fun MelodyTrainerScreen(
     onPlay: () -> Unit,
     onStop: () -> Unit,
     onClear: () -> Unit,
+    onStartSingAlong: () -> Unit,
+    onStopSingAlong: () -> Unit,
+    onShowSyllables: (Boolean) -> Unit,
+    onSingAlongVolumeChange: (SingAlongSound, Int) -> Unit,
+    onRequestSyllable: (Int) -> Unit,
+    onSaveSyllable: (Int, String) -> Unit,
+    onDismissSyllable: () -> Unit,
     onToggleVoice: (Boolean) -> Unit,
     onToggleRhythm: (Boolean) -> Unit,
     onToggleCombo: (Boolean) -> Unit,
@@ -188,6 +197,7 @@ fun MelodyTrainerScreen(
                     onIncrementDuration = onIncrementDuration,
                     onToggleGorgo = onToggleGorgo,
                     onRemoveNote = onRemoveNote,
+                    onRequestSyllable = onRequestSyllable,
                 )
             }
             StaggeredAppear(delayMillis = 270) {
@@ -228,6 +238,15 @@ fun MelodyTrainerScreen(
                     onClear = onClear,
                 )
             }
+            StaggeredAppear(delayMillis = 390) {
+                SingAlongCard(
+                    singAlong = state.singAlong,
+                    onStart = onStartSingAlong,
+                    onStop = onStopSingAlong,
+                    onShowSyllables = onShowSyllables,
+                    onVolumeChange = onSingAlongVolumeChange,
+                )
+            }
             StaggeredAppear(delayMillis = 420) {
                 PracticeSection(
                     voice = state.voice,
@@ -240,6 +259,9 @@ fun MelodyTrainerScreen(
             }
             Spacer(Modifier.height(8.dp))
         }
+    }
+    state.syllableDialog?.let { dialog ->
+        SyllableDialog(dialog = dialog, onSave = onSaveSyllable, onDismiss = onDismissSyllable)
     }
 }
 
@@ -501,6 +523,7 @@ private fun SequenceCard(
     onIncrementDuration: (Int) -> Unit,
     onToggleGorgo: (Int) -> Unit,
     onRemoveNote: (Int) -> Unit,
+    onRequestSyllable: (Int) -> Unit,
 ) {
     LessonCard(title = stringResource(R.string.melody_trainer_sequence_title)) {
         Row(
@@ -537,6 +560,7 @@ private fun SequenceCard(
                                 onIncrement = { onIncrementDuration(note.index) },
                                 onToggleGorgo = { onToggleGorgo(note.index) },
                                 onRemove = { onRemoveNote(note.index) },
+                                onSyllable = { onRequestSyllable(note.index) },
                             )
                         }
                     }
@@ -580,6 +604,7 @@ private fun NoteTile(
     onIncrement: () -> Unit,
     onToggleGorgo: () -> Unit,
     onRemove: () -> Unit,
+    onSyllable: () -> Unit,
 ) {
     val container by animateColorAsState(
         targetValue = when {
@@ -595,7 +620,9 @@ private fun NoteTile(
         note.active -> ActiveGlowBorder
         else -> LbmOutline
     }
-    val rowDescription = stringResource(
+    val rowDescription = note.syllable?.let { syllable ->
+        stringResource(R.string.melody_trainer_note_a11y_syllable, note.index + 1, note.phthongLabel, syllable, note.beatsLabel)
+    } ?: stringResource(
         R.string.melody_trainer_note_a11y,
         note.index + 1,
         note.phthongLabel,
@@ -641,15 +668,30 @@ private fun NoteTile(
                     },
             ) {
                 Text(
-                    text = note.phthongLabel,
+                    // The φθόγγος, or its syllable once «Συλλαβές» is chosen (ClickUp `869f5x2cv`).
+                    text = note.lineLabel,
                     style = MaterialTheme.typography.titleLarge,
                     color = LbmTextPrimary,
                     fontWeight = FontWeight.Bold,
                 )
+                val duration = stringResource(R.string.melody_trainer_note_duration, note.beatsLabel)
                 Text(
-                    text = stringResource(R.string.melody_trainer_note_duration, note.beatsLabel),
+                    // With a syllable, the label the line is not showing comes after the length.
+                    text = note.otherLabel?.let { stringResource(R.string.melody_trainer_note_detail, duration, it) } ?: duration,
                     style = MaterialTheme.typography.bodySmall,
                     color = LbmTextSecondary,
+                )
+            }
+            IconButton(
+                onClick = onSyllable,
+                enabled = note.editable,
+                modifier = Modifier.size(40.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.TextFields,
+                    contentDescription = stringResource(R.string.melody_trainer_syllable_cd, note.index + 1),
+                    tint = if (note.editable) LbmBrown else LbmTextSecondary.copy(alpha = 0.4f),
+                    modifier = Modifier.size(20.dp),
                 )
             }
             IconButton(

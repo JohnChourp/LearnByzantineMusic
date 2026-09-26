@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
@@ -15,6 +16,9 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.lessons.ui.MetronomeClicker
+import com.johnchourp.learnbyzantinemusic.modes.PhthongTonePlayer
+import com.johnchourp.learnbyzantinemusic.modes.ToneTimbre
 import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.voice.GlobalShift
 import com.johnchourp.learnbyzantinemusic.music.Beats
@@ -27,6 +31,9 @@ import com.johnchourp.learnbyzantinemusic.trainer.ui.ExerciseNameError
 import com.johnchourp.learnbyzantinemusic.trainer.ui.MelodyTrainerScreen
 import com.johnchourp.learnbyzantinemusic.trainer.ui.MelodyTrainerUiState
 import com.johnchourp.learnbyzantinemusic.trainer.ui.PracticeModeUi
+import com.johnchourp.learnbyzantinemusic.trainer.ui.SingAlongSound
+import com.johnchourp.learnbyzantinemusic.trainer.ui.SingAlongUi
+import com.johnchourp.learnbyzantinemusic.trainer.ui.SyllableDialogUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TimingRuleNumbersUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerExercisesUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerNoteUi
@@ -34,6 +41,7 @@ import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerScaleUi
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+import kotlin.math.roundToInt
 
 /**
  * Practice page where the user writes a sequence of phthongi (Νη … Ζω), sets how long
@@ -60,6 +68,13 @@ import java.util.Locale
  * process death alike. «Οι ασκήσεις μου» keeps named melodies. Both live in [TrainerExerciseStore];
  * the formats, and what is done with a value that cannot be read, are [TrainerMelodyCodec]'s and
  * [ExerciseBook]'s.
+ *
+ * «Ψάλλε μαζί» (ClickUp `869f5x2cv`) loops the line with the current note lit, the guide fading
+ * round by round while an ison and a metronome go on, until «Στάση» ([SingAlong]). Its notes and
+ * clicks come from [MelodyPlaybackPlanner.planRound] and are played by the same [player]; the ison
+ * has a [PhthongTonePlayer] of its own and the click a [MetronomeClicker], each with its own volume.
+ * The screen stays on while it runs, since nothing else touches it for minutes. A note may carry a
+ * syllable, saved with the melody, and the line can show the syllables instead of the φθόγγοι.
  */
 class MelodyTrainerActivity : BaseActivity() {
 
@@ -86,6 +101,18 @@ class MelodyTrainerActivity : BaseActivity() {
     private var isPlaybackActive = false
     private var isVoiceActive = false
     private var isRhythmActive = false
+
+    // «Ψάλλε μαζί» (ClickUp 869f5x2cv)
+    private var isSingAlongActive = false
+    /** Where the loop is: moved by the timeline, one note at a time. Null when it is not running. */
+    private var singAlongCursor: PracticeCursor? = null
+    private var singAlongVolumes = SingAlong.Volumes.DEFAULT
+    /** The line shows the syllables instead of the φθόγγοι. */
+    private var lineShowsSyllables = false
+    /** The note whose syllable is being typed, or null. */
+    private var syllableDialogIndex: Int? = null
+    private val isonPlayer = PhthongTonePlayer()
+    private val metronome = MetronomeClicker(percentOf(SingAlong.Volumes.DEFAULT.metronome))
     private var rhythmRequirePitch = false // false = time only (Mode 2), true = phthong + time (Mode 3)
 
     private val player = MelodySequencePlayer()
@@ -176,6 +203,13 @@ class MelodyTrainerActivity : BaseActivity() {
                     onPlay = ::startPlayback,
                     onStop = ::stopPlayback,
                     onClear = ::clearSequence,
+                    onStartSingAlong = ::startSingAlong,
+                    onStopSingAlong = ::stopSingAlong,
+                    onShowSyllables = ::showSyllables,
+                    onSingAlongVolumeChange = ::changeSingAlongVolume,
+                    onRequestSyllable = ::requestSyllable,
+                    onSaveSyllable = ::saveSyllable,
+                    onDismissSyllable = ::dismissSyllable,
                     onToggleVoice = { checked ->
                         if (checked) requestVoiceSession() else stopVoiceSession(clearGreens = true)
                     },
@@ -205,7 +239,7 @@ class MelodyTrainerActivity : BaseActivity() {
 
     // region editing
 
-    private val isBusy: Boolean get() = isPlaybackActive || isVoiceActive || isRhythmActive
+    private val isBusy: Boolean get() = isPlaybackActive || isVoiceActive || isRhythmActive || isSingAlongActive
 
     private fun addNote(phthong: PhthongName) {
         if (isBusy) return
@@ -451,6 +485,94 @@ class MelodyTrainerActivity : BaseActivity() {
 
     // endregion
 
+    // region «Ψάλλε μαζί» (ClickUp 869f5x2cv)
+
+    /**
+     * Starts the loop on a snapshot of the melody, tempo and scale — nothing can change while it runs.
+     * The ison starts first, so the first note already sounds over it.
+     */
+    private fun startSingAlong() {
+        if (isBusy || notes.isEmpty()) return
+        val sequence = MelodySequence(notes.toList())
+        val tempo = MelodyTempo.of(bpm)
+        val loopScale = scale
+        val frequencyOf: (TrainerNote) -> Double = loopScale::frequencyHz
+        if (MelodyPlaybackPlanner.planRound(sequence, tempo, 0, frequencyOf).notes.isEmpty()) return
+        isSingAlongActive = true
+        singAlongCursor = PracticeCursor.start(notes.size)
+        matchedIndices.clear()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        SingAlong.isonFrequencyHz(loopScale)?.let { isonPlayer.start(it, ToneTimbre.CLEAN, singAlongVolumes.ison) }
+        metronome.setVolume(percentOf(singAlongVolumes.metronome))
+        metronome.warmUp()
+        player.setGuideVolume(singAlongVolumes.melody)
+        player.playLoop(
+            roundAt = { round -> MelodyPlaybackPlanner.planRound(sequence, tempo, round, frequencyOf) },
+            listener = ::onSingAlongNote,
+            onTick = metronome::click,
+        )
+        rebuildState()
+    }
+
+    /** The timeline moved: the cursor follows it, and the note it is on lights up. */
+    private fun onSingAlongNote(round: PlannedRound, event: PlannedNoteEvent) {
+        val cursor = singAlongCursor ?: return
+        singAlongCursor = cursor.at(round.index, event.index)
+        activeIndex = event.index
+        rebuildState()
+    }
+
+    private fun stopSingAlong() {
+        if (!isSingAlongActive) return
+        player.stop()
+        isonPlayer.stop()
+        metronome.release()
+        isSingAlongActive = false
+        singAlongCursor = null
+        activeIndex = -1
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        rebuildState()
+    }
+
+    /** A volume moved: it applies at once — to the next note for the guide, to the sounding ison and click. */
+    private fun changeSingAlongVolume(sound: SingAlongSound, percent: Int) {
+        val level = (percent / 100f).coerceIn(0f, 1f)
+        singAlongVolumes = when (sound) {
+            SingAlongSound.MELODY -> singAlongVolumes.copy(melody = level).also { player.setGuideVolume(level) }
+            SingAlongSound.ISON -> singAlongVolumes.copy(ison = level).also { isonPlayer.setVolume(level) }
+            SingAlongSound.METRONOME -> singAlongVolumes.copy(metronome = level).also { metronome.setVolume(percentOf(level)) }
+        }
+        rebuildState()
+    }
+
+    private fun showSyllables(show: Boolean) {
+        lineShowsSyllables = show
+        rebuildState()
+    }
+
+    private fun requestSyllable(index: Int) {
+        if (isBusy || index !in notes.indices) return
+        syllableDialogIndex = index
+        rebuildState()
+    }
+
+    /** Stores what was typed, cleaned by the note itself; an empty text takes the syllable off. */
+    private fun saveSyllable(index: Int, typed: String) {
+        syllableDialogIndex = null
+        if (!isBusy && index in notes.indices) {
+            notes[index] = notes[index].withSyllable(typed)
+            autosave()
+        }
+        rebuildState()
+    }
+
+    private fun dismissSyllable() {
+        syllableDialogIndex = null
+        rebuildState()
+    }
+
+    // endregion
+
     // region microphone permission
 
     private fun ensureMicThen(onGranted: () -> Unit, onDenied: () -> Unit) {
@@ -485,7 +607,7 @@ class MelodyTrainerActivity : BaseActivity() {
     // region Mode 2: voice check
 
     private fun requestVoiceSession() {
-        if (isPlaybackActive || isRhythmActive) {
+        if (isPlaybackActive || isRhythmActive || isSingAlongActive) {
             rebuildState()
             return
         }
@@ -585,7 +707,7 @@ class MelodyTrainerActivity : BaseActivity() {
     // region Mode 3: rhythm timing
 
     private fun requestRhythmSession(requirePitch: Boolean) {
-        if (isPlaybackActive || isVoiceActive || (isRhythmActive && rhythmRequirePitch != requirePitch)) {
+        if (isPlaybackActive || isVoiceActive || isSingAlongActive || (isRhythmActive && rhythmRequirePitch != requirePitch)) {
             rebuildState()
             return
         }
@@ -760,6 +882,9 @@ class MelodyTrainerActivity : BaseActivity() {
             TrainerNoteUi(
                 index = index,
                 phthongLabel = note.pitch.label,
+                lineLabel = SingAlong.lineLabel(note, lineShowsSyllables),
+                syllable = note.syllable,
+                otherLabel = SingAlong.lineLabel(note, !lineShowsSyllables).takeIf { note.syllable != null },
                 beatsLabel = formatBeats(durations[index]),
                 hasGorgo = note.hasGorgo,
                 editable = !isBusy,
@@ -769,8 +894,8 @@ class MelodyTrainerActivity : BaseActivity() {
                 gorgoToggleable = sequence.canToggleGorgon(index),
             )
         }
-        val nowPlaying = if (isPlaybackActive && activeIndex in notes.indices) {
-            notes[activeIndex].pitch.label
+        val nowPlaying = if ((isPlaybackActive || isSingAlongActive) && activeIndex in notes.indices) {
+            SingAlong.lineLabel(notes[activeIndex], lineShowsSyllables)
         } else {
             null
         }
@@ -809,21 +934,37 @@ class MelodyTrainerActivity : BaseActivity() {
                 newerFormat = exercises.isNewerFormat,
                 dialog = exerciseDialog,
             ),
+            singAlong = SingAlongUi(
+                running = isSingAlongActive,
+                startEnabled = !isBusy && notes.isNotEmpty(),
+                round = singAlongCursor?.round?.plus(1),
+                guidePercent = singAlongCursor?.let { SingAlong.guidePercent(it.round) },
+                nowLabel = nowPlaying.takeIf { isSingAlongActive },
+                showSyllables = lineShowsSyllables,
+                hasSyllables = notes.any { it.syllable != null },
+                melodyPercent = percentOf(singAlongVolumes.melody),
+                isonPercent = percentOf(singAlongVolumes.ison),
+                metronomePercent = percentOf(singAlongVolumes.metronome),
+                isonLabel = SingAlong.isonPhthong(scale).label,
+            ),
+            syllableDialog = syllableDialogIndex?.takeIf { it in notes.indices }?.let { index ->
+                SyllableDialogUi(index, notes[index].pitch.label, notes[index].syllable.orEmpty())
+            },
             voice = PracticeModeUi(
                 checked = isVoiceActive,
-                enabled = !isPlaybackActive && !isRhythmActive,
+                enabled = !isPlaybackActive && !isRhythmActive && !isSingAlongActive,
                 status = voiceStatus,
                 progress = if (isVoiceActive) correctProgress(voiceCorrectCount, total) else null,
             ),
             rhythm = PracticeModeUi(
                 checked = isRhythmActive && !rhythmRequirePitch,
-                enabled = !isPlaybackActive && !isVoiceActive && !(isRhythmActive && rhythmRequirePitch),
+                enabled = !isPlaybackActive && !isVoiceActive && !isSingAlongActive && !(isRhythmActive && rhythmRequirePitch),
                 status = rhythmStatus,
                 progress = if (isRhythmActive && !rhythmRequirePitch) correctProgress(rhythmCorrectCount, total) else null,
             ),
             combo = PracticeModeUi(
                 checked = isRhythmActive && rhythmRequirePitch,
-                enabled = !isPlaybackActive && !isVoiceActive && !(isRhythmActive && !rhythmRequirePitch),
+                enabled = !isPlaybackActive && !isVoiceActive && !isSingAlongActive && !(isRhythmActive && !rhythmRequirePitch),
                 status = comboStatus,
                 progress = if (isRhythmActive && rhythmRequirePitch) correctProgress(rhythmCorrectCount, total) else null,
             ),
@@ -839,6 +980,9 @@ class MelodyTrainerActivity : BaseActivity() {
     // endregion
 
     private fun octaveLabel(shift: Int): String = if (shift > 0) "+$shift" else shift.toString()
+
+    /** A 0 … 1 level as the whole percentage the card shows and the click generator takes. */
+    private fun percentOf(level: Float): Int = (level * 100).roundToInt()
 
     private fun correctProgress(correct: Int, total: Int): String =
         getString(R.string.melody_trainer_correct_progress, correct, total)
@@ -860,6 +1004,8 @@ class MelodyTrainerActivity : BaseActivity() {
         if (isRhythmActive) {
             stopRhythmSession(clearGreens = false)
         }
+        // Like every mode, «Ψάλλε μαζί» stops when the screen is left; only «Στάση» stops it otherwise.
+        stopSingAlong()
     }
 
     /** The autosave's safety net: every edit already wrote the melody, so this is usually a no-op. */
@@ -872,6 +1018,8 @@ class MelodyTrainerActivity : BaseActivity() {
         super.onDestroy()
         uiHandler.removeCallbacksAndMessages(null)
         player.release()
+        isonPlayer.release()
+        metronome.release()
         pitchEngine.stop()
     }
 
