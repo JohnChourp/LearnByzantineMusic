@@ -260,6 +260,7 @@ class SettingsActivity : BaseActivity() {
         LearningDataFile.Item.BASE_SHIFT -> getString(R.string.learning_data_item_base_shift, line.count)
         LearningDataFile.Item.RECORDING_FORMAT -> getString(R.string.learning_data_item_recording_format)
         LearningDataFile.Item.ANALYSIS -> getString(R.string.learning_data_item_analysis, line.count)
+        LearningDataFile.Item.LECTERN_PAGES -> getString(R.string.learning_data_item_lectern_pages, line.count)
     }
 
     private fun rejectionMessage(rejected: LearningDataFile.Result.Rejected): String = when (rejected.reason) {

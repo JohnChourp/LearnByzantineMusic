@@ -26,6 +26,7 @@
     <string name="home_tile_calendar_sub">Εβδομαδιαίο ημερολόγιο ήχων</string>
     <string name="home_tile_recordings_sub">Ηχογράφησε και άκουσε</string>
     <string name="home_tile_notes_sub">Οι σημειώσεις σου</string>
+    <string name="home_tile_lectern_sub">Τα PDF σου, με ίσο ανά σελίδα</string>
     <string name="home_tile_settings_sub">Γλώσσα &amp; προτιμήσεις</string>
     <string name="lesson_2">Μάθημα 2</string>
     <string name="lesson_3">Μάθημα 3</string>
@@ -618,7 +619,7 @@
     <string name="settings_language_current_badge">Τρέχουσα</string>
     <!-- «Δεδομένα μάθησης» (ClickUp 869f5x25w) -->
     <string name="settings_learning_data_label">Δεδομένα μάθησης</string>
-    <string name="settings_learning_data_hint">Πάρε σε άλλο κινητό τα αγαπημένα, την πρόοδο «Από το μηδέν» και τις ρυθμίσεις σου, σε ένα αρχείο. Οι φάκελοι (σημειώσεις, ηχογραφήσεις) δεν μπαίνουν στο αρχείο· στο νέο κινητό τους ξαναδιαλέγεις.</string>
+    <string name="settings_learning_data_hint">Πάρε σε άλλο κινητό τα αγαπημένα, την πρόοδο «Από το μηδέν» και τις ρυθμίσεις σου, σε ένα αρχείο. Οι φάκελοι (σημειώσεις, ηχογραφήσεις) και τα ίδια τα PDF του αναλογίου δεν μπαίνουν στο αρχείο· στο νέο κινητό τα ξαναδιαλέγεις, και οι ήχοι των σελίδων τους σε περιμένουν.</string>
     <string name="settings_learning_data_export">Εξαγωγή</string>
     <string name="settings_learning_data_import">Εισαγωγή</string>
     <string name="settings_learning_data_reset_hint">Ένα μάθημα της διαδρομής «Από το μηδέν» μετρά ως ολοκληρωμένο μόλις το ανοίξεις. Ο μηδενισμός την ξεκινά από την αρχή.</string>
@@ -640,6 +641,7 @@
     <string name="learning_data_item_base_shift">Μεταφορά βάσης, σε ήχους: %1$d</string>
     <string name="learning_data_item_recording_format">Μορφή ηχογράφησης</string>
     <string name="learning_data_item_analysis">Ρυθμίσεις ανάλυσης ύμνων: %1$d</string>
+    <string name="learning_data_item_lectern_pages">Ψηφιακό αναλόγιο, ήχοι σελίδων σε PDF: %1$d</string>
     <string name="learning_data_import_failed_title">Η εισαγωγή δεν έγινε</string>
     <string name="learning_data_import_unfinished_title">Η εισαγωγή δεν ολοκληρώθηκε</string>
     <string name="learning_data_import_read_failed">Δεν ήταν δυνατό να διαβαστεί το αρχείο. Δεν άλλαξε τίποτα.</string>
@@ -1193,6 +1195,53 @@
     <string name="anastasimatarion_no_recordings">Δεν έχεις ακόμη ηχογραφήσεις για αυτόν τον ύμνο.</string>
     <string name="anastasimatarion_open_recording">Άνοιγμα</string>
     <string name="recordings_target_template">Για τον ύμνο: %1$s</string>
+
+    <!-- Ψηφιακό αναλόγιο (ClickUp 869f5x2e7) -->
+    <string name="lectern_title">Ψηφιακό αναλόγιο</string>
+    <string name="lectern_subtitle">Τα δικά σου PDF, με ίσο και απήχημα που θυμούνται τον ήχο κάθε σελίδας</string>
+    <string name="lectern_open_pdf">Άνοιγμα PDF</string>
+    <string name="lectern_how_title">Πώς διαβάζεις</string>
+    <string name="lectern_how_body">Για να γυρίσεις σελίδα: πάτησε δεξιά ή αριστερά στη σελίδα, σύρε την, ή πάτα τα πλήκτρα έντασης· δουλεύει και πεντάλ Bluetooth. Ένα πάτημα στη μέση κρύβει και δείχνει τις μπάρες. Η οθόνη μένει αναμμένη όσο διαβάζεις και γυρίζει και οριζόντια. Στη μπάρα του ίσου διαλέγεις ήχο, μεταφορά βάσης και «Ίσον σε…»: ισχύουν από εκείνη τη σελίδα, ώσπου να ορίσεις άλλον ήχο σε επόμενη.</string>
+    <string name="lectern_library_title">Τα PDF σου</string>
+    <string name="lectern_library_empty">Δεν έχεις ανοίξει ακόμη PDF. Η εφαρμογή δεν έχει δικά της: άνοιξε ένα δικό σου, από το κινητό, τις λήψεις, το Drive ή όπου αλλού το κρατάς.</string>
+    <string name="lectern_library_last_page">Σελίδα %1$d</string>
+    <string name="lectern_library_remove">Αφαίρεση του «%1$s» από τη λίστα</string>
+    <string name="lectern_library_remove_hint">Η αφαίρεση από τη λίστα δεν σβήνει το αρχείο, ούτε τους ήχους που όρισες στις σελίδες του.</string>
+    <string name="lectern_library_removed">Αφαιρέθηκε από τη λίστα· το αρχείο δεν άλλαξε.</string>
+    <string name="lectern_library_full">Η λίστα έχει ήδη %1$d PDF, όσα χωρά. Το PDF ανοίγει τώρα· για να μείνει στη λίστα, αφαίρεσε πρώτα ένα άλλο.</string>
+    <string name="lectern_not_kept">Η εφαρμογή που δίνει αυτό το PDF δεν επιτρέπει να μείνει στη λίστα: ανοίγει μόνο αυτή τη φορά. Οι ήχοι των σελίδων του κρατιούνται κανονικά.</string>
+    <string name="lectern_untitled">PDF χωρίς όνομα</string>
+    <string name="lectern_opening">Άνοιγμα του PDF…</string>
+    <string name="lectern_failure_no_access">Η εφαρμογή δεν έχει πια πρόσβαση σε αυτό το PDF. Αφαίρεσέ το από τη λίστα και άνοιξέ το ξανά με το «Άνοιγμα PDF».</string>
+    <string name="lectern_failure_not_found">Το PDF δεν βρέθηκε: ίσως μετακινήθηκε, μετονομάστηκε ή σβήστηκε. Αφαίρεσέ το από τη λίστα και άνοιξέ το ξανά από εκεί που είναι τώρα.</string>
+    <string name="lectern_failure_password">Το PDF προστατεύεται με κωδικό και δεν ανοίγει εδώ. Αφαίρεσε τον κωδικό σε άλλη εφαρμογή και άνοιξέ το ξανά.</string>
+    <string name="lectern_failure_damaged">Το αρχείο δεν διαβάζεται ως PDF: ίσως έχει χαλάσει ή δεν είναι PDF.</string>
+    <string name="lectern_failure_unreadable">Δεν ήταν δυνατό να διαβαστεί το αρχείο. Δοκίμασε ξανά.</string>
+    <string name="lectern_remove_from_library">Αφαίρεση από τη λίστα</string>
+    <string name="lectern_page_failed">Η σελίδα %1$d δεν μπόρεσε να εμφανιστεί.</string>
+    <string name="lectern_page_cd">Σελίδα %1$d από %2$d</string>
+    <string name="lectern_page_of">%1$d / %2$d</string>
+    <string name="lectern_next_page">Επόμενη σελίδα</string>
+    <string name="lectern_previous_page">Προηγούμενη σελίδα</string>
+    <string name="lectern_night_on">Νυχτερινή απόχρωση</string>
+    <string name="lectern_night_off">Κανονικά χρώματα</string>
+    <string name="lectern_go_to_page">Μετάβαση σε σελίδα</string>
+    <string name="lectern_go">Μετάβαση</string>
+    <string name="lectern_map_newer">Οι ήχοι αυτού του PDF ορίστηκαν σε νεότερη έκδοση της εφαρμογής. Ενημέρωσέ την για να τους δεις και να τους αλλάξεις.</string>
+    <string name="lectern_moved_from_notification">Το ίσον άλλαξε από την ειδοποίηση.</string>
+    <string name="lectern_use_page_setting">Ήχος της σελίδας</string>
+    <string name="lectern_ison_toggle">Ισοκράτημα</string>
+    <string name="lectern_set_mode">Όρισε ήχο</string>
+    <string name="lectern_set_mode_hint">Πάτησε εδώ για να διαλέξεις τον ήχο αυτής της σελίδας.</string>
+    <string name="lectern_bar_ison">Ίσον σε %1$s</string>
+    <string name="lectern_bar_set_here">ορίστηκε σε αυτή τη σελίδα</string>
+    <string name="lectern_bar_from_page">από τη σελ. %1$d</string>
+    <string name="lectern_apichima">Απήχημα</string>
+    <string name="lectern_setting_title">Ήχος από τη σελίδα %1$d</string>
+    <string name="lectern_setting_hint">Ισχύει από αυτή τη σελίδα και μετά, ώσπου να ορίσεις άλλον ήχο σε επόμενη. Κάθε αλλαγή ακούγεται αμέσως και αποθηκεύεται.</string>
+    <string name="lectern_setting_mode">Ήχος</string>
+    <string name="lectern_setting_clear">Αφαίρεση της ρύθμισης αυτής της σελίδας</string>
+    <string name="lectern_setting_done">Τέλος</string>
 
     <!-- Ανάλυση φθόγγων ηχογράφησης -->
     <string name="title_activity_recording_analysis">Ανάλυση ηχογράφησης</string>

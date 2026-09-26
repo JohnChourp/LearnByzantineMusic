@@ -17,6 +17,8 @@
     <exclude domain="sharedpref" path="learn_byzantine_music_recordings.xml" />
     <exclude domain="sharedpref" path="learn_byzantine_music_notes.xml" />
     <exclude domain="sharedpref" path="learn_byzantine_music_owned_recordings.xml" />
+    <!-- The lectern's library: PDF URIs, useless without their grants (ClickUp 869f5x2e7). -->
+    <exclude domain="sharedpref" path="learn_byzantine_music_lectern_library.xml" />
     <!-- Notes snapshots still waiting for the folder: notes.db, which is kept, holds the same notes. -->
     <exclude domain="file" path="notes_pending_snapshots" />
     <!-- Raw recording audio stays on the device (ClickUp 869f5x26x). -->

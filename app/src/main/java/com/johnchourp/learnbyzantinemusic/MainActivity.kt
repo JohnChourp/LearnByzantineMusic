@@ -10,6 +10,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.GraphicEq
@@ -33,6 +34,7 @@ import com.johnchourp.learnbyzantinemusic.learning.LearningPath
 import com.johnchourp.learnbyzantinemusic.learning.LearningProgress
 import com.johnchourp.learnbyzantinemusic.home.TileAccent
 import com.johnchourp.learnbyzantinemusic.home.WeeklyToneUi
+import com.johnchourp.learnbyzantinemusic.lectern.LecternActivity
 import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
 import com.johnchourp.learnbyzantinemusic.modes.EightModesNavigation
 import com.johnchourp.learnbyzantinemusic.notes.NotesActivity
@@ -304,6 +306,14 @@ class MainActivity : BaseActivity() {
                     onClick = ::openAnastasimatarion,
                 ),
                 HomeTile(
+                    id = "lectern",
+                    titleRes = R.string.lectern_title,
+                    subtitleRes = R.string.home_tile_lectern_sub,
+                    icon = Icons.Filled.AutoStories,
+                    accent = TileAccent.Brown,
+                    onClick = ::openLectern,
+                ),
+                HomeTile(
                     id = "notes",
                     titleRes = R.string.notes_open,
                     subtitleRes = R.string.home_tile_notes_sub,
@@ -465,6 +475,10 @@ class MainActivity : BaseActivity() {
 
     private fun openAnastasimatarion() {
         startActivity(Intent(this, AnastasimatarionActivity::class.java))
+    }
+
+    private fun openLectern() {
+        startActivity(Intent(this, LecternActivity::class.java))
     }
 
     private fun openNotes() {

@@ -27,6 +27,7 @@
     <string name="home_tile_calendar_sub">Weekly mode calendar</string>
     <string name="home_tile_recordings_sub">Record and listen</string>
     <string name="home_tile_notes_sub">Your notes</string>
+    <string name="home_tile_lectern_sub">Your PDFs, with an ison per page</string>
     <string name="home_tile_settings_sub">Language &amp; preferences</string>
     <string name="lesson_2">Lesson 2</string>
     <string name="lesson_3">Lesson 3</string>
@@ -619,7 +620,7 @@
     <string name="settings_language_current_badge">Current</string>
     <!-- «Learning data» (ClickUp 869f5x25w) -->
     <string name="settings_learning_data_label">Learning data</string>
-    <string name="settings_learning_data_hint">Take your favourites, your \"From scratch\" progress and your settings to another phone, in one file. Folders (notes, recordings) are not in the file; on the new phone you pick them again.</string>
+    <string name="settings_learning_data_hint">Take your favourites, your \"From scratch\" progress and your settings to another phone, in one file. Folders (notes, recordings) and the lectern\'s PDFs themselves are not in the file; on the new phone you pick them again, and the modes of their pages are waiting.</string>
     <string name="settings_learning_data_export">Export</string>
     <string name="settings_learning_data_import">Import</string>
     <string name="settings_learning_data_reset_hint">A lesson of the \"From scratch\" path counts as done as soon as you open it. Resetting starts the path over.</string>
@@ -641,6 +642,7 @@
     <string name="learning_data_item_base_shift">Base shift, in modes: %1$d</string>
     <string name="learning_data_item_recording_format">Recording format</string>
     <string name="learning_data_item_analysis">Hymn analysis settings: %1$d</string>
+    <string name="learning_data_item_lectern_pages">Digital lectern, page modes in PDFs: %1$d</string>
     <string name="learning_data_import_failed_title">Nothing was imported</string>
     <string name="learning_data_import_unfinished_title">The import did not finish</string>
     <string name="learning_data_import_read_failed">The file could not be read. Nothing changed.</string>
@@ -1194,6 +1196,53 @@
     <string name="anastasimatarion_no_recordings">You have no recordings for this hymn yet.</string>
     <string name="anastasimatarion_open_recording">Open</string>
     <string name="recordings_target_template">For the hymn: %1$s</string>
+
+    <!-- Ψηφιακό αναλόγιο / digital lectern (ClickUp 869f5x2e7) -->
+    <string name="lectern_title">Digital lectern</string>
+    <string name="lectern_subtitle">Your own PDFs, with an ison and an apichima that remember each page\'s mode</string>
+    <string name="lectern_open_pdf">Open a PDF</string>
+    <string name="lectern_how_title">How to read</string>
+    <string name="lectern_how_body">To turn a page: tap the right or left side of the page, swipe it, or press the volume keys; a Bluetooth pedal works too. A tap in the middle hides and shows the bars. The screen stays on while you read, and it also turns sideways. In the ison bar you choose the mode, the base transposition and \"Ison on…\": they apply from that page on, until you set another mode on a later one.</string>
+    <string name="lectern_library_title">Your PDFs</string>
+    <string name="lectern_library_empty">You have not opened a PDF yet. The app ships none: open one of your own, from the phone, Downloads, Drive or wherever you keep it.</string>
+    <string name="lectern_library_last_page">Page %1$d</string>
+    <string name="lectern_library_remove">Remove \"%1$s\" from the list</string>
+    <string name="lectern_library_remove_hint">Removing a PDF from the list deletes neither the file nor the modes you set on its pages.</string>
+    <string name="lectern_library_removed">Removed from the list; the file is unchanged.</string>
+    <string name="lectern_library_full">The list already holds %1$d PDFs, all it can. This PDF opens now; to keep it in the list, remove another one first.</string>
+    <string name="lectern_not_kept">The app that provides this PDF does not let it stay in the list: it opens this time only. The modes of its pages are kept as usual.</string>
+    <string name="lectern_untitled">Untitled PDF</string>
+    <string name="lectern_opening">Opening the PDF…</string>
+    <string name="lectern_failure_no_access">The app no longer has access to this PDF. Remove it from the list and open it again with \"Open a PDF\".</string>
+    <string name="lectern_failure_not_found">The PDF was not found: it may have been moved, renamed or deleted. Remove it from the list and open it again from where it is now.</string>
+    <string name="lectern_failure_password">This PDF is password-protected and cannot open here. Remove the password in another app and open it again.</string>
+    <string name="lectern_failure_damaged">This file cannot be read as a PDF: it may be damaged, or not a PDF.</string>
+    <string name="lectern_failure_unreadable">The file could not be read. Try again.</string>
+    <string name="lectern_remove_from_library">Remove from the list</string>
+    <string name="lectern_page_failed">Page %1$d could not be shown.</string>
+    <string name="lectern_page_cd">Page %1$d of %2$d</string>
+    <string name="lectern_page_of">%1$d / %2$d</string>
+    <string name="lectern_next_page">Next page</string>
+    <string name="lectern_previous_page">Previous page</string>
+    <string name="lectern_night_on">Night tint</string>
+    <string name="lectern_night_off">Normal colours</string>
+    <string name="lectern_go_to_page">Go to page</string>
+    <string name="lectern_go">Go</string>
+    <string name="lectern_map_newer">The modes of this PDF were set in a newer version of the app. Update it to see and change them.</string>
+    <string name="lectern_moved_from_notification">The ison was changed from the notification.</string>
+    <string name="lectern_use_page_setting">Page\'s mode</string>
+    <string name="lectern_ison_toggle">Ison (drone)</string>
+    <string name="lectern_set_mode">Set a mode</string>
+    <string name="lectern_set_mode_hint">Tap here to choose this page\'s mode.</string>
+    <string name="lectern_bar_ison">Ison on %1$s</string>
+    <string name="lectern_bar_set_here">set on this page</string>
+    <string name="lectern_bar_from_page">since page %1$d</string>
+    <string name="lectern_apichima">Apichima</string>
+    <string name="lectern_setting_title">Mode from page %1$d</string>
+    <string name="lectern_setting_hint">Applies from this page on, until you set another mode on a later page. Every change sounds at once and is saved.</string>
+    <string name="lectern_setting_mode">Mode</string>
+    <string name="lectern_setting_clear">Remove this page\'s setting</string>
+    <string name="lectern_setting_done">Done</string>
 
     <!-- Ανάλυση φθόγγων ηχογράφησης -->
     <string name="title_activity_recording_analysis">Recording analysis</string>

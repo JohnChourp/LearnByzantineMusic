@@ -32,6 +32,8 @@ class ExportPolicyTest {
         "mode_base_shift_moria_<modeKey>" to YES,
         "ison_in_background" to YES,
         "recordings_output_format" to YES,
+        // The lectern's page → ήχος maps: named by each PDF's SHA-256, never a URI (ClickUp 869f5x2e7).
+        "lectern_pages_<sha256>" to YES,
         // Per hymn only: a recording's analysis settings are keyed by that recording's URI.
         "<analysisContext>|expected" to HYMN_CONTEXTS_ONLY,
         "<analysisContext>|mode" to HYMN_CONTEXTS_ONLY,
@@ -40,6 +42,8 @@ class ExportPolicyTest {
         "recordings_folder_tree_uri" to NO,
         "notes_folder_tree_uri" to NO,
         "owned_recordings" to NO,
+        // The lectern's library: PDF URIs, each a READ grant of this phone.
+        "lectern_library" to NO,
         // This device's own bookkeeping.
         "notes_last_sync_epoch_ms" to NO,
         "notes_last_sync_error" to NO,

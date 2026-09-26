@@ -1252,9 +1252,10 @@ private fun ApichimaPlayer(
  * For a string the screen computes with rather than only shows — the απήχημα's φθόγγοι, which a
  * translation spells in its own alphabet. Unlike [AppLanguage.wrapContextWithLocale] this leaves the
  * process-wide default locale alone: it reads one string, it does not switch the UI's language.
+ * Internal so the lectern's ison bar (ClickUp `869f5x2e7`) reads its απήχημα the same way.
  */
 @Composable
-private fun greekStringResource(@StringRes id: Int): String {
+internal fun greekStringResource(@StringRes id: Int): String {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     return remember(context, configuration, id) {

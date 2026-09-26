@@ -34,6 +34,10 @@
         <exclude domain="sharedpref" path="learn_byzantine_music_recordings.xml" />
         <exclude domain="sharedpref" path="learn_byzantine_music_notes.xml" />
         <exclude domain="sharedpref" path="learn_byzantine_music_owned_recordings.xml" />
+        <!-- The lectern's library (AppPrefs.Store LECTERN_LIBRARY, ClickUp 869f5x2e7): PDF URIs whose
+             read grants stay on this phone. The page → ήχος maps (LECTERN_PAGES) are named by each
+             file's SHA-256, not by a URI, and are kept. -->
+        <exclude domain="sharedpref" path="learn_byzantine_music_lectern_library.xml" />
         <!-- Notes snapshots still waiting for the folder: notes.db, which is kept, holds the same notes. -->
         <exclude domain="file" path="notes_pending_snapshots" />
         <!-- A recording in progress, and recordings the folder could not take (ClickUp 869f5x26x):
@@ -50,6 +54,7 @@
         <exclude domain="sharedpref" path="learn_byzantine_music_recordings.xml" />
         <exclude domain="sharedpref" path="learn_byzantine_music_notes.xml" />
         <exclude domain="sharedpref" path="learn_byzantine_music_owned_recordings.xml" />
+        <exclude domain="sharedpref" path="learn_byzantine_music_lectern_library.xml" />
         <exclude domain="file" path="notes_pending_snapshots" />
         <exclude domain="file" path="recordings_capture" />
         <exclude domain="file" path="recordings_pending" />

@@ -21,7 +21,8 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.isNightMode
  * localised configuration, so it cannot drop the locale it was handed.
  *
  * **Also.** Locks every screen to portrait. The app is meant to be read off a stand while chanting,
- * and several diagrams assume portrait width.
+ * and several diagrams assume portrait width. The one exception is the digital lectern's reader
+ * (ClickUp `869f5x2e7`), whose PDF pages are wide as often as tall: it overrides [screenOrientation].
  *
  * Reads (never writes): `app_language_code`, `app_font_step`, `app_theme_mode` — see
  * [com.johnchourp.learnbyzantinemusic.prefs.AppPrefs].
@@ -64,8 +65,11 @@ abstract class BaseActivity : ComponentActivity() {
     protected fun currentPalette() =
         AppThemeMode.saved(this).palette(resources.configuration.isNightMode())
 
+    /** The orientation this screen is held to: portrait, except where a screen overrides it. */
+    protected open val screenOrientation: Int get() = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = screenOrientation
     }
 }

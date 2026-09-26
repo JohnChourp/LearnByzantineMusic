@@ -2,6 +2,8 @@ package com.johnchourp.learnbyzantinemusic.settings
 
 import com.johnchourp.learnbyzantinemusic.AppFontScale
 import com.johnchourp.learnbyzantinemusic.AppLanguage
+import com.johnchourp.learnbyzantinemusic.lectern.LecternFileKey
+import com.johnchourp.learnbyzantinemusic.lectern.LecternPagesCodec
 import com.johnchourp.learnbyzantinemusic.learning.LearningPath
 import com.johnchourp.learnbyzantinemusic.lessons.ui.MetronomeSchedule
 import com.johnchourp.learnbyzantinemusic.modes.ToneTimbre
@@ -33,7 +35,8 @@ import java.time.LocalDate
  * **One rule for both directions: [normalized].** For every key it gives the value the app itself
  * would use when it reads that key — through the app's own rules: [AppFontScale.normalizeStep],
  * [MetronomeSchedule.clampBpm], the shared «Μεταφορά βάσης» range [BaseShift.clamp] (so the file
- * follows it when it widens), [LearningPath.isStep], [Mode.fromKey], [StoredPhthongs] and the enums. The
+ * follows it when it widens), [LearningPath.isStep], [Mode.fromKey], [StoredPhthongs], the lectern's
+ * [LecternPagesCodec] and the enums. The
  * export writes normalised values; the import accepts a value only when it is already in that form.
  * So whatever the app exports, it can import back.
  *
@@ -169,9 +172,9 @@ object LearningDataFile {
     // ---- what the confirmation dialog lists ------------------------------------------------------
 
     /** The kinds of change an import can make, in the order the dialog lists them. */
-    enum class Item { FONT_SIZE, LANGUAGE, THEME, METRONOME, FAVOURITES, PROGRESS, SELECTED_MODE, TIMBRE, ISON_BACKGROUND, BASE_SHIFT, RECORDING_FORMAT, ANALYSIS }
+    enum class Item { FONT_SIZE, LANGUAGE, THEME, METRONOME, FAVOURITES, PROGRESS, SELECTED_MODE, TIMBRE, ISON_BACKGROUND, BASE_SHIFT, RECORDING_FORMAT, ANALYSIS, LECTERN_PAGES }
 
-    /** One line of the dialog; [count] is how many pages, steps, modes or hymns, where that matters. */
+    /** One line of the dialog; [count] is how many pages, steps, modes, hymns or PDFs, where that matters. */
     data class Line(val item: Item, val count: Int)
 
     fun summary(accepted: Result.Accepted): List<Line> {
@@ -185,6 +188,7 @@ object LearningDataFile {
                     Item.FAVOURITES, Item.PROGRESS -> (value as Set<*>).forEach { bucket += it.toString() }
                     Item.BASE_SHIFT -> bucket += name.removePrefix(AppPrefs.BASE_SHIFT_KEY_PREFIX)
                     Item.ANALYSIS -> bucket += analysisContext(name)
+                    Item.LECTERN_PAGES -> bucket += name.removePrefix(AppPrefs.LECTERN_PAGES_KEY_PREFIX)
                     else -> bucket += name
                 }
             }
@@ -206,6 +210,7 @@ object LearningDataFile {
         AppPrefs.BaseShiftMoria -> Item.BASE_SHIFT
         AppPrefs.RecordingsOutputFormat -> Item.RECORDING_FORMAT
         AppPrefs.AnalysisExpectedMelody, AppPrefs.AnalysisModeKey, AppPrefs.AnalysisStartPhthong -> Item.ANALYSIS
+        AppPrefs.LecternPageModes -> Item.LECTERN_PAGES
         else -> null
     }
 
@@ -228,6 +233,9 @@ object LearningDataFile {
         AppPrefs.AnalysisExpectedMelody -> storedName.endsWith(AppPrefs.ANALYSIS_EXPECTED_SUFFIX)
         AppPrefs.AnalysisModeKey -> storedName.endsWith(AppPrefs.ANALYSIS_MODE_SUFFIX)
         AppPrefs.AnalysisStartPhthong -> storedName.endsWith(AppPrefs.ANALYSIS_START_SUFFIX)
+        // Named by the PDF's SHA-256 (LecternFileKey), so the name itself can carry nothing else.
+        AppPrefs.LecternPageModes -> storedName.startsWith(AppPrefs.LECTERN_PAGES_KEY_PREFIX) &&
+            LecternFileKey.isSha256Hex(storedName.removePrefix(AppPrefs.LECTERN_PAGES_KEY_PREFIX))
         else -> storedName == key.name
     }
 
@@ -260,6 +268,8 @@ object LearningDataFile {
         AppPrefs.RecordingsOutputFormat -> (value as? String)?.let { RecordingFormatOption.fromStoredValue(it).name }
         AppPrefs.AnalysisExpectedMelody -> (value as? String)?.let { StoredPhthongs.encodeList(StoredPhthongs.decodeList(it)) }
         AppPrefs.AnalysisStartPhthong -> StoredPhthongs.decode(value as? String)?.let(StoredPhthongs::encode)
+        // The canonical text of a readable, non-empty map; its shifts follow BaseShift like the 8 Ήχοι's.
+        AppPrefs.LecternPageModes -> (value as? String)?.let(LecternPagesCodec::normalized)
         // A key the file may not carry has no value in it.
         else -> null
     }

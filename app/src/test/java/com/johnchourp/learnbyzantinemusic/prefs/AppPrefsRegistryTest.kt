@@ -27,6 +27,8 @@ class AppPrefsRegistryTest {
                 "favorite_topic_ids",
                 "ison_in_background",
                 "learning_completed_step_ids",
+                "lectern_library",
+                "lectern_pages_<sha256>",
                 "metronome_bpm",
                 "metronome_foot_mode",
                 "metronome_silent",
@@ -51,6 +53,8 @@ class AppPrefsRegistryTest {
         assertEquals(
             listOf(
                 "eight_modes_base_shift_prefs",
+                "learn_byzantine_music_lectern_library",
+                "learn_byzantine_music_lectern_pages",
                 "learn_byzantine_music_notes",
                 "learn_byzantine_music_owned_recordings",
                 "learn_byzantine_music_recordings",
