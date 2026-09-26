@@ -31,6 +31,8 @@ import kotlin.math.roundToInt
  * | [OFFLINE_MIN_NOTE_MS] 93 ms | 4 recording frames | `PhthongSegmenter` | shorter is a glide, a consonant or a blip |
  * | [OFFLINE_MAX_GAP_MS] 46 ms | 2 recording frames | `PhthongSegmenter` | a shorter gap does not split a note |
  * | [OFFLINE_STEADY_MS] 116 ms | 5 recording frames | `PhthongSegmenter.calibrate` | the first steady stretch is the starting note |
+ * | [WAIT_HOLD_MS] 300 ms | 7 live frames, measured in capture time | `WaitModeEvaluator` | held this long, «Παραλλαγή με αναμονή» moves on |
+ * | [WAIT_TOLERANCES_MORIA] ±3 → ±2.5 → ±2 | 50 → 42 → 33 cents | `WaitModeEvaluator` | see *The narrowing tolerance of J1* |
  *
  * The window is the same on both sides so that a recording is analysed with the ear the live
  * Trainer listens with; half of it (23.2 ms) is the longest lag YIN may search, which clears the
@@ -57,9 +59,30 @@ import kotlin.math.roundToInt
  * **Known limit.** By the same rule, a step of 6 μόρια or less can never say «έξω» even at ±3: the
  * hard chromatic scale (πλ. Β΄) has 4 μόρια at Βου–Γα and Ζω–Νη΄ and 6 at Νη–Πα and Δι–Κε, and the
  * enharmonic one (Γ΄, Βαρύς) has 6 at Βου–Γα and Κε–Ζω. A voice between those rungs is always given
- * to one of them. This touches «Πού είμαι» and the analysis, which read each mode's own scale; the
- * Trainer always reads the diatonic table. Closing it needs a tolerance under ±2 μόρια or one per
- * step, and neither is decided, so the limit is written here and pinned by `NearestRungFirstTest`.
+ * to one of them. This touches every screen that reads a mode's own scale: «Πού είμαι», the analysis,
+ * and — since F2 (ClickUp `869f5x24v`) — the Trainer once a ήχος is chosen; «Διατονικός» has no step
+ * under 8. Closing it needs a tolerance under ±2 μόρια or one per step, and neither is decided, so the
+ * limit is written here and pinned by `NearestRungFirstTest`.
+ *
+ * ## The narrowing tolerance of J1
+ *
+ * «Παραλλαγή με αναμονή» (ClickUp `869f5x2cd`) waits on each φθόγγος until it is held for
+ * [WAIT_HOLD_MS], and asks for more as the learner gets better: the first run is judged at ±3 — the
+ * same as every other screen — and each run through the whole line **without a skip** narrows it one
+ * level ([nextWaitLevel]), down to ±2. A run with a skip keeps the level; nothing ever widens it back
+ * by itself, and a new visit to the Trainer starts again at ±3.
+ *
+ * The nearest-rung rule above decides where a level can matter: a level says «έξω» on a side of a step
+ * only when it is **under half that step**.
+ *
+ * | Level | ± μόρια | «έξω» possible on a step of | So, by genus |
+ * |---|---|---|---|
+ * | 0 | 3 | more than 6 μόρια | diatonic and soft chromatic: every step (the smallest is 8) |
+ * | 1 | 2.5 | more than 5 | also the 6-μόρια steps of the enharmonic and the hard chromatic |
+ * | 2 | 2 | more than 4 | the same — the hard chromatic's 4-μόρια steps can never say «έξω» |
+ *
+ * So on the hard chromatic's Βου–Γα and Ζω–Νη΄ narrowing changes nothing: a voice past the middle of
+ * that step is simply on the neighbour, at every level. `WaitModeToleranceTest` pins the table.
  *
  * [IN_TUNE_MORIA] is a whole number on purpose: the analysis summary prints it as «±N μόρια».
  *
@@ -95,6 +118,21 @@ object IntonationProfile {
 
     /** How long the first steady stretch must last to calibrate a recording to the singer. */
     const val OFFLINE_STEADY_MS: Double = 116.0
+
+    /** How long «Παραλλαγή με αναμονή» needs a φθόγγος held, in capture time, before the line moves on. */
+    const val WAIT_HOLD_MS: Double = 300.0
+
+    /** The narrowing levels of «Παραλλαγή με αναμονή», loosest first; the first is [IN_TUNE_MORIA]. */
+    val WAIT_TOLERANCES_MORIA: List<Double> = listOf(IN_TUNE_MORIA, 2.5, 2.0)
+
+    /** The ± μόρια of narrowing [level], held inside the table at both ends. */
+    fun waitTolerance(level: Int): Double = WAIT_TOLERANCES_MORIA[level.coerceIn(0, WAIT_TOLERANCES_MORIA.lastIndex)]
+
+    /** The level after a run through the whole line: one narrower after a run without a skip, else the same. */
+    fun nextWaitLevel(level: Int, withoutSkips: Boolean): Int {
+        val current = level.coerceIn(0, WAIT_TOLERANCES_MORIA.lastIndex)
+        return if (withoutSkips) (current + 1).coerceAtMost(WAIT_TOLERANCES_MORIA.lastIndex) else current
+    }
 
     /**
      * The one in-tune rule: [deviationMoria] from the nearest rung, inclusive at the boundary.

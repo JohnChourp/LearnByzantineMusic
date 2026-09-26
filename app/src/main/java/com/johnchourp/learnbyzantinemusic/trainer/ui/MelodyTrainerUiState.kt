@@ -2,7 +2,9 @@ package com.johnchourp.learnbyzantinemusic.trainer.ui
 
 import androidx.compose.runtime.Immutable
 import com.johnchourp.learnbyzantinemusic.music.BaseShift
+import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 import com.johnchourp.learnbyzantinemusic.music.Mode
+import com.johnchourp.learnbyzantinemusic.trainer.VoiceTrace
 
 /**
  * Immutable snapshot of everything the redesigned Melody Trainer screen renders. The host
@@ -34,6 +36,7 @@ data class MelodyTrainerUiState(
     val scale: TrainerScaleUi = TrainerScaleUi(),
     val exercises: TrainerExercisesUi = TrainerExercisesUi(),
     val singAlong: SingAlongUi = SingAlongUi(),
+    val waitMode: WaitModeUi = WaitModeUi(),
     /** The syllable being typed for one note, or null (ClickUp `869f5x2cv`). */
     val syllableDialog: SyllableDialogUi? = null,
     val voice: PracticeModeUi = PracticeModeUi(),
@@ -100,6 +103,47 @@ data class SingAlongUi(
     val metronomePercent: Int = 100,
     /** The φθόγγος the ison holds, already labelled — the ήχος's base, or Νη for «Διατονικός». */
     val isonLabel: String = "",
+)
+
+/**
+ * «Παραλλαγή με αναμονή» as the screen draws it (ClickUp `869f5x2cd`). The waiting, the verdicts and
+ * the stars are `WaitModeEvaluator`'s and `WaitModeScore`'s; this is only what to show, already worded.
+ */
+@Immutable
+data class WaitModeUi(
+    val running: Boolean = false,
+    /** There is a line, and no other mode is running. */
+    val startEnabled: Boolean = false,
+    /** The φθόγγος the line waits on, as the line shows it; null when not running. */
+    val targetLabel: String? = null,
+    /** Where the voice is, in words: how many μόρια higher or lower, «Κράτα…», or silence. */
+    val guidance: String? = null,
+    /** The voice is on the φθόγγος now, within the tolerance. */
+    val onTarget: Boolean = false,
+    /** How much of the hold is done, 0 … 1. */
+    val holdProgress: Float = 0f,
+    /** The last seconds of the voice, as offsets from the target in μόρια, oldest first. */
+    val trace: List<VoiceTrace.Point> = emptyList(),
+    /** The rungs around the target, as offsets from it in μόρια; 0 is the target itself. */
+    val rungOffsets: List<Double> = emptyList(),
+    /** The ± μόρια of this run, from the narrowing levels of `IntonationProfile`. */
+    val toleranceMoria: Double = IntonationProfile.IN_TUNE_MORIA,
+    /** «Ανοχή ±3 μόρια», already printed. */
+    val toleranceLabel: String = "",
+    /** The ison sounds during the exercise; off unless the learner turns it on. */
+    val isonOn: Boolean = false,
+    /** The last run's stars and what they came from, or null before the first run ends. */
+    val result: WaitResultUi? = null,
+    /** Why it could not start or stopped, when it did; null otherwise. */
+    val status: String? = null,
+)
+
+/** The end of a run: its stars, and two lines that explain them and the next tolerance. */
+@Immutable
+data class WaitResultUi(
+    val stars: Int,
+    val summary: String,
+    val nextLevel: String,
 )
 
 /** The three sounds of «Ψάλλε μαζί» that have a volume of their own. */

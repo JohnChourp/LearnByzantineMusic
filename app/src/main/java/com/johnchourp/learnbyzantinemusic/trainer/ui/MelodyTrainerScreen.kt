@@ -111,8 +111,8 @@ private val ActiveGlowBorder = Color(0xFFE0A100)
  * a hero, a visual timing-rules card, the note picker + octave stepper, the editable sequence
  * with animated match/active feedback, «Οι ασκήσεις μου» ([TrainerExercisesCard]), the ήχος and
  * «Μεταφορά βάσης» ([TrainerScaleCard]), a tempo slider, the transport row, «Ψάλλε μαζί»
- * ([SingAlongCard]) and the three voice-practice mode cards. All audio / mic / timing logic stays
- * in the host Activity.
+ * ([SingAlongCard]), «Παραλλαγή με αναμονή» ([WaitModeCard]) and the three voice-practice mode
+ * cards. All audio / mic / timing logic stays in the host Activity.
  */
 @Composable
 fun MelodyTrainerScreen(
@@ -148,6 +148,10 @@ fun MelodyTrainerScreen(
     onRequestSyllable: (Int) -> Unit,
     onSaveSyllable: (Int, String) -> Unit,
     onDismissSyllable: () -> Unit,
+    onStartWait: () -> Unit,
+    onStopWait: () -> Unit,
+    onSkipWait: () -> Unit,
+    onWaitIsonChange: (Boolean) -> Unit,
     onToggleVoice: (Boolean) -> Unit,
     onToggleRhythm: (Boolean) -> Unit,
     onToggleCombo: (Boolean) -> Unit,
@@ -245,6 +249,15 @@ fun MelodyTrainerScreen(
                     onStop = onStopSingAlong,
                     onShowSyllables = onShowSyllables,
                     onVolumeChange = onSingAlongVolumeChange,
+                )
+            }
+            StaggeredAppear(delayMillis = 405) {
+                WaitModeCard(
+                    wait = state.waitMode,
+                    onStart = onStartWait,
+                    onStop = onStopWait,
+                    onSkip = onSkipWait,
+                    onIsonChange = onWaitIsonChange,
                 )
             }
             StaggeredAppear(delayMillis = 420) {

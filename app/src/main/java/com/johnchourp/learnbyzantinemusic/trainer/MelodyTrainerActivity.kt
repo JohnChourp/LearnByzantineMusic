@@ -22,6 +22,7 @@ import com.johnchourp.learnbyzantinemusic.modes.ToneTimbre
 import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.voice.GlobalShift
 import com.johnchourp.learnbyzantinemusic.music.Beats
+import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
@@ -37,10 +38,15 @@ import com.johnchourp.learnbyzantinemusic.trainer.ui.SyllableDialogUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TimingRuleNumbersUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerExercisesUi
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerNoteUi
+import com.johnchourp.learnbyzantinemusic.trainer.ui.TRACE_RANGE_MORIA
 import com.johnchourp.learnbyzantinemusic.trainer.ui.TrainerScaleUi
+import com.johnchourp.learnbyzantinemusic.trainer.ui.WaitModeUi
+import com.johnchourp.learnbyzantinemusic.trainer.ui.WaitResultUi
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
+import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -75,6 +81,12 @@ import kotlin.math.roundToInt
  * has a [PhthongTonePlayer] of its own and the click a [MetronomeClicker], each with its own volume.
  * The screen stays on while it runs, since nothing else touches it for minutes. A note may carry a
  * syllable, saved with the melody, and the line can show the syllables instead of the φθόγγοι.
+ *
+ * «Παραλλαγή με αναμονή» (ClickUp `869f5x2cd`) waits on each note until the voice holds it: the
+ * [WaitModeEvaluator] moves the same [PracticeCursor] only on a held note or an explicit skip, and
+ * reads the voice on this [scale]'s ladder — mode, «Μεταφορά βάσης» and the voice's global shift. Its
+ * tolerance narrows through the levels of `IntonationProfile` for as long as this screen stays open,
+ * and each run ends with [WaitModeScore]'s stars. Its ison is off unless switched on.
  */
 class MelodyTrainerActivity : BaseActivity() {
 
@@ -112,6 +124,18 @@ class MelodyTrainerActivity : BaseActivity() {
     /** The note whose syllable is being typed, or null. */
     private var syllableDialogIndex: Int? = null
     private val isonPlayer = PhthongTonePlayer()
+
+    // «Παραλλαγή με αναμονή» (ClickUp 869f5x2cd)
+    private var isWaitActive = false
+    private var waitEvaluator: WaitModeEvaluator? = null
+    /** The last frame the waiting line took, for the arrow and the hold bar. */
+    private var waitFrame: WaitFrame? = null
+    private val voiceTrace = VoiceTrace()
+    /** The narrowing level, from `IntonationProfile`: starts loose every time the Trainer opens. */
+    private var waitLevel = 0
+    private var waitIsonOn = false
+    private var waitResult: WaitResultUi? = null
+    private var waitStatus: String? = null
     private val metronome = MetronomeClicker(percentOf(SingAlong.Volumes.DEFAULT.metronome))
     private var rhythmRequirePitch = false // false = time only (Mode 2), true = phthong + time (Mode 3)
 
@@ -210,6 +234,10 @@ class MelodyTrainerActivity : BaseActivity() {
                     onRequestSyllable = ::requestSyllable,
                     onSaveSyllable = ::saveSyllable,
                     onDismissSyllable = ::dismissSyllable,
+                    onStartWait = ::requestWaitMode,
+                    onStopWait = { stopWaitMode(clearGreens = true) },
+                    onSkipWait = ::skipWaitNote,
+                    onWaitIsonChange = ::changeWaitIson,
                     onToggleVoice = { checked ->
                         if (checked) requestVoiceSession() else stopVoiceSession(clearGreens = true)
                     },
@@ -239,7 +267,8 @@ class MelodyTrainerActivity : BaseActivity() {
 
     // region editing
 
-    private val isBusy: Boolean get() = isPlaybackActive || isVoiceActive || isRhythmActive || isSingAlongActive
+    private val isBusy: Boolean
+        get() = isPlaybackActive || isVoiceActive || isRhythmActive || isSingAlongActive || isWaitActive
 
     private fun addNote(phthong: PhthongName) {
         if (isBusy) return
@@ -599,15 +628,178 @@ class MelodyTrainerActivity : BaseActivity() {
         when {
             isVoiceActive -> handleVoiceFrame(onScale)
             isRhythmActive -> handleRhythmFrame(onScale, capturedAtMillis)
+            // The wait mode reads the frequency on its own, octave-folded against the note it waits on.
+            isWaitActive -> handleWaitFrame(match?.frequencyHz, capturedAtMillis)
         }
     }
+
+    // endregion
+
+    // region «Παραλλαγή με αναμονή» (ClickUp 869f5x2cd)
+
+    private fun requestWaitMode() {
+        if (isBusy) return
+        if (notes.isEmpty()) {
+            waitStatus = getString(R.string.melody_trainer_voice_need_notes)
+            rebuildState()
+            return
+        }
+        ensureMicThen(onGranted = ::startWaitMode, onDenied = {
+            waitStatus = getString(R.string.melody_trainer_mic_permission_required)
+            rebuildState()
+        })
+    }
+
+    /** Every note is waited on at its rung of this scale's ladder; the Trainer's ladder holds them all. */
+    private fun startWaitMode() {
+        if (isBusy || notes.isEmpty()) return
+        val ladder = scale.ladder
+        val targets = notes.map { note ->
+            requireNotNull(ladder.stepFor(note.pitch)) { "${note.pitch.label} is outside the Trainer's ladder" }
+        }
+        val evaluator = WaitModeEvaluator(targets, ladder, IntonationProfile.waitTolerance(waitLevel))
+        matchedIndices.clear()
+        voiceTrace.clear()
+        waitFrame = null
+        waitResult = null
+        waitStatus = null
+        waitEvaluator = evaluator
+        isWaitActive = true
+        activeIndex = evaluator.currentIndex ?: -1
+        rebuildState()
+        if (!pitchEngine.start()) {
+            stopWaitMode(clearGreens = true)
+            waitStatus = getString(R.string.melody_trainer_mic_unavailable)
+            rebuildState()
+            return
+        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (waitIsonOn) startWaitIson()
+    }
+
+    private fun handleWaitFrame(frequencyHz: Double?, capturedAtMillis: Long) {
+        val evaluator = waitEvaluator ?: return
+        val frame = evaluator.onFrame(frequencyHz, capturedAtMillis)
+        waitFrame = frame
+        voiceTrace.add(capturedAtMillis, frame.reading?.offsetMoria)
+        if (frame.advanced) {
+            frame.targetIndex?.let(matchedIndices::add)
+            onWaitNoteChanged(evaluator)
+        } else {
+            rebuildState()
+        }
+    }
+
+    /** «Παράλειψη»: only ever from a tap. The skipped note stays un-greened. */
+    private fun skipWaitNote() {
+        val evaluator = waitEvaluator ?: return
+        if (evaluator.skip()) onWaitNoteChanged(evaluator)
+    }
+
+    private fun onWaitNoteChanged(evaluator: WaitModeEvaluator) {
+        voiceTrace.clear()
+        waitFrame = null
+        if (evaluator.isComplete) {
+            finishWaitMode(evaluator)
+        } else {
+            activeIndex = evaluator.currentIndex ?: -1
+            rebuildState()
+        }
+    }
+
+    /** The whole line is done: stars, and the next run's tolerance — narrower only after no skip. */
+    private fun finishWaitMode(evaluator: WaitModeEvaluator) {
+        val run = evaluator.result()
+        val nextLevel = IntonationProfile.nextWaitLevel(waitLevel, withoutSkips = run.skips == 0)
+        val next = formatMoria(IntonationProfile.waitTolerance(nextLevel))
+        val summary = WaitModeScore.medianLockMillis(run.lockMillis)?.let { median ->
+            getString(R.string.melody_trainer_wait_done, run.skips, formatSeconds(median))
+        } ?: getString(R.string.melody_trainer_wait_done_all_skipped)
+        val nextLine = when {
+            run.skips > 0 -> getString(R.string.melody_trainer_wait_same_level, next)
+            nextLevel > waitLevel -> getString(R.string.melody_trainer_wait_next_level, next)
+            else -> getString(R.string.melody_trainer_wait_top_level, next)
+        }
+        waitResult = WaitResultUi(WaitModeScore.stars(run), summary, nextLine)
+        waitLevel = nextLevel
+        stopWaitMode(clearGreens = false)
+    }
+
+    private fun stopWaitMode(clearGreens: Boolean) {
+        if (!isWaitActive) return
+        pitchEngine.stop()
+        isonPlayer.stop()
+        isWaitActive = false
+        waitEvaluator = null
+        waitFrame = null
+        voiceTrace.clear()
+        if (clearGreens) matchedIndices.clear()
+        activeIndex = -1
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        rebuildState()
+    }
+
+    /** Off unless the learner turns it on: from the loudspeaker the microphone may hear it (I4 is still to measure). */
+    private fun changeWaitIson(on: Boolean) {
+        waitIsonOn = on
+        if (isWaitActive) {
+            if (on) startWaitIson() else isonPlayer.stop()
+        }
+        rebuildState()
+    }
+
+    private fun startWaitIson() {
+        SingAlong.isonFrequencyHz(scale)?.let { isonPlayer.start(it, ToneTimbre.CLEAN, singAlongVolumes.ison) }
+    }
+
+    private fun waitModeUi(): WaitModeUi {
+        val evaluator = waitEvaluator
+        val index = evaluator?.currentIndex
+        val frame = waitFrame?.takeIf { it.targetIndex == index }
+        val reading = frame?.reading
+        val guidance = when {
+            index == null -> null
+            reading == null -> getString(R.string.melody_trainer_wait_silence)
+            frame.onTarget -> getString(R.string.melody_trainer_wait_hold)
+            reading.offsetMoria < 0 -> getString(R.string.melody_trainer_wait_higher, formatMoria(abs(reading.offsetMoria)))
+            else -> getString(R.string.melody_trainer_wait_lower, formatMoria(abs(reading.offsetMoria)))
+        }
+        val tolerance = evaluator?.toleranceMoria ?: IntonationProfile.waitTolerance(waitLevel)
+        val target = index?.let { scale.ladder.stepFor(notes[it].pitch) }
+        return WaitModeUi(
+            running = isWaitActive,
+            startEnabled = !isBusy && notes.isNotEmpty(),
+            targetLabel = index?.let { SingAlong.lineLabel(notes[it], lineShowsSyllables) },
+            guidance = guidance,
+            onTarget = frame?.onTarget == true,
+            holdProgress = ((frame?.heldMillis ?: 0L).toFloat() / IntonationProfile.WAIT_HOLD_MS.toFloat()).coerceIn(0f, 1f),
+            trace = if (isWaitActive) voiceTrace.points() else emptyList(),
+            rungOffsets = target?.let { t ->
+                scale.ladder.steps
+                    .map { (it.moriaFromNi.value - t.moriaFromNi.value).toDouble() }
+                    .filter { abs(it) <= TRACE_RANGE_MORIA }
+            }.orEmpty(),
+            toleranceMoria = tolerance,
+            toleranceLabel = getString(R.string.melody_trainer_wait_tolerance, formatMoria(tolerance)),
+            isonOn = waitIsonOn,
+            result = waitResult,
+            status = waitStatus,
+        )
+    }
+
+    /** μόρια as the card prints them: whole when whole, else one decimal, in the screen's language. */
+    private fun formatMoria(moria: Double): String =
+        DecimalFormat("0.#", DecimalFormatSymbols.getInstance(currentLocale())).format(moria)
+
+    private fun formatSeconds(millis: Long): String =
+        DecimalFormat("0.0", DecimalFormatSymbols.getInstance(currentLocale())).format(millis / 1000.0)
 
     // endregion
 
     // region Mode 2: voice check
 
     private fun requestVoiceSession() {
-        if (isPlaybackActive || isRhythmActive || isSingAlongActive) {
+        if (isPlaybackActive || isRhythmActive || isSingAlongActive || isWaitActive) {
             rebuildState()
             return
         }
@@ -669,6 +861,11 @@ class MelodyTrainerActivity : BaseActivity() {
             setActiveRhythmStatus(getString(R.string.melody_trainer_mic_unavailable))
             rebuildState()
         }
+        if (isWaitActive) {
+            stopWaitMode(clearGreens = false)
+            waitStatus = getString(R.string.melody_trainer_mic_unavailable)
+            rebuildState()
+        }
     }
 
     private fun finishVoiceSession() {
@@ -707,7 +904,7 @@ class MelodyTrainerActivity : BaseActivity() {
     // region Mode 3: rhythm timing
 
     private fun requestRhythmSession(requirePitch: Boolean) {
-        if (isPlaybackActive || isVoiceActive || isSingAlongActive || (isRhythmActive && rhythmRequirePitch != requirePitch)) {
+        if (isPlaybackActive || isVoiceActive || isSingAlongActive || isWaitActive || (isRhythmActive && rhythmRequirePitch != requirePitch)) {
             rebuildState()
             return
         }
@@ -947,24 +1144,25 @@ class MelodyTrainerActivity : BaseActivity() {
                 metronomePercent = percentOf(singAlongVolumes.metronome),
                 isonLabel = SingAlong.isonPhthong(scale).label,
             ),
+            waitMode = waitModeUi(),
             syllableDialog = syllableDialogIndex?.takeIf { it in notes.indices }?.let { index ->
                 SyllableDialogUi(index, notes[index].pitch.label, notes[index].syllable.orEmpty())
             },
             voice = PracticeModeUi(
                 checked = isVoiceActive,
-                enabled = !isPlaybackActive && !isRhythmActive && !isSingAlongActive,
+                enabled = !isPlaybackActive && !isRhythmActive && !isSingAlongActive && !isWaitActive,
                 status = voiceStatus,
                 progress = if (isVoiceActive) correctProgress(voiceCorrectCount, total) else null,
             ),
             rhythm = PracticeModeUi(
                 checked = isRhythmActive && !rhythmRequirePitch,
-                enabled = !isPlaybackActive && !isVoiceActive && !isSingAlongActive && !(isRhythmActive && rhythmRequirePitch),
+                enabled = !isPlaybackActive && !isVoiceActive && !isSingAlongActive && !isWaitActive && !(isRhythmActive && rhythmRequirePitch),
                 status = rhythmStatus,
                 progress = if (isRhythmActive && !rhythmRequirePitch) correctProgress(rhythmCorrectCount, total) else null,
             ),
             combo = PracticeModeUi(
                 checked = isRhythmActive && rhythmRequirePitch,
-                enabled = !isPlaybackActive && !isVoiceActive && !isSingAlongActive && !(isRhythmActive && !rhythmRequirePitch),
+                enabled = !isPlaybackActive && !isVoiceActive && !isSingAlongActive && !isWaitActive && !(isRhythmActive && !rhythmRequirePitch),
                 status = comboStatus,
                 progress = if (isRhythmActive && rhythmRequirePitch) correctProgress(rhythmCorrectCount, total) else null,
             ),
@@ -1006,6 +1204,7 @@ class MelodyTrainerActivity : BaseActivity() {
         }
         // Like every mode, «Ψάλλε μαζί» stops when the screen is left; only «Στάση» stops it otherwise.
         stopSingAlong()
+        stopWaitMode(clearGreens = false)
     }
 
     /** The autosave's safety net: every edit already wrote the melody, so this is usually a no-op. */
