@@ -50,6 +50,9 @@ class BackupRulesTest {
         AppPrefs.Store.LECTERN_LIBRARY to Backup.LEFT_OUT,
         // The lectern's page → ήχος maps, named by each PDF's SHA-256: the user's own work.
         AppPrefs.Store.LECTERN_PAGES to Backup.KEPT,
+        // This phone's once-per-install answers: restored elsewhere, «already asked» would stop a new
+        // phone from ever asking for the notifications permission (ClickUp 869f5x273).
+        AppPrefs.Store.DEVICE to Backup.LEFT_OUT,
     )
 
     /** Everything else that stays on the device, by the name the code gives it on disk. */

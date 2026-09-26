@@ -40,7 +40,7 @@ object AppPrefs {
 
     /** A `SharedPreferences` file. */
     enum class Store(val fileName: String) {
-        /** Global app settings: font scale, language, learning-path progress, the notifications prompt. */
+        /** Global app settings: font scale, language, learning-path progress. */
         SETTINGS("learn_byzantine_music_settings"),
 
         /** The recordings page: SAF folder grant and chosen output format. */
@@ -71,6 +71,14 @@ object AppPrefs {
 
         /** The digital lectern's page → ήχος maps, one per PDF, named by the file's SHA-256. */
         LECTERN_PAGES("learn_byzantine_music_lectern_pages"),
+
+        /**
+         * This phone only: once-per-install answers that belong to this phone's own permission
+         * state — the Android 13+ notifications prompt. Left out of Google backup and device
+         * transfer: a restored «already asked» would stop a new phone from ever asking, while its
+         * permission was never granted there (ClickUp `869f5x273`).
+         */
+        DEVICE("learn_byzantine_music_device"),
     }
 
     /** What a key holds, so a reader cannot ask for the wrong accessor. */
@@ -230,7 +238,7 @@ object AppPrefs {
 
     val NotificationsPermissionAsked = Key(
         name = "notifications_permission_asked",
-        store = Store.SETTINGS,
+        store = Store.DEVICE,
         type = Type.BOOLEAN,
         default = "false",
         writtenBy = "AppNotifications, just before the Android 13+ notifications prompt is first shown",

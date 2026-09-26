@@ -7,6 +7,7 @@ import com.johnchourp.learnbyzantinemusic.practice.PracticeDay
 import com.johnchourp.learnbyzantinemusic.practice.PracticeLog
 import com.johnchourp.learnbyzantinemusic.practice.PracticeLogCodec
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.DEVICE
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.EIGHT_MODES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.LECTERN_PAGES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.NOTES
@@ -111,9 +112,9 @@ class LearningDataFileTest {
     private val keptOnDevice: Map<AppPrefs.Store, Map<String, Any>> = mapOf(
         SETTINGS to mapOf(
             "app_language_onboarding_completed" to true,
-            "notifications_permission_asked" to true,
             "a_key_no_build_registers" to "leftover",
         ),
+        DEVICE to mapOf("notifications_permission_asked" to true),
         RECORDINGS to mapOf("recordings_folder_tree_uri" to "content://com.android.externalstorage.documents/tree/primary%3AMusic"),
         NOTES to mapOf(
             "notes_folder_tree_uri" to "content://com.android.externalstorage.documents/tree/primary%3ANotes",
@@ -276,7 +277,7 @@ class LearningDataFileTest {
         val notImportable = listOf(
             Triple("learn_byzantine_music_notes", "notes_folder_tree_uri", entry("STRING", "content://x")),
             Triple("learn_byzantine_music_settings", "app_language_onboarding_completed", entry("BOOLEAN", true)),
-            Triple("learn_byzantine_music_settings", "notifications_permission_asked", entry("BOOLEAN", true)),
+            Triple("learn_byzantine_music_device", "notifications_permission_asked", entry("BOOLEAN", true)),
             Triple("learn_byzantine_music_settings", "a_setting_of_a_newer_build", entry("BOOLEAN", true)),
             Triple("recording_analysis_settings", "recording:content://x/1.flac|expected", entry("STRING", "NI")),
             Triple("recording_analysis_settings", "hymn:ninth:01|expected", entry("STRING", "NI")),

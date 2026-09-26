@@ -61,6 +61,7 @@ class AppPrefsRegistryTest {
         assertEquals(
             listOf(
                 "eight_modes_base_shift_prefs",
+                "learn_byzantine_music_device",
                 "learn_byzantine_music_lectern_library",
                 "learn_byzantine_music_lectern_pages",
                 "learn_byzantine_music_notes",
