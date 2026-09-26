@@ -26,8 +26,8 @@ import kotlin.math.pow
  *
  *     f = NI_BASE_HZ * 2^(moriaFromNi / MORIA_PER_OCTAVE)
  *
- * Transposition is the same operation: the per-mode base shift (`-12..+12` μόρια) is simply added to
- * `moriaFromNi` before the power, so it cannot round differently from the scale it transposes.
+ * Transposition is the same operation: the base shift (within [BaseShift.RANGE] μόρια) is simply added
+ * to `moriaFromNi` before the power, so it cannot round differently from the scale it transposes.
  *
  * Users of this object express pitch in **μόρια above Νη**, which may be negative (below Νη) and may
  * exceed [MORIA_PER_OCTAVE] (higher octaves). No caller does its own `2.0.pow(...)`.

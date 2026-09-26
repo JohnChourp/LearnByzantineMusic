@@ -76,6 +76,8 @@ data class TrainerScaleUi(
     val mode: Mode? = null,
     val baseShiftMoria: Int = BaseShift.DEFAULT_MORIA,
     val enabled: Boolean = true,
+    /** The voice's global shift from «Βρες τη φωνή σου», on top of every scale (ClickUp `869f5x2dd`). */
+    val globalShiftMoria: Int = BaseShift.DEFAULT_MORIA,
 ) {
     /** «Διατονικός» is fixed at Νη = 220 Hz; only a chosen ήχος can be transposed. */
     val baseShiftEditable: Boolean get() = enabled && mode != null

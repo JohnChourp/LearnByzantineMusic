@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.music.BaseShift
+import com.johnchourp.learnbyzantinemusic.voice.GlobalShift
 import com.johnchourp.learnbyzantinemusic.music.Beats
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
@@ -143,6 +144,7 @@ class MelodyTrainerActivity : BaseActivity() {
         voiceStatus = getString(R.string.melody_trainer_voice_hint)
         rhythmStatus = getString(R.string.melody_trainer_rhythm_hint)
         comboStatus = getString(R.string.melody_trainer_combo_hint)
+        scale = scale.copy(globalShiftMoria = GlobalShift.load(this))
         restoreSaved()
         rebuildState()
 
@@ -188,6 +190,19 @@ class MelodyTrainerActivity : BaseActivity() {
         }
     }
 
+    /**
+     * «Βρες τη φωνή σου» may have changed the voice's global shift in Settings meanwhile: take it on
+     * when this screen returns, unless something is sounding or listening (ClickUp `869f5x2dd`).
+     */
+    override fun onStart() {
+        super.onStart()
+        val global = GlobalShift.load(this)
+        if (global != scale.globalShiftMoria && !isBusy) {
+            scale = scale.copy(globalShiftMoria = global)
+            rebuildState()
+        }
+    }
+
     // region editing
 
     private val isBusy: Boolean get() = isPlaybackActive || isVoiceActive || isRhythmActive
@@ -230,7 +245,7 @@ class MelodyTrainerActivity : BaseActivity() {
         } else {
             BaseShift.clamp(modePrefs.getInt(AppPrefs.baseShiftKeyName(mode.key), BaseShift.DEFAULT_MORIA))
         }
-        scale = TrainerScale(mode, shift)
+        scale = TrainerScale(mode, shift, scale.globalShiftMoria)
         autosave()
         rebuildState()
     }
@@ -318,7 +333,9 @@ class MelodyTrainerActivity : BaseActivity() {
         notes.clear()
         notes.addAll(live.notes)
         bpm = live.bpm
-        scale = live.scale
+        // A melody keeps its ήχος and «Μεταφορά βάσης»; the voice's global shift is the singer's, not
+        // the melody's, so it stays as it is (ClickUp `869f5x2dd`).
+        scale = live.scale.copy(globalShiftMoria = scale.globalShiftMoria)
         matchedIndices.clear()
     }
 
@@ -776,6 +793,7 @@ class MelodyTrainerActivity : BaseActivity() {
                 mode = scale.mode,
                 baseShiftMoria = scale.baseShiftMoria,
                 enabled = !isBusy,
+                globalShiftMoria = scale.globalShiftMoria,
             ),
             exercises = TrainerExercisesUi(
                 items = exercises.exercises.map { exercise ->

@@ -82,6 +82,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import com.johnchourp.learnbyzantinemusic.ui.theme.AccentCrimsonContent
+import androidx.compose.material.icons.filled.Mic
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
+import com.johnchourp.learnbyzantinemusic.voice.ui.VoiceRangeDialog
 
 /**
  * Strings for the language-confirmation dialog, pre-resolved by the host Activity in the
@@ -147,6 +150,18 @@ fun SettingsScreen(
     onDismissLearningData: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    /** «Φωνή» (ClickUp `869f5x2dd`): the voice's global shift in force, 0 for none. */
+    globalShiftMoria: Int = BaseShift.DEFAULT_MORIA,
+    onFindVoice: () -> Unit = {},
+    onResetVoice: () -> Unit = {},
+    /** «Βρες τη φωνή σου» is open; the host owns the microphone it listens with. */
+    voiceTestOpen: Boolean = false,
+    heardFrequencyHz: Double? = null,
+    micDenied: Boolean = false,
+    isonWillStop: Boolean = false,
+    onVoiceListen: (Boolean) -> Unit = {},
+    onApplyGlobalShift: (Int) -> Unit = {},
+    onCloseVoiceTest: () -> Unit = {},
 ) {
     val scroll = rememberScrollState()
     Column(
@@ -187,6 +202,13 @@ fun SettingsScreen(
                 )
             }
             StaggeredAppear(delayMillis = 180) {
+                VoiceCard(
+                    globalShiftMoria = globalShiftMoria,
+                    onFindVoice = onFindVoice,
+                    onResetVoice = onResetVoice,
+                )
+            }
+            StaggeredAppear(delayMillis = 220) {
                 LearningDataCard(
                     onExport = onExportLearningData,
                     onImport = onImportLearningData,
@@ -205,6 +227,17 @@ fun SettingsScreen(
         )
     }
 
+    if (voiceTestOpen) {
+        VoiceRangeDialog(
+            heardFrequencyHz = heardFrequencyHz,
+            micDenied = micDenied,
+            currentGlobalShiftMoria = globalShiftMoria,
+            onListen = onVoiceListen,
+            onApply = onApplyGlobalShift,
+            onClose = onCloseVoiceTest,
+            isonWillStop = isonWillStop,
+        )
+    }
     if (learningDataPrompt != null) {
         LearningDataDialog(
             prompt = learningDataPrompt,
@@ -712,6 +745,70 @@ private fun SelectionIndicator(selected: Boolean) {
                 tint = Color.White,
                 modifier = Modifier.size(16.dp),
             )
+        }
+    }
+}
+
+/* ----------------------------- Voice ----------------------------- */
+
+/**
+ * «Φωνή» (ClickUp `869f5x2dd`): the one global shift that «Βρες τη φωνή σου» sets for every ladder in
+ * the app, on top of each mode's own. The test is always here; the 8 Ήχοι page offers it only once.
+ */
+@Composable
+private fun VoiceCard(
+    globalShiftMoria: Int,
+    onFindVoice: () -> Unit,
+    onResetVoice: () -> Unit,
+) {
+    val none = globalShiftMoria == BaseShift.DEFAULT_MORIA
+    LessonCard(title = stringResource(R.string.settings_voice_label)) {
+        Text(
+            text = stringResource(R.string.settings_voice_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = LbmTextSecondary,
+        )
+        Spacer(Modifier.height(6.dp))
+        Text(
+            text = if (none) {
+                stringResource(R.string.settings_voice_none)
+            } else {
+                stringResource(R.string.settings_voice_current, globalShiftMoria)
+            },
+            style = MaterialTheme.typography.titleSmall,
+            color = LbmTextPrimary,
+            fontWeight = FontWeight.SemiBold,
+        )
+        Spacer(Modifier.height(12.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Button(
+                onClick = onFindVoice,
+                modifier = Modifier.heightIn(min = 48.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = LbmBrown,
+                    contentColor = Color.White,
+                ),
+            ) {
+                Icon(Icons.Filled.Mic, contentDescription = null, modifier = Modifier.size(20.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.settings_voice_find),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+            Spacer(Modifier.weight(1f))
+            // Through the button's colours, so a disabled «Μηδενισμός» looks disabled (ClickUp `869f5x281`).
+            TextButton(
+                onClick = onResetVoice,
+                enabled = !none,
+                colors = ButtonDefaults.textButtonColors(contentColor = LbmBrown),
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_voice_reset),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
         }
     }
 }

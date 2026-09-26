@@ -177,7 +177,7 @@ object LearningDataFile {
     /** The kinds of change an import can make, in the order the dialog lists them. */
     enum class Item {
         FONT_SIZE, LANGUAGE, THEME, METRONOME, FAVOURITES, PROGRESS, PRACTICE, SELECTED_MODE, TIMBRE, ISON_BACKGROUND,
-        BASE_SHIFT, RECORDING_FORMAT, ANALYSIS, TRAINER_EXERCISES, TRAINER_LAST_MELODY,
+        BASE_SHIFT, GLOBAL_BASE_SHIFT, RECORDING_FORMAT, ANALYSIS, TRAINER_EXERCISES, TRAINER_LAST_MELODY,
     }
 
     /** One line of the dialog; [count] is how many pages, steps, modes, hymns or exercises, where that matters. */
@@ -217,6 +217,7 @@ object LearningDataFile {
         AppPrefs.SelectedToneTimbre -> Item.TIMBRE
         AppPrefs.IsonInBackground -> Item.ISON_BACKGROUND
         AppPrefs.BaseShiftMoria -> Item.BASE_SHIFT
+        AppPrefs.GlobalBaseShift -> Item.GLOBAL_BASE_SHIFT
         AppPrefs.RecordingsOutputFormat -> Item.RECORDING_FORMAT
         AppPrefs.AnalysisExpectedMelody, AppPrefs.AnalysisModeKey, AppPrefs.AnalysisStartPhthong -> Item.ANALYSIS
         AppPrefs.TrainerExercises -> Item.TRAINER_EXERCISES
@@ -271,7 +272,7 @@ object LearningDataFile {
         AppPrefs.FavoriteTopicIds -> stringSet(value)?.filter { it.isNotBlank() }?.toSet()
         AppPrefs.SelectedModeKey, AppPrefs.AnalysisModeKey -> Mode.fromKey(value as? String)?.key
         AppPrefs.SelectedToneTimbre -> ToneTimbre.entries.firstOrNull { it.name == value }?.name
-        AppPrefs.BaseShiftMoria -> (value as? Int)?.let(BaseShift::clamp)
+        AppPrefs.BaseShiftMoria, AppPrefs.GlobalBaseShift -> (value as? Int)?.let(BaseShift::clamp)
         AppPrefs.RecordingsOutputFormat -> (value as? String)?.let { RecordingFormatOption.fromStoredValue(it).name }
         AppPrefs.AnalysisExpectedMelody -> (value as? String)?.let { StoredPhthongs.encodeList(StoredPhthongs.decodeList(it)) }
         AppPrefs.AnalysisStartPhthong -> StoredPhthongs.decode(value as? String)?.let(StoredPhthongs::encode)

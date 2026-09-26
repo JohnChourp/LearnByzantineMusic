@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.prefs
 
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import android.content.Context
 import android.content.SharedPreferences
 
@@ -232,6 +233,21 @@ object AppPrefs {
         export = Export.NO,
     )
 
+    val GlobalBaseShift = Key(
+        name = "global_base_shift_moria",
+        store = Store.SETTINGS,
+        type = Type.INT,
+        default = "0 — every ladder exactly as before it existed",
+        allowed = "${BaseShift.MIN_MORIA}..+${BaseShift.MAX_MORIA} μόρια, clamped on read. Added to each mode's own " +
+            "«Μεταφορά βάσης» wherever a ladder is built, and the sum clamped again (BaseShift.combined); " +
+            "the modes' own values are never rewritten",
+        writtenBy = "«Βρες τη φωνή σου», when its suggestion is accepted, and the reset of the «Φωνή» card in Settings",
+        readBy = "the 8 Ήχοι page (diagram, απήχημα, ison, «Πού είμαι») — and through its requests " +
+            "IsonPlaybackService — and the Melody Trainer, «Διατονικός» included",
+        // The singer's voice, the same on any phone — like the per-mode shifts it is added to.
+        export = Export.YES,
+    )
+
     // ---- RECORDINGS ---------------------------------------------------------------------------
 
     val RecordingsFolderTreeUri = Key(
@@ -337,7 +353,8 @@ object AppPrefs {
         store = Store.EIGHT_MODES,
         type = Type.INT,
         default = "0",
-        allowed = "-12..+12 μόρια; values outside are clamped on both read and write",
+        allowed = "${BaseShift.MIN_MORIA}..+${BaseShift.MAX_MORIA} μόρια (BaseShift.RANGE); values outside are clamped on " +
+            "both read and write",
         writtenBy = "the «Μεταφορά βάσης» slider, per mode",
         readBy = "the scale diagram, touch playback and the ison drone of that mode",
         export = Export.YES,
@@ -354,6 +371,28 @@ object AppPrefs {
         writtenBy = "the «Συνέχισε στο παρασκήνιο» switch of the ison card",
         readBy = "EightModesActivity, to decide whether the page or IsonPlaybackService plays the ison",
         export = Export.YES,
+    )
+
+    val VoiceRangeOffered = Key(
+        name = "voice_range_offered",
+        store = Store.EIGHT_MODES,
+        type = Type.BOOLEAN,
+        default = "false",
+        writtenBy = "the 8 Ήχοι page, once it has offered «Βρες τη φωνή σου» — taken or not — and Settings, " +
+            "once the test has been opened from its «Φωνή» card",
+        readBy = "the 8 Ήχοι page, so it offers the test by itself only the first time it opens",
+        // A once-per-install prompt, like the notifications one: each phone offers it once.
+        export = Export.NO,
+    )
+
+    val EightModesTourShown = Key(
+        name = "eight_modes_tour_shown",
+        store = Store.EIGHT_MODES,
+        type = Type.BOOLEAN,
+        default = "false",
+        writtenBy = "the 8 Ήχοι page's four-step tour, when it is finished or skipped",
+        readBy = "the same page, so the tour never shows by itself again",
+        export = Export.NO,
     )
 
     /**
@@ -491,6 +530,7 @@ object AppPrefs {
         MetronomeFootMode,
         ThemeMode,
         NotificationsPermissionAsked,
+        GlobalBaseShift,
         RecordingsFolderTreeUri,
         RecordingsOutputFormat,
         NotesFolderTreeUri,
@@ -501,6 +541,8 @@ object AppPrefs {
         SelectedToneTimbre,
         BaseShiftMoria,
         IsonInBackground,
+        VoiceRangeOffered,
+        EightModesTourShown,
         AnalysisExpectedMelody,
         AnalysisModeKey,
         AnalysisStartPhthong,
