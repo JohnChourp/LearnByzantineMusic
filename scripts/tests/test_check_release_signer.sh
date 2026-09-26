@@ -67,10 +67,21 @@ run_case "apk: release key passes" 0 "[signer] OK" \
     apk "Signer #1 certificate DN: CN=LearnByzantineMusic\nSigner #1 certificate SHA-256 digest: $PIN\n"
 run_case "apk: another key with the same DN fails" 1 "$OTHER" \
     apk "Signer #1 certificate DN: CN=LearnByzantineMusic\nSigner #1 certificate SHA-256 digest: $OTHER\n"
-run_case "apk: two signers fail" 1 "βρήκα 2" \
-    apk "Signer #1 certificate SHA-256 digest: $PIN\nSigner #2 certificate SHA-256 digest: $PIN\n"
-run_case "apk: no digest line fails" 1 "βρήκα 0" \
+run_case "apk: two different certificates fail" 1 "2 διαφορετικά" \
+    apk "Signer #1 certificate SHA-256 digest: $PIN\nSigner #2 certificate SHA-256 digest: $OTHER\n"
+run_case "apk: no digest line fails" 1 "Δεν βρήκα SHA-256" \
     apk "Verifies\n"
+
+# Newer apksigner (the GitHub runner's, 2026-09-26) prints one block per scheme instead of «Signer #1».
+# The first case is the runner's own output for the v1.17.1 APK, which the old parser rejected.
+run_case "apk: per-scheme format (runner, v1.17.1) passes" 0 "[signer] OK" \
+    apk "V2 Signer: certificate DN: CN=LearnByzantineMusic, O=LearnByzantineMusic, OU=Android, L=Athens, ST=Attica, C=GR\nV2 Signer: certificate SHA-256 digest: $PIN\nV2 Signer: certificate SHA-1 digest: 826c1a7ab4ad07d4209408a2c4c1cff761361237\nV2 Signer: certificate MD5 digest: 41dd8e437b5f70f17446bd778e08b851\n"
+run_case "apk: per-scheme format with another key fails" 1 "$OTHER" \
+    apk "V2 Signer: certificate SHA-256 digest: $OTHER\n"
+run_case "apk: the same certificate in two schemes passes" 0 "[signer] OK" \
+    apk "V2 Signer: certificate SHA-256 digest: $PIN\nV3 Signer: certificate SHA-256 digest: $PIN\n"
+run_case "apk: v2 release key but v3 another key fails" 1 "2 διαφορετικά" \
+    apk "V2 Signer: certificate SHA-256 digest: $PIN\nV3 Signer: certificate SHA-256 digest: $OTHER\n"
 run_case "apk: a digest that is not SHA-256 fails" 1 "Δεν διάβασα" \
     apk "Signer #1 certificate SHA-256 digest: abc\n"
 run_case "apk: apksigner verify failing fails" 1 "απέτυχε" \

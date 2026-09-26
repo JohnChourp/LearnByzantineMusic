@@ -15,7 +15,9 @@
 #
 # Χρήση:
 #   check-release-signer.sh <apk>
-#       exit 0 μόνο αν το APK έχει ακριβώς έναν υπογράφοντα, το καρφωμένο πιστοποιητικό.
+#       exit 0 μόνο αν ΚΑΘΕ πιστοποιητικό που τυπώνει το apksigner είναι το καρφωμένο (και υπάρχει ένα).
+#       Το apksigner ≤ 36 τυπώνει «Signer #1 certificate …», τα νεότερα μία γραμμή ανά scheme
+#       («V2 Signer: certificate …») — το v1.17.1 κόλλησε εδώ στο GitHub Actions· διαβάζονται και οι δύο.
 #   check-release-signer.sh --keystore <keystore> <alias>
 #       exit 0 μόνο αν το κλειδί <alias> του keystore είναι το καρφωμένο πιστοποιητικό·
 #       ο κωδικός διαβάζεται από το ANDROID_SIGNING_STORE_PASSWORD. Τρέχει πριν από bump/build.
@@ -77,7 +79,7 @@ find_apksigner() {
 }
 
 check_apk() {
-    local apk="$1" signer output count digest
+    local apk="$1" signer output digests distinct count
     if [[ ! -f "$apk" ]]; then
         echo "ERROR: Δεν βρέθηκε το APK: $apk" >&2
         return 2
@@ -91,14 +93,20 @@ check_apk() {
         echo "ERROR: Το apksigner verify απέτυχε για $apk." >&2
         return 1
     fi
-    count="$(printf '%s\n' "$output" | grep -c '^Signer #[0-9][0-9]* certificate SHA-256 digest:' || true)"
-    if [[ "$count" != "1" ]]; then
+    digests="$(printf '%s\n' "$output" | grep -E 'Signer.* certificate SHA-256 digest:' | sed -E 's/.* certificate SHA-256 digest:[[:space:]]*//' || true)"
+    if [[ -z "$digests" ]]; then
         printf '%s\n' "$output" >&2
-        echo "ERROR: Περίμενα ακριβώς έναν υπογράφοντα στο $apk, βρήκα $count." >&2
+        echo "ERROR: Δεν βρήκα SHA-256 πιστοποιητικού στην έξοδο του apksigner για $apk." >&2
         return 1
     fi
-    digest="$(printf '%s\n' "$output" | sed -n 's/^Signer #[0-9][0-9]* certificate SHA-256 digest: *//p')"
-    compare_to_pin "το APK $(basename "$apk")" "$digest"
+    distinct="$(printf '%s\n' "$digests" | tr '[:upper:]' '[:lower:]' | tr -d ': \t\r' | sort -u)"
+    count="$(printf '%s\n' "$distinct" | wc -l | tr -d ' ')"
+    if [[ "$count" != "1" ]]; then
+        printf '%s\n' "$output" >&2
+        echo "ERROR: Το $apk έχει $count διαφορετικά πιστοποιητικά υπογραφής." >&2
+        return 1
+    fi
+    compare_to_pin "το APK $(basename "$apk")" "$distinct"
 }
 
 check_keystore() {
