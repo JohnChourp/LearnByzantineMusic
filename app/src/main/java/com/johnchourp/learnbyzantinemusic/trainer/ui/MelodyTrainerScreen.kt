@@ -81,6 +81,8 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.music.Mode
+import com.johnchourp.learnbyzantinemusic.summary_theory.ui.Neume
+import com.johnchourp.learnbyzantinemusic.trainer.MelodySequence
 import com.johnchourp.learnbyzantinemusic.trainer.MelodyTempo
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonHero
@@ -106,9 +108,9 @@ private val ActiveGlowBorder = Color(0xFFE0A100)
 /**
  * Redesigned «Γυμναστής Μελωδίας» screen. A pure renderer of [MelodyTrainerUiState] + callbacks:
  * a hero, a visual timing-rules card, the note picker + octave stepper, the editable sequence
- * with animated match/active feedback, the ήχος and «Μεταφορά βάσης» ([TrainerScaleCard]), a tempo
- * slider, the transport row, and the three voice-practice mode cards. All audio / mic / timing
- * logic stays in the host Activity.
+ * with animated match/active feedback, «Οι ασκήσεις μου» ([TrainerExercisesCard]), the ήχος and
+ * «Μεταφορά βάσης» ([TrainerScaleCard]), a tempo slider, the transport row, and the three
+ * voice-practice mode cards. All audio / mic / timing logic stays in the host Activity.
  */
 @Composable
 fun MelodyTrainerScreen(
@@ -124,6 +126,15 @@ fun MelodyTrainerScreen(
     onRemoveNote: (Int) -> Unit,
     onSelectScale: (Mode?) -> Unit,
     onBaseShiftChange: (Int) -> Unit,
+    onRequestSaveExercise: () -> Unit,
+    onSaveExercise: (String) -> Unit,
+    onRequestOpenExercise: (String) -> Unit,
+    onOpenExercise: (String) -> Unit,
+    onRequestRenameExercise: (String) -> Unit,
+    onRenameExercise: (String, String) -> Unit,
+    onRequestDeleteExercise: (String) -> Unit,
+    onDeleteExercise: (String) -> Unit,
+    onDismissExerciseDialog: () -> Unit,
     onTempoChange: (Int) -> Unit,
     onPlay: () -> Unit,
     onStop: () -> Unit,
@@ -159,6 +170,7 @@ fun MelodyTrainerScreen(
                 AddPhthongCard(
                     phthongLabels = phthongLabels,
                     addEnabled = state.addEnabled,
+                    noteLimitReached = state.noteLimitReached,
                     onAddPhthong = onAddPhthong,
                     octaveLabel = state.octaveLabel,
                     octaveDownEnabled = state.octaveDownEnabled,
@@ -176,6 +188,20 @@ fun MelodyTrainerScreen(
                     onIncrementDuration = onIncrementDuration,
                     onToggleGorgo = onToggleGorgo,
                     onRemoveNote = onRemoveNote,
+                )
+            }
+            StaggeredAppear(delayMillis = 270) {
+                TrainerExercisesCard(
+                    exercises = state.exercises,
+                    onRequestSave = onRequestSaveExercise,
+                    onSave = onSaveExercise,
+                    onRequestOpen = onRequestOpenExercise,
+                    onOpen = onOpenExercise,
+                    onRequestRename = onRequestRenameExercise,
+                    onRename = onRenameExercise,
+                    onRequestDelete = onRequestDeleteExercise,
+                    onDelete = onDeleteExercise,
+                    onDismissDialog = onDismissExerciseDialog,
                 )
             }
             StaggeredAppear(delayMillis = 300) {
@@ -252,7 +278,7 @@ private fun RulesCard(numbers: TimingRuleNumbersUi) {
         ),
         RuleEntry(
             Icons.Filled.Bolt, AccentPurpleContainer, AccentPurpleContent,
-            R.string.melody_trainer_rule_gorgo_title, R.string.melody_trainer_rule_gorgo_body,
+            Neume.GORGON.nameRes, R.string.melody_trainer_rule_gorgo_body,
             listOf(numbers.gorgonNote, numbers.gorgonTakes),
         ),
         RuleEntry(
@@ -318,6 +344,7 @@ private fun RuleRow(rule: RuleEntry) {
 private fun AddPhthongCard(
     phthongLabels: List<String>,
     addEnabled: Boolean,
+    noteLimitReached: Boolean,
     onAddPhthong: (Int) -> Unit,
     octaveLabel: String,
     octaveDownEnabled: Boolean,
@@ -343,6 +370,14 @@ private fun AddPhthongCard(
                     onClick = { onAddPhthong(index) },
                 )
             }
+        }
+        if (noteLimitReached) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.melody_trainer_notes_limit, MelodySequence.MAX_NOTES),
+                style = MaterialTheme.typography.bodySmall,
+                color = LbmBrown,
+            )
         }
         Spacer(Modifier.height(14.dp))
         OctaveStepper(
@@ -709,7 +744,8 @@ private fun GorgoChip(selected: Boolean, enabled: Boolean, onClick: () -> Unit) 
         )
         Spacer(Modifier.width(6.dp))
         Text(
-            text = stringResource(R.string.melody_trainer_gorgo),
+            // The sign's one name, as on every theory page.
+            text = stringResource(Neume.GORGON.nameRes),
             style = MaterialTheme.typography.labelLarge,
             color = contentColor,
             fontWeight = FontWeight.SemiBold,

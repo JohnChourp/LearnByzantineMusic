@@ -9,9 +9,12 @@ import com.johnchourp.learnbyzantinemusic.lessons.ui.MetronomeSchedule
 import com.johnchourp.learnbyzantinemusic.modes.ToneTimbre
 import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.Mode
+import com.johnchourp.learnbyzantinemusic.practice.PracticeLogCodec
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingFormatOption
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.StoredPhthongs
+import com.johnchourp.learnbyzantinemusic.trainer.ExerciseBook
+import com.johnchourp.learnbyzantinemusic.trainer.TrainerMelodyCodec
 import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
 import org.json.JSONArray
 import org.json.JSONException
@@ -19,10 +22,11 @@ import org.json.JSONObject
 import java.time.LocalDate
 
 /**
- * The «Δεδομένα μάθησης» file: the favourites, the «Από το μηδέν» progress and the settings, in one
- * file the learner saves and opens through the system pickers to take them to another phone
- * (ClickUp `869f5x25w`). Pure — no Android — so every rule here runs in plain JVM tests; the Settings
- * screen reads and writes the preferences around it ([LearningDataPrefs]).
+ * The «Δεδομένα μάθησης» file: the favourites, the «Από το μηδέν» progress, the practice history, the
+ * Melody Trainer's exercises and the settings, in one file the learner saves and opens through the
+ * system pickers to take them to another phone (ClickUp `869f5x25w`). Pure — no Android — so every
+ * rule here runs in plain JVM tests; the Settings screen reads and writes the preferences around it
+ * ([LearningDataPrefs]).
  *
  * **Format, version 1 — readable forever.**
  * `{"schemaVersion": 1, "exportedAt": <epoch ms>, "appVersion": "1.17.0",
@@ -35,7 +39,9 @@ import java.time.LocalDate
  * **One rule for both directions: [normalized].** For every key it gives the value the app itself
  * would use when it reads that key — through the app's own rules: [AppFontScale.normalizeStep],
  * [MetronomeSchedule.clampBpm], the shared «Μεταφορά βάσης» range [BaseShift.clamp] (so the file
- * follows it when it widens), [LearningPath.isStep], [Mode.fromKey], [StoredPhthongs], the lectern's
+ * follows it when it widens), [LearningPath.isStep], [Mode.fromKey], [StoredPhthongs],
+ * [PracticeLogCodec] (the practice history behind the streak, ClickUp `869f5x2dy`), the Melody
+ * Trainer's own formats ([TrainerMelodyCodec], [ExerciseBook.normalized]), the lectern's
  * [LecternPagesCodec] and the enums. The
  * export writes normalised values; the import accepts a value only when it is already in that form.
  * So whatever the app exports, it can import back.
@@ -172,9 +178,12 @@ object LearningDataFile {
     // ---- what the confirmation dialog lists ------------------------------------------------------
 
     /** The kinds of change an import can make, in the order the dialog lists them. */
-    enum class Item { FONT_SIZE, LANGUAGE, THEME, METRONOME, FAVOURITES, PROGRESS, SELECTED_MODE, TIMBRE, ISON_BACKGROUND, BASE_SHIFT, RECORDING_FORMAT, ANALYSIS, LECTERN_PAGES }
+    enum class Item {
+        FONT_SIZE, LANGUAGE, THEME, METRONOME, FAVOURITES, PROGRESS, PRACTICE, SELECTED_MODE, TIMBRE, ISON_BACKGROUND,
+        BASE_SHIFT, RECORDING_FORMAT, ANALYSIS, TRAINER_EXERCISES, TRAINER_LAST_MELODY, LECTERN_PAGES,
+    }
 
-    /** One line of the dialog; [count] is how many pages, steps, modes, hymns or PDFs, where that matters. */
+    /** One line of the dialog; [count] is how many pages, steps, modes, hymns, exercises or PDFs, where that matters. */
     data class Line(val item: Item, val count: Int)
 
     fun summary(accepted: Result.Accepted): List<Line> {
@@ -186,8 +195,11 @@ object LearningDataFile {
                 val bucket = things.getOrPut(item) { mutableSetOf() }
                 when (item) {
                     Item.FAVOURITES, Item.PROGRESS -> (value as Set<*>).forEach { bucket += it.toString() }
+                    Item.PRACTICE -> PracticeLogCodec.decode(value as String).practisedDays.forEach { bucket += it.toString() }
                     Item.BASE_SHIFT -> bucket += name.removePrefix(AppPrefs.BASE_SHIFT_KEY_PREFIX)
                     Item.ANALYSIS -> bucket += analysisContext(name)
+                    // The exercises the list will hold; one a newer app wrote, and this one cannot read, is not counted.
+                    Item.TRAINER_EXERCISES -> ExerciseBook.decode(value as? String).exercises.forEach { bucket += it.name }
                     Item.LECTERN_PAGES -> bucket += name.removePrefix(AppPrefs.LECTERN_PAGES_KEY_PREFIX)
                     else -> bucket += name
                 }
@@ -204,12 +216,15 @@ object LearningDataFile {
         AppPrefs.MetronomeBpm, AppPrefs.MetronomeVibrate, AppPrefs.MetronomeSilent, AppPrefs.MetronomeFootMode -> Item.METRONOME
         AppPrefs.FavoriteTopicIds -> Item.FAVOURITES
         AppPrefs.LearningCompletedStepIds -> Item.PROGRESS
+        AppPrefs.PracticeLogJson -> Item.PRACTICE
         AppPrefs.SelectedModeKey -> Item.SELECTED_MODE
         AppPrefs.SelectedToneTimbre -> Item.TIMBRE
         AppPrefs.IsonInBackground -> Item.ISON_BACKGROUND
         AppPrefs.BaseShiftMoria -> Item.BASE_SHIFT
         AppPrefs.RecordingsOutputFormat -> Item.RECORDING_FORMAT
         AppPrefs.AnalysisExpectedMelody, AppPrefs.AnalysisModeKey, AppPrefs.AnalysisStartPhthong -> Item.ANALYSIS
+        AppPrefs.TrainerExercises -> Item.TRAINER_EXERCISES
+        AppPrefs.TrainerLastMelody -> Item.TRAINER_LAST_MELODY
         AppPrefs.LecternPageModes -> Item.LECTERN_PAGES
         else -> null
     }
@@ -268,6 +283,14 @@ object LearningDataFile {
         AppPrefs.RecordingsOutputFormat -> (value as? String)?.let { RecordingFormatOption.fromStoredValue(it).name }
         AppPrefs.AnalysisExpectedMelody -> (value as? String)?.let { StoredPhthongs.encodeList(StoredPhthongs.decodeList(it)) }
         AppPrefs.AnalysisStartPhthong -> StoredPhthongs.decode(value as? String)?.let(StoredPhthongs::encode)
+        // An empty or unreadable history is not carried, so an import never replaces a history with nothing.
+        AppPrefs.PracticeLogJson -> (value as? String)?.let(PracticeLogCodec::decode)
+            ?.takeIf { it.days.isNotEmpty() }?.let(PracticeLogCodec::encode)
+        // The same for the Trainer: a melody without notes, or a list without entries, is not carried,
+        // and neither is one the Trainer cannot read or a newer app wrote.
+        AppPrefs.TrainerLastMelody -> TrainerMelodyCodec.decodeString(value as? String)
+            ?.takeIf { it.notes.isNotEmpty() }?.let(TrainerMelodyCodec::encodeString)
+        AppPrefs.TrainerExercises -> (value as? String)?.let(ExerciseBook::normalized)
         // The canonical text of a readable, non-empty map; its shifts follow BaseShift like the 8 Ήχοι's.
         AppPrefs.LecternPageModes -> (value as? String)?.let(LecternPagesCodec::normalized)
         // A key the file may not carry has no value in it.

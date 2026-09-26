@@ -16,7 +16,11 @@ import com.johnchourp.learnbyzantinemusic.music.TimeSign.KLASMA
 import com.johnchourp.learnbyzantinemusic.music.TimeSign.TRIARGON
 import com.johnchourp.learnbyzantinemusic.music.TimeSign.TRIGORGON
 import com.johnchourp.learnbyzantinemusic.music.TimeSign.TRIPLI
+import com.johnchourp.learnbyzantinemusic.music.TimeSign.VAREIA_APLI
+import com.johnchourp.learnbyzantinemusic.music.TimeSign.VAREIA_DIPLI
+import com.johnchourp.learnbyzantinemusic.music.TimeSign.VAREIA_TRIPLI
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -129,6 +133,18 @@ class TimeRulesTest {
     }
 
     @Test
+    fun aRestIsSilentForTheBeatsItsDotsCount() {
+        // On a rest the dots count the χρόνοι — 1, 2, 3 — where on a note they add them: 2, 3, 4.
+        assertEquals(listOf(one), durations(note(VAREIA_APLI)))
+        assertEquals(listOf(whole(2)), durations(note(VAREIA_DIPLI)))
+        assertEquals(listOf(whole(3)), durations(note(VAREIA_TRIPLI)))
+        assertEquals(listOf(one, whole(2), one), durations(note(), note(VAREIA_DIPLI), note()))
+        assertTrue(note(VAREIA_APLI).isRest)
+        assertFalse(note(APLI).isRest)
+        assertValid(note(), note(VAREIA_TRIPLI), note())
+    }
+
+    @Test
     fun sharingKeepsWhatANoteLastsBeyondTheSharedBeat() {
         // A κλάσμα note gives its last χρόνος to the γοργόν that follows it, and keeps the first.
         assertEquals(listOf(one + half, half), durations(note(KLASMA), note(GORGON)))
@@ -211,6 +227,25 @@ class TimeRulesTest {
             listOf(RhythmProblem(2, GORGON_DOT_LEFT, Reason.NO_BEAT_TO_SHARE)),
             problems(note(), note(GORGON), note(GORGON_DOT_LEFT)),
         )
+    }
+
+    @Test
+    fun aSignOnARestIsInvalid() {
+        assertEquals(listOf(RhythmProblem(0, KLASMA, Reason.SIGN_ON_A_REST)), problems(note(VAREIA_APLI, KLASMA)))
+        // The rest keeps its own length, whatever else is written on it.
+        assertEquals(listOf(one), durations(note(VAREIA_APLI, KLASMA)))
+        assertEquals(listOf(one), durations(note(VAREIA_APLI, base = whole(3))))
+    }
+
+    @Test
+    fun aDividerCannotShareABeatWithARest() {
+        // A γοργόν right after a rest: a silence has no χρόνος to share.
+        assertEquals(listOf(RhythmProblem(1, GORGON, Reason.REST_IN_GROUP)), problems(note(VAREIA_APLI), note(GORGON)))
+        assertEquals(
+            listOf(RhythmProblem(1, DIGORGON, Reason.REST_IN_GROUP)),
+            problems(note(), note(DIGORGON), note(VAREIA_APLI)),
+        )
+        assertEquals(listOf(one, one), durations(note(VAREIA_APLI), note(GORGON)))
     }
 
     @Test

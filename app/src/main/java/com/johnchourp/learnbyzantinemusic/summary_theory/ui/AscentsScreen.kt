@@ -1,6 +1,5 @@
 package com.johnchourp.learnbyzantinemusic.summary_theory.ui
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -70,59 +69,6 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmSurfaceVariant
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextPrimary
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTextSecondary
 
-/** Localized name of a simple ascending character. */
-@StringRes
-internal fun AscentCharacter.nameRes(): Int = when (this) {
-    AscentCharacter.ISON -> R.string.ison
-    AscentCharacter.OLIGON -> R.string.oligon
-    AscentCharacter.PETASTI -> R.string.flyer
-    AscentCharacter.KENTIMATA -> R.string.embroideries
-    AscentCharacter.KENTIMA -> R.string.embroidery
-    AscentCharacter.YPSILI -> R.string.high
-}
-
-/** The neume drawable for a simple ascending character. */
-@DrawableRes
-internal fun AscentCharacter.diagramRes(): Int = when (this) {
-    AscentCharacter.ISON -> R.drawable.ison
-    AscentCharacter.OLIGON -> R.drawable.oligon
-    AscentCharacter.PETASTI -> R.drawable.flyer
-    AscentCharacter.KENTIMATA -> R.drawable.embroideries
-    AscentCharacter.KENTIMA -> R.drawable.embroidery
-    AscentCharacter.YPSILI -> R.drawable.high
-}
-
-/** Accessibility description for a simple character's neume. */
-@StringRes
-internal fun AscentCharacter.cdRes(): Int = when (this) {
-    AscentCharacter.ISON -> R.string.cd_ison
-    AscentCharacter.OLIGON -> R.string.cd_oligon
-    AscentCharacter.PETASTI -> R.string.cd_flyer
-    AscentCharacter.KENTIMATA -> R.string.cd_embroideries
-    AscentCharacter.KENTIMA -> R.string.cd_embroidery
-    AscentCharacter.YPSILI -> R.string.cd_high
-}
-
-/** One-line definition for the characters that have one (Πεταστή, Κεντήματα); else null. */
-@StringRes
-internal fun AscentCharacter.definitionRes(): Int? = when (this) {
-    AscentCharacter.PETASTI -> R.string.flyer_definition
-    AscentCharacter.KENTIMATA -> R.string.embroideries_definition
-    else -> null
-}
-
-/** Intrinsic neume size (width × height, dp) from the original layout, kept to preserve scale. */
-internal fun AscentCharacter.glyphSize(): Pair<Int, Int> = when (this) {
-    AscentCharacter.ISON -> 62 to 18
-    // The original simple Ολίγον row overrode its height to 8dp (a thin, flat mark); the
-    // leaping section keeps the 18dp default — see LeapingAscent.
-    AscentCharacter.OLIGON -> 70 to 8
-    AscentCharacter.PETASTI -> 62 to 23
-    AscentCharacter.KENTIMATA -> 30 to 18
-    AscentCharacter.KENTIMA -> 15 to 18
-    AscentCharacter.YPSILI -> 42 to 36
-}
-
 /** Localized "+N φωνές" / "0 φωνή" label for a voice count 0..14. */
 @StringRes
 internal fun voicesLabelRes(voices: Int): Int = when (voices) {
@@ -143,10 +89,9 @@ internal fun voicesLabelRes(voices: Int): Int = when (voices) {
     else -> R.string.add_fourteen_voice
 }
 
-/** Whether a form is written on the emphatic Πεταστή base (else the plain Ολίγον base). */
-internal fun NeumeForm.baseLabelRes(): Int =
-    if (glyphs.any { it.neume == Neume.FLYER }) R.string.ascents_base_petasti
-    else R.string.ascents_base_oligon
+/** The base a form is written on: the emphatic Πεταστή, else the plain Ολίγον. */
+internal fun NeumeForm.base(): Neume =
+    if (glyphs.any { it.neume == Neume.PETASTI }) Neume.PETASTI else Neume.OLIGON
 
 /**
  * Redesigned «Ανιόντες» page: an animated hero, a concept card, an interactive ladder that
@@ -224,7 +169,7 @@ private fun VoiceRiseCard() {
         ) {
             AscentCharacter.all.forEach { character ->
                 LessonChip(
-                    label = stringResource(character.nameRes()),
+                    label = character.sign.displayName(),
                     selected = character == selected,
                     onClick = {
                         // Always restart the climb, even when switching between equal-rise
@@ -244,7 +189,7 @@ private fun VoiceRiseCard() {
         Text(
             text = stringResource(
                 captionRes,
-                stringResource(selected.nameRes()),
+                selected.sign.displayName(),
                 stringResource(voicesLabelRes(selected.voices)),
             ),
             style = MaterialTheme.typography.bodyMedium,
@@ -386,7 +331,7 @@ private fun SimpleCharacterRow(character: AscentCharacter) {
             VoiceBadge(voices = character.voices)
             Spacer(Modifier.width(12.dp))
             Text(
-                text = stringResource(character.nameRes()),
+                text = character.sign.displayName(),
                 style = MaterialTheme.typography.titleMedium,
                 color = LbmTextPrimary,
                 fontWeight = FontWeight.Bold,
@@ -399,7 +344,7 @@ private fun SimpleCharacterRow(character: AscentCharacter) {
                 fontWeight = FontWeight.SemiBold,
             )
         }
-        character.definitionRes()?.let { defRes ->
+        character.definitionRes?.let { defRes ->
             Spacer(Modifier.height(6.dp))
             Text(
                 text = stringResource(defRes),
@@ -418,7 +363,7 @@ private val SIMPLE_NEUME_FRAME_HEIGHT = 88.dp
 /** A single neume on a white frame, drawn at its true (scaled) size so rows stay compact. */
 @Composable
 private fun SimpleNeumeFrame(character: AscentCharacter) {
-    val (w, h) = character.glyphSize()
+    val (w, h) = character.glyphSize
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
@@ -432,8 +377,8 @@ private fun SimpleNeumeFrame(character: AscentCharacter) {
             contentAlignment = Alignment.Center,
         ) {
             Image(
-                painter = painterResource(character.diagramRes()),
-                contentDescription = stringResource(character.cdRes()),
+                painter = painterResource(character.sign.drawable),
+                contentDescription = character.sign.contentDescription(),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(
                     width = (w * SIMPLE_NEUME_SCALE).dp,
@@ -548,7 +493,7 @@ private fun LeapingForm(form: NeumeForm, contentDescription: String, modifier: M
         }
         Spacer(Modifier.height(8.dp))
         Text(
-            text = stringResource(form.baseLabelRes()),
+            text = stringResource(R.string.ascents_base, form.base().displayName()),
             style = MaterialTheme.typography.labelLarge,
             color = LbmTextSecondary,
             textAlign = TextAlign.Center,

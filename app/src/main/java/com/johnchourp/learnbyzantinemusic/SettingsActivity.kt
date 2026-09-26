@@ -254,12 +254,15 @@ class SettingsActivity : BaseActivity() {
         LearningDataFile.Item.METRONOME -> getString(R.string.learning_data_item_metronome)
         LearningDataFile.Item.FAVOURITES -> getString(R.string.learning_data_item_favourites, line.count)
         LearningDataFile.Item.PROGRESS -> getString(R.string.learning_data_item_progress, line.count, LearningPath.size)
+        LearningDataFile.Item.PRACTICE -> getString(R.string.learning_data_item_practice, line.count)
         LearningDataFile.Item.SELECTED_MODE -> getString(R.string.learning_data_item_selected_mode)
         LearningDataFile.Item.TIMBRE -> getString(R.string.learning_data_item_timbre)
         LearningDataFile.Item.ISON_BACKGROUND -> getString(R.string.learning_data_item_ison_background)
         LearningDataFile.Item.BASE_SHIFT -> getString(R.string.learning_data_item_base_shift, line.count)
         LearningDataFile.Item.RECORDING_FORMAT -> getString(R.string.learning_data_item_recording_format)
         LearningDataFile.Item.ANALYSIS -> getString(R.string.learning_data_item_analysis, line.count)
+        LearningDataFile.Item.TRAINER_EXERCISES -> getString(R.string.learning_data_item_trainer_exercises, line.count)
+        LearningDataFile.Item.TRAINER_LAST_MELODY -> getString(R.string.learning_data_item_trainer_last_melody)
         LearningDataFile.Item.LECTERN_PAGES -> getString(R.string.learning_data_item_lectern_pages, line.count)
     }
 

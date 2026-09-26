@@ -11,31 +11,10 @@ package com.johnchourp.learnbyzantinemusic.summary_theory.ui
  * model and must be preserved — they are not cosmetic.
  *
  * Pure Kotlin with no Android dependencies (dp values are plain [Int]s, alignment is the
- * [NeumeAlign] enum) so it stays unit-testable; the UI layer maps [Neume] → drawable,
- * [NeumeAlign] → `Alignment` and the [Int] sizes/offsets → `dp` (see `NeumeStack`).
+ * [NeumeAlign] enum) so it stays unit-testable; the UI layer draws each [Neume] with the glyph the
+ * sign table gives it, maps [NeumeAlign] → `Alignment` and the [Int] sizes/offsets → `dp` (see
+ * `NeumeStack`). [NeumeGlyph] and [NeumeForm] are shared by every theory page that draws signs.
  */
-
-/**
- * The individual neume glyphs that compose a written character.
- *
- * The first five back the «Ανιόντες» leaping-ascent diagrams; the next batch was added for the
- * «Συνθέσεις ανάβασης» (ClimbingCompositions) page, which reuses this same model + [NeumeStack]
- * renderer to draw its ascending-composition equations. The next batch backs the «Ποιότητος»
- * (Quality) page — the eight quality signs plus the base glyphs its examples need. The final batch
- * backs the «Χαρακτήρες Χρόνου» (Time) page — the dotted/double/triple gorgó and argó time-division
- * characters. Adding values here is additive — every existing form keeps rendering identically.
- */
-enum class Neume {
-    OLIGON, FLYER, EMBROIDERY, EMBROIDERIES, HIGH,
-    APOSTROPHE, ISON, UNDERFLOW, GORGO, DIGORGO, SIMPLE_DOT, FRACTION,
-    // «Ποιότητος» quality signs + their example glyphs.
-    HEAVY, HEAVY_SIMPLE_DOT, HEAVY_DOUBLE_DOTS, HEAVY_TRIPLE_DOTS,
-    YFEN, SLIGHT_CONTINUOUS, DIGITAL, ALL_RIGHT, VACCUM, VACCUM_SIMPLE, LINK, INTERCOM,
-    PRESENTED_GORGO, DOUBLE_DOTS, TRIPLE_DOTS, SLIGHT, ARGO, TRIGORGO,
-    // «Χαρακτήρες Χρόνου» (Time) — gorgó/argó time-division family.
-    GORGO_PRESENTED, PRESENTED_BOTTOM_DIGORGO, PRESENTED_MIDDLE_DIGORGO, PRESENTED_TOP_DIGORGO,
-    DIARGO, TRIARGO,
-}
 
 /** Where a glyph sits inside its form box; mirrors the original FrameLayout gravities. */
 enum class NeumeAlign { CENTER, TOP_CENTER, TOP_START, TOP_END, BOTTOM_CENTER }
@@ -62,16 +41,16 @@ data class LeapingAscent(val voices: Int, val forms: List<NeumeForm>)
 private fun oligon(dy: Int = 0, align: NeumeAlign = NeumeAlign.CENTER, dx: Int = 0) =
     NeumeGlyph(Neume.OLIGON, 70, 18, align, dx, dy)
 
-private fun flyer(dy: Int = 0) = NeumeGlyph(Neume.FLYER, 62, 23, NeumeAlign.CENTER, 0, dy)
+private fun flyer(dy: Int = 0) = NeumeGlyph(Neume.PETASTI, 62, 23, NeumeAlign.CENTER, 0, dy)
 
 private fun embroidery(w: Int = 15, h: Int = 18, align: NeumeAlign = NeumeAlign.CENTER, dx: Int = 0, dy: Int = 0) =
-    NeumeGlyph(Neume.EMBROIDERY, w, h, align, dx, dy)
+    NeumeGlyph(Neume.KENTIMA, w, h, align, dx, dy)
 
 private fun embroideries(w: Int = 25, h: Int = 18, align: NeumeAlign = NeumeAlign.TOP_CENTER, dx: Int = 0, dy: Int = 0) =
-    NeumeGlyph(Neume.EMBROIDERIES, w, h, align, dx, dy)
+    NeumeGlyph(Neume.KENTIMATA, w, h, align, dx, dy)
 
 private fun high(w: Int = 42, h: Int = 36, align: NeumeAlign = NeumeAlign.TOP_CENTER, dx: Int = 0, dy: Int = 0) =
-    NeumeGlyph(Neume.HIGH, w, h, align, dx, dy)
+    NeumeGlyph(Neume.YPSILI, w, h, align, dx, dy)
 
 object LeapingAscents {
     /** All leaps +2 … +14, in order, each with its authored neume forms. */

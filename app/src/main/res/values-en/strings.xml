@@ -92,9 +92,9 @@
     <string name="one_voice_definition">I raise my voice</string>
     <string name="minus_one_voice_definition">Descending one voice</string>
     <string name="examples_quantity_characters">Examples Quantity Characters</string>
-    <string name="ison">Even</string>
-    <string name="oligon">A little bit</string>
-    <string name="apostrophe">Apostrophe</string>
+    <string name="ison">Ison</string>
+    <string name="oligon">Oligon</string>
+    <string name="apostrophe">Apostrophos</string>
     <string name="exercise_1">Exercise 1</string>
     <string name="title_activity_lesson2">Lesson2</string>
     <string name="duotrioquatro">Duple, Triple, Quadruple</string>
@@ -128,65 +128,69 @@
     <string name="cd_disimos">Disimos: two phthongs between two red measure bars.</string>
     <string name="cd_trisimos">Trisimos: three phthongs between two red measure bars.</string>
     <string name="cd_tetrasimos">Tetrasimos: four phthongs between two red measure bars.</string>
-    <string name="time_characters">Characters of Time</string>
+    <string name="time_characters">Time Characters</string>
     <string name="time_characters_subtitle">The marks that show how long a note lasts or stays silent</string>
-    <string name="time_characters_definition">Time characters include the marks, which indicate how much time a pause or note adds to a note:</string>
-    <string name="time_1">1 year</string>
-    <string name="add_time_1">Adds 1 time to the symbol</string>
+    <string name="time_listen">Listen</string>
+    <string name="time_listen_slow">Slow</string>
+    <string name="time_listen_stop">Stop</string>
+    <string name="time_listen_cd">Listen: %1$s</string>
+    <string name="time_characters_definition">The time characters are the signs that show how much time is added to a phthong, or how long a rest lasts:</string>
+    <string name="time_1">1 beat</string>
+    <string name="add_time_1">Adds 1 beat to the sign</string>
     <string name="heavy_definition">Heavy is timeless, without temporality, without tonality.</string>
-    <string name="heavy">Heavy</string>
-    <string name="pause_time_1">1 year break</string>
-    <string name="pause_time_2">2 time break</string>
-    <string name="pause_time_3">3 time break</string>
+    <string name="heavy">Vareia</string>
+    <string name="pause_time_1">Rest of 1 beat</string>
+    <string name="pause_time_2">Rest of 2 beats</string>
+    <string name="pause_time_3">Rest of 3 beats</string>
     <string name="time_characters_examples">Examples of Tenses</string>
-    <string name="time_characters_examples_definition">The fraction and a dot add a time to the punctuation marks, that is, to the equal, the little, the apostrophe, etc.</string>
-    <string name="fraction">Fraction</string>
-    <string name="phthong_1_for_2_time">1 photgo for 2 times</string>
-    <string name="dot_simple">Simple</string>
-    <string name="dot_double">Double</string>
-    <string name="phthong_1_for_3_time">1 photgo for 3 times</string>
-    <string name="dot_triple">Triple</string>
-    <string name="phthong_1_for_4_time">1 photgo for 4 times</string>
+    <string name="time_characters_examples_definition">The klasma and a single dot add one beat to the signs that are sung — the ison, the oligon, the apostrophos and so on.</string>
+    <string name="fraction">Klasma</string>
+    <string name="phthong_1_for_2_time">1 phthong for 2 beats</string>
+    <string name="dot_simple">Apli</string>
+    <string name="dot_double">Dipli</string>
+    <string name="phthong_1_for_3_time">1 phthong for 3 beats</string>
+    <string name="dot_triple">Tripli</string>
+    <string name="phthong_1_for_4_time">1 phthong for 4 beats</string>
     <string name="title_activity_lesson3">Lesson3</string>
-    <string name="yfen">Hyphen</string>
+    <string name="yfen">Yfen</string>
     <string name="yfen_definition">Yfen means that the note is played with small variations in its pitch.</string>
-    <string name="embroideries">Embroidery</string>
+    <string name="embroideries">Kentimata</string>
     <string name="embroideries_definition">Stitches are used when one phthong is joined to another. This is a smoother ascent with lighter intensity on the phthong.</string>
-    <string name="flyer">Flyer</string>
+    <string name="flyer">Petasti</string>
     <string name="flyer_definition">The thrower is used when I want to do a more tonal ascent with a lot of intensity by nineting the phthong:</string>
     <string name="climbing_compositions">Ascending Combinations</string>
     <string name="equal">=</string>
     <string name="yfen_examples">Examples of Hyphen</string>
     <string name="trisimos_definition">Trisimos means that for every 3 beats (or counts) 3 phthongs are said.</string>
     <string name="tetrasimos_definition">Tetrasimos means that for every 4 beats (or counts) 4 phthongs are said.</string>
-    <string name="heavy_definition_used">Varea is also used for a pause and is empty (we say nothing).</string>
+    <string name="heavy_definition_used">The vareia is also used as a rest, and it is empty: nothing is sung.</string>
     <string name="title_activity_lesson4">Lesson 4</string>
-    <string name="underflow">Underflow</string>
-    <string name="gorgo">Gorgo</string>
+    <string name="underflow">Yporroi</string>
+    <string name="gorgo">Gorgon</string>
     <string name="time_1_by_2">½</string>
-    <string name="gorgo_definition_1">In one year we say two phongs are equal.</string>
-    <string name="gorgo_definition_2">The gorgo divides the time in the phthongo that is also the previous one.</string>
-    <string name="gorgo_in_climbing_compositions">The gorgo in climbing compositions</string>
-    <string name="presented_gorgo">Ghostly Gorgo</string>
-    <string name="presented_gorgo_definition">The present gorgo divides the time in the phthong it is on and divides it again.\nAlso from the side the dot is on it gives the time that was divided.</string>
+    <string name="gorgo_definition_1">In one beat we sing two phthongs, both on the ison.</string>
+    <string name="gorgo_definition_2">The gorgon divides the beat between the phthong it sits on and the one before it.</string>
+    <string name="gorgo_in_climbing_compositions">The gorgon in climbing compositions</string>
+    <string name="presented_gorgo">Dotted Gorgon</string>
+    <string name="presented_gorgo_definition">The dotted gorgon divides the beat of the phthong it sits on, and divides it again.\nThe side the dot is on gets the larger part of the divided beat.</string>
     <string name="time_3_by_4">¾</string>
     <string name="time_1_by_4">¼</string>
-    <string name="digorgo">Digorgo</string>
+    <string name="digorgo">Digorgon</string>
     <string name="time_1_by_3">⅓</string>
     <string name="time_2_by_3">⅔</string>
-    <string name="trigorgo">Trigorgo</string>
-    <string name="presented_digorgo">Present Digorgos</string>
-    <string name="digorgo_in_climbing_compositions">The digorgo in climbing compositions</string>
+    <string name="trigorgo">Trigorgon</string>
+    <string name="presented_digorgo">Dotted Digorgon</string>
+    <string name="digorgo_in_climbing_compositions">The digorgon in climbing compositions</string>
     <string name="title_activity_lesson5">Lesson 5</string>
     <string name="argo">Argon</string>
     <string name="time_2">2</string>
-    <string name="diargo">Diargo</string>
+    <string name="diargo">Diargon</string>
     <string name="time_3">3</string>
-    <string name="triargo">Triargo</string>
+    <string name="triargo">Triargon</string>
     <string name="time_4">4</string>
     <string name="ascent_of_two_voices">Ascent of two voices</string>
     <string name="add_two_voice">+2 votes</string>
-    <string name="continuous_slight">Continuous slight</string>
+    <string name="continuous_slight">Syneches Elafron</string>
     <string name="ascent_of_three_voices">Ascent of three voices</string>
     <string name="add_three_voice">+3 votes</string>
     <string name="ascent_of_four_voices">Ascent of four voices</string>
@@ -214,8 +218,8 @@
     <string name="transcendent_ascents">Transcendent Climbs</string>
     <string name="transcendent_descents">Transcendent Descents</string>
     <string name="title_activity_ascents">Ascents</string>
-    <string name="embroidery">Embroidery</string>
-    <string name="high">High</string>
+    <string name="embroidery">Kentima</string>
+    <string name="high">Ypsili</string>
 
     <!-- «Ascents» page redesign (Compose) -->
     <string name="ascents_subtitle">Quantity characters that raise the voice</string>
@@ -231,16 +235,11 @@
     <string name="ascents_leaping_intro">For bigger leaps we combine a base character (Oligon or Petasti) with embroideries and highs. Pick an interval to see how it is written.</string>
     <string name="ascents_leaping_pick">Pick an interval</string>
     <string name="ascents_leaping_forms_title">How it is written</string>
-    <string name="ascents_base_oligon">with Oligon</string>
-    <string name="ascents_base_petasti">with Petasti</string>
+    <string name="ascents_base">with %1$s</string>
     <string name="ascents_tip_title">Tip</string>
     <string name="ascents_tip_body">Learn the simple characters first. The leaping ascents are just combinations of them — don’t be afraid of them!</string>
-    <string name="cd_ison">Neume: Ison</string>
-    <string name="cd_oligon">Neume: Oligon</string>
-    <string name="cd_flyer">Neume: Petasti</string>
-    <string name="cd_embroidery">Neume: Kentima</string>
-    <string name="cd_embroideries">Neume: Kentimata</string>
-    <string name="cd_high">Neume: Ypsili</string>
+    <string name="cd_neume">Neume: %1$s</string>
+    <string name="cd_quality_sign">Quality sign: %1$s</string>
     <string name="cd_leaping_neume">Neumes for a rise of %1$s</string>
 
     <!-- «Descents» page redesign (Compose) -->
@@ -260,17 +259,13 @@
     <string name="descents_tip_title">Tip</string>
     <string name="descents_tip_body">Learn the simple characters first. The leaping descents are just combinations of them — don’t be afraid of them!</string>
     <string name="yporroi_definition">The Yporroi is written as a single neume but is worth two apostrophes — a drop of two voices (-2).</string>
-    <string name="cd_apostrophe">Neume: Apostrophos</string>
-    <string name="cd_slight">Neume: Elafron</string>
-    <string name="cd_underflow">Neume: Yporroi</string>
-    <string name="cd_low">Neume: Chamili</string>
     <string name="cd_leaping_descent">Neumes for a descent of %1$s</string>
 
     <string name="title_activity_descents">Descents</string>
-    <string name="slight">Slightly</string>
+    <string name="slight">Elafron</string>
     <string name="minus_two_voice">-2 voices</string>
     <string name="minus_one_plus_minus_one_voice">-1 + -1 vote</string>
-    <string name="low">Low</string>
+    <string name="low">Chamili</string>
     <string name="title_activity_transcendent_ascents">Transcendent Ascents</string>
     <string name="add_eight_voice">+8 votes</string>
     <string name="add_nine_voice">+9 votes</string>
@@ -287,12 +282,12 @@
     <string name="minus_eleven_voice">-11 voices</string>
     <string name="minus_twelve_voice">-12 voices</string>
     <string name="title_activity_quality">Quality</string>
-    <string name="digital">Digital</string>
+    <string name="digital">Psifiston</string>
     <string name="digital_definition">The Psifiston is also called oxeia and is written below a note, and requires that note to be pronounced with liveliness or force, or higher.</string>
-    <string name="all_right">All right</string>
+    <string name="all_right">Omalon</string>
     <string name="all_right_definition">Omalon is written below the phthong, usually the equal and the minor, and requires a smooth undulation of the voice up to the high voice.</string>
     <string name="all_right_examples">Some examples with Omalon:</string>
-    <string name="link">Link</string>
+    <string name="link">Syndesmos</string>
     <string name="link_definition">The Syndesmos is called and another connects ascending phthongs with descending or equal, or equal to equal, without interrupting the voice.\nThe phthongs that are connected to each other do not accept two different syllables, but always one, which is placed in the first position.</string>
     <string name="link_examples">So for example we have the following compositions:</string>
     <string name="_1">(1)</string>
@@ -303,12 +298,12 @@
     <string name="_6">(6)</string>
     <string name="link_example_5_definition">In the fifth composition the conjunction connects the voice of the apostrophe with the voice of the olig.</string>
     <string name="link_example_6_definition">In the sixth composition the link connects the second note of the undertone with the voice of the equal.</string>
-    <string name="vaccum">Vaccum</string>
+    <string name="vaccum">Antikenoma</string>
     <string name="vaccum_definition">The Antiquenoma is also placed under phthongs and is always followed by caiontes.\nHe pronounces the voice with a small flutter, which gives liveliness to the uttered phthong.</string>
     <string name="vaccum_examples">We have some examples with antivacum below:</string>
     <string name="vaccum_examples_with_one_dot">Usually the antivacune is bound to a singlet, so it is followed by phthong and gorgon cations.\nFor example:</string>
     <string name="vaccum_examples_with_one_dot_definition">In such a case, the antikenoma acts between the first and the second time of the phthong, in the one it is in.\nThe phthong of the following phthong is pronounced chopped, somewhat disused, from the phthong of the equal or the little phthong.</string>
-    <string name="intercom">Intercom</string>
+    <string name="intercom">Endofonon</string>
     <string name="intercom_definition">The Endophone requires that we pronounce the phthong, under which it is, with the mouth closed, therefore weakly and through the nose.\nIf the phthong with the endophone also has a time point, the endophone also acts on the time point, so that all times of the phthong are recited through the nose.</string>
     <string name="vaccum_complex_examples">Below we have slightly more complex examples:\nIn composition (1) the antibody acts in the oligon.\nIn composition (2) the antibody acts vigorously in the flying quality.</string>
     <string name="link_pronounced">Conjoined vowels are pronounced smoothly and weakly stressed.</string>
@@ -326,7 +321,7 @@
     <string name="heavy_example_definition_3">The equal is pronounced with as much liveliness as the apostrophe and the little one. But when there is a heaviness before the equal, then:</string>
     <string name="heavy_example_definition_4">Ison is pronounced with a heavy accent, which differs from the apostrophe and oligon.</string>
     <string name="heavy_example_definition_5">When the weight is in front of one or two etc. dots, then it is no longer connected with it, despite a pause or silence of a time or two etc.</string>
-    <string name="pause">Pause</string>
+    <string name="pause">Rest</string>
     <string name="title_activity_time">Time</string>
     <string name="continuous_slight_definition">We can distinguish the continuous light by observing that the apostrophe and the light are almost adjacent (there is a very small gap between them).\nThe apostrophe acts first and then the light, which in this composition, however, descends by only one second.</string>
     <string name="continuous_slight_definition_2">In the composition below I do not perform a continuous light because it changes syllables and has a fraction over the apostrophe.</string>
@@ -620,7 +615,7 @@
     <string name="settings_language_current_badge">Current</string>
     <!-- «Learning data» (ClickUp 869f5x25w) -->
     <string name="settings_learning_data_label">Learning data</string>
-    <string name="settings_learning_data_hint">Take your favourites, your \"From scratch\" progress and your settings to another phone, in one file. Folders (notes, recordings) and the lectern\'s PDFs themselves are not in the file; on the new phone you pick them again, and the modes of their pages are waiting.</string>
+    <string name="settings_learning_data_hint">Take your favourites, your \"From scratch\" progress, your practice history, your Melody Trainer exercises and your settings to another phone, in one file. Folders (notes, recordings) and the lectern\'s PDFs themselves are not in the file; on the new phone you pick them again, and the modes of their pages are waiting.</string>
     <string name="settings_learning_data_export">Export</string>
     <string name="settings_learning_data_import">Import</string>
     <string name="settings_learning_data_reset_hint">A lesson of the \"From scratch\" path counts as done as soon as you open it. Resetting starts the path over.</string>
@@ -636,12 +631,15 @@
     <string name="learning_data_item_metronome">Metronome: tempo and switches</string>
     <string name="learning_data_item_favourites">Favourite pages: %1$d</string>
     <string name="learning_data_item_progress">\"From scratch\" progress: %1$d of %2$d</string>
+    <string name="learning_data_item_practice">Practice history, days: %1$d</string>
     <string name="learning_data_item_selected_mode">The mode 8 Modes opens on</string>
     <string name="learning_data_item_timbre">Tone timbre</string>
     <string name="learning_data_item_ison_background">The ison in the background</string>
     <string name="learning_data_item_base_shift">Base shift, in modes: %1$d</string>
     <string name="learning_data_item_recording_format">Recording format</string>
     <string name="learning_data_item_analysis">Hymn analysis settings: %1$d</string>
+    <string name="learning_data_item_trainer_exercises">My exercises, in the Melody Trainer: %1$d</string>
+    <string name="learning_data_item_trainer_last_melody">The Melody Trainer\'s last melody</string>
     <string name="learning_data_item_lectern_pages">Digital lectern, page modes in PDFs: %1$d</string>
     <string name="learning_data_import_failed_title">Nothing was imported</string>
     <string name="learning_data_import_unfinished_title">The import did not finish</string>
@@ -653,7 +651,7 @@
     <string name="learning_data_import_empty">The file has nothing to import.</string>
     <string name="learning_data_import_write_failed">Writing failed; only some of the settings may have changed. Try the import again.</string>
     <string name="learning_data_reset_title">Reset progress?</string>
-    <string name="learning_data_reset_message">The \"From scratch\" path will start over: no step will count as done. A lesson counts as done as soon as you open it, so it counts again the next time you open it. Favourites and settings do not change.</string>
+    <string name="learning_data_reset_message">The \"From scratch\" path will start over: no step will count as done. A lesson counts as done as soon as you open it, so it counts again the next time you open it. Favourites, your practice history and settings do not change.</string>
     <string name="learning_data_reset_confirm">Reset</string>
     <string name="learning_data_reset_done">Progress reset.</string>
     <string name="learning_data_cancel">Cancel</string>
@@ -967,7 +965,6 @@
     <string name="melody_trainer_note_duration">%1$s b.</string>
     <string name="melody_trainer_duration_decrease">Less time</string>
     <string name="melody_trainer_duration_increase">More time</string>
-    <string name="melody_trainer_gorgo">Gorgon</string>
     <string name="melody_trainer_note_remove">Remove phthong</string>
     <string name="melody_trainer_tempo_title">Speed</string>
     <string name="melody_trainer_tempo_value">%1$d beats/min</string>
@@ -998,7 +995,6 @@
     <string name="melody_trainer_rule_default_title">Default</string>
     <!-- The numbers of the three rule bodies are arguments read from the time rules (TimingRulesHelp): never type one in. -->
     <string name="melody_trainer_rule_default_body">Each phthong lasts %1$s beat.</string>
-    <string name="melody_trainer_rule_gorgo_title">Gorgon</string>
     <string name="melody_trainer_rule_gorgo_body">The phthong becomes half a beat (%1$s) and takes %2$s from the previous one — two phthongi in one beat.</string>
     <string name="melody_trainer_rule_klasma_title">Klasma (apli)</string>
     <string name="melody_trainer_rule_klasma_body">Adds %1$s whole beat to the phthong.</string>
@@ -1020,6 +1016,30 @@
     <string name="melody_trainer_base_shift_higher">Higher base</string>
     <string name="melody_trainer_base_shift_shared">Shared with the «8 Modes» page: a change here applies there too, for this mode.</string>
     <string name="melody_trainer_base_shift_diatonic">Diatonic always stays at Νη = 220 Hz. To shift the base, choose a mode.</string>
+    <string name="melody_trainer_notes_limit">Up to %1$d phthongs in one melody.</string>
+    <string name="melody_trainer_exercises_title">My exercises</string>
+    <string name="melody_trainer_exercises_hint">Save a melody under a name to find it again. The last melody is kept on its own, even when you close the app.</string>
+    <string name="melody_trainer_exercises_empty">No saved exercises yet.</string>
+    <string name="melody_trainer_exercises_newer">Your exercises were written by a newer version of the app. Update it to see them; they are not changed here.</string>
+    <string name="melody_trainer_exercise_save_as">Save as…</string>
+    <string name="melody_trainer_exercise_save_title">Save exercise</string>
+    <string name="melody_trainer_exercise_rename_title">Rename exercise</string>
+    <string name="melody_trainer_exercise_name_label">Name</string>
+    <string name="melody_trainer_exercise_save">Save</string>
+    <string name="melody_trainer_exercise_rename">Rename</string>
+    <string name="melody_trainer_exercise_open">Open</string>
+    <string name="melody_trainer_exercise_delete">Delete</string>
+    <string name="melody_trainer_exercise_cancel">Cancel</string>
+    <string name="melody_trainer_exercise_summary">%1$d phthongs · %2$s · %3$d beats/min</string>
+    <string name="melody_trainer_exercise_open_cd">Open: %1$s</string>
+    <string name="melody_trainer_exercise_rename_cd">Rename: %1$s</string>
+    <string name="melody_trainer_exercise_delete_cd">Delete: %1$s</string>
+    <string name="melody_trainer_exercise_open_confirm">Open “%1$s”? The melody you are writing now will be replaced.</string>
+    <string name="melody_trainer_exercise_delete_confirm">Delete “%1$s”? This cannot be undone.</string>
+    <string name="melody_trainer_exercise_name_blank">Write a name.</string>
+    <string name="melody_trainer_exercise_name_too_long">At most %1$d characters.</string>
+    <string name="melody_trainer_exercise_name_taken">An exercise with this name already exists.</string>
+    <string name="melody_trainer_exercise_full">You already have %1$d exercises; delete one to save another.</string>
     <string name="melody_trainer_practice_title">Practice with your voice</string>
     <string name="melody_trainer_practice_intro">Pick a practice mode, sing, and the correct phthongi turn green.</string>
     <string name="melody_trainer_correct_progress">Correct: %1$d/%2$d</string>
@@ -1032,15 +1052,6 @@
     <string name="climbing_concept_title">What is an ascending composition?</string>
     <string name="climbing_concept_body">A compound ascending character is a single written sign read as a combination of simpler neumes. Find the base first (Oligon, Ison or Apostrophos) — it sets the movement of the voice — then the small marks around it that add ornament or timing. The order they are read in is shown in the breakdown to the right of each composition.</string>
     <string name="climbing_how_to_read">On each line the compound character is on the left and the neumes that make it up are on the right. Tap a line to watch it break apart into its parts again.</string>
-    <string name="name_oligon">Oligon</string>
-    <string name="name_ison">Ison</string>
-    <string name="name_apostrophe">Apostrophos</string>
-    <string name="name_embroideries">Kentimata</string>
-    <string name="name_underflow">Yporroi</string>
-    <string name="name_gorgo">Gorgon</string>
-    <string name="name_digorgo">Digorgon</string>
-    <string name="name_simple_dot">Simple dot</string>
-    <string name="name_fraction">Fraction</string>
 
     <string name="climbing_legend_title">The symbols at a glance</string>
     <string name="climbing_legend_oligon">Rises one voice — the basic ascent.</string>
@@ -1050,8 +1061,8 @@
     <string name="climbing_legend_underflow">Yporroi: a quick descending run.</string>
     <string name="climbing_legend_gorgo">Gorgon: the notes read fast, at half the time (½).</string>
     <string name="climbing_legend_digorgo">Digorgon: faster still — the notes at a third of the time (⅓).</string>
-    <string name="climbing_legend_simple_dot">Simple dot: a timing mark.</string>
-    <string name="climbing_legend_fraction">Fraction: a small timing addition.</string>
+    <string name="climbing_legend_simple_dot">Apli: a timing mark.</string>
+    <string name="climbing_legend_fraction">Klasma: a small timing addition.</string>
 
     <string name="gorgo_section_intro">The gorgon is a small mark placed on a composition that makes its notes read fast — each in half the time (½).</string>
     <string name="digorgo_section_intro">The digorgon speeds things up even more: it splits one beat into three equal parts so the notes read at ⅓ — the composition\'s total time stays the same.</string>
@@ -1079,11 +1090,6 @@
     <string name="climbing_reading_gorgo_5">Yporroi with a gorgon: apostrophos with a gorgon and apostrophos, in half the time.</string>
     <string name="climbing_reading_digorgo_1">With a digorgon: ison, kentimata with a digorgon and Oligon — ⅓ of the time each.</string>
 
-    <string name="cd_gorgo">Neume: Gorgon</string>
-    <string name="cd_digorgo">Neume: Digorgon</string>
-    <string name="cd_simple_dot">Neume: Simple dot</string>
-    <string name="cd_fraction">Neume: Fraction</string>
-
     <!-- «Quality» page redesign (Compose) -->
     <string name="quality_subtitle">The signs that change the colour of a note</string>
     <string name="quality_intro_title">What are the quality signs?</string>
@@ -1108,11 +1114,7 @@
     <string name="q_tag_link">Changes: the linking</string>
     <string name="q_tag_intercom">Changes: the timbre</string>
 
-    <!-- Quality: legend meanings + missing base-neume names/descriptions -->
-    <string name="name_slight">Elaphron</string>
-    <string name="name_flyer">Petasti</string>
-    <string name="name_double_dots">Two dots</string>
-    <string name="cd_double_dots">Neume: Two dots</string>
+    <!-- Quality: legend meanings -->
     <string name="q_legend_ison">Holds the same pitch</string>
     <string name="q_legend_oligon">Goes up one note</string>
     <string name="q_legend_apostrophe">Goes down one note</string>
@@ -1125,15 +1127,7 @@
     <string name="q_legend_underflow">Two descents in one sign</string>
     <string name="q_legend_double_dots">Add time to the note</string>
 
-    <!-- Quality: content descriptions for the eight signs -->
-    <string name="cd_heavy">Quality sign: Vareia</string>
-    <string name="cd_yfen">Quality sign: Yfen</string>
-    <string name="cd_continuous_slight">Quality sign: Continuous elaphron</string>
-    <string name="cd_digital">Quality sign: Psifiston</string>
-    <string name="cd_all_right">Quality sign: Omalon</string>
-    <string name="cd_vaccum">Quality sign: Antikenoma</string>
-    <string name="cd_link">Quality sign: Syndesmos</string>
-    <string name="cd_intercom">Quality sign: Endofono</string>
+    <!-- Quality: the counter-example's description -->
     <string name="cd_continuous_slight_example">An example where a continuous elaphron is NOT performed, because the syllable changes and there is a fraction over the apostrophe.</string>
 
     <!-- Quality: short readings under each worked example -->
@@ -1281,6 +1275,51 @@
     <string name="home_weekly_tone_this_week">This week: %1$s</string>
     <string name="home_weekly_tone_from_vespers">From vespers tonight: %1$s</string>
     <string name="home_weekly_tone_open_eight_modes">Open in the 8 Modes</string>
+    <!-- Five minutes a day (ClickUp 869f5x2dy) -->
+    <string name="practice_daily_title">Five minutes a day</string>
+    <string name="practice_daily_subtitle">Apichima, voice, rhythm and the next lesson — five minutes.</string>
+    <string name="home_practice_status_done">Today ✓ · Day streak: %1$d</string>
+    <string name="home_practice_status_pending">Not yet today · Day streak: %1$d</string>
+    <string name="practice_step_counter">Step %1$d of %2$d · %3$d′</string>
+    <string name="practice_step_apichima_title">Apichima and ison</string>
+    <string name="practice_step_apichima_body">Mode: %1$s. Listen to the apichima, then hold a phthong over the ison.</string>
+    <string name="practice_step_voice_title">Voice</string>
+    <string name="practice_step_voice_body">Mode: %1$s. With the ison sounding, chant and see in «Where am I» which phthong you are on.</string>
+    <string name="practice_step_voice_action">Open «Where am I»</string>
+    <string name="practice_step_rhythm_title">Rhythm</string>
+    <string name="practice_step_rhythm_body">Start the metronome and keep the beat with your hand for a minute.</string>
+    <string name="practice_step_rhythm_action">Open the metronome</string>
+    <string name="practice_step_lesson_title">The next lesson</string>
+    <string name="practice_step_lesson_body">From scratch: %1$s</string>
+    <string name="practice_step_lesson_action">Open the lesson</string>
+    <string name="practice_no_tone_note">This week no mode of the Octoechos is chanted, so we practise the First Mode, where the cycle begins.</string>
+    <string name="practice_next">Next</string>
+    <string name="practice_end">End</string>
+    <string name="practice_counts_at_end_hint">The day counts once you reach the last step.</string>
+    <string name="practice_last_step_hint">Last step: «Next» or «End», and today\'s practice counts.</string>
+    <string name="practice_done_title">Well done — today\'s practice counts.</string>
+    <string name="practice_streak_days">Day streak: %1$d</string>
+    <string name="practice_open_history">Practice history</string>
+    <string name="practice_close">Close</string>
+    <string name="practice_history_subtitle">The days you completed the five minutes, and a reminder if you want one.</string>
+    <string name="practice_history_streak_title">Streak</string>
+    <string name="practice_history_today_done">Today: done</string>
+    <string name="practice_history_today_pending">Today: not yet</string>
+    <string name="practice_history_best">Best streak: %1$d</string>
+    <string name="practice_history_week_title">The last 7 days</string>
+    <string name="practice_history_week_total">Days: %1$d · Minutes: %2$d</string>
+    <string name="practice_history_bar_cd">%1$s — minutes: %2$d</string>
+    <string name="practice_reminder_title">Reminder</string>
+    <string name="practice_reminder_switch">Remind me if I have not practised</string>
+    <string name="practice_reminder_time">Time: %1$s</string>
+    <string name="practice_reminder_change_time">Change time</string>
+    <string name="practice_reminder_note">Around this time, and only if you have not completed today\'s five minutes yet.</string>
+    <string name="practice_reminder_blocked">The app\'s notifications are off, so the reminder will not show.</string>
+    <string name="practice_reminder_open_settings">Notification settings</string>
+    <string name="practice_reminder_channel_name">Practice reminder</string>
+    <string name="practice_reminder_channel_description">Once a day, at the time you chose, if you have not practised yet.</string>
+    <string name="practice_reminder_notification_text">You have not practised yet today — five minutes are enough.</string>
+    <string name="practice_reminder_notification_text_streak">Day streak: %1$d — five minutes keep it going.</string>
     <!-- Live voice mirror (E1) -->
     <string name="eight_modes_mirror_card_title">Where am I</string>
     <string name="eight_modes_mirror_hint">Turn the microphone on and chant: it tells you which phthong you are on, and how many moria away.</string>

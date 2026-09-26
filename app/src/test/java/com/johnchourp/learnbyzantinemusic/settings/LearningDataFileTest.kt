@@ -1,18 +1,31 @@
 package com.johnchourp.learnbyzantinemusic.settings
 
+import com.johnchourp.learnbyzantinemusic.music.Mode
+import com.johnchourp.learnbyzantinemusic.music.PhthongName
+import com.johnchourp.learnbyzantinemusic.practice.PracticeDay
+import com.johnchourp.learnbyzantinemusic.practice.PracticeLog
+import com.johnchourp.learnbyzantinemusic.practice.PracticeLogCodec
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.EIGHT_MODES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.LECTERN_PAGES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.NOTES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.OWNED_RECORDINGS
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.PRACTICE
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.RECORDINGS
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.RECORDING_ANALYSIS
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.SETTINGS
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.TRAINER
 import com.johnchourp.learnbyzantinemusic.settings.LearningDataFile.Item
 import com.johnchourp.learnbyzantinemusic.settings.LearningDataFile.Line
 import com.johnchourp.learnbyzantinemusic.settings.LearningDataFile.Reason
 import com.johnchourp.learnbyzantinemusic.settings.LearningDataFile.Result.Accepted
 import com.johnchourp.learnbyzantinemusic.settings.LearningDataFile.Result.Rejected
+import com.johnchourp.learnbyzantinemusic.trainer.ExerciseBook
+import com.johnchourp.learnbyzantinemusic.trainer.ExerciseChange
+import com.johnchourp.learnbyzantinemusic.trainer.TrainerMelody
+import com.johnchourp.learnbyzantinemusic.trainer.TrainerMelodyCodec
+import com.johnchourp.learnbyzantinemusic.trainer.TrainerNote
+import com.johnchourp.learnbyzantinemusic.trainer.TrainerScale
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
@@ -29,6 +42,23 @@ import java.time.LocalDate
 class LearningDataFileTest {
 
     private val exportedAt = 1_758_800_000_000L
+
+    /** A practice history as the app writes it (ClickUp `869f5x2dy`): two days practised. */
+    private val practiceLog = PracticeLogCodec.encode(
+        PracticeLog(mapOf(LocalDate.of(2026, 9, 24) to PracticeDay(1, 5), LocalDate.of(2026, 9, 25) to PracticeDay(2, 11)))
+    )
+
+    /** Written by the Trainer's own codecs, so each is already in the form the export writes. */
+    private val trainerMelody = TrainerMelody(
+        notes = listOf(TrainerNote(PhthongName.PA), TrainerNote(PhthongName.VOU, octaveShift = 1, baseDurationBeats = 1.5f)),
+        bpm = 96,
+        scale = TrainerScale(Mode.SECOND, -4),
+    )
+    private val trainerExercises = listOf("Άσκηση α", "Άσκηση β")
+        .foldIndexed(ExerciseBook.EMPTY) { index, book, name ->
+            (book.saveAs(name, trainerMelody, nowMillis = exportedAt + index) as ExerciseChange.Done).book
+        }
+        .encode()
 
     /** A valid value for every key that travels — every registry key and family is here at least once. */
     private val everythingThatTravels: Map<AppPrefs.Store, Map<String, Any>> = mapOf(
@@ -59,6 +89,11 @@ class LearningDataFileTest {
             "hymn:first:01|start" to "PA",
             "hymn:varys:42|expected" to "",
         ),
+        PRACTICE to mapOf("practice_log" to practiceLog),
+        TRAINER to mapOf(
+            "trainer_exercises" to trainerExercises,
+            "trainer_last_melody" to TrainerMelodyCodec.encodeString(trainerMelody),
+        ),
         // Two PDFs' page → ήχος maps (ClickUp 869f5x2e7), named by SHA-256, in their canonical text.
         LECTERN_PAGES to mapOf(
             "lectern_pages_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" to
@@ -83,6 +118,7 @@ class LearningDataFileTest {
             "notes_last_sync_error" to "backup_file_write_failed",
         ),
         OWNED_RECORDINGS to mapOf("owned_recordings" to """["content://media/external/audio/1"]"""),
+        PRACTICE to mapOf("practice_reminder_enabled" to true, "practice_reminder_minute_of_day" to 1140),
         RECORDING_ANALYSIS to mapOf(
             "recording:content://com.android.externalstorage.documents/document/primary%3AMusic%2F1.flac|expected" to "NI,PA",
             "recording:content://com.android.externalstorage.documents/document/primary%3AMusic%2F1.flac|mode" to "first",
@@ -338,12 +374,15 @@ class LearningDataFileTest {
                 Line(Item.METRONOME, 4),
                 Line(Item.FAVOURITES, 2),
                 Line(Item.PROGRESS, 3),
+                Line(Item.PRACTICE, 2),
                 Line(Item.SELECTED_MODE, 1),
                 Line(Item.TIMBRE, 1),
                 Line(Item.ISON_BACKGROUND, 1),
                 Line(Item.BASE_SHIFT, 3),
                 Line(Item.RECORDING_FORMAT, 1),
                 Line(Item.ANALYSIS, 2),
+                Line(Item.TRAINER_EXERCISES, 2),
+                Line(Item.TRAINER_LAST_MELODY, 1),
                 Line(Item.LECTERN_PAGES, 2),
             ),
             LearningDataFile.summary(result)

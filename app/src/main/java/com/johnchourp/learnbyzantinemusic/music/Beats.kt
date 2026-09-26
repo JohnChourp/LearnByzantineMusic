@@ -2,6 +2,7 @@ package com.johnchourp.learnbyzantinemusic.music
 
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 /**
  * An exact length of time in χρόνοι (beats), for the time rules of [ByzantineRhythmMapper]
@@ -26,6 +27,14 @@ value class Beats(val ticks: Int) : Comparable<Beats> {
 
     override fun compareTo(other: Beats): Int = ticks.compareTo(other.ticks)
 
+    /**
+     * Milliseconds this length lasts at [beatsPerMinute] χρόνοι per minute, rounded once from the exact
+     * length. A player places every note at the exact offset from its start converted this way, so
+     * rounding never adds up from note to note.
+     */
+    fun millisAt(beatsPerMinute: Int): Long =
+        (ticks.coerceAtLeast(0) * (MILLIS_PER_MINUTE / beatsPerMinute.coerceAtLeast(1)) / TICKS_PER_BEAT).roundToLong()
+
     /** «2», «1/3», «3/2» — for test failures and logs; screens print lengths their own way. */
     override fun toString(): String {
         val divisor = greatestCommonDivisor(ticks, TICKS_PER_BEAT)
@@ -40,6 +49,8 @@ value class Beats(val ticks: Int) : Comparable<Beats> {
 
         val ZERO = Beats(0)
         val ONE = Beats(TICKS_PER_BEAT)
+
+        private const val MILLIS_PER_MINUTE = 60_000.0
 
         /** [count] whole χρόνοι. */
         fun whole(count: Int): Beats = Beats(count * TICKS_PER_BEAT)

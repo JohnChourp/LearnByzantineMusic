@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.compose.runtime.remember
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
@@ -21,9 +22,11 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stairs
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionActivity
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyModeCalendarActivity
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyToneAnnouncement
+import com.johnchourp.learnbyzantinemusic.home.DailyPracticeUi
 import com.johnchourp.learnbyzantinemusic.home.HomeInfo
 import com.johnchourp.learnbyzantinemusic.home.HomeScreen
 import androidx.compose.runtime.mutableStateOf
@@ -32,12 +35,17 @@ import com.johnchourp.learnbyzantinemusic.home.HomeSection
 import com.johnchourp.learnbyzantinemusic.home.HomeTile
 import com.johnchourp.learnbyzantinemusic.learning.LearningPath
 import com.johnchourp.learnbyzantinemusic.learning.LearningProgress
+import com.johnchourp.learnbyzantinemusic.learning.LessonScreens
 import com.johnchourp.learnbyzantinemusic.home.TileAccent
 import com.johnchourp.learnbyzantinemusic.home.WeeklyToneUi
 import com.johnchourp.learnbyzantinemusic.lectern.LecternActivity
 import com.johnchourp.learnbyzantinemusic.modes.EightModesActivity
 import com.johnchourp.learnbyzantinemusic.modes.EightModesNavigation
 import com.johnchourp.learnbyzantinemusic.notes.NotesActivity
+import com.johnchourp.learnbyzantinemusic.practice.DailyPracticeActivity
+import com.johnchourp.learnbyzantinemusic.practice.PracticeLogStore
+import com.johnchourp.learnbyzantinemusic.practice.PracticeReminders
+import com.johnchourp.learnbyzantinemusic.practice.PracticeSummary
 import com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 
@@ -60,10 +68,15 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
  * tone moves at the vespers hour and at midnight while the app stays open. Its «Άνοιξε στους 8 Ήχους»
  * opens that mode one-shot, without touching the 8 Ήχοι page's saved mode.
  *
+ * **«Πεντάλεπτο της ημέρας»** (ClickUp `869f5x2dy`) is the card under it: one button that starts the
+ * guided session, and the streak, re-read in `onResume` so a session completed a moment ago shows.
+ * On start the home also re-arms the opt-in practice reminder if it is on and nothing is scheduled.
+ *
  * **Inputs:** none — this is the launcher entry point.
  * **Opens:** every other screen, by explicit Intent; the 8 Ήχοι also on a given mode, one-shot.
  * **Touches:** `learning_completed_step_ids` (read + write), `app_language_code` and
- * `app_language_onboarding_completed` (read + write, through the onboarding dialogs).
+ * `app_language_onboarding_completed` (read + write, through the onboarding dialogs), `practice_log`
+ * and the reminder's settings (read).
  *
  * The path never hides or reorders the sections below it: an experienced chanter ignores the card and
  * taps straight through.
@@ -77,10 +90,15 @@ class MainActivity : BaseActivity() {
     /** Recomputed in [onResume]: the tone moves at the vespers hour and at midnight. */
     private val toneNow = mutableStateOf<WeeklyToneAnnouncement.Announcement?>(null)
 
+    /** Re-read in [onResume]: a session completed a moment ago must show on the card. */
+    private val practice = mutableStateOf<PracticeSummary?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         completedSteps.value = LearningProgress.completedSteps(this)
         toneNow.value = currentTone()
+        practice.value = currentPractice()
+        runCatching { PracticeReminders.ensureScheduled(this) }
         setContent {
             LbmTheme(palette = currentPalette()) {
                 val sections = remember { withProgressTracking(buildHomeSections()) }
@@ -91,6 +109,13 @@ class MainActivity : BaseActivity() {
                     sections = sections,
                     learningPath = learningPathUi(sections, completedSteps.value),
                     weeklyTone = toneNow.value?.let(::weeklyToneUi),
+                    dailyPractice = practice.value?.let { summary ->
+                        DailyPracticeUi(
+                            streak = summary.streak,
+                            practisedToday = summary.practisedToday,
+                            onStart = { startActivity(Intent(this, DailyPracticeActivity::class.java)) },
+                        )
+                    },
                     // canOpenEightModesHome: from here the «8 Ήχοι» row must actually navigate.
                     // Inside that screen it is where you already are, so it does nothing there.
                     onOpenSearch = {
@@ -111,7 +136,12 @@ class MainActivity : BaseActivity() {
         super.onResume()
         completedSteps.value = LearningProgress.completedSteps(this)
         toneNow.value = currentTone()
+        practice.value = currentPractice()
     }
+
+    /** Null hides the card: the home screen never fails over the practice history. */
+    private fun currentPractice(): PracticeSummary? =
+        runCatching { PracticeLogStore(this).summary() }.getOrNull()
 
     /** Null hides the card: the home screen never fails over a date it cannot resolve. */
     private fun currentTone(): WeeklyToneAnnouncement.Announcement? =
@@ -176,21 +206,17 @@ class MainActivity : BaseActivity() {
             titleRes = R.string.home_section_phthongs,
             subtitleRes = R.string.home_section_phthongs_sub,
             tiles = listOf(
-                HomeTile(
+                lessonTile(
                     id = "phthongs_names",
-                    titleRes = R.string.phthongs_names,
                     subtitleRes = R.string.home_tile_phthongs_names_sub,
                     icon = Icons.Filled.MusicNote,
                     accent = TileAccent.Gold,
-                    onClick = ::openPhthongsNames,
                 ),
-                HomeTile(
+                lessonTile(
                     id = "duotrioquatro",
-                    titleRes = R.string.duotrioquatro,
                     subtitleRes = R.string.home_tile_duotrioquatro_sub,
                     icon = Icons.Filled.Timer,
                     accent = TileAccent.Gold,
-                    onClick = ::openDuotrioquatro,
                 ),
             ),
         ),
@@ -199,29 +225,23 @@ class MainActivity : BaseActivity() {
             subtitleRes = null,
             info = HomeInfo.QuantityVoices,
             tiles = listOf(
-                HomeTile(
+                lessonTile(
                     id = "ascents",
-                    titleRes = R.string.ascents,
                     subtitleRes = R.string.home_tile_ascents_sub,
                     icon = Icons.AutoMirrored.Filled.TrendingUp,
                     accent = TileAccent.Blue,
-                    onClick = ::openAscents,
                 ),
-                HomeTile(
+                lessonTile(
                     id = "descents",
-                    titleRes = R.string.descents,
                     subtitleRes = R.string.home_tile_descents_sub,
                     icon = Icons.AutoMirrored.Filled.TrendingDown,
                     accent = TileAccent.Blue,
-                    onClick = ::openDescents,
                 ),
-                HomeTile(
+                lessonTile(
                     id = "climbing_compositions",
-                    titleRes = R.string.climbing_compositions,
                     subtitleRes = R.string.home_tile_climbing_sub,
                     icon = Icons.Filled.Stairs,
                     accent = TileAccent.Blue,
-                    onClick = ::openClimbingCompositions,
                 ),
             ),
         ),
@@ -229,21 +249,17 @@ class MainActivity : BaseActivity() {
             titleRes = R.string.characters,
             subtitleRes = R.string.home_section_characters_sub,
             tiles = listOf(
-                HomeTile(
+                lessonTile(
                     id = "quality",
-                    titleRes = R.string.quality,
                     subtitleRes = R.string.home_tile_quality_sub,
                     icon = Icons.Filled.AutoAwesome,
                     accent = TileAccent.Purple,
-                    onClick = ::openQuality,
                 ),
-                HomeTile(
+                lessonTile(
                     id = "time",
-                    titleRes = R.string.time,
                     subtitleRes = R.string.home_tile_time_sub,
                     icon = Icons.Filled.Schedule,
                     accent = TileAccent.Purple,
-                    onClick = ::openTime,
                 ),
             ),
         ),
@@ -251,21 +267,17 @@ class MainActivity : BaseActivity() {
             titleRes = R.string.home_section_testimonies_modes,
             subtitleRes = null,
             tiles = listOf(
-                HomeTile(
+                lessonTile(
                     id = "testimonies",
-                    titleRes = R.string.testimonies,
                     subtitleRes = R.string.home_tile_testimonies_sub,
                     icon = Icons.AutoMirrored.Filled.MenuBook,
                     accent = TileAccent.Brown,
-                    onClick = ::openTestimonies,
                 ),
-                HomeTile(
+                lessonTile(
                     id = "eight_modes",
-                    titleRes = R.string.eight_modes_open,
                     subtitleRes = R.string.home_tile_eight_modes_sub,
                     icon = Icons.Filled.LibraryMusic,
                     accent = TileAccent.Brown,
-                    onClick = ::openEightModes,
                 ),
             ),
         ),
@@ -410,53 +422,23 @@ class MainActivity : BaseActivity() {
         finish()
     }
 
-    private fun openPhthongsNames() {
-        val intent = Intent(this, com.johnchourp.learnbyzantinemusic.lessons.PhthongsNames::class.java)
-        startActivity(intent)
-    }
-
-    private fun openDuotrioquatro() {
-        val intent = Intent(this, com.johnchourp.learnbyzantinemusic.lessons.Duotrioquatro::class.java)
-        startActivity(intent)
-    }
-
-    private fun openClimbingCompositions() {
-        val intent = Intent(this, com.johnchourp.learnbyzantinemusic.lessons.ClimbingCompositions::class.java)
-        startActivity(intent)
-    }
-
-    private fun openAscents() {
-        val intent =
-            Intent(this, com.johnchourp.learnbyzantinemusic.summary_theory.Ascents::class.java)
-        startActivity(intent)
-    }
-
-    private fun openDescents() {
-        val intent =
-            Intent(this, com.johnchourp.learnbyzantinemusic.summary_theory.Descents::class.java)
-        startActivity(intent)
-    }
-
-    private fun openQuality() {
-        val intent =
-            Intent(this, com.johnchourp.learnbyzantinemusic.summary_theory.Quality::class.java)
-        startActivity(intent)
-    }
-
-    private fun openTime() {
-        val intent = Intent(this, com.johnchourp.learnbyzantinemusic.summary_theory.Time::class.java)
-        startActivity(intent)
-    }
-
-    private fun openTestimonies() {
-        val intent = Intent(this, com.johnchourp.learnbyzantinemusic.summary_theory.Testimonies::class.java)
-        startActivity(intent)
-    }
-
-    private fun openEightModes() {
-        val intent = Intent(this, EightModesActivity::class.java)
-        startActivity(intent)
-    }
+    /**
+     * A lesson's tile. Its title and screen come from [LessonScreens], the one map the home and the
+     * daily practice session share, so the id is written once and both show and open the same page.
+     */
+    private fun lessonTile(
+        id: String,
+        @StringRes subtitleRes: Int,
+        icon: ImageVector,
+        accent: TileAccent,
+    ): HomeTile = HomeTile(
+        id = id,
+        titleRes = LessonScreens.titleRes(id),
+        subtitleRes = subtitleRes,
+        icon = icon,
+        accent = accent,
+        onClick = { LessonScreens.intent(this, id)?.let(::startActivity) },
+    )
 
     private fun openMelodyTrainer() {
         val intent = Intent(this, com.johnchourp.learnbyzantinemusic.trainer.MelodyTrainerActivity::class.java)

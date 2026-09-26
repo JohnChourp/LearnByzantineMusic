@@ -11,8 +11,7 @@ import org.junit.Test
  *
  * The registry does not compile a key without an [AppPrefs.Export] decision. This pins WHICH
  * decision, so adding a key, or changing where one goes, is a deliberate edit here, next to its
- * reason. The saved melodies of the Melody Trainer (F6) will add registry keys too: whichever of the
- * two lands second classifies the other's keys here.
+ * reason.
  */
 class ExportPolicyTest {
 
@@ -32,6 +31,11 @@ class ExportPolicyTest {
         "mode_base_shift_moria_<modeKey>" to YES,
         "ison_in_background" to YES,
         "recordings_output_format" to YES,
+        // The practice history behind the streak (ClickUp 869f5x2dy): the learner's own, like the path.
+        "practice_log" to YES,
+        // The learner's own work: the Melody Trainer's saved exercises and its last melody (F6).
+        "trainer_exercises" to YES,
+        "trainer_last_melody" to YES,
         // The lectern's page → ήχος maps: named by each PDF's SHA-256, never a URI (ClickUp 869f5x2e7).
         "lectern_pages_<sha256>" to YES,
         // Per hymn only: a recording's analysis settings are keyed by that recording's URI.
@@ -50,6 +54,9 @@ class ExportPolicyTest {
         // Once per install: the first-launch language wizard, and Android's notifications prompt.
         "app_language_onboarding_completed" to NO,
         "notifications_permission_asked" to NO,
+        // The daily reminder: switching it on is where Android asks for notifications, on that phone.
+        "practice_reminder_enabled" to NO,
+        "practice_reminder_minute_of_day" to NO,
     )
 
     @Test
