@@ -128,6 +128,10 @@
     <string name="cd_tetrasimos">Τετράσημος: τέσσερις φθόγγοι ανάμεσα σε δύο κόκκινες γραμμές μέτρου.</string>
     <string name="time_characters">Χαρακτήρες Χρόνου</string>
     <string name="time_characters_subtitle">Τα σημάδια που δείχνουν πόσο χρόνο κρατά ή σιωπά ένας φθόγγος</string>
+    <string name="time_listen">Άκου</string>
+    <string name="time_listen_slow">Αργά</string>
+    <string name="time_listen_stop">Σταμάτα</string>
+    <string name="time_listen_cd">Άκου: %1$s</string>
     <string name="time_characters_definition">Στους χαρακτήρες χρόνου περιλαμβάνονται τα σημάδια, τα οποία δείχνουν πόσο χρόνο προσθέτουν σε έναν φθόγγο η μια παύση:</string>
     <string name="time_1">1 χρόνο</string>
     <string name="add_time_1">Προσθέτει 1 χρόνο στο σύμβολο</string>
