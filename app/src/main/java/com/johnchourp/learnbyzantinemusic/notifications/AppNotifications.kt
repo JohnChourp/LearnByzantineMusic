@@ -110,5 +110,5 @@ object AppNotifications {
         prefs(context).edit().putBoolean(AppPrefs.NotificationsPermissionAsked.name, true).apply()
     }
 
-    private fun prefs(context: Context) = AppPrefs.open(context, AppPrefs.Store.SETTINGS)
+    private fun prefs(context: Context) = AppPrefs.open(context, AppPrefs.NotificationsPermissionAsked.store)
 }
