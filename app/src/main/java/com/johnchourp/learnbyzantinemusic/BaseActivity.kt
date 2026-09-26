@@ -20,6 +20,12 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.isNightMode
  * **Order matters.** Locale first, font scale second: the font-scale wrapper is built on top of the
  * localised configuration, so it cannot drop the locale it was handed.
  *
+ * **Re-applied on resume.** Applying them at attach time means a screen keeps the values it was
+ * created with. Settings recreates only itself when the theme or the font size changes, so the home
+ * screen waiting behind it came back in the old theme until the app was restarted — since v1.16.0,
+ * reported on a device on 2026-09-26. Every screen now remembers the three values it was attached
+ * with ([AttachedSettings]) and recreates itself in [onResume] when any of them has changed since.
+ *
  * **Also.** Locks every screen to portrait. The app is meant to be read off a stand while chanting,
  * and several diagrams assume portrait width. The one exception is the digital lectern's reader
  * (ClickUp `869f5x2e7`), whose PDF pages are wide as often as tall: it overrides [screenOrientation].
@@ -28,7 +34,11 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.isNightMode
  * [com.johnchourp.learnbyzantinemusic.prefs.AppPrefs].
  */
 abstract class BaseActivity : ComponentActivity() {
+    /** The language, font size and theme this screen was attached with; compared in [onResume]. */
+    private var attachedWith: AttachedSettings? = null
+
     override fun attachBaseContext(newBase: Context?) {
+        attachedWith = newBase?.let(AttachedSettings::read)
         val languageContext = AppLanguage.wrapContextWithLocale(newBase)
         val fontScaleContext = AppFontScale.wrapContextWithFontScale(languageContext)
         super.attachBaseContext(wrapContextWithThemeMode(fontScaleContext))
@@ -71,5 +81,29 @@ abstract class BaseActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = screenOrientation
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Changed on another screen while this one waited behind it. The values are applied only
+        // at attach time, so creating the screen again is the only way to show them.
+        if (attachedWith != null && AttachedSettings.read(this) != attachedWith) {
+            recreate()
+        }
+    }
+}
+
+/** The three settings [BaseActivity] applies at attach time, as saved right now. */
+internal data class AttachedSettings(
+    val languageCode: String,
+    val fontStep: Int,
+    val themeMode: AppThemeMode,
+) {
+    companion object {
+        fun read(context: Context) = AttachedSettings(
+            languageCode = AppLanguage.getSavedLanguageCode(context),
+            fontStep = AppFontScale.getSavedStep(context),
+            themeMode = AppThemeMode.saved(context),
+        )
     }
 }
