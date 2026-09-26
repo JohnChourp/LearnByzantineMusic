@@ -80,6 +80,9 @@ jobs:
             exit 1
           fi
 
+          # Same pin as scripts/release-and-tag.sh: an APK signed by any other key cannot update an installed copy.
+          ./scripts/check-release-signer.sh "$APK_PATH"
+
           APK_ALIAS_PATH="$RUNNER_TEMP/apk-release.apk"
           cp "$APK_PATH" "$APK_ALIAS_PATH"
           echo "apk_alias_path=$APK_ALIAS_PATH" >> "$GITHUB_OUTPUT"
