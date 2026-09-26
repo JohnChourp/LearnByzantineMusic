@@ -606,8 +606,8 @@ private fun ThemeCard(
 
 private data class ThemeOption(val mode: AppThemeMode, @StringRes val labelRes: Int)
 
+/** One option per [AppThemeMode], and nothing that follows the device (operator decision, 2026-09-26). */
 private val THEME_OPTIONS = listOf(
-    ThemeOption(AppThemeMode.SYSTEM, R.string.settings_theme_option_system),
     ThemeOption(AppThemeMode.LIGHT, R.string.settings_theme_option_light),
     ThemeOption(AppThemeMode.DARK, R.string.settings_theme_option_dark),
     ThemeOption(AppThemeMode.HIGH_CONTRAST, R.string.settings_theme_option_high_contrast),

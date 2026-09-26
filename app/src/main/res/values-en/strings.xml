@@ -607,7 +607,6 @@
     <string name="settings_font_size_hint">Drag to preview, then tap “Apply” to use it across the whole app. Available sizes: 20, 40, 60, 80, 100.</string>
     <string name="settings_theme_label">Appearance</string>
     <string name="settings_theme_hint">Choose light or dark. Dark helps when you chant in low light.</string>
-    <string name="settings_theme_option_system">Follow the device</string>
     <string name="settings_theme_option_light">Light</string>
     <string name="settings_theme_option_dark">Dark</string>
     <string name="settings_theme_option_high_contrast">Dark, high contrast</string>

@@ -270,7 +270,11 @@ object LearningDataFile {
     internal fun normalized(key: AppPrefs.Key, value: Any): Any? = when (key) {
         AppPrefs.FontStep -> (value as? Int)?.let(AppFontScale::normalizeStep)
         AppPrefs.LanguageCode -> (value as? String)?.let(AppLanguage::normalizeLanguageCode)
-        AppPrefs.ThemeMode -> (value as? String)?.let { AppThemeMode.fromStored(it).storedValue }
+        // A file from v1.16.0–v1.17.3 may say «system»: it stays, so AppThemeMode.saved settles it
+        // into what the device shows, exactly as for an app updated in place.
+        AppPrefs.ThemeMode -> (value as? String)?.let {
+            if (it == AppThemeMode.LEGACY_FOLLOW_DEVICE) it else AppThemeMode.fromStored(it).storedValue
+        }
         AppPrefs.MetronomeBpm -> (value as? Int)?.let(MetronomeSchedule::clampBpm)
         AppPrefs.MetronomeVibrate, AppPrefs.MetronomeSilent, AppPrefs.MetronomeFootMode,
         AppPrefs.IsonInBackground -> value as? Boolean
