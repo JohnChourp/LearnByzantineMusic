@@ -61,8 +61,8 @@ android {
         applicationId = "com.johnchourp.learnbyzantinemusic"
         minSdk = 24
         targetSdk = 34
-        versionCode = 57
-        versionName = "1.17.2"
+        versionCode = 58
+        versionName = "1.17.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
