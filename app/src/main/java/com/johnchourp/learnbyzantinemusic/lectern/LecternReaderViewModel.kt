@@ -223,7 +223,7 @@ class LecternReaderViewModel(application: Application) : AndroidViewModel(applic
     /** The page drops its own setting and follows the pages before it again. */
     fun clearPage() = edit { assignments, page -> PageAssignments.clear(assignments, page) }
 
-    /** Back to the page's own ison after a move made from the notification. */
+    /** Back to the page's own ison from one put there from outside (the notification, the 8 Ήχοι page). */
     fun usePageSetting() {
         if (mutableState.value.moved == null) return
         mutableState.update { it.copy(moved = null) }
