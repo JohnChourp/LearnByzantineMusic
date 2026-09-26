@@ -1,9 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.modes
 
-import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MAX
-import com.johnchourp.learnbyzantinemusic.modes.ui.BASE_SHIFT_MIN
 import com.johnchourp.learnbyzantinemusic.modes.ui.EIGHT_MODES
 import com.johnchourp.learnbyzantinemusic.modes.ui.SCALE_OCTAVES
+import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.Moria
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import org.junit.Assert.assertEquals
@@ -26,7 +25,7 @@ class IsonOffThePageTest {
         var compared = 0
         EIGHT_MODES.forEach { row ->
             val mode = row.mode
-            (BASE_SHIFT_MIN..BASE_SHIFT_MAX).forEach { shift ->
+            (BaseShift.MIN_MORIA..BaseShift.MAX_MORIA).forEach { shift ->
                 // Exactly what the page does: its ladder, its choices, its lookup.
                 val pageLadder = ModeLadders.ladder(row.scale, shift)
                 val choices = IsonDrone.choices(mode, pageLadder)
@@ -53,7 +52,7 @@ class IsonOffThePageTest {
         }
         // Guards the sweep: every mode × every shift × every φθόγγος, or it proves nothing.
         assertEquals(
-            EIGHT_MODES.size * (BASE_SHIFT_MAX - BASE_SHIFT_MIN + 1) * PhthongName.entries.size,
+            EIGHT_MODES.size * (BaseShift.MAX_MORIA - BaseShift.MIN_MORIA + 1) * PhthongName.entries.size,
             compared,
         )
     }
@@ -64,7 +63,7 @@ class IsonOffThePageTest {
         assertEquals(SCALE_OCTAVES, ModeLadders.OCTAVES)
         EIGHT_MODES.forEach { row ->
             val mode = row.mode
-            listOf(BASE_SHIFT_MIN, 0, BASE_SHIFT_MAX).forEach { shift ->
+            listOf(BaseShift.MIN_MORIA, 0, BaseShift.MAX_MORIA).forEach { shift ->
                 assertEquals(
                     "${mode.key} shift=$shift",
                     row.scale.ladder(octaves = SCALE_OCTAVES, baseShift = Moria(shift)).frequencies,

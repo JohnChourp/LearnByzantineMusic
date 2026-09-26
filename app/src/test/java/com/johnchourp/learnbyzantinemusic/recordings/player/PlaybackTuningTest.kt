@@ -9,7 +9,7 @@ import org.junit.Test
 
 /**
  * The in-app player's speed and shift (ClickUp `869f5x268`): speed stays between ½× and 1×, the shift
- * within the «Μεταφορά βάσης» range ([BaseShift], today ±12 μόρια), and the shift becomes a pitch
+ * within the «Μεταφορά βάσης» range ([BaseShift], ±36 μόρια since J4), and the shift becomes a pitch
  * factor only through [ByzantineTuning]. Out-of-range values are clamped, never rejected — a slider
  * cannot hand in anything the player refuses.
  */

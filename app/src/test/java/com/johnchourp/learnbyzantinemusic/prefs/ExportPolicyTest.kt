@@ -29,6 +29,8 @@ class ExportPolicyTest {
         "selected_mode_key" to YES,
         "selected_tone_timbre" to YES,
         "mode_base_shift_moria_<modeKey>" to YES,
+        // The voice's global shift from «Βρες τη φωνή σου» (ClickUp 869f5x2dd): the singer's, on any phone.
+        "global_base_shift_moria" to YES,
         "ison_in_background" to YES,
         "recordings_output_format" to YES,
         // The practice history behind the streak (ClickUp 869f5x2dy): the learner's own, like the path.
@@ -50,6 +52,9 @@ class ExportPolicyTest {
         // Once per install: the first-launch language wizard, and Android's notifications prompt.
         "app_language_onboarding_completed" to NO,
         "notifications_permission_asked" to NO,
+        // Once per phone, like those: 8 Ήχοι offering «Βρες τη φωνή σου», and its tour (ClickUp 869f5x2dd).
+        "voice_range_offered" to NO,
+        "eight_modes_tour_shown" to NO,
         // The daily reminder: switching it on is where Android asks for notifications, on that phone.
         "practice_reminder_enabled" to NO,
         "practice_reminder_minute_of_day" to NO,

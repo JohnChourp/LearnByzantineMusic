@@ -11,12 +11,12 @@ import com.johnchourp.learnbyzantinemusic.music.ByzantineTuning
  * Since ClickUp `869f4tpxj`, the screen builds a
  * [com.johnchourp.learnbyzantinemusic.music.ModeLadder] instead of calling this, so nothing in the
  * app reaches it any more. It is kept on purpose: `ModeLadderTest` asserts the ladder reproduces
- * **this** function's output **exactly** (delta 0.0) for all four scales across the whole `-12..+12`
- * base-shift range.
+ * **this** function's output **exactly** (delta 0.0) for all four scales across the whole base-shift
+ * range, `BaseShift.RANGE`.
  *
  * That is a second implementation of the same arithmetic, which is normally the thing to avoid —
  * `ByzantineTuning` exists precisely because two copies drift. The difference is that this copy is
- * *pinned* to the other by an exact equality test over 100 combinations, so it cannot drift
+ * *pinned* to the other by an exact equality test over every combination, so it cannot drift
  * silently; it is an oracle, not a duplicate in use. Delete it only together with that test, and
  * only knowingly.
  *
@@ -32,7 +32,7 @@ object ModeScaleFrequencies {
      * the diagram's top-to-bottom labels. [ascendingIntervals] are the μόρια steps from the bottom
      * φθόγγος upward; [referenceMoriaFromBottom] is where the reference Νη sits in that ascending run.
      *
-     * [baseShiftMoria] (the per-mode «Μεταφορά βάσης», `-12..+12`) is added to each φθόγγος' distance
+     * [baseShiftMoria] (the «Μεταφορά βάσης», within `BaseShift.RANGE`) is added to each φθόγγος' distance
      * from Νη *before* the frequency is computed, so a transposed ladder is the same arithmetic as an
      * untransposed one and cannot round differently from it.
      */
