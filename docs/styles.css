@@ -1,0 +1,440 @@
+/*
+  Landing page for Learn Byzantine Music (GitHub Pages, served from /docs).
+  Static on purpose: no build step, no web fonts, no trackers. The app declares that it collects no
+  data, and its website must not either.
+
+  Colours are the app's own LbmPalette (app/src/main/java/.../ui/theme/LbmPalette.kt), light and dark.
+  Every text/background pair below clears WCAG AA (4.5:1) in both themes.
+*/
+
+:root {
+  color-scheme: light;
+  --bg: #F6F2EA;
+  --surface: #FFFCF7;
+  --surface-variant: #F2E8D8;
+  --outline: #E1D2B8;
+  --text: #2F251A;
+  --text-2: #655644;
+  --brown: #7A4E24;
+  --on-brown: #FFFFFF;
+  --hero-start: #EADCC5;
+  --hero-end: #F7EFE1;
+  --accent-green: #1B5E20;
+  --accent-green-bg: #E6F4EA;
+  --focus: #0D47A1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #17120D;
+    --surface: #211A13;
+    --surface-variant: #2B2219;
+    --outline: #4A3C2C;
+    --text: #F3EADC;
+    --text-2: #C3B5A1;
+    --brown: #E8B981;
+    --on-brown: #17120D;
+    --hero-start: #2A2017;
+    --hero-end: #1C1610;
+    --accent-green: #8FD694;
+    --accent-green-bg: #1E2A1F;
+    --focus: #9CC3FF;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #17120D;
+  --surface: #211A13;
+  --surface-variant: #2B2219;
+  --outline: #4A3C2C;
+  --text: #F3EADC;
+  --text-2: #C3B5A1;
+  --brown: #E8B981;
+  --on-brown: #17120D;
+  --hero-start: #2A2017;
+  --hero-end: #1C1610;
+  --accent-green: #8FD694;
+  --accent-green-bg: #1E2A1F;
+  --focus: #9CC3FF;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--brown);
+  text-underline-offset: 0.15em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -100px;
+  padding: 12px 16px;
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--brown);
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Header */
+
+.site-header {
+  border-bottom: 1px solid var(--outline);
+  background: var(--surface);
+}
+
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 64px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+  min-height: 48px;
+}
+
+.brand img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chip-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--outline);
+  border-radius: 999px;
+  background: var(--surface-variant);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.chip-button:hover {
+  border-color: var(--brown);
+}
+
+/* The theme button needs JavaScript; without it the page simply follows the system theme. */
+.theme-toggle[hidden] {
+  display: none;
+}
+
+/* Hero */
+
+.hero {
+  background: linear-gradient(160deg, var(--hero-start), var(--hero-end));
+  border-bottom: 1px solid var(--outline);
+}
+
+.hero .wrap {
+  display: grid;
+  gap: 32px;
+  padding-top: 48px;
+  padding-bottom: 48px;
+  align-items: center;
+}
+
+.hero-icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.15);
+}
+
+h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  line-height: 1.15;
+  margin: 20px 0 12px;
+}
+
+.lead {
+  font-size: 1.2rem;
+  color: var(--text);
+  margin: 0 0 28px;
+  max-width: 38em;
+}
+
+.downloads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid var(--brown);
+}
+
+.button-primary {
+  background: var(--brown);
+  color: var(--on-brown);
+}
+
+.button-primary:hover {
+  filter: brightness(1.08);
+}
+
+/* Placeholder for the Google Play badge until the listing is live. */
+.play-slot {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  border: 2px dashed var(--outline);
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.downloads-note {
+  margin: 14px 0 0;
+  color: var(--text-2);
+  font-size: 0.95rem;
+}
+
+.promises {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 28px 0 0;
+  padding: 0;
+}
+
+.promises li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--accent-green-bg);
+  color: var(--accent-green);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.promises svg {
+  flex: none;
+}
+
+/* Screenshots */
+
+section {
+  padding: 56px 0;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+
+.section-intro {
+  color: var(--text-2);
+  margin: 0 0 28px;
+}
+
+.gallery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.gallery figure {
+  margin: 0;
+}
+
+.gallery img {
+  width: 100%;
+  aspect-ratio: 1 / 2;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 18px;
+  border: 1px solid var(--outline);
+  background: var(--surface-variant);
+}
+
+.gallery figcaption {
+  margin-top: 12px;
+}
+
+.gallery figcaption strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.gallery figcaption span {
+  color: var(--text-2);
+  font-size: 0.95rem;
+}
+
+/* Privacy */
+
+.privacy {
+  background: var(--surface);
+  border-top: 1px solid var(--outline);
+  border-bottom: 1px solid var(--outline);
+}
+
+.privacy p {
+  max-width: 42em;
+}
+
+/* Footer */
+
+.site-footer {
+  padding: 32px 0 48px;
+  color: var(--text-2);
+}
+
+.footer-links {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  font-weight: 600;
+}
+
+.site-footer small {
+  font-size: 0.9rem;
+}
+
+/* Phones: the gallery becomes a horizontal, snap-scrolling strip so it does not take six screens. */
+
+@media (max-width: 760px) {
+  .hero .wrap {
+    padding-top: 32px;
+    padding-bottom: 36px;
+  }
+
+  .gallery {
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: 62%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 12px;
+    gap: 16px;
+  }
+
+  .gallery li {
+    scroll-snap-align: start;
+  }
+
+  .button,
+  .play-slot {
+    width: 100%;
+  }
+
+  .brand span {
+    font-size: 0.95rem;
+    line-height: 1.25;
+  }
+}
+
+/* Very narrow phones: the theme button keeps its accessible name but shows only the icon. */
+@media (max-width: 420px) {
+  .theme-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .theme-toggle {
+    padding: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gallery {
+    scroll-behavior: smooth;
+  }
+}
