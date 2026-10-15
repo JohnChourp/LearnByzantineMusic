@@ -323,7 +323,7 @@ h2 {
 
 .gallery img {
   width: 100%;
-  aspect-ratio: 9 / 20;
+  aspect-ratio: 1 / 2;
   object-fit: cover;
   object-position: top;
   border-radius: 18px;
