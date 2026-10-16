@@ -60,7 +60,7 @@ android {
     defaultConfig {
         applicationId = "com.johnchourp.learnbyzantinemusic"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 59
         versionName = "1.17.4"
 

@@ -7,5 +7,9 @@
   reading off a stand in a dark church does not want.
 -->
 <resources>
-    <style name="Theme.LearnByzantineMusic" parent="android:Theme.Material.NoActionBar" />
+    <style name="Theme.LearnByzantineMusic" parent="android:Theme.Material.NoActionBar">
+        <!-- Edge-to-edge (targetSdk 36): the keyboard resizes the window and BaseActivity pads the
+             content by the IME inset, so a text field is never left under the keyboard. -->
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
 </resources>

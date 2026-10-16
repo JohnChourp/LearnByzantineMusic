@@ -4,7 +4,11 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
 
 /**
@@ -28,6 +32,14 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
  * **Also.** Locks every screen to portrait. The app is meant to be read off a stand while chanting,
  * and several diagrams assume portrait width. The one exception is the digital lectern's reader
  * (ClickUp `869f5x2e7`), whose PDF pages are wide as often as tall: it overrides [screenOrientation].
+ *
+ * **System bars (targetSdk 36).** From Android 15 every app is drawn edge-to-edge: behind the status
+ * bar, the navigation bar and the keyboard, with no way to opt out from Android 16. No screen of the
+ * app handles insets (none uses a Scaffold), so instead of 26 screens each padding themselves,
+ * [applySystemBarInsets] does it once here: the content view keeps out of the bars, the display
+ * cutout and the keyboard — the same layout the app had at targetSdk 34 — and [enableEdgeToEdge]
+ * colours the bar icons for the in-app theme (its night flag is set in [attachBaseContext]).
+ * `EveryScreenStaysInsideTheSystemBarsTest` pins this (ClickUp `869fhmxpt`).
  *
  * Reads `app_language_code`, `app_font_step`, `app_theme_mode` — see
  * [com.johnchourp.learnbyzantinemusic.prefs.AppPrefs]. Writes only once, through
@@ -74,8 +86,27 @@ abstract class BaseActivity : ComponentActivity() {
     protected open val screenOrientation: Int get() = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         requestedOrientation = screenOrientation
+        applySystemBarInsets(findViewById(android.R.id.content))
+    }
+
+    /**
+     * Pads the content view by the system bars, the display cutout and the keyboard, and consumes
+     * those insets, so every screen lays out exactly as it did before edge-to-edge. A bar that is
+     * hidden reports 0 and costs no space.
+     */
+    private fun applySystemBarInsets(content: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(content) { view, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or
+                    WindowInsetsCompat.Type.displayCutout() or
+                    WindowInsetsCompat.Type.ime(),
+            )
+            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     override fun onResume() {
