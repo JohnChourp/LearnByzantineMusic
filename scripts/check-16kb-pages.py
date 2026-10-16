@@ -2,7 +2,8 @@
 """Fails when a native library in an APK or AAB is not 16 KB page aligned.
 
 Google Play rejects apps with native code that target Android 15+ unless every LOAD segment of
-every .so is aligned to at least 16 KB. FFmpegKit (4 KB) was the reason it was removed
+every .so is aligned to at least 16 KB, and every .so stored uncompressed in the archive starts at
+a 16 KB offset (so it can be mapped straight from the APK). FFmpegKit (4 KB) was the reason it was removed
 (ClickUp 869fhmxpt). Run this on every release build:
 
     python3 scripts/check-16kb-pages.py app/build/outputs/apk/release/*.apk
@@ -40,20 +41,32 @@ def load_alignments(data: bytes):
         yield p_align
 
 
+def data_offset(raw, info: zipfile.ZipInfo) -> int:
+    """Where the entry's bytes start: after its local header, whose extra field may differ from the central one."""
+    raw.seek(info.header_offset)
+    local = raw.read(30)
+    name_length, extra_length = struct.unpack_from("<HH", local, 26)
+    return info.header_offset + 30 + name_length + extra_length
+
+
 def check(path: str) -> int:
     bad = 0
     libs = 0
-    with zipfile.ZipFile(path) as archive:
-        for name in sorted(archive.namelist()):
+    with open(path, "rb") as raw, zipfile.ZipFile(raw) as archive:
+        for info in sorted(archive.infolist(), key=lambda i: i.filename):
+            name = info.filename
             if not name.endswith(".so"):
                 continue
             libs += 1
             aligns = list(load_alignments(archive.read(name)))
             worst = min(aligns) if aligns else 0
-            status = "ok " if worst >= PAGE else "BAD"
-            if worst < PAGE:
+            stored = info.compress_type == zipfile.ZIP_STORED
+            offset = data_offset(raw, info) if stored else None
+            ok = worst >= PAGE and (not stored or offset % PAGE == 0)
+            if not ok:
                 bad += 1
-            print(f"{status} {worst:>6}  {name}")
+            where = f"zip offset {offset}" if stored else "compressed"
+            print(f"{'ok ' if ok else 'BAD'} {worst:>6}  {where:<20} {name}")
     print(f"{path}: {libs} native libraries, {bad} not 16 KB aligned")
     return bad
 
