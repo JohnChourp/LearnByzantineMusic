@@ -16,6 +16,8 @@ local.properties
 app/src/main/assets/local_fonts/
 app/src/main/assets/editor_symbols_local_v1.json
 /build-artifacts/
+# Android Studio "Generate Signed Bundle / APK" default output; Play uploads use the CI artifact aab-<tag>
+/app/release/
 .env
 .env.*
 *.jks
