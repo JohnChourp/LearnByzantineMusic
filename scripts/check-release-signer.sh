@@ -42,7 +42,7 @@ normalize() {
     tr -d ':[:space:]' | tr '[:upper:]' '[:lower:]'
 }
 
-# Όπως το normalize, αλλά κρατά μία γραμμή ανά πιστοποιητικό.
+# Όπως το normalize, αλλά κρατά μία γραμμή ανά πιστοποιητικό (για APK και AAB).
 normalize_lines() {
     tr -d ': \t\r' | tr '[:upper:]' '[:lower:]'
 }
@@ -108,7 +108,7 @@ check_apk() {
         echo "ERROR: Δεν βρήκα SHA-256 πιστοποιητικού στην έξοδο του apksigner για $apk." >&2
         return 1
     fi
-    distinct="$(printf '%s\n' "$digests" | tr '[:upper:]' '[:lower:]' | tr -d ': \t\r' | sort -u)"
+    distinct="$(printf '%s\n' "$digests" | normalize_lines | sort -u)"
     count="$(printf '%s\n' "$distinct" | wc -l | tr -d ' ')"
     if [[ "$count" != "1" ]]; then
         printf '%s\n' "$output" >&2
@@ -135,6 +135,13 @@ check_bundle() {
     if ! output="$("$jarsigner" -verify "$aab" 2>&1)" || ! grep -qx 'jar verified\.' <<<"$output"; then
         printf '%s\n' "$output" >&2
         echo "ERROR: Το jarsigner -verify απέτυχε για $aab." >&2
+        return 1
+    fi
+    # Το «jar verified.» τυπώνεται και όταν κάτι μπήκε στο AAB μετά την υπογραφή· μόνο η προειδοποίηση
+    # το λέει. Το -strict δεν βοηθά: κόβει και κάθε self-signed κλειδί, όπως το κλειδί των releases.
+    if grep -q 'unsigned entries' <<<"$output"; then
+        printf '%s\n' "$output" >&2
+        echo "ERROR: Το $aab έχει αρχεία εκτός υπογραφής." >&2
         return 1
     fi
     if ! output="$("$keytool" -printcert -jarfile "$aab" 2>&1)"; then

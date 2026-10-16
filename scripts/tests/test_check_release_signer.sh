@@ -131,6 +131,8 @@ run_case "aab: two different certificates fail" 1 "2 διαφορετικά" \
     bundle "$VERIFIED" "\t SHA256: $PIN\n\t SHA256: $OTHER\n"
 run_case "aab: unsigned fails although jarsigner exits 0" 1 "απέτυχε" \
     bundle "\njar is unsigned.\n" ""
+run_case "aab: entries added after signing fail" 1 "εκτός υπογραφής" \
+    bundle "\njar verified.\n\nWarning: \nThis jar contains unsigned entries which have not been integrity-checked. \n" "\t SHA256: $PIN\n"
 run_case "aab: jarsigner failing fails" 1 "απέτυχε" \
     env JARSIGNER="$tmp/jarsigner" KEYTOOL="$tmp/printcert" FAKE_VERIFY="jar verified.\n" FAKE_VERIFY_EXIT=1 \
         bash "$CHECK" --bundle "$tmp/app.aab"
