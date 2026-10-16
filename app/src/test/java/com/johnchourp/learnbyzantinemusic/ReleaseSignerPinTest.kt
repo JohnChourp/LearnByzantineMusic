@@ -97,7 +97,7 @@ class ReleaseSignerPinTest {
     @Test
     fun theReleaseSmokeTestNeverUninstallsTheShippedApp() {
         // The smoke test runs on the owner's phone, where the shipped package holds real notes.
-        val uninstalls = code("scripts/release-and-tag.sh").filter { "adb" in it && " uninstall " in "$it " }
+        val uninstalls = code("scripts/release-and-tag.sh").filter { " uninstall " in " ${it.lowercase()} " }
         assertEquals("no adb uninstall in the release script", emptyList<String>(), uninstalls)
     }
 

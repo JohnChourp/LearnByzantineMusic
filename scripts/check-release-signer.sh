@@ -132,7 +132,8 @@ check_bundle() {
     fi
     # Το jarsigner βγαίνει 0 και για AAB χωρίς υπογραφή («jar is unsigned»): μετράει μόνο το «jar verified.».
     # Here-string, όχι pipe: με pipefail το grep -q κλείνει νωρίς και το printf πεθαίνει με SIGPIPE.
-    if ! output="$("$jarsigner" -verify "$aab" 2>&1)" || ! grep -qx 'jar verified\.' <<<"$output"; then
+    # Αγγλικά μηνύματα, ό,τι locale κι αν έχει το JDK: οι δύο έλεγχοι εδώ διαβάζουν το κείμενό τους.
+    if ! output="$("$jarsigner" -J-Duser.language=en -J-Duser.country=US -verify "$aab" 2>&1)" || ! grep -qx 'jar verified\.' <<<"$output"; then
         printf '%s\n' "$output" >&2
         echo "ERROR: Το jarsigner -verify απέτυχε για $aab." >&2
         return 1
