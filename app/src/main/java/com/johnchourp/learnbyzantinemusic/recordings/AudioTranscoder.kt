@@ -8,10 +8,13 @@ import android.media.MediaMuxer
 import android.os.Build
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.WavPcmReader
 import com.johnchourp.learnbyzantinemusic.recordings.codec.AdtsHeader
+import com.johnchourp.learnbyzantinemusic.recordings.codec.FlacStreamHeader
 import com.johnchourp.learnbyzantinemusic.recordings.codec.PcmResampler
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.roundToInt
@@ -25,7 +28,7 @@ import kotlin.math.roundToInt
  * |--------|--------------------|--------------------------------------------|
  * | M4A    | AAC LC, 192 kb/s   | `MediaMuxer` MPEG-4                        |
  * | AAC    | AAC LC, 192 kb/s   | ADTS, header per frame ([AdtsHeader])      |
- * | FLAC   | FLAC, level 5      | the encoder's own stream (`fLaC` + frames) |
+ * | FLAC   | FLAC, level 5      | the encoder's own stream ([FlacStreamHeader]) |
  * | OPUS   | Opus, 96 kb/s      | `MediaMuxer` Ogg, API 29+, at 48 000 Hz    |
  * | WAV    | —                  | a plain copy                               |
  *
@@ -92,8 +95,8 @@ object AudioTranscoder {
                 try {
                     codec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
                     codec.start()
-                    pump(codec, PcmSource(reader, PcmResampler(reader.sampleRate, sampleRate)), sampleRate, sink)
-                    sink.finish()
+                    val frames = pump(codec, PcmSource(reader, PcmResampler(reader.sampleRate, sampleRate)), sampleRate, sink)
+                    sink.finish(frames)
                 } finally {
                     runCatching { codec.stop() }
                     runCatching { codec.release() }
@@ -124,7 +127,8 @@ object AudioTranscoder {
     }
 
     /** Feeds 16-bit little-endian PCM in and hands every encoded buffer to [sink], until end of stream. */
-    private fun pump(codec: MediaCodec, source: PcmSource, sampleRate: Int, sink: EncodedSink) {
+    /** Returns how many PCM frames went in. */
+    private fun pump(codec: MediaCodec, source: PcmSource, sampleRate: Int, sink: EncodedSink): Long {
         val info = MediaCodec.BufferInfo()
         var inputDone = false
         var framesQueued = 0L
@@ -163,7 +167,7 @@ object AudioTranscoder {
                     }
                     codec.releaseOutputBuffer(outputIndex, false)
                     progressed = true
-                    if (info.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) return
+                    if (info.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) return framesQueued
                 }
             }
             idleRounds = if (progressed) 0 else idleRounds + 1
@@ -210,15 +214,15 @@ object AudioTranscoder {
             } else {
                 error("ogg_needs_api_29")
             }
-        RecordingFormatOption.AAC -> AdtsSink(FileOutputStream(outputFile), sampleRate)
-        RecordingFormatOption.FLAC -> FlacSink(FileOutputStream(outputFile))
+        RecordingFormatOption.AAC -> AdtsSink(outputFile, sampleRate)
+        RecordingFormatOption.FLAC -> FlacSink(outputFile)
         RecordingFormatOption.MP3, RecordingFormatOption.WAV -> error("not_encodable:$format")
     }
 
     private interface EncodedSink {
         fun onFormat(format: MediaFormat) {}
         fun write(data: ByteBuffer, info: MediaCodec.BufferInfo)
-        fun finish() {}
+        fun finish(totalSamples: Long) {}
         fun close()
     }
 
@@ -245,7 +249,7 @@ object AudioTranscoder {
             wroteSamples = true
         }
 
-        override fun finish() {
+        override fun finish(totalSamples: Long) {
             check(wroteSamples) { "no_audio_written" }
             muxer.stop()
             started = false
@@ -258,13 +262,15 @@ object AudioTranscoder {
     }
 
     /** Raw AAC frames, each behind its own ADTS header. */
-    private class AdtsSink(private val out: OutputStream, private val sampleRate: Int) : EncodedSink {
-        private val frame = ByteArray(8 * 1024)
-        private var wroteFrames = false
-
+    private class AdtsSink(file: File, private val sampleRate: Int) : EncodedSink {
         init {
+            // Checked before the file is opened, so a refused rate leaves no open stream behind.
             require(AdtsHeader.isSupportedRate(sampleRate)) { "adts_rate:$sampleRate" }
         }
+
+        private val out = BufferedOutputStream(FileOutputStream(file))
+        private val frame = ByteArray(8 * 1024)
+        private var wroteFrames = false
 
         override fun write(data: ByteBuffer, info: MediaCodec.BufferInfo) {
             if (info.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG != 0) return
@@ -273,7 +279,7 @@ object AudioTranscoder {
             wroteFrames = true
         }
 
-        override fun finish() {
+        override fun finish(totalSamples: Long) {
             check(wroteFrames) { "no_audio_written" }
         }
 
@@ -283,51 +289,57 @@ object AudioTranscoder {
     }
 
     /**
-     * The FLAC encoder emits the stream header (`fLaC` + STREAMINFO) first, as codec config, then the
-     * frames. Some encoders leave the `fLaC` marker out of the config: it is added when missing.
+     * The FLAC encoder emits the stream header (`fLaC` + STREAMINFO) as codec config before the frames,
+     * possibly split over several config buffers and sometimes without the marker: every part is kept
+     * until the first frame, then written as one header ([FlacStreamHeader.assemble]). The format's
+     * `csd-0` is used only when no config buffer came. Once the encode is done, STREAMINFO gets the real
+     * sample count, which the encoder could not know up front (a 0 there means a 0:00 duration and no
+     * seeking in players).
      */
-    private class FlacSink(private val out: OutputStream) : EncodedSink {
+    private class FlacSink(private val file: File) : EncodedSink {
+        private val buffered = BufferedOutputStream(FileOutputStream(file))
         private val frame = ByteArray(16 * 1024)
-        private var headerWritten = false
+        private val configParts = mutableListOf<ByteArray>()
+        private var formatCsd: ByteArray? = null
+        private var header: ByteArray? = null
         private var wroteFrames = false
 
         override fun onFormat(format: MediaFormat) {
-            if (headerWritten) return
-            val csd = if (format.containsKey("csd-0")) format.getByteBuffer("csd-0") else null
-            if (csd != null && csd.remaining() > 0) writeHeader(csd.duplicate(), csd.remaining())
+            if (formatCsd != null || !format.containsKey("csd-0")) return
+            val csd = format.getByteBuffer("csd-0")?.duplicate() ?: return
+            if (csd.remaining() > 0) formatCsd = ByteArray(csd.remaining()).also { csd.get(it) }
         }
 
         override fun write(data: ByteBuffer, info: MediaCodec.BufferInfo) {
             if (info.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG != 0) {
-                if (!headerWritten) writeHeader(data, info.size)
+                check(header == null) { "flac_config_after_frames" }
+                configParts += ByteArray(info.size).also { data.get(it) }
                 return
             }
-            check(headerWritten) { "flac_frames_before_header" }
-            copy(data, info.size, out, frame)
+            if (header == null) {
+                val parts = configParts.ifEmpty { listOfNotNull(formatCsd) }
+                check(parts.isNotEmpty()) { "flac_frames_before_header" }
+                header = FlacStreamHeader.assemble(parts).also { buffered.write(it) }
+            }
+            copy(data, info.size, buffered, frame)
             wroteFrames = true
         }
 
         /** A stream header alone is not a recording: without frames the saver must keep the WAV. */
-        override fun finish() {
+        override fun finish(totalSamples: Long) {
             check(wroteFrames) { "no_audio_written" }
-        }
-
-        private fun writeHeader(data: ByteBuffer, size: Int) {
-            val header = ByteArray(size).also { data.get(it) }
-            if (!header.startsWithFlacMarker()) out.write(FLAC_MARKER)
-            out.write(header)
-            headerWritten = true
+            buffered.flush()
+            val written = header ?: return
+            if (!FlacStreamHeader.hasStreamInfo(written)) return
+            RandomAccessFile(file, "rw").use { raf ->
+                val patch = FlacStreamHeader.totalSamplesPatch(written[FlacStreamHeader.TOTAL_SAMPLES_OFFSET], totalSamples)
+                raf.seek(FlacStreamHeader.TOTAL_SAMPLES_OFFSET.toLong())
+                raf.write(patch)
+            }
         }
 
         override fun close() {
-            out.close()
-        }
-
-        private fun ByteArray.startsWithFlacMarker(): Boolean =
-            size >= FLAC_MARKER.size && FLAC_MARKER.indices.all { this[it] == FLAC_MARKER[it] }
-
-        private companion object {
-            val FLAC_MARKER = byteArrayOf('f'.code.toByte(), 'L'.code.toByte(), 'a'.code.toByte(), 'C'.code.toByte())
+            runCatching { buffered.close() }
         }
     }
 
