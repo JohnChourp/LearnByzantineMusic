@@ -122,7 +122,9 @@ EOF
 chmod 600 "$LOCAL_ENV_FILE"
 
 KEYSTORE_BASE64_PATH="$KEYSTORE_DIR/release-upload-key.base64"
-base64 -w 0 "$KEYSTORE_PATH" > "$KEYSTORE_BASE64_PATH"
+# Από stdin και χωρίς αλλαγές γραμμής: το base64 του macOS δεν δέχεται αρχείο ως όρισμα («invalid
+# argument», 2026-10-16) και του Linux σπάει γραμμές στους 76 χαρακτήρες. Έτσι βγαίνει ίδιο και στα δύο.
+base64 < "$KEYSTORE_PATH" | tr -d '\n' > "$KEYSTORE_BASE64_PATH"
 
 if [[ "$SET_GITHUB_SECRETS" -eq 1 ]]; then
     if ! command -v gh >/dev/null 2>&1; then
