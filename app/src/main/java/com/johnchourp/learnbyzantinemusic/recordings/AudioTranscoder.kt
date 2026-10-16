@@ -312,8 +312,9 @@ object AudioTranscoder {
 
         override fun write(data: ByteBuffer, info: MediaCodec.BufferInfo) {
             if (info.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG != 0) {
-                check(header == null) { "flac_config_after_frames" }
-                configParts += ByteArray(info.size).also { data.get(it) }
+                // Config after the frames (an encoder re-sending STREAMINFO at the end) is not part of
+                // the file: the header is already written and gets the real length in finish().
+                if (header == null) configParts += ByteArray(info.size).also { data.get(it) }
                 return
             }
             if (header == null) {
