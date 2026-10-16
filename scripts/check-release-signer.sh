@@ -18,11 +18,15 @@
 #       exit 0 μόνο αν ΚΑΘΕ πιστοποιητικό που τυπώνει το apksigner είναι το καρφωμένο (και υπάρχει ένα).
 #       Το apksigner ≤ 36 τυπώνει «Signer #1 certificate …», τα νεότερα μία γραμμή ανά scheme
 #       («V2 Signer: certificate …») — το v1.17.1 κόλλησε εδώ στο GitHub Actions· διαβάζονται και οι δύο.
+#   check-release-signer.sh --bundle <aab>
+#       exit 0 μόνο αν το AAB επαληθεύεται (jarsigner) και ΟΛΑ τα πιστοποιητικά του (keytool -printcert)
+#       είναι το καρφωμένο. Με αυτό το κλειδί το Play App Signing (επιλογή A) δίνει στο Play τα ίδια
+#       APK με το GitHub, ώστε το ένα να ενημερώνει το άλλο.
 #   check-release-signer.sh --keystore <keystore> <alias>
 #       exit 0 μόνο αν το κλειδί <alias> του keystore είναι το καρφωμένο πιστοποιητικό·
 #       ο κωδικός διαβάζεται από το ANDROID_SIGNING_STORE_PASSWORD. Τρέχει πριν από bump/build.
 # Exit 1 σε λάθος πιστοποιητικό, 2 όταν ο έλεγχος δεν μπορεί να τρέξει — ποτέ «πέρασε» από προεπιλογή.
-# Τα APKSIGNER / KEYTOOL αντικαθιστούν τα εργαλεία (για το scripts/tests/test_check_release_signer.sh).
+# Τα APKSIGNER / KEYTOOL / JARSIGNER αντικαθιστούν τα εργαλεία (για το scripts/tests/test_check_release_signer.sh).
 #
 # Η αλλαγή του pin ΔΕΝ διορθώνει ένα mismatch: αφήνει ορφανή κάθε εγκατεστημένη εφαρμογή. Νέο κλειδί
 # σημαίνει APK Signature Scheme v3 rotation (lineage υπογεγραμμένο από το παλιό κλειδί), όχι νέο pin.
@@ -31,11 +35,16 @@ set -euo pipefail
 EXPECTED_CERT_SHA256="f14d6379ddc512cc1b05de57553144c9ae373ef7e09edeb8256b4191bb4537de"
 
 usage() {
-    echo "Usage: check-release-signer.sh <apk> | --keystore <keystore> <alias>" >&2
+    echo "Usage: check-release-signer.sh <apk> | --bundle <aab> | --keystore <keystore> <alias>" >&2
 }
 
 normalize() {
     tr -d ':[:space:]' | tr '[:upper:]' '[:lower:]'
+}
+
+# Όπως το normalize, αλλά κρατά μία γραμμή ανά πιστοποιητικό.
+normalize_lines() {
+    tr -d ': \t\r' | tr '[:upper:]' '[:lower:]'
 }
 
 compare_to_pin() {
@@ -109,6 +118,46 @@ check_apk() {
     compare_to_pin "το APK $(basename "$apk")" "$distinct"
 }
 
+check_bundle() {
+    local aab="$1" jarsigner keytool output digests distinct count
+    if [[ ! -f "$aab" ]]; then
+        echo "ERROR: Δεν βρέθηκε το AAB: $aab" >&2
+        return 2
+    fi
+    jarsigner="${JARSIGNER:-jarsigner}"
+    keytool="${KEYTOOL:-keytool}"
+    if ! command -v "$jarsigner" >/dev/null 2>&1 || ! command -v "$keytool" >/dev/null 2>&1; then
+        echo "ERROR: Δεν βρέθηκαν jarsigner/keytool. Χωρίς τον έλεγχο το release δεν προχωράει." >&2
+        return 2
+    fi
+    # Το jarsigner βγαίνει 0 και για AAB χωρίς υπογραφή («jar is unsigned»): μετράει μόνο το «jar verified.».
+    # Here-string, όχι pipe: με pipefail το grep -q κλείνει νωρίς και το printf πεθαίνει με SIGPIPE.
+    if ! output="$("$jarsigner" -verify "$aab" 2>&1)" || ! grep -qx 'jar verified\.' <<<"$output"; then
+        printf '%s\n' "$output" >&2
+        echo "ERROR: Το jarsigner -verify απέτυχε για $aab." >&2
+        return 1
+    fi
+    if ! output="$("$keytool" -printcert -jarfile "$aab" 2>&1)"; then
+        printf '%s\n' "$output" >&2
+        echo "ERROR: Το keytool δεν διάβασε τα πιστοποιητικά του $aab." >&2
+        return 1
+    fi
+    digests="$(printf '%s\n' "$output" | sed -n 's/^[[:space:]]*SHA256:[[:space:]]*//p')"
+    if [[ -z "$digests" ]]; then
+        printf '%s\n' "$output" >&2
+        echo "ERROR: Δεν βρήκα SHA-256 πιστοποιητικού στην έξοδο του keytool για $aab." >&2
+        return 1
+    fi
+    distinct="$(printf '%s\n' "$digests" | normalize_lines | sort -u)"
+    count="$(printf '%s\n' "$distinct" | wc -l | tr -d ' ')"
+    if [[ "$count" != "1" ]]; then
+        printf '%s\n' "$output" >&2
+        echo "ERROR: Το $aab έχει $count διαφορετικά πιστοποιητικά υπογραφής." >&2
+        return 1
+    fi
+    compare_to_pin "το AAB $(basename "$aab")" "$distinct"
+}
+
 check_keystore() {
     local keystore="$1" alias="$2" keytool output digest
     if [[ ! -f "$keystore" ]]; then
@@ -133,6 +182,13 @@ check_keystore() {
 }
 
 case "${1:-}" in
+    --bundle)
+        if (($# != 2)); then
+            usage
+            exit 2
+        fi
+        check_bundle "$2"
+        ;;
     --keystore)
         if (($# != 3)); then
             usage

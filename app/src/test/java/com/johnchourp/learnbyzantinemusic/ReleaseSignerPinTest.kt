@@ -19,7 +19,8 @@ import java.io.File
  * - the pin is the certificate that signed v1.16.0 — changing it strands every installed copy;
  * - `release-and-tag.sh` checks the keystore before the version bump, and the APK after the build and
  *   before the commit and the tag;
- * - the tag workflow checks the APK before either publish step;
+ * - the tag workflow checks the APK before either publish step, and the AAB (signer and 16 KB pages)
+ *   before it keeps it for Google Play;
  * - `setup-release-signing.sh` checks the keystore before it overwrites the GitHub secrets.
  *
  * Lines are matched whole and comments are dropped first, so neither a commented-out call nor a
@@ -78,6 +79,19 @@ class ReleaseSignerPinTest {
         assertEquals("both publish steps (notes and fallback notes)", 2, publishes.size)
         assertTrue("the APK is checked after it is found", found < check)
         assertTrue("the APK is checked before every publish step", publishes.all { check < it })
+    }
+
+    @Test
+    fun theTagWorkflowChecksTheAabBeforeItKeepsItForGooglePlay() {
+        val lines = code(".github/workflows/android-release.yml")
+        val found = single(lines, "AAB_PATH=\"\$(find app/build/outputs/bundle/release -maxdepth 1 -type f -name '*.aab' | sort | tail -n1 || true)\"")
+        val signer = single(lines, "./scripts/check-release-signer.sh --bundle \"\$AAB_PATH\"")
+        val pages = single(lines, "python3 scripts/check-16kb-pages.py \"\$APK_PATH\" \"\$AAB_PATH\"")
+        val output = single(lines, "echo \"aab_path=\$AAB_PATH\" >> \"\$GITHUB_OUTPUT\"")
+        val kept = single(lines, "path: \${{ steps.package.outputs.aab_path }}")
+
+        assertTrue("the AAB is checked after it is found", found < signer && found < pages)
+        assertTrue("only a checked AAB is handed on", signer < output && pages < output && output < kept)
     }
 
     @Test

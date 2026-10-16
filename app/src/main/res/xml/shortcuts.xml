@@ -10,6 +10,9 @@
   and its base shift. It only plays — it never records. It carries no conversation category: that
   category is for messaging shortcuts, and this one is not one. The extra's name must spell
   EightModesActivity.EXTRA_START_ISON exactly; IsonShortcutTest holds the two together.
+
+  targetPackage is the release applicationId written out: the launcher does not resolve a @string
+  here. IsonShortcutTest holds it to app/build.gradle.kts.
 -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
@@ -21,7 +24,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="com.johnchourp.learnbyzantinemusic.recordings.RecordingsActivity"
-            android:targetPackage="com.johnchourp.learnbyzantinemusic" />
+            android:targetPackage="com.johnchourp.learnbyzantinemusic.app" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
     <shortcut
@@ -33,7 +36,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="com.johnchourp.learnbyzantinemusic.modes.EightModesActivity"
-            android:targetPackage="com.johnchourp.learnbyzantinemusic">
+            android:targetPackage="com.johnchourp.learnbyzantinemusic.app">
             <extra
                 android:name="com.johnchourp.learnbyzantinemusic.modes.EXTRA_START_ISON"
                 android:value="true" />

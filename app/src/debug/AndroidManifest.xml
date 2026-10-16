@@ -23,7 +23,7 @@
     <application>
         <provider
             android:name="com.johnchourp.learnbyzantinemusic.recordings.saf.FakeSafProvider"
-            android:authorities="com.johnchourp.learnbyzantinemusic.test.saf"
+            android:authorities="${applicationId}.test.saf"
             android:exported="true"
             android:grantUriPermissions="true"
             android:permission="android.permission.MANAGE_DOCUMENTS">

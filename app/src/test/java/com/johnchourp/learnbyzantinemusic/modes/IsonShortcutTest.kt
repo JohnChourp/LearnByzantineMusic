@@ -41,6 +41,22 @@ class IsonShortcutTest {
 
     private val isonIntent: Element by lazy { elements(ison, "intent").single() }
 
+    /** The release `applicationId`, read from the one place it is written. */
+    private val applicationId: String by lazy {
+        Regex("""^\s*applicationId\s*=\s*"([^"]+)"""", RegexOption.MULTILINE)
+            .find(repoFile("build.gradle.kts").readText())?.groupValues?.get(1)
+            ?: error("no applicationId in build.gradle.kts")
+    }
+
+    @Test
+    fun everyShortcutOpensTheReleasedPackage() {
+        // targetPackage cannot follow the build: a @string there reaches the launcher unresolved
+        // (measured: «cmp=@2131559719/…»), and res/xml has no manifest placeholders. So it is written
+        // out, and held here to the applicationId, or a package rename leaves the shortcuts dead.
+        val packages = shortcuts.flatMap { elements(it, "intent") }.map { it.getAttribute("android:targetPackage") }
+        assertEquals(listOf(applicationId, applicationId), packages)
+    }
+
     @Test
     fun bothShortcutsAreThereAndTheRecordingOneIsUntouched() {
         // Guards the slice: a parse that found nothing would let every assertion below pass.
@@ -50,7 +66,6 @@ class IsonShortcutTest {
     @Test
     fun itOpensTheEightModesPageAndNothingElse() {
         assertEquals("android.intent.action.VIEW", isonIntent.getAttribute("android:action"))
-        assertEquals("com.johnchourp.learnbyzantinemusic", isonIntent.getAttribute("android:targetPackage"))
         assertEquals(
             "com.johnchourp.learnbyzantinemusic.modes.EightModesActivity",
             isonIntent.getAttribute("android:targetClass"),
