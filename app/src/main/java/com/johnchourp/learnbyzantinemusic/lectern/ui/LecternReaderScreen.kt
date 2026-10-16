@@ -144,6 +144,12 @@ private val nightFilter = ColorFilter.colorMatrix(ColorMatrix(LecternNightTint.M
  * the setting comes from. A tap on it opens the page's setting — ήχος, «Μεταφορά βάσης», «Ίσον σε…» —
  * which applies from this page on. With the night tint on, the bars go dark too.
  */
+/**
+ * The palette the reader draws in: the app's own, or the dark one while the night tint is on over a
+ * light theme. The activity paints the system bars from the same answer, so they never stay light.
+ */
+fun readerPalette(base: LbmPalette, night: Boolean): LbmPalette = if (night && !base.isDark) LbmPalette.dark else base
+
 @Composable
 fun LecternReaderScreen(
     state: LecternReaderViewModel.State,
@@ -151,9 +157,8 @@ fun LecternReaderScreen(
     actions: LecternReaderActions,
     modifier: Modifier = Modifier,
 ) {
-    val base = LocalLbmPalette.current
     // The night tint darkens the whole reader, bars included, whatever the app's theme.
-    LbmTheme(palette = if (state.night && !base.isDark) LbmPalette.dark else base) {
+    LbmTheme(palette = readerPalette(LocalLbmPalette.current, state.night)) {
         var barsVisible by rememberSaveable { mutableStateOf(true) }
         var editing by rememberSaveable { mutableStateOf(false) }
         var pickingPage by rememberSaveable { mutableStateOf(false) }
