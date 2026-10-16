@@ -29,8 +29,8 @@ import kotlin.math.roundToInt
  * | OPUS   | Opus, 96 kb/s      | `MediaMuxer` Ogg, API 29+, at 48 000 Hz    |
  * | WAV    | —                  | a plain copy                               |
  *
- * **It never claims a success it did not have**: any missing encoder, exception or empty output is a
- * failure, and the caller ([com.johnchourp.learnbyzantinemusic.recordings.session.RecordingSaver])
+ * **It never claims a success it did not have**: any missing encoder, exception, or output without a
+ * single audio frame (a FLAC stream header alone included) is a failure, and the caller ([com.johnchourp.learnbyzantinemusic.recordings.session.RecordingSaver])
  * then saves the WAV with the «η μετατροπή απέτυχε» message. That is the FLAC fallback of decision D3
  * on a device without a FLAC encoder.
  */
@@ -260,6 +260,7 @@ object AudioTranscoder {
     /** Raw AAC frames, each behind its own ADTS header. */
     private class AdtsSink(private val out: OutputStream, private val sampleRate: Int) : EncodedSink {
         private val frame = ByteArray(8 * 1024)
+        private var wroteFrames = false
 
         init {
             require(AdtsHeader.isSupportedRate(sampleRate)) { "adts_rate:$sampleRate" }
@@ -269,6 +270,11 @@ object AudioTranscoder {
             if (info.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG != 0) return
             out.write(AdtsHeader.forFrame(info.size, sampleRate, channels = 1))
             copy(data, info.size, out, frame)
+            wroteFrames = true
+        }
+
+        override fun finish() {
+            check(wroteFrames) { "no_audio_written" }
         }
 
         override fun close() {
@@ -283,6 +289,7 @@ object AudioTranscoder {
     private class FlacSink(private val out: OutputStream) : EncodedSink {
         private val frame = ByteArray(16 * 1024)
         private var headerWritten = false
+        private var wroteFrames = false
 
         override fun onFormat(format: MediaFormat) {
             if (headerWritten) return
@@ -297,6 +304,12 @@ object AudioTranscoder {
             }
             check(headerWritten) { "flac_frames_before_header" }
             copy(data, info.size, out, frame)
+            wroteFrames = true
+        }
+
+        /** A stream header alone is not a recording: without frames the saver must keep the WAV. */
+        override fun finish() {
+            check(wroteFrames) { "no_audio_written" }
         }
 
         private fun writeHeader(data: ByteBuffer, size: Int) {
