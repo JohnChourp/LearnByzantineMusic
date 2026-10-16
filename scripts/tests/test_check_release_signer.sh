@@ -32,8 +32,10 @@ esac
 printf '%b' "${FAKE_OUT:-}"
 exit "${FAKE_EXIT:-0}"
 EOF
+# Το ψεύτικο jarsigner απαντά μόνο με αγγλικό locale: το script διαβάζει το κείμενό του.
 cat > "$tmp/jarsigner" <<'EOF'
 #!/usr/bin/env bash
+[[ " $* " == *" -J-Duser.language=en "* ]] || { echo "fake jarsigner: not asked for English" >&2; exit 3; }
 printf '%b' "${FAKE_VERIFY:-}"
 exit "${FAKE_VERIFY_EXIT:-0}"
 EOF
