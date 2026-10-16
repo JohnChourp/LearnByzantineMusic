@@ -19,7 +19,8 @@ import java.io.File
  * - the pin is the certificate that signed v1.16.0 — changing it strands every installed copy;
  * - `release-and-tag.sh` checks the keystore before the version bump, and the APK after the build and
  *   before the commit and the tag;
- * - the tag workflow checks the APK before either publish step;
+ * - the tag workflow checks the APK before either publish step, and the AAB (signer and 16 KB pages)
+ *   before it keeps it for Google Play; `release-and-tag.sh` checks the same AAB before commit and tag;
  * - `setup-release-signing.sh` checks the keystore before it overwrites the GitHub secrets.
  *
  * Lines are matched whole and comments are dropped first, so neither a commented-out call nor a
@@ -66,6 +67,11 @@ class ReleaseSignerPinTest {
         assertTrue("the keystore is checked before the version bump", keystoreCheck < bump)
         assertTrue("the APK is checked after the build", build < apkCheck)
         assertTrue("the APK is checked before the commit and the tag", apkCheck < commit && apkCheck < tag)
+
+        val aabCheck = single(lines, "\"\$BASH\" \"\$SIGNER_CHECK_SCRIPT\" --bundle \"\$AAB_PATH\"")
+        val pages = single(lines, "python3 \"\$SCRIPT_DIR/check-16kb-pages.py\" \"\$APK_PATH\" \"\$AAB_PATH\"")
+        assertTrue("the AAB is checked after the build", build < aabCheck && build < pages)
+        assertTrue("the AAB is checked before the commit and the tag", listOf(aabCheck, pages).all { it < commit && it < tag })
     }
 
     @Test
@@ -78,6 +84,30 @@ class ReleaseSignerPinTest {
         assertEquals("both publish steps (notes and fallback notes)", 2, publishes.size)
         assertTrue("the APK is checked after it is found", found < check)
         assertTrue("the APK is checked before every publish step", publishes.all { check < it })
+    }
+
+    @Test
+    fun theTagWorkflowChecksTheAabBeforeItKeepsItForGooglePlay() {
+        val lines = code(".github/workflows/android-release.yml")
+        val found = single(lines, "AAB_PATH=\"\$(find app/build/outputs/bundle/release -maxdepth 1 -type f -name '*.aab' | sort | tail -n1 || true)\"")
+        val signer = single(lines, "./scripts/check-release-signer.sh --bundle \"\$AAB_PATH\"")
+        val pages = single(lines, "python3 scripts/check-16kb-pages.py \"\$APK_PATH\" \"\$AAB_PATH\"")
+        val output = single(lines, "echo \"aab_path=\$AAB_PATH\" >> \"\$GITHUB_OUTPUT\"")
+        val kept = single(lines, "path: \${{ steps.package.outputs.aab_path }}")
+
+        assertTrue("the AAB is checked after it is found", found < signer && found < pages)
+        assertTrue("only a checked AAB is handed on", signer < output && pages < output && output < kept)
+    }
+
+    @Test
+    fun theReleaseSmokeTestNeverUninstallsTheShippedApp() {
+        // The smoke test runs on the owner's phone, where the shipped package holds real notes:
+        // neither an uninstall nor a `pm clear` / `cmd package clear` may touch it.
+        val wipes = code("scripts/release-and-tag.sh").filter { line ->
+            val padded = " ${line.lowercase()} "
+            " uninstall " in padded || (" clear " in padded && (" pm " in padded || " package " in padded))
+        }
+        assertEquals("nothing in the release script may wipe the installed app", emptyList<String>(), wipes)
     }
 
     @Test

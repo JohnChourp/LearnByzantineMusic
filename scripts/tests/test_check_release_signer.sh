@@ -2,6 +2,8 @@
 # Tests για το scripts/check-release-signer.sh με ψεύτικα apksigner/keytool: κάθε κλάδος, μαζί και
 # όσοι πρέπει να αποτυγχάνουν «κλειστά» (λείπει εργαλείο, αρχείο ή κωδικός → exit 2, ποτέ 0).
 #
+# Τα AAB ελέγχονται με ψεύτικα jarsigner/keytool -printcert (FAKE_VERIFY / FAKE_OUT).
+#
 # Τρέχει με: bash scripts/tests/test_check_release_signer.sh
 set -uo pipefail
 
@@ -13,7 +15,7 @@ PIN_COLONS="F1:4D:63:79:DD:C5:12:CC:1B:05:DE:57:55:31:44:C9:AE:37:3E:F7:E0:9E:DE
 
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
-touch "$tmp/app.apk" "$tmp/release.jks" "$tmp/not-executable"
+touch "$tmp/app.apk" "$tmp/app.aab" "$tmp/release.jks" "$tmp/not-executable"
 
 cat > "$tmp/apksigner" <<'EOF'
 #!/usr/bin/env bash
@@ -30,7 +32,21 @@ esac
 printf '%b' "${FAKE_OUT:-}"
 exit "${FAKE_EXIT:-0}"
 EOF
-chmod +x "$tmp/apksigner" "$tmp/keytool"
+# Το ψεύτικο jarsigner απαντά μόνο με αγγλικό locale: το script διαβάζει το κείμενό του.
+cat > "$tmp/jarsigner" <<'EOF'
+#!/usr/bin/env bash
+[[ " $* " == *" -J-Duser.language=en "* ]] || { echo "fake jarsigner: not asked for English" >&2; exit 3; }
+printf '%b' "${FAKE_VERIFY:-}"
+exit "${FAKE_VERIFY_EXIT:-0}"
+EOF
+# keytool -printcert -jarfile: δεν παίρνει κωδικό.
+cat > "$tmp/printcert" <<'EOF'
+#!/usr/bin/env bash
+[[ " $* " == *" -J-Duser.language=en "*" -printcert -jarfile "* ]] || { echo "fake printcert: unexpected $*" >&2; exit 3; }
+printf '%b' "${FAKE_OUT:-}"
+exit "${FAKE_EXIT:-0}"
+EOF
+chmod +x "$tmp/apksigner" "$tmp/keytool" "$tmp/jarsigner" "$tmp/printcert"
 
 failures=0
 run_case() {
@@ -59,6 +75,12 @@ keystore() {
     env KEYTOOL="$tmp/keytool" ANDROID_SIGNING_STORE_PASSWORD=pw FAKE_OUT="$1" FAKE_EXIT="${2:-0}" \
         bash "$CHECK" --keystore "$tmp/release.jks" release_alias
 }
+
+bundle() {
+    env JARSIGNER="$tmp/jarsigner" KEYTOOL="$tmp/printcert" FAKE_VERIFY="$1" FAKE_OUT="$2" FAKE_EXIT="${3:-0}" \
+        bash "$CHECK" --bundle "$tmp/app.aab"
+}
+VERIFIED="\njar verified.\n\nWarning: \nThis jar contains entries whose signer certificate is self-signed.\n"
 
 run_case "the pin in the script is the v1.16.0 certificate" 0 "" \
     grep -qx "EXPECTED_CERT_SHA256=\"$PIN\"" "$CHECK"
@@ -101,6 +123,28 @@ run_case "keystore: missing password cannot pass" 2 "ANDROID_SIGNING_STORE_PASSW
     env KEYTOOL="$tmp/keytool" ANDROID_SIGNING_STORE_PASSWORD= bash "$CHECK" --keystore "$tmp/release.jks" a
 run_case "keystore: missing keystore cannot pass" 2 "Δεν βρέθηκε το keystore" \
     env KEYTOOL="$tmp/keytool" ANDROID_SIGNING_STORE_PASSWORD=pw bash "$CHECK" --keystore "$tmp/missing.jks" a
+
+# The verify and printcert texts follow a real bundleDebug AAB (JDK 17, 2026-10-16).
+run_case "aab: release key passes" 0 "[signer] OK" \
+    bundle "$VERIFIED" "Signer #1:\n\nCertificate #1:\nOwner: CN=LearnByzantineMusic\nCertificate fingerprints:\n\t SHA1: 00:11\n\t SHA256: $PIN_COLONS\nSignature algorithm name: SHA256withRSA\n"
+run_case "aab: another key fails" 1 "$OTHER" \
+    bundle "$VERIFIED" "\t SHA256: $OTHER\n"
+run_case "aab: two different certificates fail" 1 "2 διαφορετικά" \
+    bundle "$VERIFIED" "\t SHA256: $PIN\n\t SHA256: $OTHER\n"
+run_case "aab: unsigned fails although jarsigner exits 0" 1 "απέτυχε" \
+    bundle "\njar is unsigned.\n" ""
+run_case "aab: entries added after signing fail" 1 "εκτός υπογραφής" \
+    bundle "\njar verified.\n\nWarning: \nThis jar contains unsigned entries which have not been integrity-checked. \n" "\t SHA256: $PIN\n"
+run_case "aab: jarsigner failing fails" 1 "απέτυχε" \
+    env JARSIGNER="$tmp/jarsigner" KEYTOOL="$tmp/printcert" FAKE_VERIFY="jar verified.\n" FAKE_VERIFY_EXIT=1 \
+        bash "$CHECK" --bundle "$tmp/app.aab"
+run_case "aab: no digest line fails" 1 "Δεν βρήκα SHA-256" \
+    bundle "$VERIFIED" "Signature algorithm name: SHA256withRSA\n"
+run_case "aab: missing file cannot pass" 2 "Δεν βρέθηκε το AAB" \
+    env JARSIGNER="$tmp/jarsigner" KEYTOOL="$tmp/printcert" bash "$CHECK" --bundle "$tmp/missing.aab"
+run_case "aab: missing jarsigner cannot pass" 2 "jarsigner/keytool" \
+    env JARSIGNER="$tmp/no-such-tool" KEYTOOL="$tmp/printcert" bash "$CHECK" --bundle "$tmp/app.aab"
+run_case "--bundle without a file cannot pass" 2 "Usage" bash "$CHECK" --bundle
 
 run_case "no arguments cannot pass" 2 "Usage" bash "$CHECK"
 run_case "--keystore without an alias cannot pass" 2 "Usage" bash "$CHECK" --keystore "$tmp/release.jks"

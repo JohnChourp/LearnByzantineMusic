@@ -6,6 +6,7 @@ import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract.Document
 import android.provider.DocumentsContract.Root
 import android.provider.DocumentsProvider
+import com.johnchourp.learnbyzantinemusic.BuildConfig
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -146,7 +147,8 @@ class FakeSafProvider : DocumentsProvider() {
     }
 
     companion object {
-        const val AUTHORITY = "com.johnchourp.learnbyzantinemusic.test.saf"
+        /** Follows the package, as the manifest does, so two debug installs never claim the same authority. */
+        val AUTHORITY = "${BuildConfig.APPLICATION_ID}.test.saf"
         const val ROOT_ID = "root"
 
         /** The directory the provider serves. Set by each test before it touches a URI. */

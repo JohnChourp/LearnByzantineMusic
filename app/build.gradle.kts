@@ -58,7 +58,10 @@ android {
             !signingKeyPassword.isNullOrBlank()
 
     defaultConfig {
-        applicationId = "com.johnchourp.learnbyzantinemusic"
+        // Not the namespace: «com.johnchourp.learnbyzantinemusic» stays reserved by a closed Play
+        // account, so Google Play and the GitHub APK ship as «.app» (ClickUp 869fhmxpt). Installs of the
+        // old package do not update to this one; the brain FAQ covers moving notes across.
+        applicationId = "com.johnchourp.learnbyzantinemusic.app"
         minSdk = 24
         targetSdk = 36
         versionCode = 59
@@ -86,7 +89,8 @@ android {
             // A debug build (and its instrumented tests) installs next to the released app instead of
             // over it: a different signing key would otherwise force an uninstall, which wipes the
             // user's notes and settings. Shortcuts in res/xml/shortcuts.xml still name the release
-            // package, so on a debug install they open the released app.
+            // package (a @string there is not resolved by the launcher), so on a debug install they
+            // open the released app.
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }

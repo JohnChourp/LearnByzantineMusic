@@ -15,7 +15,7 @@ import java.io.File
  */
 class TestSafProviderStaysOutOfReleaseTest {
 
-    private val authority = "com.johnchourp.learnbyzantinemusic.test.saf"
+    private val authority = "\${applicationId}.test.saf"
 
     private fun repoFile(path: String): File =
         listOf(File("app/$path"), File(path)).firstOrNull { it.exists() }
@@ -35,7 +35,7 @@ class TestSafProviderStaysOutOfReleaseTest {
     fun theMainManifestDoesNotDeclareIt() {
         assertFalse(
             "the test provider must not be in the shipped manifest",
-            repoFile("src/main/AndroidManifest.xml").readText().contains(authority),
+            repoFile("src/main/AndroidManifest.xml").readText().let { it.contains(authority) || it.contains("FakeSafProvider") },
         )
     }
 

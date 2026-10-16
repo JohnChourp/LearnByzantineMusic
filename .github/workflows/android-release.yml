@@ -83,9 +83,30 @@ jobs:
           # Same pin as scripts/release-and-tag.sh: an APK signed by any other key cannot update an installed copy.
           ./scripts/check-release-signer.sh "$APK_PATH"
 
+          # The AAB is what Google Play takes. Same key (Play App Signing, option A), so Play and GitHub
+          # installs update each other; and no native library may break 16 KB pages, which Play rejects.
+          AAB_PATH="$(find app/build/outputs/bundle/release -maxdepth 1 -type f -name '*.aab' | sort | tail -n1 || true)"
+          if [[ -z "$AAB_PATH" ]]; then
+            echo "Missing AAB output" >&2
+            exit 1
+          fi
+          ./scripts/check-release-signer.sh --bundle "$AAB_PATH"
+          python3 scripts/check-16kb-pages.py "$APK_PATH" "$AAB_PATH"
+          echo "aab_path=$AAB_PATH" >> "$GITHUB_OUTPUT"
+
           APK_ALIAS_PATH="$RUNNER_TEMP/apk-release.apk"
           cp "$APK_PATH" "$APK_ALIAS_PATH"
           echo "apk_alias_path=$APK_ALIAS_PATH" >> "$GITHUB_OUTPUT"
+
+      # Kept for the Play Console upload (by hand for now; ClickUp 869fhmxpt). Not a release asset:
+      # GitHub users install the APK.
+      - name: Keep the AAB for Google Play
+        uses: actions/upload-artifact@v7
+        with:
+          name: aab-${{ github.ref_name }}
+          path: ${{ steps.package.outputs.aab_path }}
+          if-no-files-found: error
+          retention-days: 90
 
       # Same generator as scripts/release-and-tag.sh. If it fails, the release still
       # publishes with GitHub's generated notes (see the fallback publish step below).

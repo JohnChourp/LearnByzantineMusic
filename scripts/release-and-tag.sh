@@ -121,11 +121,12 @@ run_launch_smoke_test() {
     serial="${devices[0]}"
     echo "[release] Smoke test σε $serial για $pkg"
 
-    # Καθαρή αφετηρία: αν υπάρχει παλιά έκδοση, το install μπορεί να αποτύχει για άσχετο λόγο.
-    adb -s "$serial" uninstall "$pkg" >/dev/null 2>&1 || true
-
+    # ΠΟΤΕ uninstall: το $pkg είναι η εφαρμογή που κυκλοφορεί, και στο κινητό του κατόχου κρατά τις
+    # σημειώσεις του· το uninstall τις σβήνει. Το APK έχει ήδη περάσει το pin υπογραφής, άρα εγκαθίσταται
+    # ως ενημέρωση πάνω στην υπάρχουσα — που είναι και ο δρόμος των χρηστών. Αν αποτύχει, σταματάμε.
     if ! adb -s "$serial" install -r "$apk"; then
-        echo "ERROR: Το signed APK ΔΕΝ εγκαθίσταται. Το release σταματάει." >&2
+        echo "ERROR: Το signed APK ΔΕΝ εγκαθίσταται ως ενημέρωση. Το release σταματάει." >&2
+        echo "ERROR: Δεν απεγκαθιστώ τίποτα: έλεγξε τη συσκευή με το χέρι (π.χ. εγκατεστημένο debug ή παλιό κλειδί)." >&2
         exit 1
     fi
 
@@ -420,7 +421,17 @@ fi
 # Πριν από αντιγραφή, smoke test, commit και tag: δημοσιεύεται αυτό ακριβώς το αρχείο.
 "$BASH" "$SIGNER_CHECK_SCRIPT" "$APK_PATH"
 
+# Το AAB πάει στο Google Play: ίδιοι έλεγχοι με το android-release.yml, ώστε να κόβεται εδώ και όχι μετά το tag.
+AAB_PATH="$(find "$ROOT_DIR/app/build/outputs/bundle/release" -maxdepth 1 -type f -name '*.aab' | sort | tail -n1 || true)"
+if [[ -z "$AAB_PATH" ]]; then
+    echo "ERROR: Δεν βρέθηκε AAB release artifact." >&2
+    exit 1
+fi
+"$BASH" "$SIGNER_CHECK_SCRIPT" --bundle "$AAB_PATH"
+python3 "$SCRIPT_DIR/check-16kb-pages.py" "$APK_PATH" "$AAB_PATH"
+
 cp "$APK_PATH" "$RELEASE_DIR/"
+cp "$AAB_PATH" "$RELEASE_DIR/"
 
 # Stable asset aliases for direct end-user downloads.
 cp "$APK_PATH" "$RELEASE_DIR/apk-release.apk"
