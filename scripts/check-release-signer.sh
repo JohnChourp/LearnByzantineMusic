@@ -13,6 +13,12 @@
 # κλειδί με σταθερό DN σε κάθε μηχάνημα χωρίς keystore — άρα το «apksigner → CN=LearnByzantineMusic»
 # δεν απέδειχνε τίποτα. Εδώ συγκρίνεται το SHA-256 του πιστοποιητικού, το μόνο που συγκρίνει το Android.
 #
+# Από τη v1.18.0 το pin είναι το 89cfbf95…b70939 (ClickUp 869fhmxpt). Η εφαρμογή έγινε
+# com.johnchourp.learnbyzantinemusic.app για το Google Play, ένα πακέτο χωρίς καμία εγκατάσταση, άρα
+# η αλλαγή δεν άφησε κανέναν ορφανό. Το f14d6379… υπάρχει μόνο στα GitHub secrets, και το Play App
+# Signing (επιλογή A) θέλει το ίδιο το κλειδί για το PEPK· το 89cfbf95… είναι σε keystore του κατόχου
+# (μετρημένο 2026-10-16) και είναι αυτό που υπέγραψε το δημοσιευμένο v1.17.0.
+#
 # Χρήση:
 #   check-release-signer.sh <apk>
 #       exit 0 μόνο αν ΚΑΘΕ πιστοποιητικό που τυπώνει το apksigner είναι το καρφωμένο (και υπάρχει ένα).
@@ -30,9 +36,10 @@
 #
 # Η αλλαγή του pin ΔΕΝ διορθώνει ένα mismatch: αφήνει ορφανή κάθε εγκατεστημένη εφαρμογή. Νέο κλειδί
 # σημαίνει APK Signature Scheme v3 rotation (lineage υπογεγραμμένο από το παλιό κλειδί), όχι νέο pin.
+# Η μόνη εξαίρεση ήταν η αλλαγή του 869fhmxpt πάνω σε νέο πακέτο, πριν από την πρώτη του έκδοση.
 set -euo pipefail
 
-EXPECTED_CERT_SHA256="f14d6379ddc512cc1b05de57553144c9ae373ef7e09edeb8256b4191bb4537de"
+EXPECTED_CERT_SHA256="89cfbf95a5ef70b1122ccc03d7a97d8ea238819720790cc574a3d250c0b70939"
 
 usage() {
     echo "Usage: check-release-signer.sh <apk> | --bundle <aab> | --keystore <keystore> <alias>" >&2

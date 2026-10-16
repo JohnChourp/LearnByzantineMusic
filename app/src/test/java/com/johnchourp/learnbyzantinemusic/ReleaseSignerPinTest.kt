@@ -16,7 +16,9 @@ import java.io.File
  *
  * `scripts/check-release-signer.sh` compares the certificate's SHA-256 with a pin (its branches are
  * tested by `scripts/tests/test_check_release_signer.sh`). This test keeps the pin and its callers:
- * - the pin is the certificate that signed v1.16.0 — changing it strands every installed copy;
+ * - the pin is the release certificate of `com.johnchourp.learnbyzantinemusic.app` (from v1.18.0,
+ *   ClickUp `869fhmxpt`) — changing it strands every installed copy. It moved once, from `f14d6379…`,
+ *   when the app took the new package before its first release, so nobody was stranded;
  * - `release-and-tag.sh` checks the keystore before the version bump, and the APK after the build and
  *   before the commit and the tag;
  * - the tag workflow checks the APK before either publish step, and the AAB (signer and 16 KB pages)
@@ -46,7 +48,7 @@ class ReleaseSignerPinTest {
     }
 
     @Test
-    fun thePinIsTheCertificateThatSignedV1_16_0() {
+    fun thePinIsTheReleaseCertificateOfTheAppPackage() {
         single(code(CHECK), "EXPECTED_CERT_SHA256=\"$RELEASE_CERT_SHA256\"")
     }
 
@@ -126,7 +128,10 @@ class ReleaseSignerPinTest {
     private companion object {
         const val CHECK = "scripts/check-release-signer.sh"
 
-        /** `apksigner verify --print-certs` of the published v1.16.0 `apk-release.apk`, 2026-09-26. */
-        const val RELEASE_CERT_SHA256 = "f14d6379ddc512cc1b05de57553144c9ae373ef7e09edeb8256b4191bb4537de"
+        /**
+         * `apksigner verify --print-certs` of the published v1.17.0 `apk-release.apk` (2026-10-16), and the
+         * owner's keystore matched it the same day. The release key of the `.app` package.
+         */
+        const val RELEASE_CERT_SHA256 = "89cfbf95a5ef70b1122ccc03d7a97d8ea238819720790cc574a3d250c0b70939"
     }
 }
