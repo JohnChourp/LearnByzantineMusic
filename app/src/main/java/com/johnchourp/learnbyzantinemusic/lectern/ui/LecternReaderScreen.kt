@@ -135,6 +135,12 @@ private val SWIPE_THRESHOLD = 56.dp
 private val nightFilter = ColorFilter.colorMatrix(ColorMatrix(LecternNightTint.MATRIX))
 
 /**
+ * The palette the reader draws in: the app's own, or the dark one while the night tint is on over a
+ * light theme. The activity paints the system bars from the same answer, so they never stay light.
+ */
+fun readerPalette(base: LbmPalette, night: Boolean): LbmPalette = if (night && !base.isDark) LbmPalette.dark else base
+
+/**
  * The lectern's reader (ClickUp `869f5x2e7`): the page as wide as the screen, a top bar (back, title,
  * ‹ page ›, night tint) and the ison bar under the page. A tap in the middle of the page hides both
  * bars and shows them again; the sides turn the page, as do a swipe, the volume keys and a pedal (the
@@ -144,12 +150,6 @@ private val nightFilter = ColorFilter.colorMatrix(ColorMatrix(LecternNightTint.M
  * the setting comes from. A tap on it opens the page's setting — ήχος, «Μεταφορά βάσης», «Ίσον σε…» —
  * which applies from this page on. With the night tint on, the bars go dark too.
  */
-/**
- * The palette the reader draws in: the app's own, or the dark one while the night tint is on over a
- * light theme. The activity paints the system bars from the same answer, so they never stay light.
- */
-fun readerPalette(base: LbmPalette, night: Boolean): LbmPalette = if (night && !base.isDark) LbmPalette.dark else base
-
 @Composable
 fun LecternReaderScreen(
     state: LecternReaderViewModel.State,
