@@ -113,8 +113,8 @@ repo_slug() {
 SLUG="${GITHUB_REPOSITORY:-$(repo_slug)}"
 
 gradle_value() {
-    # First `name = value` assignment in the TAGGED app/build.gradle.kts, quotes stripped.
-    git show "${TAG}:app/build.gradle.kts" 2>/dev/null \
+    # First `name = value` assignment in app/build.gradle.kts at ${2:-the tag}, quotes stripped.
+    git show "${2:-$TAG}:app/build.gradle.kts" 2>/dev/null \
         | sed -nE "s/^[[:space:]]*$1[[:space:]]*=[[:space:]]*\"?([^\"[:space:]]+)\"?.*/\1/p" | head -n1
 }
 
@@ -267,6 +267,14 @@ MIN_SDK="$(gradle_value minSdk)"
 TARGET_SDK="$(gradle_value targetSdk)"
 MIN_ANDROID="$(android_version_for_sdk "$MIN_SDK")"
 
+# Android updates an app only within one package name. When the package changed since the previous
+# release (v1.18.0: «.app» for Google Play), this release installs NEXT TO the old app, not over it.
+APP_ID="$(gradle_value applicationId)"
+PREVIOUS_APP_ID=""
+if [[ -n "$PREVIOUS_TAG" ]]; then
+    PREVIOUS_APP_ID="$(gradle_value applicationId "$PREVIOUS_TAG")"
+fi
+
 APK_SIZE_MB=""
 APK_SHA256=""
 if [[ -n "$APK_PATH" ]]; then
@@ -318,7 +326,12 @@ render() {
     if [[ -n "$MIN_ANDROID" ]]; then
         echo "- Απαιτεί **Android ${MIN_ANDROID}** ή νεότερο."
     fi
-    echo "- Αν το κινητό το ζητήσει, επίτρεψε την εγκατάσταση από αυτή την πηγή· εγκαθίσταται ως ενημέρωση πάνω από την προηγούμενη έκδοση."
+    if [[ -n "$PREVIOUS_APP_ID" && -n "$APP_ID" && "$PREVIOUS_APP_ID" != "$APP_ID" ]]; then
+        echo "- Αν το κινητό το ζητήσει, επίτρεψε την εγκατάσταση από αυτή την πηγή."
+        echo "- ⚠️ **Νέο όνομα πακέτου** (\`${PREVIOUS_APP_ID}\` → \`${APP_ID}\`): η έκδοση εγκαθίσταται **δίπλα** στην παλιά, όχι πάνω της, και ξεκινά άδεια. Πριν απεγκαταστήσεις την παλιά, πέρασε τα δεδομένα σου: στην παλιά **Σημειώσεις → «Εξαγωγή τώρα»** και **Ρυθμίσεις → Δεδομένα μάθησης → «Εξαγωγή»**· στη νέα **«Εισαγωγή»** και **«Import backup»** από τον ίδιο φάκελο, και ξαναδιάλεξε τους φακέλους ηχογραφήσεων και PDF."
+    else
+        echo "- Αν το κινητό το ζητήσει, επίτρεψε την εγκατάσταση από αυτή την πηγή· εγκαθίσταται ως ενημέρωση πάνω από την προηγούμενη έκδοση."
+    fi
     if [[ -n "$APK_SHA256" ]]; then
         echo "- SHA-256: \`${APK_SHA256}\`"
     fi
