@@ -95,7 +95,8 @@ run_case "apk: no digest line fails" 1 "Δεν βρήκα SHA-256" \
     apk "Verifies\n"
 
 # Newer apksigner (the GitHub runner's, 2026-09-26) prints one block per scheme instead of «Signer #1».
-# The first case is the runner's own output for the v1.17.1 APK, which the old parser rejected.
+# The first case is the runner's output for the v1.17.1 APK, which the old parser rejected, with the
+# SHA-256 line set to the current pin (v1.17.1 itself was f14d6379…; the SHA-1/MD5 lines are its own).
 run_case "apk: per-scheme format (runner, v1.17.1) passes" 0 "[signer] OK" \
     apk "V2 Signer: certificate DN: CN=LearnByzantineMusic, O=LearnByzantineMusic, OU=Android, L=Athens, ST=Attica, C=GR\nV2 Signer: certificate SHA-256 digest: $PIN\nV2 Signer: certificate SHA-1 digest: 826c1a7ab4ad07d4209408a2c4c1cff761361237\nV2 Signer: certificate MD5 digest: 41dd8e437b5f70f17446bd778e08b851\n"
 run_case "apk: per-scheme format with another key fails" 1 "$OTHER" \
