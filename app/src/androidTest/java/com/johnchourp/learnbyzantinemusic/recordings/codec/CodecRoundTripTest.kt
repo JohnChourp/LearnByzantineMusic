@@ -5,6 +5,7 @@ import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.johnchourp.learnbyzantinemusic.recordings.AudioTranscoder
@@ -18,6 +19,7 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
+import java.io.IOException
 import kotlin.math.PI
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -42,6 +44,10 @@ import kotlin.math.sin
  */
 @RunWith(AndroidJUnit4::class)
 class CodecRoundTripTest {
+    private companion object {
+        const val TAG = "CodecRoundTripTest"
+    }
+
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private val dir = File(context.cacheDir, "codec_round_trip").apply { mkdirs() }
 
@@ -98,10 +104,21 @@ class CodecRoundTripTest {
     @Test
     fun oldM4a() = oldRecording("old.m4a")
 
+    /**
+     * From Android 10 an old Ogg Opus recording must decode. Below that Android may not read Ogg Opus
+     * at all, so either outcome is accepted there — a decoded tone, or a clean IOException (the analysis
+     * then shows «αποτυχία» instead of crashing) — and the run logs which one this device gave.
+     */
     @Test
     fun oldOpus() {
-        assumeTrue("Ogg Opus is read from API 29", Build.VERSION.SDK_INT >= RecordingFormatOption.OPUS_MIN_SDK)
-        oldRecording("old.opus")
+        if (Build.VERSION.SDK_INT >= RecordingFormatOption.OPUS_MIN_SDK) {
+            oldRecording("old.opus")
+            return
+        }
+        val outcome = runCatching { oldRecording("old.opus") }
+        val error = outcome.exceptionOrNull()
+        Log.i(TAG, "old Ogg Opus on API ${Build.VERSION.SDK_INT}: ${if (error == null) "decoded" else "not readable ($error)"}")
+        assertTrue("below API 29 only a clean IOException is acceptable, got $error", error == null || error is IOException)
     }
 
     @Test
