@@ -20,7 +20,7 @@ import java.io.File
  * - `release-and-tag.sh` checks the keystore before the version bump, and the APK after the build and
  *   before the commit and the tag;
  * - the tag workflow checks the APK before either publish step, and the AAB (signer and 16 KB pages)
- *   before it keeps it for Google Play;
+ *   before it keeps it for Google Play; `release-and-tag.sh` checks the same AAB before commit and tag;
  * - `setup-release-signing.sh` checks the keystore before it overwrites the GitHub secrets.
  *
  * Lines are matched whole and comments are dropped first, so neither a commented-out call nor a
@@ -67,6 +67,11 @@ class ReleaseSignerPinTest {
         assertTrue("the keystore is checked before the version bump", keystoreCheck < bump)
         assertTrue("the APK is checked after the build", build < apkCheck)
         assertTrue("the APK is checked before the commit and the tag", apkCheck < commit && apkCheck < tag)
+
+        val aabCheck = single(lines, "\"\$BASH\" \"\$SIGNER_CHECK_SCRIPT\" --bundle \"\$AAB_PATH\"")
+        val pages = single(lines, "python3 \"\$SCRIPT_DIR/check-16kb-pages.py\" \"\$APK_PATH\" \"\$AAB_PATH\"")
+        assertTrue("the AAB is checked after the build", build < aabCheck && build < pages)
+        assertTrue("the AAB is checked before the commit and the tag", listOf(aabCheck, pages).all { it < commit && it < tag })
     }
 
     @Test
@@ -96,9 +101,13 @@ class ReleaseSignerPinTest {
 
     @Test
     fun theReleaseSmokeTestNeverUninstallsTheShippedApp() {
-        // The smoke test runs on the owner's phone, where the shipped package holds real notes.
-        val uninstalls = code("scripts/release-and-tag.sh").filter { " uninstall " in " ${it.lowercase()} " }
-        assertEquals("no adb uninstall in the release script", emptyList<String>(), uninstalls)
+        // The smoke test runs on the owner's phone, where the shipped package holds real notes:
+        // neither an uninstall nor a `pm clear` / `cmd package clear` may touch it.
+        val wipes = code("scripts/release-and-tag.sh").filter { line ->
+            val padded = " ${line.lowercase()} "
+            " uninstall " in padded || (" clear " in padded && (" pm " in padded || " package " in padded))
+        }
+        assertEquals("nothing in the release script may wipe the installed app", emptyList<String>(), wipes)
     }
 
     @Test

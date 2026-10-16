@@ -421,7 +421,17 @@ fi
 # Πριν από αντιγραφή, smoke test, commit και tag: δημοσιεύεται αυτό ακριβώς το αρχείο.
 "$BASH" "$SIGNER_CHECK_SCRIPT" "$APK_PATH"
 
+# Το AAB πάει στο Google Play: ίδιοι έλεγχοι με το android-release.yml, ώστε να κόβεται εδώ και όχι μετά το tag.
+AAB_PATH="$(find "$ROOT_DIR/app/build/outputs/bundle/release" -maxdepth 1 -type f -name '*.aab' | sort | tail -n1 || true)"
+if [[ -z "$AAB_PATH" ]]; then
+    echo "ERROR: Δεν βρέθηκε AAB release artifact." >&2
+    exit 1
+fi
+"$BASH" "$SIGNER_CHECK_SCRIPT" --bundle "$AAB_PATH"
+python3 "$SCRIPT_DIR/check-16kb-pages.py" "$APK_PATH" "$AAB_PATH"
+
 cp "$APK_PATH" "$RELEASE_DIR/"
+cp "$AAB_PATH" "$RELEASE_DIR/"
 
 # Stable asset aliases for direct end-user downloads.
 cp "$APK_PATH" "$RELEASE_DIR/apk-release.apk"

@@ -42,7 +42,7 @@ EOF
 # keytool -printcert -jarfile: δεν παίρνει κωδικό.
 cat > "$tmp/printcert" <<'EOF'
 #!/usr/bin/env bash
-[[ "$1 $2" == "-printcert -jarfile" ]] || { echo "fake printcert: unexpected $*" >&2; exit 3; }
+[[ " $* " == *" -J-Duser.language=en "*" -printcert -jarfile "* ]] || { echo "fake printcert: unexpected $*" >&2; exit 3; }
 printf '%b' "${FAKE_OUT:-}"
 exit "${FAKE_EXIT:-0}"
 EOF

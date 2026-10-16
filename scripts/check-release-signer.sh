@@ -145,7 +145,7 @@ check_bundle() {
         echo "ERROR: Το $aab έχει αρχεία εκτός υπογραφής." >&2
         return 1
     fi
-    if ! output="$("$keytool" -printcert -jarfile "$aab" 2>&1)"; then
+    if ! output="$("$keytool" -J-Duser.language=en -J-Duser.country=US -printcert -jarfile "$aab" 2>&1)"; then
         printf '%s\n' "$output" >&2
         echo "ERROR: Το keytool δεν διάβασε τα πιστοποιητικά του $aab." >&2
         return 1
