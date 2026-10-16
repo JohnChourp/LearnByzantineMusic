@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
@@ -93,11 +94,14 @@ abstract class BaseActivity : ComponentActivity() {
     }
 
     /**
-     * Pads the content view by the system bars, the display cutout and the keyboard, and consumes
-     * those insets, so every screen lays out exactly as it did before edge-to-edge. A bar that is
+     * Pads the content view by the system bars, the display cutout and the keyboard, paints that
+     * padding in the palette's page colour, and consumes those insets, so every screen lays out exactly as it did before edge-to-edge. A bar that is
      * hidden reports 0 and costs no space.
      */
     private fun applySystemBarInsets(content: View) {
+        // The bars are transparent now: the padding below them shows this view's background, which is
+        // the page colour of the chosen palette, so the page simply continues under the bars.
+        content.setBackgroundColor(currentPalette().pageBg.toArgb())
         ViewCompat.setOnApplyWindowInsetsListener(content) { view, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or

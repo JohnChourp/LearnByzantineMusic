@@ -40,6 +40,10 @@ class EveryScreenStaysInsideTheSystemBarsTest {
         }
         assertTrue("the padding must be applied to the content view", Regex("""view\.setPadding\(\s*bars\.left,\s*bars\.top,\s*bars\.right,\s*bars\.bottom\s*\)""").containsMatchIn(base))
         assertTrue("the insets must be consumed, so no child pads twice", base.contains("WindowInsetsCompat.CONSUMED"))
+        assertTrue(
+            "the padding under the transparent bars must be the palette's page colour, not the platform window background",
+            Regex("""content\.setBackgroundColor\(\s*currentPalette\(\)\.pageBg\.toArgb\(\)\s*\)""").containsMatchIn(base),
+        )
     }
 
     @Test
