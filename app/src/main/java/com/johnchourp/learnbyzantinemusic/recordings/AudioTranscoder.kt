@@ -230,7 +230,9 @@ object AudioTranscoder {
         private var wroteSamples = false
 
         override fun onFormat(format: MediaFormat) {
-            check(!started) { "format_changed_twice" }
+            // A muxer takes one track format, before it starts. Some encoders report the format again
+            // (an updated csd, for example); the track and its config are already set, so it is ignored.
+            if (started) return
             track = muxer.addTrack(format)
             muxer.start()
             started = true
