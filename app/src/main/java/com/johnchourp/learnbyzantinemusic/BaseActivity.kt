@@ -4,8 +4,15 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
+import com.johnchourp.learnbyzantinemusic.ui.theme.LbmPalette
 
 /**
  * The base every screen in the app extends, and the reason two global settings work everywhere
@@ -28,6 +35,14 @@ import com.johnchourp.learnbyzantinemusic.ui.theme.AppThemeMode
  * **Also.** Locks every screen to portrait. The app is meant to be read off a stand while chanting,
  * and several diagrams assume portrait width. The one exception is the digital lectern's reader
  * (ClickUp `869f5x2e7`), whose PDF pages are wide as often as tall: it overrides [screenOrientation].
+ *
+ * **System bars (targetSdk 36).** From Android 15 every app is drawn edge-to-edge: behind the status
+ * bar, the navigation bar and the keyboard, with no way to opt out from Android 16. No screen of the
+ * app handles insets (none uses a Scaffold), so instead of 26 screens each padding themselves,
+ * [applySystemBarInsets] does it once here: the content view keeps out of the bars, the display
+ * cutout and the keyboard — the same layout the app had at targetSdk 34 — and [enableEdgeToEdge]
+ * colours the bar icons for the in-app theme (its night flag is set in [attachBaseContext]).
+ * `EveryScreenStaysInsideTheSystemBarsTest` pins this (ClickUp `869fhmxpt`).
  *
  * Reads `app_language_code`, `app_font_step`, `app_theme_mode` — see
  * [com.johnchourp.learnbyzantinemusic.prefs.AppPrefs]. Writes only once, through
@@ -74,8 +89,49 @@ abstract class BaseActivity : ComponentActivity() {
     protected open val screenOrientation: Int get() = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val palette = currentPalette()
+        enableEdgeToEdgeFor(palette)
         super.onCreate(savedInstanceState)
         requestedOrientation = screenOrientation
+        applySystemBarInsets(findViewById(android.R.id.content))
+        paintSystemBars(palette)
+    }
+
+    /**
+     * Colours the bars and the strip under them for [palette]: the page colour, with icons light on
+     * a dark page and dark on a light one. Built from the palette rather than `SystemBarStyle.auto`,
+     * so a three-button navigation bar shows the page instead of a translucent scrim. A screen whose
+     * page colour changes while it is open — the lectern reader's night tint — calls this again.
+     */
+    protected fun paintSystemBars(palette: LbmPalette) {
+        enableEdgeToEdgeFor(palette)
+        findViewById<View>(android.R.id.content).setBackgroundColor(palette.pageBg.toArgb())
+    }
+
+    private fun enableEdgeToEdgeFor(palette: LbmPalette) {
+        val page = palette.pageBg.toArgb()
+        // API 24–25 cannot draw dark navigation icons; there a light page gets the default dark scrim.
+        val style = if (palette.isDark) SystemBarStyle.dark(page) else SystemBarStyle.light(page, LIGHT_PAGE_DARK_SCRIM)
+        enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
+    }
+
+    /**
+     * Pads the content view by the system bars, the display cutout and the keyboard, and consumes
+     * those insets, so every screen lays out exactly as it did before edge-to-edge. A bar that is
+     * hidden reports 0 and costs no space.
+     */
+    private fun applySystemBarInsets(content: View) {
+        // The padding below the transparent bars shows this view's background, which paintSystemBars
+        // sets to the page colour, so the page simply continues under the bars.
+        ViewCompat.setOnApplyWindowInsetsListener(content) { view, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or
+                    WindowInsetsCompat.Type.displayCutout() or
+                    WindowInsetsCompat.Type.ime(),
+            )
+            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     override fun onResume() {
@@ -102,3 +158,6 @@ internal data class AttachedSettings(
         )
     }
 }
+
+/** The scrim behind the navigation bar on a light page where Android cannot draw dark icons (API 24–25). */
+private const val LIGHT_PAGE_DARK_SCRIM = 0x801B1B1B.toInt()

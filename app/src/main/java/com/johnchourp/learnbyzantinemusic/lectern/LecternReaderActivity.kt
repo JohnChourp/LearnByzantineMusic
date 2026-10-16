@@ -9,12 +9,14 @@ import android.view.KeyEvent
 import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.lectern.ui.LecternReaderActions
 import com.johnchourp.learnbyzantinemusic.lectern.ui.LecternReaderScreen
+import com.johnchourp.learnbyzantinemusic.lectern.ui.readerPalette
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 
 /**
@@ -57,6 +59,13 @@ class LecternReaderActivity : BaseActivity() {
             LbmTheme(palette = currentPalette()) {
                 val state by viewModel.state.collectAsState()
                 val actions = remember { actions() }
+                // The system bars and the strip under them follow the night tint too (edge-to-edge,
+                // targetSdk 36): otherwise a light theme leaves cream bands around a dark page.
+                // The saved theme cannot change while the reader is open (BaseActivity recreates the
+                // screen on a theme change), so it is read once, not on every page turn.
+                val basePalette = remember { currentPalette() }
+                val pagePalette = readerPalette(basePalette, state.night)
+                LaunchedEffect(pagePalette) { paintSystemBars(pagePalette) }
                 LecternReaderScreen(state = state, title = title, actions = actions)
             }
         }

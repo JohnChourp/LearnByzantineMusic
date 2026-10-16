@@ -157,6 +157,21 @@ class EveryScreenAppliesTheThemeTest {
         )
     }
 
+    /**
+     * Every declared screen extends [com.johnchourp.learnbyzantinemusic.BaseActivity] directly, which is
+     * also what keeps it inside the system bars since targetSdk 36 (`EveryScreenStaysInsideTheSystemBarsTest`,
+     * ClickUp `869fhmxpt`): a screen on another base would be drawn under the status bar.
+     */
+    @Test
+    fun everyDeclaredScreenExtendsBaseActivity() {
+        val offenders = screens.mapNotNull { screen ->
+            val code = screen.file?.let { KotlinSource.withoutComments(it.readText()) } ?: return@mapNotNull null
+            val header = Regex("""\bclass\s+${Regex.escape(screen.simpleName)}\b[^{]*""").find(code)?.value.orEmpty()
+            screen.simpleName.takeUnless { Regex("""\bBaseActivity\s*\(""").containsMatchIn(header) }
+        }.sorted()
+        assertEquals("these screens do not extend BaseActivity", emptyList<String>(), offenders)
+    }
+
     @Test
     fun theViewBasedAllowListIsStillTrue() {
         val declared = screens.map { it.simpleName }.toSet()
