@@ -1,13 +1,13 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis
 
 import android.content.Context
-import android.media.AudioFormat
 import android.media.MediaCodec
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.net.Uri
 import com.johnchourp.learnbyzantinemusic.recordings.codec.MonoWavWriter
 import com.johnchourp.learnbyzantinemusic.recordings.codec.PcmResampler
+import com.johnchourp.learnbyzantinemusic.recordings.codec.PcmSampleFormat
 import java.io.File
 import java.io.IOException
 import java.nio.ByteOrder
@@ -151,7 +151,7 @@ object RecordingDecoder {
                         for (frame in 0 until frames) {
                             var sum = 0f
                             for (channel in 0 until pcm.channels) {
-                                sum += if (pcm.isFloat) buffer.getFloat() else buffer.getShort() / 32768f
+                                sum += pcm.sample.read(buffer)
                             }
                             mono[frame] = sum / pcm.channels
                         }
@@ -167,9 +167,9 @@ object RecordingDecoder {
         }
     }
 
-    /** How the decoder lays out its PCM: rate, channels, 16-bit or float. */
-    private data class PcmLayout(val sampleRate: Int, val channels: Int, val isFloat: Boolean) {
-        val frameBytes: Int get() = channels * (if (isFloat) 4 else 2)
+    /** How the decoder lays out its PCM: rate, channels and sample format. */
+    private data class PcmLayout(val sampleRate: Int, val channels: Int, val sample: PcmSampleFormat) {
+        val frameBytes: Int get() = channels * sample.bytes
 
         companion object {
             fun from(format: MediaFormat): PcmLayout {
@@ -178,12 +178,11 @@ object RecordingDecoder {
                 val encoding = if (format.containsKey(MediaFormat.KEY_PCM_ENCODING)) {
                     format.getInteger(MediaFormat.KEY_PCM_ENCODING)
                 } else {
-                    AudioFormat.ENCODING_PCM_16BIT
+                    PcmSampleFormat.PCM_16.encodingId
                 }
-                if (encoding != AudioFormat.ENCODING_PCM_16BIT && encoding != AudioFormat.ENCODING_PCM_FLOAT) {
-                    throw IOException("decode_failed:pcm_encoding:$encoding")
-                }
-                return PcmLayout(rate, channels, encoding == AudioFormat.ENCODING_PCM_FLOAT)
+                val sample = PcmSampleFormat.fromEncoding(encoding)
+                    ?: throw IOException("decode_failed:pcm_encoding:$encoding")
+                return PcmLayout(rate, channels, sample)
             }
         }
     }
