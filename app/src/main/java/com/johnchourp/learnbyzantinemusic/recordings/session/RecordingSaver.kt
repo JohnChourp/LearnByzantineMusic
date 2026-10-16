@@ -4,7 +4,7 @@ import com.johnchourp.learnbyzantinemusic.recordings.RecordingFormatOption
 import java.io.File
 import java.io.OutputStream
 
-/** Turns the capture WAV into another format: FFmpeg in the app, a fake in tests. */
+/** Turns the capture WAV into another format: Android's encoders ([com.johnchourp.learnbyzantinemusic.recordings.AudioTranscoder]) in the app, a fake in tests. */
 fun interface Transcoder {
     /** True only when [output] now holds the whole recording in [format]. */
     fun transcode(sourceWav: File, output: File, format: RecordingFormatOption): Boolean

@@ -7,7 +7,7 @@ import java.io.InputStream
 
 /**
  * Streams the samples of a 16-bit PCM WAV file as mono floats in [-1, 1] (channels are averaged),
- * skipping any non-audio chunks (ffmpeg writes a LIST chunk before the data).
+ * skipping any non-audio chunks (other writers, ffmpeg among them, put a LIST chunk before the data).
  */
 class WavPcmReader private constructor(
     private val input: InputStream,
@@ -72,7 +72,7 @@ class WavPcmReader private constructor(
                         skipFully(input, size - 16)
                     }
                     "data" -> {
-                        // 1 = PCM; 0xFFFE = WAVE_FORMAT_EXTENSIBLE, which ffmpeg only uses for PCM here.
+                        // 1 = PCM; 0xFFFE = WAVE_FORMAT_EXTENSIBLE, which other writers (ffmpeg among them) use for PCM too.
                         if ((format != 1 && format != 0xFFFE) || bitsPerSample != 16 || channels !in 1..8 || sampleRate <= 0) {
                             throw IOException("unsupported_wav_format:$format/$bitsPerSample/$channels/$sampleRate")
                         }

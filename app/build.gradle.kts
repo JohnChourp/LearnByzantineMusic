@@ -146,7 +146,6 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.work.runtime)
-    implementation("com.arthenica:ffmpeg-kit-full-gpl:6.0-2")
     testImplementation(libs.junit)
     testImplementation("org.json:json:20240303")
     androidTestImplementation(libs.androidx.junit)

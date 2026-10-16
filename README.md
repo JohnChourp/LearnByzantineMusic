@@ -354,7 +354,6 @@
 - `com.google.guava:guava = 32.1.3-jre` (explicit pin στο app dependency graph για mitigation του temporary-directory advisory)
 - `com.google.guava:guava >= 32.1.3-jre`, `org.bouncycastle:bcprov/bcpkix/bcutil-jdk18on >= 1.85`, `org.apache.commons:commons-lang3 >= 3.20.0`, `org.apache.httpcomponents:httpclient >= 4.5.14` (security floors στα AGP 9 lint/UTP tool classpaths του `:app`, μέσω `app/build.gradle.kts`· δεν κατεβάζουν το Guava 33.x του lint)
 - `io.netty:* 4.1.x = 4.1.138.Final` (ευθυγράμμιση σε όλα τα configurations του `:app` μέσω `app/build.gradle.kts`, για τα AGP/UTP test-platform artifacts που φέρνουν Netty 4.1 μέσω `grpc-netty`)
-- `com.arthenica:ffmpeg-kit-full-gpl = 6.0-2` (για transcode ηχογραφήσεων σε `flac/mp3/aac/m4a/opus`)
 
 - Κύρια components:
 - `MainActivity`
@@ -601,8 +600,9 @@ source "$HOME/.android/learnbyzantine/release-signing.env"
 
 ### Δεν αποθηκεύεται στο format που διάλεξα. Τι να ελέγξω;
 - Έλεγξε ότι στο selector της σελίδας `Ηχογραφήσεις` έχει επιλεγεί το σωστό format πριν την έναρξη.
-- Για μη-WAV formats η μετατροπή γίνεται μέσω FFmpeg και απαιτεί επιτυχή transcode στο τέλος της εγγραφής.
-- Αν αποτύχει transcode, εμφανίζεται μήνυμα σφάλματος και δεν δημιουργείται τελικό αρχείο στον φάκελο.
+- Για μη-WAV formats η μετατροπή γίνεται με τους encoders του ίδιου του Android (`MediaCodec`/`MediaMuxer`) στο τέλος της εγγραφής.
+- Το MP3 δεν προσφέρεται πια (το Android δεν έχει MP3 encoder): μια αποθηκευμένη επιλογή MP3 ηχογραφεί σε M4A. Το OPUS εμφανίζεται μόνο από Android 10. Οι παλιές ηχογραφήσεις MP3/OPUS ανοίγουν κανονικά.
+- Αν αποτύχει η μετατροπή (π.χ. συσκευή χωρίς FLAC encoder), η ηχογράφηση σώζεται ως WAV στον ίδιο φάκελο, με μήνυμα «Η μετατροπή σε … απέτυχε — αποθηκεύτηκε ως WAV».
 
 ### Δεν ανοίγει ο φάκελος σε file explorer. Τι να ελέγξω;
 - Χρειάζεται διαθέσιμη εφαρμογή που να υποστηρίζει `ACTION_VIEW` για directory URI.

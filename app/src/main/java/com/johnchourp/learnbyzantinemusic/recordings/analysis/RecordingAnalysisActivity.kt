@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
  * «Ανάλυση φθόγγων» for one saved recording: which phthongs were sung, in which order, how in
  * tune, a pitch-over-time diagram, and — against a melody the user types — how correct it was.
  *
- * Flow: [RecordingDecoder] (FFmpegKit → mono WAV) → [PitchTrackAnalyzer] (YIN, once per
+ * Flow: [RecordingDecoder] (Android decoders → mono WAV) → [PitchTrackAnalyzer] (YIN, once per
  * recording) → [PhthongSegmenter] on the chosen mode's scale, calibrated on the starting
  * phthong → [SequenceAligner] against the expected melody. Changing the mode, the starting
  * phthong or the expected melody only reruns the last two steps.

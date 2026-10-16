@@ -90,7 +90,7 @@ data class PendingState(
  *
  * **Threads.** Taps arrive on the main thread; capture runs on its own thread, as it always has;
  * saving runs in [scope], which outlives every screen, one save at a time. `RecordingSessions` holds
- * the process's instance and wires the real microphone, FFmpeg and the SAF folder; the tests wire
+ * the process's instance and wires the real microphone, Android's encoders and the SAF folder; the tests wire
  * fakes. While a recording is active, `RecordingService` — a foreground service of type microphone —
  * keeps the process in the foreground, so the microphone is not silenced with the screen off
  * (ClickUp `869f5x273`); it controls the session only through [RecordingControls].
