@@ -9,9 +9,9 @@ set -uo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CHECK="$HERE/../check-release-signer.sh"
-PIN="f14d6379ddc512cc1b05de57553144c9ae373ef7e09edeb8256b4191bb4537de"
-OTHER="89cfbf95a5ef70b1122ccc03d7a97d8ea238819720790cc574a3d250c0b70939"
-PIN_COLONS="F1:4D:63:79:DD:C5:12:CC:1B:05:DE:57:55:31:44:C9:AE:37:3E:F7:E0:9E:DE:B8:25:6B:41:91:BB:45:37:DE"
+PIN="89cfbf95a5ef70b1122ccc03d7a97d8ea238819720790cc574a3d250c0b70939"
+OTHER="f14d6379ddc512cc1b05de57553144c9ae373ef7e09edeb8256b4191bb4537de"
+PIN_COLONS="89:CF:BF:95:A5:EF:70:B1:12:2C:CC:03:D7:A9:7D:8E:A2:38:81:97:20:79:0C:C5:74:A3:D2:50:C0:B7:09:39"
 
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
@@ -82,7 +82,7 @@ bundle() {
 }
 VERIFIED="\njar verified.\n\nWarning: \nThis jar contains entries whose signer certificate is self-signed.\n"
 
-run_case "the pin in the script is the v1.16.0 certificate" 0 "" \
+run_case "the pin in the script is the .app release certificate (signed v1.17.0)" 0 "" \
     grep -qx "EXPECTED_CERT_SHA256=\"$PIN\"" "$CHECK"
 
 run_case "apk: release key passes" 0 "[signer] OK" \
@@ -95,7 +95,8 @@ run_case "apk: no digest line fails" 1 "Δεν βρήκα SHA-256" \
     apk "Verifies\n"
 
 # Newer apksigner (the GitHub runner's, 2026-09-26) prints one block per scheme instead of «Signer #1».
-# The first case is the runner's own output for the v1.17.1 APK, which the old parser rejected.
+# The first case is the runner's output for the v1.17.1 APK, which the old parser rejected, with the
+# SHA-256 line set to the current pin (v1.17.1 itself was f14d6379…; the SHA-1/MD5 lines are its own).
 run_case "apk: per-scheme format (runner, v1.17.1) passes" 0 "[signer] OK" \
     apk "V2 Signer: certificate DN: CN=LearnByzantineMusic, O=LearnByzantineMusic, OU=Android, L=Athens, ST=Attica, C=GR\nV2 Signer: certificate SHA-256 digest: $PIN\nV2 Signer: certificate SHA-1 digest: 826c1a7ab4ad07d4209408a2c4c1cff761361237\nV2 Signer: certificate MD5 digest: 41dd8e437b5f70f17446bd778e08b851\n"
 run_case "apk: per-scheme format with another key fails" 1 "$OTHER" \
