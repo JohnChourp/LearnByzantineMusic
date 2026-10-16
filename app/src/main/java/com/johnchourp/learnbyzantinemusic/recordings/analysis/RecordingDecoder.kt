@@ -16,7 +16,7 @@ import java.nio.ByteOrder
  * Decodes a saved recording (FLAC, MP3, WAV, AAC, M4A or OPUS — whatever the recorder wrote, now or
  * in an older version) to a mono 16-bit WAV at [SAMPLE_RATE] in the app cache.
  *
- * WAV is read directly ([WavPcmReader]); everything else goes through Android's own decoders
+ * A 16-bit WAV is read directly ([WavPcmReader]); everything else — other WAVs included — goes through Android's own decoders
  * (`MediaExtractor` + `MediaCodec`), which replaced FFmpegKit (ClickUp `869fhmxpt`). Channels are
  * averaged and the rate converted with [PcmResampler]. A format the device cannot decode — Ogg Opus
  * before Android 10, for example — fails with an [IOException], which the analysis shows as a failed
@@ -41,7 +41,17 @@ object RecordingDecoder {
                 source.outputStream().use { input.copyTo(it) }
             }
             if (copied == null) throw IOException("recording_not_readable")
-            val written = if (extension == "wav") decodeWav(source, output) else decodeWithMediaCodec(source, output)
+            val written = if (extension == "wav") {
+                // The app's own WAVs are 16-bit PCM and are read directly. Any other WAV (8/24/32-bit,
+                // float) still decodes, through Android's decoder, as it did with FFmpeg.
+                try {
+                    decodeWav(source, output)
+                } catch (notSixteenBit: IOException) {
+                    decodeWithMediaCodec(source, output)
+                }
+            } else {
+                decodeWithMediaCodec(source, output)
+            }
             if (written <= 0L) throw IOException("decode_failed:no_audio")
             return output
         } catch (error: Throwable) {
