@@ -2,8 +2,8 @@
 """Fails when a native library in an APK or AAB is not 16 KB page aligned.
 
 Google Play rejects apps with native code that target Android 15+ unless every LOAD segment of
-every .so is aligned to at least 16 KB, and every .so stored uncompressed in the archive starts at
-a 16 KB offset (so it can be mapped straight from the APK). FFmpegKit (4 KB) was the reason it was removed
+every .so is aligned to at least 16 KB, and, in an APK, every .so stored uncompressed starts at a
+16 KB offset (so it can be mapped straight from the APK; bundletool takes care of that for an AAB). FFmpegKit (4 KB) was the reason it was removed
 (ClickUp 869fhmxpt). Run this on every release build:
 
     python3 scripts/check-16kb-pages.py app/build/outputs/apk/release/*.apk
@@ -52,6 +52,7 @@ def data_offset(raw, info: zipfile.ZipInfo) -> int:
 def check(path: str) -> int:
     bad = 0
     libs = 0
+    is_apk = path.lower().endswith(".apk")
     with open(path, "rb") as raw, zipfile.ZipFile(raw) as archive:
         for info in sorted(archive.infolist(), key=lambda i: i.filename):
             name = info.filename
@@ -60,7 +61,8 @@ def check(path: str) -> int:
             libs += 1
             aligns = list(load_alignments(archive.read(name)))
             worst = min(aligns) if aligns else 0
-            stored = info.compress_type == zipfile.ZIP_STORED
+            # Only an APK is mapped from the archive; an AAB's APKs are aligned by bundletool.
+            stored = is_apk and info.compress_type == zipfile.ZIP_STORED
             offset = data_offset(raw, info) if stored else None
             ok = worst >= PAGE and (not stored or offset % PAGE == 0)
             if not ok:
