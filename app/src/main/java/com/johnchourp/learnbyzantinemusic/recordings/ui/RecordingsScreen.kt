@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.recordings.ui
 
+import android.os.Build
 import android.os.SystemClock
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
@@ -673,7 +674,7 @@ private fun FormatSection(
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            RecordingFormatOption.entries.forEach { option ->
+            RecordingFormatOption.recordableOn(Build.VERSION.SDK_INT).forEach { option ->
                 LessonChip(
                     label = stringResource(option.labelResId),
                     selected = option == selectedFormat,

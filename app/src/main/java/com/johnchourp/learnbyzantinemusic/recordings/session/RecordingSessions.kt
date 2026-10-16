@@ -17,7 +17,7 @@ import java.io.File
 
 /**
  * The process's one [RecordingSession], wired to the real microphone ([AudioRecordPcmSource]),
- * FFmpeg ([AudioTranscoder]), the picked SAF folder ([SafRecordingSink]) and the «πρόσφατες» list.
+ * Android's encoders ([AudioTranscoder]), the picked SAF folder ([SafRecordingSink]) and the «πρόσφατες» list.
  *
  * **Storage.** `filesDir/recordings_capture/` holds the recording in progress and
  * `filesDir/recordings_pending/` what could not reach the folder — both app-private, neither in the

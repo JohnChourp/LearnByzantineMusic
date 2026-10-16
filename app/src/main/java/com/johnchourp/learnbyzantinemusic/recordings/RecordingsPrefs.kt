@@ -4,6 +4,7 @@ import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 
 class RecordingsPrefs(context: Context) {
     private val prefs = AppPrefs.open(context, AppPrefs.Store.RECORDINGS)
@@ -17,8 +18,12 @@ class RecordingsPrefs(context: Context) {
         prefs.edit().putString(KEY_RECORDINGS_FOLDER_TREE_URI, uri.toString()).apply()
     }
 
+    /** The stored choice as a format this device can record to (MP3, and OPUS below API 29, read as M4A). */
     fun getSelectedFormat(): RecordingFormatOption =
-        RecordingFormatOption.fromStoredValue(prefs.getString(KEY_RECORDINGS_OUTPUT_FORMAT, RecordingFormatOption.FLAC.name))
+        RecordingFormatOption.forRecording(
+            prefs.getString(KEY_RECORDINGS_OUTPUT_FORMAT, RecordingFormatOption.FLAC.name),
+            Build.VERSION.SDK_INT,
+        )
 
     fun setSelectedFormat(format: RecordingFormatOption) {
         prefs.edit().putString(KEY_RECORDINGS_OUTPUT_FORMAT, format.name).apply()

@@ -280,7 +280,8 @@ object AppPrefs {
         store = Store.RECORDINGS,
         type = Type.STRING,
         default = "FLAC",
-        allowed = "a RecordingFormatOption name; unknown values fall back to FLAC",
+        allowed = "a RecordingFormatOption name; unknown values fall back to FLAC; MP3 (no encoder on Android) " +
+            "and OPUS below API 29 are recorded as M4A",
         writtenBy = "the format selector on the recordings page",
         readBy = "the recorder, to pick the container and the transcode step",
         export = Export.YES,
