@@ -82,6 +82,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            // A debug build (and its instrumented tests) installs next to the released app instead of
+            // over it: a different signing key would otherwise force an uninstall, which wipes the
+            // user's notes and settings. Shortcuts in res/xml/shortcuts.xml still name the release
+            // package, so on a debug install they open the released app.
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
