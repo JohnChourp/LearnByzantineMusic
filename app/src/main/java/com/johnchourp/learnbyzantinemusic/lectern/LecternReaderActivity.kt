@@ -61,7 +61,10 @@ class LecternReaderActivity : BaseActivity() {
                 val actions = remember { actions() }
                 // The system bars and the strip under them follow the night tint too (edge-to-edge,
                 // targetSdk 36): otherwise a light theme leaves cream bands around a dark page.
-                val pagePalette = readerPalette(currentPalette(), state.night)
+                // The saved theme cannot change while the reader is open (BaseActivity recreates the
+                // screen on a theme change), so it is read once, not on every page turn.
+                val basePalette = remember { currentPalette() }
+                val pagePalette = readerPalette(basePalette, state.night)
                 LaunchedEffect(pagePalette) { paintSystemBars(pagePalette) }
                 LecternReaderScreen(state = state, title = title, actions = actions)
             }

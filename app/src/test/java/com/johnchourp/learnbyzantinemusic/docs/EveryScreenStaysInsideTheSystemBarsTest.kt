@@ -67,7 +67,7 @@ class EveryScreenStaysInsideTheSystemBarsTest {
         assertTrue(
             "the reader must paint the bars from the same palette its page uses",
             Regex("""LaunchedEffect\(\s*pagePalette\s*\)\s*\{\s*paintSystemBars\(\s*pagePalette\s*\)""").containsMatchIn(reader) &&
-                reader.contains("readerPalette(currentPalette(), state.night)"),
+                reader.contains("readerPalette(basePalette, state.night)"),
         )
     }
 
