@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.recordings.codec
 
 import android.media.MediaCodecList
+import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.net.Uri
 import android.os.Build
@@ -28,6 +29,13 @@ import kotlin.math.sin
  * device offers, then decoded the way the analysis reads recordings. Each round trip must keep the
  * length and the pitch — a wrong rate, a dropped channel or a broken container shows up as one of
  * the two. Only runs on a device or emulator: `MediaCodec` does not exist on the JVM.
+ *
+ * Every encoded file must also **declare** its length (container/STREAMINFO duration), because the
+ * in-app player shows and seeks by it — decoding to the end would not notice a FLAC that says 0:00.
+ *
+ * The `old_*` tests decode recordings the way FFmpegKit wrote them before this change (fixtures in
+ * `androidTest/assets/old_recordings`, made once with `ffmpeg -f lavfi -i sine=frequency=220:...` and
+ * the app's old settings: MP3 `-q:a 2`, AAC/M4A 192k, Opus 96k), plus a 24-bit WAV.
  *
  * FLAC is skipped (not failed) on a device without a FLAC encoder: there the app saves WAV with the
  * «η μετατροπή απέτυχε» message, which `RecordingSaverTranscodeFailureTest` already proves.
@@ -69,7 +77,60 @@ class CodecRoundTripTest {
         val result = AudioTranscoder.transcode(toneWav(), encoded, format)
         assertTrue("$format: ${result.details}", result.isSuccess)
         assertTrue("$format: empty file", encoded.length() > 0L)
+        assertEquals("$format declared duration (s)", 2.0, declaredSeconds(encoded), 0.15)
 
+        try {
+            assertDecodesToTone(encoded, expectedSeconds = 2.0, label = format.name)
+        } finally {
+            encoded.delete()
+        }
+    }
+
+    @Test
+    fun oldFlac() = oldRecording("old.flac")
+
+    @Test
+    fun oldMp3() = oldRecording("old.mp3")
+
+    @Test
+    fun oldAac() = oldRecording("old.aac")
+
+    @Test
+    fun oldM4a() = oldRecording("old.m4a")
+
+    @Test
+    fun oldOpus() {
+        assumeTrue("Ogg Opus is read from API 29", Build.VERSION.SDK_INT >= RecordingFormatOption.OPUS_MIN_SDK)
+        oldRecording("old.opus")
+    }
+
+    @Test
+    fun old24BitWav() = oldRecording("old_24bit.wav")
+
+    private fun oldRecording(asset: String) {
+        val file = File(dir, asset)
+        InstrumentationRegistry.getInstrumentation().context.assets.open("old_recordings/$asset").use { input ->
+            file.outputStream().use { input.copyTo(it) }
+        }
+        try {
+            assertDecodesToTone(file, expectedSeconds = 1.0, label = asset)
+        } finally {
+            file.delete()
+        }
+    }
+
+    private fun declaredSeconds(file: File): Double {
+        val extractor = MediaExtractor()
+        try {
+            extractor.setDataSource(file.absolutePath)
+            val format = extractor.getTrackFormat(0)
+            return if (format.containsKey(MediaFormat.KEY_DURATION)) format.getLong(MediaFormat.KEY_DURATION) / 1e6 else 0.0
+        } finally {
+            extractor.release()
+        }
+    }
+
+    private fun assertDecodesToTone(encoded: File, expectedSeconds: Double, label: String) {
         val decoded = RecordingDecoder.decodeToWav(context, Uri.fromFile(encoded), encoded.name)
         try {
             decoded.inputStream().buffered().use { input ->
@@ -83,15 +144,14 @@ class CodecRoundTripTest {
                     count += read
                 }
                 val seconds = count.toDouble() / RecordingDecoder.SAMPLE_RATE
-                // Lossy codecs add a little priming/padding; anything near 2 s is the same recording.
-                assertEquals("$format length (s)", 2.0, seconds, 0.15)
+                // Lossy codecs add a little priming/padding; anything this near is the same recording.
+                assertEquals("$label length (s)", expectedSeconds, seconds, 0.15)
                 val middle = samples.copyOfRange(count / 4, count * 3 / 4)
                 val hz = upwardCrossings(middle) * RecordingDecoder.SAMPLE_RATE.toDouble() / middle.size
-                assertEquals("$format pitch (Hz)", 220.0, hz, 3.0)
+                assertEquals("$label pitch (Hz)", 220.0, hz, 3.0)
             }
         } finally {
             decoded.delete()
-            encoded.delete()
         }
     }
 
