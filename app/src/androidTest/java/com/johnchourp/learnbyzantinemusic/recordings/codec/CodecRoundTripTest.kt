@@ -95,8 +95,9 @@ class CodecRoundTripTest {
         }
     }
 
+    /** The capture input. Named apart from every encoded output, so a WAV "encode" is never a copy onto itself. */
     private fun toneWav(): File {
-        val file = File(dir, "tone.wav")
+        val file = File(dir, "capture_source.wav")
         val samples = WavFormat.SAMPLE_RATE * 2
         file.outputStream().use { out ->
             out.write(ByteArray(WavFormat.HEADER_SIZE))
