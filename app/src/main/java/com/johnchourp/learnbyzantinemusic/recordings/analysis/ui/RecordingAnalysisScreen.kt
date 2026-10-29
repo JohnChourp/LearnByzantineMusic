@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.recordings.analysis.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,13 +13,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -28,6 +32,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -40,6 +48,8 @@ import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AlignmentStep
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AnalysisStatus
+import com.johnchourp.learnbyzantinemusic.recordings.analysis.ExerciseChoice
+import com.johnchourp.learnbyzantinemusic.recordings.analysis.ExercisePicker
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.MelodyComparison
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.RecordingAnalysisUiState
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.SungNote
@@ -69,9 +79,21 @@ fun RecordingAnalysisScreen(
     onAddExpected: (PhthongName) -> Unit,
     onRemoveLastExpected: () -> Unit,
     onClearExpected: () -> Unit,
+    onOpenExercises: () -> Unit,
+    onUseExercise: (ExerciseChoice) -> Unit,
+    onCloseExercises: () -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // Outside the list: a dialog inside a LazyColumn item would close when the item scrolls away.
+    uiState.exercisePicker?.let { picker ->
+        ExercisePickerDialog(
+            picker = picker,
+            hasMelody = uiState.expected.isNotEmpty(),
+            onUse = onUseExercise,
+            onDismiss = onCloseExercises,
+        )
+    }
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -137,6 +159,7 @@ fun RecordingAnalysisScreen(
                         onAdd = onAddExpected,
                         onRemoveLast = onRemoveLastExpected,
                         onClear = onClearExpected,
+                        onOpenExercises = onOpenExercises,
                     )
                 }
             }
@@ -266,6 +289,7 @@ private fun CompareCard(
     onAdd: (PhthongName) -> Unit,
     onRemoveLast: () -> Unit,
     onClear: () -> Unit,
+    onOpenExercises: () -> Unit,
 ) {
     LessonCard(title = stringResource(R.string.analysis_compare_title)) {
         Text(
@@ -284,7 +308,8 @@ private fun CompareCard(
                 Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = stringResource(R.string.analysis_compare_backspace))
             }
         }
-        Spacer(Modifier.height(10.dp))
+        TextButton(onClick = onOpenExercises) { Text(stringResource(R.string.analysis_compare_from_exercises)) }
+        Spacer(Modifier.height(4.dp))
         if (expected.isEmpty()) {
             Text(stringResource(R.string.analysis_compare_empty), style = MaterialTheme.typography.bodyMedium, color = LbmTextSecondary)
         } else {
@@ -349,6 +374,69 @@ private fun CompareCard(
                 }
             }
         }
+    }
+}
+
+/**
+ * «Από τις ασκήσεις μου». A melody already entered is replaced only after a yes, as «Άνοιγμα» asks
+ * first in the Melody Trainer.
+ */
+@Composable
+private fun ExercisePickerDialog(
+    picker: ExercisePicker,
+    hasMelody: Boolean,
+    onUse: (ExerciseChoice) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var pending by remember(picker) { mutableStateOf<ExerciseChoice?>(null) }
+    val asking = pending
+    if (asking != null) {
+        AlertDialog(
+            onDismissRequest = { pending = null },
+            text = { Text(stringResource(R.string.analysis_exercise_replace, asking.phthongs.size, asking.name)) },
+            confirmButton = {
+                TextButton(onClick = { onUse(asking) }) { Text(stringResource(R.string.analysis_exercise_replace_confirm)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { pending = null }) { Text(stringResource(R.string.melody_trainer_exercise_cancel)) }
+            },
+        )
+        return
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.melody_trainer_exercises_title)) },
+        text = {
+            when {
+                picker.newerFormat -> Text(stringResource(R.string.melody_trainer_exercises_newer))
+                picker.choices.isEmpty() -> Text(stringResource(R.string.analysis_exercises_empty))
+                else -> LazyColumn(modifier = Modifier.heightIn(max = 360.dp)) {
+                    items(picker.choices, key = { it.name }) { choice ->
+                        ExerciseChoiceRow(choice, onClick = { if (hasMelody) pending = choice else onUse(choice) })
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.melody_trainer_exercise_cancel)) }
+        },
+    )
+}
+
+@Composable
+private fun ExerciseChoiceRow(choice: ExerciseChoice, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 10.dp),
+    ) {
+        Text(choice.name, style = MaterialTheme.typography.bodyLarge, color = LbmTextPrimary, fontWeight = FontWeight.SemiBold)
+        Text(
+            text = stringResource(R.string.analysis_exercise_count, choice.phthongs.size),
+            style = MaterialTheme.typography.bodySmall,
+            color = LbmTextSecondary,
+        )
     }
 }
 

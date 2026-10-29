@@ -1356,6 +1356,11 @@
     <string name="analysis_step_wrong">✗ %1$s → %2$s</string>
     <string name="analysis_step_missing">– %1$s</string>
     <string name="analysis_step_extra">+ %1$s</string>
+    <string name="analysis_compare_from_exercises">Από τις ασκήσεις μου</string>
+    <string name="analysis_exercises_empty">Δεν έχεις αποθηκευμένη άσκηση με φθόγγους. Φτιάξε μία στον Γυμναστή Μελωδίας με «Αποθήκευση ως…».</string>
+    <string name="analysis_exercise_count">%1$d φθόγγοι</string>
+    <string name="analysis_exercise_replace">Η αναμενόμενη μελωδία θα γίνει οι %1$d φθόγγοι της «%2$s». Αυτή που έχεις γράψει τώρα θα αντικατασταθεί.</string>
+    <string name="analysis_exercise_replace_confirm">Αντικατάσταση</string>
     <string name="recordings_action_analyze_short">Ανάλυση φθόγγων</string>
     <string name="anastasimatarion_analyze_recording">Ανάλυση</string>
     <string name="learning_path_title">Από το μηδέν</string>

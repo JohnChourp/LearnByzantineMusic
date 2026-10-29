@@ -433,7 +433,8 @@ object AppPrefs {
         default = "empty — no expected melody has been typed for this context",
         allowed = "comma-separated PhthongName constant names (NI … ZO, frozen: see StoredPhthongs); " +
             "unknown names are dropped on read",
-        writtenBy = "the «αναμενόμενη μελωδία» field on the analysis screen",
+        writtenBy = "the «αναμενόμενη μελωδία» field on the analysis screen, typed or taken from an exercise " +
+            "with «Από τις ασκήσεις μου»",
         readBy = "SequenceAligner, to score what was chanted against what was expected",
         export = Export.HYMN_CONTEXTS_ONLY,
     )
@@ -522,7 +523,8 @@ object AppPrefs {
         allowed = "a JSON object {schemaVersion, exercises[]}, at most ExerciseBook.MAX_EXERCISES; " +
             "an entry that cannot be read is kept as it is, and the Trainer never writes over a newer schemaVersion",
         writtenBy = "«Αποθήκευση ως…», rename and delete in «Οι ασκήσεις μου» on the Melody Trainer",
-        readBy = "the «Οι ασκήσεις μου» list, and «Άνοιγμα» of one exercise",
+        readBy = "the «Οι ασκήσεις μου» list, and «Άνοιγμα» of one exercise; «Από τις ασκήσεις μου» on the " +
+            "analysis screen, read only",
         export = Export.YES,
     )
 
