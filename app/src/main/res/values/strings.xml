@@ -23,6 +23,7 @@
     <string name="home_section_practice">Εξάσκηση &amp; Εργαλεία</string>
     <string name="home_section_practice_sub">Εξασκήσου και κράτα σημειώσεις</string>
     <string name="home_tile_melody_trainer_sub">Γυμναστής μελωδίας</string>
+    <string name="home_tile_ear_trainer_sub">Βρες τον ήχο με το αυτί</string>
     <string name="home_tile_calendar_sub">Εβδομαδιαίο ημερολόγιο ήχων</string>
     <string name="home_tile_recordings_sub">Ηχογράφησε και άκουσε</string>
     <string name="home_tile_notes_sub">Οι σημειώσεις σου</string>
@@ -651,6 +652,8 @@
     <string name="learning_data_item_analysis">Ρυθμίσεις ανάλυσης ύμνων: %1$d</string>
     <string name="learning_data_item_trainer_exercises">Οι ασκήσεις μου, στον Γυμναστή Μελωδίας: %1$d</string>
     <string name="learning_data_item_trainer_last_melody">Η τελευταία μελωδία του Γυμναστή Μελωδίας</string>
+    <string name="learning_data_item_ear_trainer_scores">«Μάντεψε τον ήχο», σκορ σε ήχους: %1$d</string>
+    <string name="learning_data_item_ear_trainer_level">Το επίπεδο του «Μάντεψε τον ήχο»</string>
     <string name="learning_data_item_lectern_pages">Ψηφιακό αναλόγιο, ήχοι σελίδων σε PDF: %1$d</string>
     <string name="learning_data_import_failed_title">Η εισαγωγή δεν έγινε</string>
     <string name="learning_data_import_unfinished_title">Η εισαγωγή δεν ολοκληρώθηκε</string>
@@ -1407,6 +1410,29 @@
     <string name="practice_reminder_channel_description">Μία φορά την ημέρα, στην ώρα που διάλεξες, αν δεν έχεις εξασκηθεί ακόμη.</string>
     <string name="practice_reminder_notification_text">Δεν έχεις εξασκηθεί ακόμη σήμερα — πέντε λεπτά αρκούν.</string>
     <string name="practice_reminder_notification_text_streak">Συνέχεια ημερών: %1$d — πέντε λεπτά για να συνεχίσει.</string>
+    <!-- Μάντεψε τον ήχο (ClickUp 869f4tqb9) -->
+    <string name="ear_trainer_title">Μάντεψε τον ήχο</string>
+    <string name="ear_trainer_subtitle">Άκου μια κλίμακα και βρες σε ποιον ήχο είναι.</string>
+    <string name="ear_trainer_level_title">Επίπεδο</string>
+    <string name="ear_trainer_level_kyrioi">Οι 4 κύριοι, με ίσο</string>
+    <string name="ear_trainer_level_all">Και οι 8, με ίσο</string>
+    <string name="ear_trainer_level_all_without_ison">Και οι 8, χωρίς ίσο</string>
+    <string name="ear_trainer_question_title">Ποιος ήχος είναι;</string>
+    <string name="ear_trainer_question_hint">Πάνω στο ίσο ακούς την κλίμακα του ήχου γύρω από τη βάση του: τρεις φθόγγους πάνω, δύο κάτω, και πίσω στη βάση.</string>
+    <string name="ear_trainer_question_hint_without_ison">Ακούς την κλίμακα του ήχου γύρω από τη βάση του, χωρίς ίσο: τρεις φθόγγους πάνω, δύο κάτω, και πίσω στη βάση. Η βάση είναι ο πρώτος και ο τελευταίος φθόγγος.</string>
+    <string name="ear_trainer_play">Άκου</string>
+    <string name="ear_trainer_stop">Σταμάτα</string>
+    <string name="ear_trainer_listen_first">Άκου πρώτα και μετά διάλεξε ήχο.</string>
+    <string name="ear_trainer_right">Σωστά: %1$s</string>
+    <string name="ear_trainer_wrong">Ήταν %1$s, όχι %2$s</string>
+    <string name="ear_trainer_genus_and_base">%1$s · βάση %2$s</string>
+    <string name="ear_trainer_moria_from_base">Από τη βάση, σε μόρια: %1$s</string>
+    <string name="ear_trainer_dominants">Δεσπόζοντες: %1$s</string>
+    <string name="ear_trainer_play_mode">Άκου: %1$s</string>
+    <string name="ear_trainer_next">Επόμενη ερώτηση</string>
+    <string name="ear_trainer_scores_title">Τα σκορ σου</string>
+    <string name="ear_trainer_score">%1$s: %2$d σωστά από %3$d</string>
+    <string name="ear_trainer_score_none">%1$s: καμία απάντηση ακόμη</string>
     <!-- Ζωντανός καθρέφτης φωνής (E1) -->
     <string name="eight_modes_mirror_card_title">Πού είμαι</string>
     <string name="eight_modes_mirror_hint">Άνοιξε το μικρόφωνο και ψάλε: σου λέει σε ποιον φθόγγο είσαι και πόσα μόρια μακριά.</string>

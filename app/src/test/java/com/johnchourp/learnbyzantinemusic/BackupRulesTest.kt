@@ -46,6 +46,8 @@ class BackupRulesTest {
         AppPrefs.Store.PRACTICE to Backup.KEPT,
         // The Trainer's saved exercises and last melody — the user's own work (ClickUp 869f5x261).
         AppPrefs.Store.TRAINER to Backup.KEPT,
+        // «Μάντεψε τον ήχο»: the score per ήχος and the level — the learner's own (ClickUp 869f4tqb9).
+        AppPrefs.Store.EAR_TRAINER to Backup.KEPT,
         // The lectern's library: PDF URIs whose read grants stay on this phone (ClickUp 869f5x2e7).
         AppPrefs.Store.LECTERN_LIBRARY to Backup.LEFT_OUT,
         // The lectern's page → ήχος maps, named by each PDF's SHA-256: the user's own work.

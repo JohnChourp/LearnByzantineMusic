@@ -24,6 +24,7 @@
     <string name="home_section_practice">Practice &amp; Tools</string>
     <string name="home_section_practice_sub">Practice and take notes</string>
     <string name="home_tile_melody_trainer_sub">Melody trainer</string>
+    <string name="home_tile_ear_trainer_sub">Find the mode by ear</string>
     <string name="home_tile_calendar_sub">Weekly mode calendar</string>
     <string name="home_tile_recordings_sub">Record and listen</string>
     <string name="home_tile_notes_sub">Your notes</string>
@@ -652,6 +653,8 @@
     <string name="learning_data_item_analysis">Hymn analysis settings: %1$d</string>
     <string name="learning_data_item_trainer_exercises">My exercises, in the Melody Trainer: %1$d</string>
     <string name="learning_data_item_trainer_last_melody">The Melody Trainer\'s last melody</string>
+    <string name="learning_data_item_ear_trainer_scores">“Guess the mode” scores, modes: %1$d</string>
+    <string name="learning_data_item_ear_trainer_level">The level of “Guess the mode”</string>
     <string name="learning_data_item_lectern_pages">Digital lectern, page modes in PDFs: %1$d</string>
     <string name="learning_data_import_failed_title">Nothing was imported</string>
     <string name="learning_data_import_unfinished_title">The import did not finish</string>
@@ -1408,6 +1411,29 @@
     <string name="practice_reminder_channel_description">Once a day, at the time you chose, if you have not practised yet.</string>
     <string name="practice_reminder_notification_text">You have not practised yet today — five minutes are enough.</string>
     <string name="practice_reminder_notification_text_streak">Day streak: %1$d — five minutes keep it going.</string>
+    <!-- Μάντεψε τον ήχο (ClickUp 869f4tqb9) -->
+    <string name="ear_trainer_title">Guess the mode</string>
+    <string name="ear_trainer_subtitle">Hear a scale and tell which mode it is.</string>
+    <string name="ear_trainer_level_title">Level</string>
+    <string name="ear_trainer_level_kyrioi">The 4 authentic modes, with ison</string>
+    <string name="ear_trainer_level_all">All 8, with ison</string>
+    <string name="ear_trainer_level_all_without_ison">All 8, without ison</string>
+    <string name="ear_trainer_question_title">Which mode is it?</string>
+    <string name="ear_trainer_question_hint">Over the ison you hear the mode\'s scale around its base: three notes up, two down, and back to the base.</string>
+    <string name="ear_trainer_question_hint_without_ison">You hear the mode\'s scale around its base, without the ison: three notes up, two down, and back to the base. The base is the first and the last note.</string>
+    <string name="ear_trainer_play">Listen</string>
+    <string name="ear_trainer_stop">Stop</string>
+    <string name="ear_trainer_listen_first">Listen first, then choose a mode.</string>
+    <string name="ear_trainer_right">Right: %1$s</string>
+    <string name="ear_trainer_wrong">It was %1$s, not %2$s</string>
+    <string name="ear_trainer_genus_and_base">%1$s · base %2$s</string>
+    <string name="ear_trainer_moria_from_base">From the base, in moria: %1$s</string>
+    <string name="ear_trainer_dominants">Dominant notes: %1$s</string>
+    <string name="ear_trainer_play_mode">Listen: %1$s</string>
+    <string name="ear_trainer_next">Next question</string>
+    <string name="ear_trainer_scores_title">Your scores</string>
+    <string name="ear_trainer_score">%1$s: %2$d right of %3$d</string>
+    <string name="ear_trainer_score_none">%1$s: no answers yet</string>
     <!-- Live voice mirror (E1) -->
     <string name="eight_modes_mirror_card_title">Where am I</string>
     <string name="eight_modes_mirror_hint">Turn the microphone on and chant: it tells you which phthong you are on, and how many moria away.</string>

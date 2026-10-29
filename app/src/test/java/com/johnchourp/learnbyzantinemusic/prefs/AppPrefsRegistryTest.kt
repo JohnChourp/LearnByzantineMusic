@@ -24,6 +24,8 @@ class AppPrefsRegistryTest {
                 "app_language_code",
                 "app_language_onboarding_completed",
                 "app_theme_mode",
+                "ear_trainer_level",
+                "ear_trainer_scores",
                 "eight_modes_tour_shown",
                 "favorite_topic_ids",
                 "global_base_shift_moria",
@@ -62,6 +64,7 @@ class AppPrefsRegistryTest {
             listOf(
                 "eight_modes_base_shift_prefs",
                 "learn_byzantine_music_device",
+                "learn_byzantine_music_ear_trainer",
                 "learn_byzantine_music_lectern_library",
                 "learn_byzantine_music_lectern_pages",
                 "learn_byzantine_music_notes",
