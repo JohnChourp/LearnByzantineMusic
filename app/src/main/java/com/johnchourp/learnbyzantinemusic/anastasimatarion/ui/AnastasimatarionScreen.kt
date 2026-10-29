@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,11 +28,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -132,16 +137,24 @@ private fun ModePicker(
     onSelectMode: (String) -> Unit,
 ) {
     // The row scrolls sideways; a mode opened from the calendar may sit off screen (ClickUp `869f4tqdf`).
-    val chipTargets = remember { AnastasimatarionLabels.MODE_ORDER.associateWith { BringIntoViewRequester() } }
+    // Only the row scrolls, never the page, and only once per selection: this item leaves composition
+    // when the list scrolls past it, and coming back must not move anything.
+    val rowScroll = rememberScrollState()
+    val chipSpans = remember { mutableStateMapOf<String, IntRange>() }
+    var revealedModeKey by rememberSaveable { mutableStateOf<String?>(null) }
     LaunchedEffect(selectedModeKey) {
+        if (revealedModeKey == selectedModeKey) return@LaunchedEffect
         withFrameNanos { } // the row has laid out its chips
-        chipTargets[selectedModeKey]?.bringIntoView()
+        val span = chipSpans[selectedModeKey] ?: return@LaunchedEffect
+        val visible = rowScroll.value until rowScroll.value + rowScroll.viewportSize
+        if (span.first !in visible || span.last !in visible) rowScroll.animateScrollTo(span.first)
+        revealedModeKey = selectedModeKey
     }
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
+                .horizontalScroll(rowScroll),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             AnastasimatarionLabels.MODE_ORDER.forEach { modeKey ->
@@ -149,7 +162,10 @@ private fun ModePicker(
                     label = stringResource(AnastasimatarionLabels.modeName(modeKey)),
                     selected = modeKey == selectedModeKey,
                     onClick = { onSelectMode(modeKey) },
-                    modifier = Modifier.bringIntoViewRequester(chipTargets.getValue(modeKey)),
+                    modifier = Modifier.onPlaced { placed ->
+                        val x = placed.positionInParent().x.toInt()
+                        chipSpans[modeKey] = x until x + placed.size.width
+                    },
                 )
             }
         }

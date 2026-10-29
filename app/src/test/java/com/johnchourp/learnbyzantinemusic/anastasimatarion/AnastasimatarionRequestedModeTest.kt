@@ -1,12 +1,13 @@
 package com.johnchourp.learnbyzantinemusic.anastasimatarion
 
-import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.modeKeyOf
+import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.CurrentMode
+import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.modeKeyOf
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.openingModeKey
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.showsOtherMode
-import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.weekModeKey
-import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.calendar.LiturgicalToneCycle
+import com.johnchourp.learnbyzantinemusic.modes.ModeResources
+import com.johnchourp.learnbyzantinemusic.music.Mode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -42,13 +43,16 @@ class AnastasimatarionRequestedModeTest {
     }
 
     @Test
-    fun theCalendarsButtonOpensTheModeOfItsOwnHeadline() {
-        // The calendar builds its headline and its button from the same resolved tone, so they agree
-        // on every date; a week without a tone (Holy Week, the week of Pentecost) has no button.
+    fun theCalendarsButtonOpensTheModeItsHeadlineNames() {
+        // The headline shows tone.toneNameRes; the button opens modeKeyOf(tone). For every date of 2026
+        // the button's mode must be the one the headline names, and a week without a tone (Holy
+        // Week, the week of Pentecost) has neither.
         val cycle = LiturgicalToneCycle()
         var day = LocalDate.of(2026, 1, 1)
         while (day.year == 2026) {
-            assertEquals("$day", weekModeKey(day), modeKeyOf(cycle.resolveTone(day)))
+            val tone = cycle.resolveTone(day)
+            val buttonNameRes = modeKeyOf(tone)?.let { ModeResources.nameRes(Mode.fromKey(it)!!) }
+            assertEquals("$day", tone.toneNameRes, buttonNameRes)
             day = day.plusDays(1)
         }
         assertNull("Holy Wednesday", modeKeyOf(cycle.resolveTone(LocalDate.of(2026, 4, 8))))
