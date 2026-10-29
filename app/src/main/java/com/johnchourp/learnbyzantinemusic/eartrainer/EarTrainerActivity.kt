@@ -28,7 +28,8 @@ import kotlinx.coroutines.launch
  * the ison would stop at every note. The phrase is one stream that moves from φθόγγος to φθόγγος
  * ([PhthongTonePlayer.retune]), so no note waits for the previous one to fade. A background ison
  * ([IsonPlaybackService]) is stopped before the first note, or two isons would sound at once.
- * Nothing plays until the learner presses «Άκου», and everything stops in onStop.
+ * Nothing plays until the learner asks for it — «Άκου», «Επόμενη ερώτηση», or «Άκου: …» for one of
+ * the two ήχοι after an answer — and everything stops in onStop.
  *
  * **State.** The level and the scores live in [EarTrainerStore]; the question, the answer and
  * whether it was heard live in the instance state, so a recreation shows the same question instead

@@ -24,8 +24,8 @@ import com.johnchourp.learnbyzantinemusic.music.ModeLadder
  * The ladder the 8 Ήχοι page draws ([ModeLadders]) and the ison's base ([IsonDrone.base]), nothing
  * written by hand. **No base shift** (owner decision, 2026-10-29): each ήχος sounds at its own
  * pitch, because the register is part of what tells some of them apart — Γ΄ and Πλ.Δ΄ are only 2
- * μόρια apart around the base, while their bases are 30 μόρια apart. A user's «Μεταφορά βάσης» or
- * the voice's global shift would move one mode and not another.
+ * μόρια apart around the base, while their bases are 30 μόρια apart, and a user's «Μεταφορά βάσης»
+ * moves one mode and not another. The voice's global shift is left out too, by the same decision.
  */
 object EarTrainerPhrase {
 

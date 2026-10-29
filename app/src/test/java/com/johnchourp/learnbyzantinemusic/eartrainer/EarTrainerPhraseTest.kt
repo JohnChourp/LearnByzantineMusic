@@ -45,6 +45,17 @@ class EarTrainerPhraseTest {
     }
 
     @Test
+    fun theClosestPairIsThirdAndPlagalFourth() {
+        // The FAQ names it: by the largest gap at any one φθόγγος, it is the only pair 2 μόρια apart.
+        fun gap(a: Mode, b: Mode) = EarTrainerPhrase.moriaFromBase(a).zip(EarTrainerPhrase.moriaFromBase(b))
+            .maxOf { (x, y) -> abs(x - y) }
+        val pairs = Mode.entries.flatMapIndexed { i, a -> Mode.entries.drop(i + 1).map { b -> Triple(a, b, gap(a, b)) } }
+        val closest = pairs.minOf { it.third }
+        assertEquals(2, closest)
+        assertEquals(listOf(Mode.THIRD to Mode.PLAGAL_FOURTH), pairs.filter { it.third == closest }.map { it.first to it.second })
+    }
+
+    @Test
     fun theClosestPairIsTellableByItsRegister() {
         // Γ΄ and Πλ.Δ΄ are 2 μόρια apart around the base; their bases are 30 μόρια apart. That is why
         // the phrase is played without any base shift.

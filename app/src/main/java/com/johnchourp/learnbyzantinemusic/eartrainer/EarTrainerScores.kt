@@ -33,8 +33,9 @@ data class EarTrainerScores(val byMode: Map<Mode, ModeScore> = emptyMap()) {
  *     {"schemaVersion":1,"modes":[{"mode":"first","answered":4,"correct":3}, …]}
  *
  * In the order of the cycle, by `Mode.key`, which is frozen. An array and not an object keyed by
- * mode, so the text is the same on every JVM: the «Δεδομένα μάθησης» file imports this value only in
- * the exact form [encode] writes. **The format is stored on users' devices**: add fields, never
+ * mode, so the order of the modes never depends on a map: the «Δεδομένα μάθησης» file imports this
+ * value only in the exact form [encode] writes. (The keys inside each object follow org.json, which
+ * writes them in one order on every Android device and may use another on the JVM of the tests.) **The format is stored on users' devices**: add fields, never
  * rename one, and write a new field only when it has something to say.
  *
  * Reading never throws. An entry it cannot read — an unknown ήχος, a negative count, more right than
