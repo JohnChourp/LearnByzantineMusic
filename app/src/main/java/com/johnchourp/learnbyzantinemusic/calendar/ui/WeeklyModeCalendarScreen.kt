@@ -53,6 +53,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -105,6 +106,7 @@ fun WeeklyModeCalendarScreen(
     onSelectDay: (Int) -> Unit,
     onPickMonth: (year: Int, month: Int) -> Unit,
     onOpenReading: (String) -> Unit,
+    onOpenAnastasimatarion: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scroll = rememberScrollState()
@@ -138,7 +140,7 @@ fun WeeklyModeCalendarScreen(
                 )
             }
             StaggeredAppear(delayMillis = 120) { LegendCard() }
-            StaggeredAppear(delayMillis = 180) { ToneCard(state) }
+            StaggeredAppear(delayMillis = 180) { ToneCard(state, onOpenAnastasimatarion) }
             StaggeredAppear(delayMillis = 240) { CelebrationsCard(state) }
             StaggeredAppear(delayMillis = 300) { ReadingsCard(state, onOpenReading) }
             Spacer(Modifier.height(8.dp))
@@ -526,7 +528,7 @@ private fun LegendSwatchRow(fill: Color, border: Color, labelRes: Int) {
 /* ----------------------------------------------------------------------------------------------- */
 
 @Composable
-private fun ToneCard(state: WeeklyModeCalendarUiState) {
+private fun ToneCard(state: WeeklyModeCalendarUiState, onOpenAnastasimatarion: (String) -> Unit) {
     LessonCard(title = stringResource(R.string.weekly_mode_calendar_tone_section_title)) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -567,6 +569,11 @@ private fun ToneCard(state: WeeklyModeCalendarUiState) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = LbmTextSecondary,
             )
+            state.anastasimatarionModeKey?.let { modeKey ->
+                OutlinedButton(onClick = { onOpenAnastasimatarion(modeKey) }) {
+                    Text(text = stringResource(R.string.weekly_mode_calendar_open_anastasimatarion))
+                }
+            }
         }
     }
 }

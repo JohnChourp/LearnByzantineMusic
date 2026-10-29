@@ -5,6 +5,7 @@ import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.calendar.LiturgicalToneCycle
 import com.johnchourp.learnbyzantinemusic.calendar.LiturgicalToneKind
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyToneAnnouncement
+import com.johnchourp.learnbyzantinemusic.calendar.WeeklyToneResult
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -30,8 +31,10 @@ object AnastasimatarionWeekMode {
     private val toneCycle = LiturgicalToneCycle()
     private val announcement = WeeklyToneAnnouncement(toneCycle = toneCycle)
 
-    fun weekModeKey(date: LocalDate): String? =
-        toneCycle.resolveTone(date).toneIndex?.let { Mode.ofToneIndex(it).key }
+    fun weekModeKey(date: LocalDate): String? = modeKeyOf(toneCycle.resolveTone(date))
+
+    /** The mode key of a resolved tone; null in a week with no tone. The calendar's tone card uses it. */
+    fun modeKeyOf(tone: WeeklyToneResult): String? = tone.toneIndex?.let { Mode.ofToneIndex(it).key }
 
     fun currentMode(moment: LocalDateTime): CurrentMode? {
         val now = announcement.at(moment)
@@ -50,6 +53,22 @@ object AnastasimatarionWeekMode {
         }
         return CurrentMode(Mode.ofToneIndex(today).key, badge)
     }
+
+    /**
+     * The mode the page opens on, before [currentMode]: the mode that was on screen before a
+     * recreation (a rotation, or a process the system killed), else the mode the caller asked for —
+     * the calendar asks for the selected week's (ClickUp `869f4tqdf`). Only one of the eight keys
+     * counts; null keeps [currentMode].
+     */
+    fun openingModeKey(savedModeKey: String?, requestedModeKey: String?): String? =
+        listOf(savedModeKey, requestedModeKey).firstOrNull { it in AnastasimatarionLabels.MODE_ORDER }
+
+    /**
+     * True when the page shows a mode other than the one its badge names, so it must say which mode
+     * is on screen (ClickUp `869f4tqdf`). No badge (a week with no tone): nothing to tell apart.
+     */
+    fun showsOtherMode(selectedModeKey: String, current: CurrentMode?): Boolean =
+        current != null && current.modeKey != selectedModeKey
 
     /** A mode key, and the badge template that names it (formatted with the mode's name). */
     data class CurrentMode(val modeKey: String, @StringRes val badgeRes: Int)

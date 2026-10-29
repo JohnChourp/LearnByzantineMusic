@@ -728,6 +728,7 @@
     <string name="weekly_mode_calendar_subtitle">The tone of the week, feasts and readings for every day</string>
     <string name="weekly_mode_calendar_tone_section_title">Tone of the week</string>
     <string name="weekly_mode_calendar_tone_explainer">The tone changes every week (Sunday–Saturday) following the cycle of the 8 tones.</string>
+    <string name="weekly_mode_calendar_open_anastasimatarion">Resurrection hymns of the tone</string>
     <string name="weekly_mode_calendar_tone_none_holy_week">Palm Sunday – Holy Week: no tone of the week</string>
     <string name="weekly_mode_calendar_tone_bright_week">Bright Week – tone of the day: %1$s</string>
     <string name="weekly_mode_calendar_tone_none_pentecost_week">Week of Pentecost: no tone of the week</string>
@@ -1241,6 +1242,7 @@
     <string name="anastasimatarion_title">Anastasimatarion</string>
     <string name="anastasimatarion_subtitle">The Sunday resurrection hymns in the 8 modes, with your recordings for each one</string>
     <string name="anastasimatarion_week_mode_template">Mode of the week: %1$s</string>
+    <string name="anastasimatarion_shown_mode_template">Showing: %1$s</string>
     <string name="anastasimatarion_day_mode_template">Mode of the day: %1$s</string>
     <string name="anastasimatarion_vespers_mode_template">From vespers tonight: %1$s</string>
     <string name="anastasimatarion_service_vespers">Vespers</string>

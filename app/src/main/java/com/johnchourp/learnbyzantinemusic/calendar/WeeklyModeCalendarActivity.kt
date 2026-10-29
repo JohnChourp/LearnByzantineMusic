@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.R
+import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionActivity
+import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode
 import com.johnchourp.learnbyzantinemusic.calendar.ui.CelebrationUi
 import com.johnchourp.learnbyzantinemusic.calendar.ui.DayCellUi
 import com.johnchourp.learnbyzantinemusic.calendar.ui.MonthGridUi
@@ -68,6 +70,7 @@ class WeeklyModeCalendarActivity : BaseActivity() {
                     onSelectDay = ::selectDay,
                     onPickMonth = ::pickMonth,
                     onOpenReading = ::openReadingTextPage,
+                    onOpenAnastasimatarion = ::openAnastasimatarion,
                 )
             }
         }
@@ -97,6 +100,10 @@ class WeeklyModeCalendarActivity : BaseActivity() {
         val clampedDay = min(selectedDate.dayOfMonth, visibleMonth.lengthOfMonth())
         selectedDate = visibleMonth.atDay(clampedDay)
         rebuildState()
+    }
+
+    private fun openAnastasimatarion(modeKey: String) {
+        startActivity(AnastasimatarionActivity.intent(this, modeKey))
     }
 
     private fun openReadingTextPage(readingId: String) {
@@ -129,6 +136,7 @@ class WeeklyModeCalendarActivity : BaseActivity() {
             monthGrid = buildMonthGrid(),
             selectedDay = selectedDate.dayOfMonth,
             toneLabel = toneLabel(tone),
+            anastasimatarionModeKey = AnastasimatarionWeekMode.modeKeyOf(tone),
             weekRangeLabel = getString(
                 R.string.weekly_mode_calendar_week_range_template,
                 tone.weekStart.format(weekRangeFormatter),
