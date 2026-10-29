@@ -38,9 +38,9 @@ import com.johnchourp.learnbyzantinemusic.modes.ModeResources
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.IntonationProfile
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
-import com.johnchourp.learnbyzantinemusic.recordings.analysis.AlignmentResult
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AlignmentStep
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.AnalysisStatus
+import com.johnchourp.learnbyzantinemusic.recordings.analysis.MelodyComparison
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.RecordingAnalysisUiState
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.SungNote
 import com.johnchourp.learnbyzantinemusic.ui.components.LessonCard
@@ -133,8 +133,7 @@ fun RecordingAnalysisScreen(
                 StaggeredAppear(delayMillis = 180, modifier = Modifier.padding(horizontal = 16.dp)) {
                     CompareCard(
                         expected = uiState.expected,
-                        notes = uiState.notes,
-                        alignment = uiState.alignment,
+                        comparison = uiState.comparison,
                         onAdd = onAddExpected,
                         onRemoveLast = onRemoveLastExpected,
                         onClear = onClearExpected,
@@ -263,8 +262,7 @@ private fun SungCard(notes: List<SungNote>, durationMs: Long) {
 @Composable
 private fun CompareCard(
     expected: List<PhthongName>,
-    notes: List<SungNote>,
-    alignment: AlignmentResult?,
+    comparison: MelodyComparison?,
     onAdd: (PhthongName) -> Unit,
     onRemoveLast: () -> Unit,
     onClear: () -> Unit,
@@ -301,7 +299,10 @@ private fun CompareCard(
             }
             TextButton(onClick = onClear) { Text(stringResource(R.string.analysis_compare_clear)) }
         }
-        if (alignment != null) {
+        if (comparison != null) {
+            // Steps are read only through the comparison's own lists: [expected] above may already be
+            // newer than the alignment (MelodyComparison).
+            val alignment = comparison.alignment
             Spacer(Modifier.height(10.dp))
             Text(
                 text = stringResource(
@@ -325,19 +326,23 @@ private fun CompareCard(
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 alignment.steps.forEach { step ->
                     when (step) {
-                        is AlignmentStep.Match -> NoteChip("✓ ${expected[step.expected].displayName}", AccentGreenContainer, AccentGreenContent)
+                        is AlignmentStep.Match -> NoteChip("✓ ${comparison.expected[step.expected].displayName}", AccentGreenContainer, AccentGreenContent)
                         is AlignmentStep.Substitution -> NoteChip(
-                            stringResource(R.string.analysis_step_wrong, expected[step.expected].displayName, phthongLabel(notes[step.sung].degree)),
+                            stringResource(
+                                R.string.analysis_step_wrong,
+                                comparison.expected[step.expected].displayName,
+                                phthongLabel(comparison.notes[step.sung].degree),
+                            ),
                             AccentOrangeContainer,
                             AccentOrangeContent,
                         )
                         is AlignmentStep.Missing -> NoteChip(
-                            stringResource(R.string.analysis_step_missing, expected[step.expected].displayName),
+                            stringResource(R.string.analysis_step_missing, comparison.expected[step.expected].displayName),
                             LbmSurfaceVariant,
                             AccentCrimsonContent,
                         )
                         is AlignmentStep.Extra -> NoteChip(
-                            stringResource(R.string.analysis_step_extra, phthongLabel(notes[step.sung].degree)),
+                            stringResource(R.string.analysis_step_extra, phthongLabel(comparison.notes[step.sung].degree)),
                             LbmSurfaceVariant,
                             LbmTextSecondary,
                         )

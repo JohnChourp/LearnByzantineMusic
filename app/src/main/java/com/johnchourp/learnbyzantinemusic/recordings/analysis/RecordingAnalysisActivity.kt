@@ -96,7 +96,7 @@ data class RecordingAnalysisUiState(
     val niHz: Double? = null,
     val notes: List<SungNote> = emptyList(),
     val expected: List<PhthongName> = emptyList(),
-    val alignment: AlignmentResult? = null,
+    val comparison: MelodyComparison? = null,
 ) {
     val positions: IntArray get() = ModeScalePositions.forMode(mode)
 }
@@ -192,18 +192,13 @@ class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(ap
                 val positions = ModeScalePositions.forMode(state.mode)
                 val niHz = PhthongSegmenter.calibrate(track, positions, state.startPhthong)
                 val notes = niHz?.let { PhthongSegmenter.segment(track, it, positions) }.orEmpty()
-                val alignment = if (state.expected.isNotEmpty() && notes.isNotEmpty()) {
-                    SequenceAligner.align(state.expected, notes.map { it.phthong })
-                } else {
-                    null
-                }
-                Triple(niHz, notes, alignment)
+                Triple(niHz, notes, MelodyComparison.of(state.expected, notes))
             }
             _uiState.update {
                 it.copy(
                     niHz = result.first,
                     notes = result.second,
-                    alignment = result.third,
+                    comparison = result.third,
                     status = if (result.second.isEmpty()) AnalysisStatus.NO_PITCH else AnalysisStatus.READY,
                 )
             }
