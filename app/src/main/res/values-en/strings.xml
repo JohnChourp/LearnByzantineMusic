@@ -1357,6 +1357,11 @@
     <string name="analysis_step_wrong">✗ %1$s → %2$s</string>
     <string name="analysis_step_missing">– %1$s</string>
     <string name="analysis_step_extra">+ %1$s</string>
+    <string name="analysis_compare_from_exercises">From my exercises</string>
+    <string name="analysis_exercises_empty">You have no saved exercise with phthongs. Make one in the Melody Trainer with “Save as…”.</string>
+    <string name="analysis_exercise_count">%1$d phthongs</string>
+    <string name="analysis_exercise_replace">The expected melody will become the %1$d phthongs of “%2$s”. The one you have entered now will be replaced.</string>
+    <string name="analysis_exercise_replace_confirm">Replace</string>
     <string name="recordings_action_analyze_short">Phthong analysis</string>
     <string name="anastasimatarion_analyze_recording">Analyse</string>
     <string name="learning_path_title">From scratch</string>

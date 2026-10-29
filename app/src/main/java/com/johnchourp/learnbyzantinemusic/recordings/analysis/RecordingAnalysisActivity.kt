@@ -15,6 +15,8 @@ import com.johnchourp.learnbyzantinemusic.BaseActivity
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.recordings.analysis.ui.RecordingAnalysisScreen
 import com.johnchourp.learnbyzantinemusic.music.Mode
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
+import com.johnchourp.learnbyzantinemusic.trainer.TrainerExerciseStore
 import com.johnchourp.learnbyzantinemusic.ui.theme.LbmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -27,7 +29,8 @@ import kotlinx.coroutines.withContext
 
 /**
  * «Ανάλυση φθόγγων» for one saved recording: which phthongs were sung, in which order, how in
- * tune, a pitch-over-time diagram, and — against a melody the user types — how correct it was.
+ * tune, a pitch-over-time diagram, and — against a melody the user types, or takes from an exercise
+ * of «Οι ασκήσεις μου» ([ExerciseTemplates]) — how correct it was.
  *
  * Flow: [RecordingDecoder] (Android decoders → mono WAV) → [PitchTrackAnalyzer] (YIN, once per
  * recording) → [PhthongSegmenter] on the chosen mode's scale, calibrated on the starting
@@ -62,6 +65,9 @@ class RecordingAnalysisActivity : BaseActivity() {
                     onAddExpected = viewModel::addExpected,
                     onRemoveLastExpected = viewModel::removeLastExpected,
                     onClearExpected = viewModel::clearExpected,
+                    onOpenExercises = viewModel::openExercisePicker,
+                    onUseExercise = viewModel::useExercise,
+                    onCloseExercises = viewModel::closeExercisePicker,
                     onRetry = viewModel::retry,
                 )
             }
@@ -97,12 +103,31 @@ data class RecordingAnalysisUiState(
     val notes: List<SungNote> = emptyList(),
     val expected: List<PhthongName> = emptyList(),
     val comparison: MelodyComparison? = null,
+    /** «Από τις ασκήσεις μου» while it is open, else null. */
+    val exercisePicker: ExercisePicker? = null,
 ) {
     val positions: IntArray get() = ModeScalePositions.forMode(mode)
+
+    /**
+     * This state with [expected] as the melody, compared with the notes it has now. The melody and its
+     * comparison change together: the notes do not depend on the melody and the alignment is cheap, so
+     * the card never shows a result for a melody it no longer has.
+     */
+    fun withExpected(expected: List<PhthongName>): RecordingAnalysisUiState =
+        copy(expected = expected, comparison = MelodyComparison.of(expected, notes))
+
+    /** This state with the notes a recompute found, compared with the melody as it is now. */
+    fun withNotes(niHz: Double?, notes: List<SungNote>): RecordingAnalysisUiState = copy(
+        niHz = niHz,
+        notes = notes,
+        comparison = MelodyComparison.of(expected, notes),
+        status = if (notes.isEmpty()) AnalysisStatus.NO_PITCH else AnalysisStatus.READY,
+    )
 }
 
 class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(application) {
     private val store = AnalysisSettingsStore(application)
+    private val exercises = TrainerExerciseStore(TrainerExerciseStore.forPrefs(AppPrefs.open(application, AppPrefs.Store.TRAINER)))
     private val _uiState = MutableStateFlow(RecordingAnalysisUiState())
     val uiState: StateFlow<RecordingAnalysisUiState> = _uiState.asStateFlow()
 
@@ -176,13 +201,23 @@ class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(ap
 
     fun clearExpected() = updateExpected(emptyList())
 
-    /**
-     * The melody and its comparison change in the same update: the notes do not depend on the
-     * melody, and the alignment is cheap, so the card never shows a result for a melody it no
-     * longer has.
-     */
+    /** Opens «Από τις ασκήσεις μου», read afresh: the Trainer may have changed them since this screen opened. */
+    fun openExercisePicker() {
+        _uiState.update { it.copy(exercisePicker = ExerciseTemplates.picker(exercises.loadExercises())) }
+    }
+
+    fun closeExercisePicker() {
+        _uiState.update { it.copy(exercisePicker = null) }
+    }
+
+    /** The φθόγγοι of [choice] become the expected melody; the exercise itself is left as it is. */
+    fun useExercise(choice: ExerciseChoice) {
+        closeExercisePicker()
+        updateExpected(choice.phthongs)
+    }
+
     private fun updateExpected(expected: List<PhthongName>) {
-        _uiState.update { it.copy(expected = expected, comparison = MelodyComparison.of(expected, it.notes)) }
+        _uiState.update { it.withExpected(expected) }
         store.saveExpected(contextKey, expected)
     }
 
@@ -197,15 +232,8 @@ class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(ap
                 val niHz = PhthongSegmenter.calibrate(track, positions, state.startPhthong)
                 niHz to niHz?.let { PhthongSegmenter.segment(track, it, positions) }.orEmpty()
             }
-            _uiState.update {
-                it.copy(
-                    niHz = result.first,
-                    notes = result.second,
-                    // The melody as it is now, which may have changed while the notes were found.
-                    comparison = MelodyComparison.of(it.expected, result.second),
-                    status = if (result.second.isEmpty()) AnalysisStatus.NO_PITCH else AnalysisStatus.READY,
-                )
-            }
+            // Compared with the melody as it is now, which may have changed while the notes were found.
+            _uiState.update { it.withNotes(result.first, result.second) }
         }
     }
 }
