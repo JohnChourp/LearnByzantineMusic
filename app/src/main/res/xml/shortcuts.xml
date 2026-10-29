@@ -17,7 +17,7 @@
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/_0"
+        android:icon="@mipmap/ic_launcher"
         android:shortcutId="new_recording"
         android:shortcutLongLabel="@string/shortcut_new_recording_long"
         android:shortcutShortLabel="@string/shortcut_new_recording_short">
@@ -29,7 +29,7 @@
     </shortcut>
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/_0"
+        android:icon="@mipmap/ic_launcher"
         android:shortcutId="ison"
         android:shortcutLongLabel="@string/shortcut_ison_long"
         android:shortcutShortLabel="@string/shortcut_ison_short">

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The app's mark (Chi-Rho over an eight-armed star) redrawn as a vector, so the launcher never scales
+  up a small bitmap (the old icon was a 60x60 PNG, ClickUp 869fhmxpt). Traced from
+  mipmap-xxxhdpi/ic_launcher.png and centred on the 108dp adaptive canvas: every stroke end stays
+  inside the 66dp safe circle, so no launcher mask cuts an arm. Strokes are a little heavier than
+  the bitmap's so they hold up at 48dp.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M31.7,54 H76.3 M54,31.3 V76.3 M32,32 L76,76 M76,32 L32,76 M54,31.3 A4.75,6.1 0 0 1 54,43.5"
+        android:strokeWidth="2.2"
+        android:strokeColor="#000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>
