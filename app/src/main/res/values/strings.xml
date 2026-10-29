@@ -1241,6 +1241,7 @@
     <string name="anastasimatarion_title">Αναστασιματάριο</string>
     <string name="anastasimatarion_subtitle">Οι αναστάσιμοι ύμνοι της Κυριακής στους 8 ήχους, με τις ηχογραφήσεις σου για τον καθένα</string>
     <string name="anastasimatarion_week_mode_template">Ήχος της εβδομάδας: %1$s</string>
+    <string name="anastasimatarion_shown_mode_template">Δείχνει: %1$s</string>
     <string name="anastasimatarion_day_mode_template">Ήχος της ημέρας: %1$s</string>
     <string name="anastasimatarion_vespers_mode_template">Από τον εσπερινό απόψε: %1$s</string>
     <string name="anastasimatarion_service_vespers">Εσπερινός</string>

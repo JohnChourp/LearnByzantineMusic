@@ -63,6 +63,13 @@ object AnastasimatarionWeekMode {
     fun openingModeKey(savedModeKey: String?, requestedModeKey: String?): String? =
         listOf(savedModeKey, requestedModeKey).firstOrNull { it in AnastasimatarionLabels.MODE_ORDER }
 
+    /**
+     * True when the page shows a mode other than the one its badge names, so it must say which mode
+     * is on screen (ClickUp `869f4tqdf`). No badge (a week with no tone): nothing to tell apart.
+     */
+    fun showsOtherMode(selectedModeKey: String, current: CurrentMode?): Boolean =
+        current != null && current.modeKey != selectedModeKey
+
     /** A mode key, and the badge template that names it (formatted with the mode's name). */
     data class CurrentMode(val modeKey: String, @StringRes val badgeRes: Int)
 }

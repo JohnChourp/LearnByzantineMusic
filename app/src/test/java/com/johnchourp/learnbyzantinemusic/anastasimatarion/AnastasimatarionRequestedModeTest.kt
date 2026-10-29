@@ -1,11 +1,16 @@
 package com.johnchourp.learnbyzantinemusic.anastasimatarion
 
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.modeKeyOf
+import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.CurrentMode
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.openingModeKey
+import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.showsOtherMode
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionWeekMode.weekModeKey
+import com.johnchourp.learnbyzantinemusic.R
 import com.johnchourp.learnbyzantinemusic.calendar.LiturgicalToneCycle
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
@@ -49,5 +54,13 @@ class AnastasimatarionRequestedModeTest {
         assertNull("Holy Wednesday", modeKeyOf(cycle.resolveTone(LocalDate.of(2026, 4, 8))))
         assertNull("the Monday after Pentecost", modeKeyOf(cycle.resolveTone(LocalDate.of(2026, 6, 1))))
         assertEquals("the week of 27 September", "plagal_fourth", modeKeyOf(cycle.resolveTone(LocalDate.of(2026, 9, 30))))
+    }
+
+    @Test
+    fun thePageNamesTheShownModeOnlyWhenTheBadgeNamesAnother() {
+        val weekOfFirst = CurrentMode("first", R.string.anastasimatarion_week_mode_template)
+        assertTrue("opened on Πλ. Δ΄ in a week of Α΄", showsOtherMode("plagal_fourth", weekOfFirst))
+        assertFalse("the badge already names it", showsOtherMode("first", weekOfFirst))
+        assertFalse("no badge in a week with no tone", showsOtherMode("plagal_fourth", null))
     }
 }

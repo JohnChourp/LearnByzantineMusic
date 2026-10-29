@@ -1242,6 +1242,7 @@
     <string name="anastasimatarion_title">Anastasimatarion</string>
     <string name="anastasimatarion_subtitle">The Sunday resurrection hymns in the 8 modes, with your recordings for each one</string>
     <string name="anastasimatarion_week_mode_template">Mode of the week: %1$s</string>
+    <string name="anastasimatarion_shown_mode_template">Showing: %1$s</string>
     <string name="anastasimatarion_day_mode_template">Mode of the day: %1$s</string>
     <string name="anastasimatarion_vespers_mode_template">From vespers tonight: %1$s</string>
     <string name="anastasimatarion_service_vespers">Vespers</string>

@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,6 +29,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -126,6 +131,12 @@ private fun ModePicker(
     weekMode: AnastasimatarionWeekMode.CurrentMode?,
     onSelectMode: (String) -> Unit,
 ) {
+    // The row scrolls sideways; a mode opened from the calendar may sit off screen (ClickUp `869f4tqdf`).
+    val chipTargets = remember { AnastasimatarionLabels.MODE_ORDER.associateWith { BringIntoViewRequester() } }
+    LaunchedEffect(selectedModeKey) {
+        withFrameNanos { } // the row has laid out its chips
+        chipTargets[selectedModeKey]?.bringIntoView()
+    }
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -138,8 +149,22 @@ private fun ModePicker(
                     label = stringResource(AnastasimatarionLabels.modeName(modeKey)),
                     selected = modeKey == selectedModeKey,
                     onClick = { onSelectMode(modeKey) },
+                    modifier = Modifier.bringIntoViewRequester(chipTargets.getValue(modeKey)),
                 )
             }
+        }
+        // Name the mode on screen when the badge below names another one, so the two never read as one.
+        if (AnastasimatarionWeekMode.showsOtherMode(selectedModeKey, weekMode)) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(
+                    R.string.anastasimatarion_shown_mode_template,
+                    stringResource(AnastasimatarionLabels.modeName(selectedModeKey)),
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = LbmTextPrimary,
+                fontWeight = FontWeight.Medium,
+            )
         }
         if (weekMode != null) {
             Spacer(Modifier.height(8.dp))
