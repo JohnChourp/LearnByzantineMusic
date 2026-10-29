@@ -145,6 +145,11 @@
             android:exported="false"
             android:label="@string/title_activity_melody_trainer"
             android:theme="@style/Theme.LearnByzantineMusic" />
+        <activity
+            android:name=".eartrainer.EarTrainerActivity"
+            android:exported="false"
+            android:label="@string/ear_trainer_title"
+            android:theme="@style/Theme.LearnByzantineMusic" />
         <!-- The digital lectern (ClickUp 869f5x2e7): the user's own PDFs through the system picker and
              PdfRenderer, so no permission. The reader is the only screen allowed to turn to landscape. -->
         <activity

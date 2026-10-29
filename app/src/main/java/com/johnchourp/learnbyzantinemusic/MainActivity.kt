@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.filled.Hearing
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MusicNote
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.johnchourp.learnbyzantinemusic.anastasimatarion.AnastasimatarionActivity
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyModeCalendarActivity
 import com.johnchourp.learnbyzantinemusic.calendar.WeeklyToneAnnouncement
+import com.johnchourp.learnbyzantinemusic.eartrainer.EarTrainerActivity
 import com.johnchourp.learnbyzantinemusic.home.DailyPracticeUi
 import com.johnchourp.learnbyzantinemusic.home.HomeInfo
 import com.johnchourp.learnbyzantinemusic.home.HomeScreen
@@ -294,6 +296,14 @@ class MainActivity : BaseActivity() {
                     onClick = ::openMelodyTrainer,
                 ),
                 HomeTile(
+                    id = "ear_trainer",
+                    titleRes = R.string.ear_trainer_title,
+                    subtitleRes = R.string.home_tile_ear_trainer_sub,
+                    icon = Icons.Filled.Hearing,
+                    accent = TileAccent.Green,
+                    onClick = ::openEarTrainer,
+                ),
+                HomeTile(
                     id = "calendar",
                     titleRes = R.string.weekly_mode_calendar_open,
                     subtitleRes = R.string.home_tile_calendar_sub,
@@ -443,6 +453,10 @@ class MainActivity : BaseActivity() {
     private fun openMelodyTrainer() {
         val intent = Intent(this, com.johnchourp.learnbyzantinemusic.trainer.MelodyTrainerActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun openEarTrainer() {
+        startActivity(Intent(this, EarTrainerActivity::class.java))
     }
 
     private fun openWeeklyModeCalendar() {
