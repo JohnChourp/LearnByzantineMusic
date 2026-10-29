@@ -66,6 +66,10 @@ object AppPrefs {
 
         /** The Melody Trainer: the user's saved exercises and the last melody (ClickUp `869f5x261`). */
         TRAINER("learn_byzantine_music_trainer"),
+
+        /** «Μάντεψε τον ήχο»: the score per ήχος and the chosen level (ClickUp `869f4tqb9`). */
+        EAR_TRAINER("learn_byzantine_music_ear_trainer"),
+
         /** The digital lectern's library: the user's own PDFs, as this phone's grants to read them. */
         LECTERN_LIBRARY("learn_byzantine_music_lectern_library"),
 
@@ -533,6 +537,33 @@ object AppPrefs {
         readBy = "MelodyTrainerActivity.onCreate, which puts the melody back after a close or a process death",
         export = Export.YES,
     )
+
+    // ---- ΜΑΝΤΕΨΕ ΤΟΝ ΗΧΟ ----------------------------------------------------------------------
+    // The learner's own progress, so both travel in the «Δεδομένα μάθησης» file (owner decision,
+    // 2026-10-29, ClickUp 869f4tqb9).
+
+    val EarTrainerScoresJson = Key(
+        name = "ear_trainer_scores",
+        store = Store.EAR_TRAINER,
+        type = Type.STRING,
+        default = "absent — no question answered yet",
+        allowed = "EarTrainerScoresCodec JSON, schemaVersion 1: answered and correct per ήχος asked; " +
+            "an entry that cannot be true is skipped, and anything unreadable reads as no scores",
+        writtenBy = "«Μάντεψε τον ήχο», after every answer, via EarTrainerStore",
+        readBy = "«Μάντεψε τον ήχο»: the score of each ήχος",
+        export = Export.YES,
+    )
+
+    val EarTrainerChosenLevel = Key(
+        name = "ear_trainer_level",
+        store = Store.EAR_TRAINER,
+        type = Type.STRING,
+        default = "kyrioi",
+        allowed = "an EarTrainerLevel key — kyrioi, all, all_without_ison; anything else reads as kyrioi",
+        writtenBy = "the level choice of «Μάντεψε τον ήχο», via EarTrainerStore",
+        readBy = "EarTrainerActivity.onCreate",
+        export = Export.YES,
+    )
     // ---- ΨΗΦΙΑΚΟ ΑΝΑΛΟΓΙΟ ---------------------------------------------------------------------
 
     val LecternLibraryEntries = Key(
@@ -603,6 +634,8 @@ object AppPrefs {
         PracticeReminderMinuteOfDay,
         TrainerExercises,
         TrainerLastMelody,
+        EarTrainerScoresJson,
+        EarTrainerChosenLevel,
         LecternLibraryEntries,
         LecternPageModes,
     )

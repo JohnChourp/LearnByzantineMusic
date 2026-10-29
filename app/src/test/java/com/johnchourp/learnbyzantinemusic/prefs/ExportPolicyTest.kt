@@ -38,6 +38,9 @@ class ExportPolicyTest {
         // The learner's own work: the Melody Trainer's saved exercises and its last melody (F6).
         "trainer_exercises" to YES,
         "trainer_last_melody" to YES,
+        // «Μάντεψε τον ήχο»: the score per ήχος and the level, the learner's own (ClickUp 869f4tqb9).
+        "ear_trainer_scores" to YES,
+        "ear_trainer_level" to YES,
         // The lectern's page → ήχος maps: named by each PDF's SHA-256, never a URI (ClickUp 869f5x2e7).
         "lectern_pages_<sha256>" to YES,
         // Per hymn only: a recording's analysis settings are keyed by that recording's URI.

@@ -1,5 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.settings
 
+import com.johnchourp.learnbyzantinemusic.eartrainer.EarTrainerScores
+import com.johnchourp.learnbyzantinemusic.eartrainer.EarTrainerScoresCodec
+import com.johnchourp.learnbyzantinemusic.eartrainer.ModeScore
 import com.johnchourp.learnbyzantinemusic.music.BaseShift
 import com.johnchourp.learnbyzantinemusic.music.Mode
 import com.johnchourp.learnbyzantinemusic.music.PhthongName
@@ -8,6 +11,7 @@ import com.johnchourp.learnbyzantinemusic.practice.PracticeLog
 import com.johnchourp.learnbyzantinemusic.practice.PracticeLogCodec
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.DEVICE
+import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.EAR_TRAINER
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.EIGHT_MODES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.LECTERN_PAGES
 import com.johnchourp.learnbyzantinemusic.prefs.AppPrefs.Store.NOTES
@@ -97,6 +101,13 @@ class LearningDataFileTest {
         TRAINER to mapOf(
             "trainer_exercises" to trainerExercises,
             "trainer_last_melody" to TrainerMelodyCodec.encodeString(trainerMelody),
+        ),
+        // «Μάντεψε τον ήχο» (ClickUp 869f4tqb9): scores for two ήχοι, and the level.
+        EAR_TRAINER to mapOf(
+            "ear_trainer_scores" to EarTrainerScoresCodec.encode(
+                EarTrainerScores(mapOf(Mode.THIRD to ModeScore(4, 3), Mode.PLAGAL_FOURTH to ModeScore(2, 0))),
+            ),
+            "ear_trainer_level" to "all",
         ),
         // Two PDFs' page → ήχος maps (ClickUp 869f5x2e7), named by SHA-256, in their canonical text.
         LECTERN_PAGES to mapOf(
@@ -396,6 +407,8 @@ class LearningDataFileTest {
                 Line(Item.ANALYSIS, 2),
                 Line(Item.TRAINER_EXERCISES, 2),
                 Line(Item.TRAINER_LAST_MELODY, 1),
+                Line(Item.EAR_TRAINER_SCORES, 2),
+                Line(Item.EAR_TRAINER_LEVEL, 1),
                 Line(Item.LECTERN_PAGES, 2),
             ),
             LearningDataFile.summary(result)

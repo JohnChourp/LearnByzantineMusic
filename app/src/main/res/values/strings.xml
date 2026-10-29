@@ -651,6 +651,8 @@
     <string name="learning_data_item_analysis">Ρυθμίσεις ανάλυσης ύμνων: %1$d</string>
     <string name="learning_data_item_trainer_exercises">Οι ασκήσεις μου, στον Γυμναστή Μελωδίας: %1$d</string>
     <string name="learning_data_item_trainer_last_melody">Η τελευταία μελωδία του Γυμναστή Μελωδίας</string>
+    <string name="learning_data_item_ear_trainer_scores">«Μάντεψε τον ήχο», σκορ σε ήχους: %1$d</string>
+    <string name="learning_data_item_ear_trainer_level">Το επίπεδο του «Μάντεψε τον ήχο»</string>
     <string name="learning_data_item_lectern_pages">Ψηφιακό αναλόγιο, ήχοι σελίδων σε PDF: %1$d</string>
     <string name="learning_data_import_failed_title">Η εισαγωγή δεν έγινε</string>
     <string name="learning_data_import_unfinished_title">Η εισαγωγή δεν ολοκληρώθηκε</string>

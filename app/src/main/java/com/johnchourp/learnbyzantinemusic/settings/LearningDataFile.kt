@@ -2,6 +2,8 @@ package com.johnchourp.learnbyzantinemusic.settings
 
 import com.johnchourp.learnbyzantinemusic.AppFontScale
 import com.johnchourp.learnbyzantinemusic.AppLanguage
+import com.johnchourp.learnbyzantinemusic.eartrainer.EarTrainerLevel
+import com.johnchourp.learnbyzantinemusic.eartrainer.EarTrainerScoresCodec
 import com.johnchourp.learnbyzantinemusic.lectern.LecternFileKey
 import com.johnchourp.learnbyzantinemusic.lectern.LecternPagesCodec
 import com.johnchourp.learnbyzantinemusic.learning.LearningPath
@@ -180,7 +182,8 @@ object LearningDataFile {
     /** The kinds of change an import can make, in the order the dialog lists them. */
     enum class Item {
         FONT_SIZE, LANGUAGE, THEME, METRONOME, FAVOURITES, PROGRESS, PRACTICE, SELECTED_MODE, TIMBRE, ISON_BACKGROUND,
-        BASE_SHIFT, GLOBAL_BASE_SHIFT, RECORDING_FORMAT, ANALYSIS, TRAINER_EXERCISES, TRAINER_LAST_MELODY, LECTERN_PAGES,
+        BASE_SHIFT, GLOBAL_BASE_SHIFT, RECORDING_FORMAT, ANALYSIS, TRAINER_EXERCISES, TRAINER_LAST_MELODY,
+        EAR_TRAINER_SCORES, EAR_TRAINER_LEVEL, LECTERN_PAGES,
     }
 
     /** One line of the dialog; [count] is how many pages, steps, modes, hymns, exercises or PDFs, where that matters. */
@@ -200,6 +203,8 @@ object LearningDataFile {
                     Item.ANALYSIS -> bucket += analysisContext(name)
                     // The exercises the list will hold; one a newer app wrote, and this one cannot read, is not counted.
                     Item.TRAINER_EXERCISES -> ExerciseBook.decode(value as? String).exercises.forEach { bucket += it.name }
+                    // The ήχοι that have a score.
+                    Item.EAR_TRAINER_SCORES -> EarTrainerScoresCodec.decode(value as? String).byMode.keys.forEach { bucket += it.key }
                     Item.LECTERN_PAGES -> bucket += name.removePrefix(AppPrefs.LECTERN_PAGES_KEY_PREFIX)
                     else -> bucket += name
                 }
@@ -226,6 +231,8 @@ object LearningDataFile {
         AppPrefs.AnalysisExpectedMelody, AppPrefs.AnalysisModeKey, AppPrefs.AnalysisStartPhthong -> Item.ANALYSIS
         AppPrefs.TrainerExercises -> Item.TRAINER_EXERCISES
         AppPrefs.TrainerLastMelody -> Item.TRAINER_LAST_MELODY
+        AppPrefs.EarTrainerScoresJson -> Item.EAR_TRAINER_SCORES
+        AppPrefs.EarTrainerChosenLevel -> Item.EAR_TRAINER_LEVEL
         AppPrefs.LecternPageModes -> Item.LECTERN_PAGES
         else -> null
     }
@@ -296,6 +303,10 @@ object LearningDataFile {
         AppPrefs.TrainerLastMelody -> TrainerMelodyCodec.decodeString(value as? String)
             ?.takeIf { it.notes.isNotEmpty() }?.let(TrainerMelodyCodec::encodeString)
         AppPrefs.TrainerExercises -> (value as? String)?.let(ExerciseBook::normalized)
+        // «Μάντεψε τον ήχο»: a record without an answer is not carried, like the practice history.
+        AppPrefs.EarTrainerScoresJson -> (value as? String)?.let(EarTrainerScoresCodec::decode)
+            ?.takeIf { it.byMode.isNotEmpty() }?.let(EarTrainerScoresCodec::encode)
+        AppPrefs.EarTrainerChosenLevel -> EarTrainerLevel.fromKey(value as? String)?.key
         // The canonical text of a readable, non-empty map; its shifts follow BaseShift like the 8 Ήχοι's.
         AppPrefs.LecternPageModes -> (value as? String)?.let(LecternPagesCodec::normalized)
         // A key the file may not carry has no value in it.

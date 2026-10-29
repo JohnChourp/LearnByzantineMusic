@@ -324,6 +324,8 @@ class SettingsActivity : BaseActivity() {
         LearningDataFile.Item.ANALYSIS -> getString(R.string.learning_data_item_analysis, line.count)
         LearningDataFile.Item.TRAINER_EXERCISES -> getString(R.string.learning_data_item_trainer_exercises, line.count)
         LearningDataFile.Item.TRAINER_LAST_MELODY -> getString(R.string.learning_data_item_trainer_last_melody)
+        LearningDataFile.Item.EAR_TRAINER_SCORES -> getString(R.string.learning_data_item_ear_trainer_scores, line.count)
+        LearningDataFile.Item.EAR_TRAINER_LEVEL -> getString(R.string.learning_data_item_ear_trainer_level)
         LearningDataFile.Item.LECTERN_PAGES -> getString(R.string.learning_data_item_lectern_pages, line.count)
     }
 

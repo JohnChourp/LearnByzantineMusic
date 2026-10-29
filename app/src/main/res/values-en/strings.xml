@@ -652,6 +652,8 @@
     <string name="learning_data_item_analysis">Hymn analysis settings: %1$d</string>
     <string name="learning_data_item_trainer_exercises">My exercises, in the Melody Trainer: %1$d</string>
     <string name="learning_data_item_trainer_last_melody">The Melody Trainer\'s last melody</string>
+    <string name="learning_data_item_ear_trainer_scores">“Guess the mode” scores, modes: %1$d</string>
+    <string name="learning_data_item_ear_trainer_level">The level of “Guess the mode”</string>
     <string name="learning_data_item_lectern_pages">Digital lectern, page modes in PDFs: %1$d</string>
     <string name="learning_data_import_failed_title">Nothing was imported</string>
     <string name="learning_data_import_unfinished_title">The import did not finish</string>
