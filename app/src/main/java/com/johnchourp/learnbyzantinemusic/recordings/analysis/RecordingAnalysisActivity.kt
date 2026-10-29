@@ -31,8 +31,8 @@ import kotlinx.coroutines.withContext
  *
  * Flow: [RecordingDecoder] (Android decoders → mono WAV) → [PitchTrackAnalyzer] (YIN, once per
  * recording) → [PhthongSegmenter] on the chosen mode's scale, calibrated on the starting
- * phthong → [SequenceAligner] against the expected melody. Changing the mode, the starting
- * phthong or the expected melody only reruns the last two steps.
+ * phthong → [SequenceAligner] against the expected melody. Changing the mode or the starting
+ * phthong only reruns the last two steps; changing the expected melody only the last one.
  *
  * Opened from a recording's menu on «Ηχογραφήσεις» and from a hymn's recordings on the
  * «Αναστασιματάριο»; a hymn shares its expected melody and scale across all its recordings.
@@ -176,10 +176,14 @@ class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(ap
 
     fun clearExpected() = updateExpected(emptyList())
 
+    /**
+     * The melody and its comparison change in the same update: the notes do not depend on the
+     * melody, and the alignment is cheap, so the card never shows a result for a melody it no
+     * longer has.
+     */
     private fun updateExpected(expected: List<PhthongName>) {
-        _uiState.update { it.copy(expected = expected) }
+        _uiState.update { it.copy(expected = expected, comparison = MelodyComparison.of(expected, it.notes)) }
         store.saveExpected(contextKey, expected)
-        recompute()
     }
 
     /** Notes on the current scale, then the comparison with the expected melody. */
@@ -191,14 +195,14 @@ class RecordingAnalysisViewModel(application: Application) : AndroidViewModel(ap
             val result = withContext(Dispatchers.Default) {
                 val positions = ModeScalePositions.forMode(state.mode)
                 val niHz = PhthongSegmenter.calibrate(track, positions, state.startPhthong)
-                val notes = niHz?.let { PhthongSegmenter.segment(track, it, positions) }.orEmpty()
-                Triple(niHz, notes, MelodyComparison.of(state.expected, notes))
+                niHz to niHz?.let { PhthongSegmenter.segment(track, it, positions) }.orEmpty()
             }
             _uiState.update {
                 it.copy(
                     niHz = result.first,
                     notes = result.second,
-                    comparison = result.third,
+                    // The melody as it is now, which may have changed while the notes were found.
+                    comparison = MelodyComparison.of(it.expected, result.second),
                     status = if (result.second.isEmpty()) AnalysisStatus.NO_PITCH else AnalysisStatus.READY,
                 )
             }

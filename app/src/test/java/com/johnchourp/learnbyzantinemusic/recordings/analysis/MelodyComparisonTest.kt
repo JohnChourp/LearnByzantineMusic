@@ -41,6 +41,7 @@ class MelodyComparisonTest {
             val comparison = MelodyComparison.of(expected, notes)!!
             assertEquals(expected, comparison.expected)
             assertEquals(notes, comparison.notes)
+            assertEquals("the score's «από Y»", expected.size, comparison.alignment.expectedCount)
             for (step in comparison.alignment.steps) {
                 val (e, s) = when (step) {
                     is AlignmentStep.Match -> step.expected to step.sung
@@ -54,13 +55,18 @@ class MelodyComparisonTest {
         }
     }
 
-    /** No JVM test can run the composable, so this reads it: a step index goes only into the comparison. */
+    /**
+     * No JVM test can run the composables, so this reads them: in every file of the analysis UI, a step
+     * index goes only into the comparison's lists, whether as `list[i]` or `list.get(i)` and its kin.
+     */
     @Test
     fun theScreenReadsStepsOnlyThroughTheComparison() {
-        val screen = File(KotlinSource.mainRoot, "com/johnchourp/learnbyzantinemusic/recordings/analysis/ui/RecordingAnalysisScreen.kt")
-        val code = KotlinSource.withoutComments(screen.readText())
-        val reads = Regex("""([\w.]+)\[step\.(expected|sung)]""").findAll(code).map { it.groupValues[1] }.toList()
-        assertTrue("the screen reads no step at all", reads.isNotEmpty())
-        assertEquals(emptyList<String>(), reads.filterNot { it == "comparison.expected" || it == "comparison.notes" })
+        val ui = File(KotlinSource.mainRoot, "com/johnchourp/learnbyzantinemusic/recordings/analysis/ui")
+        val read = Regex("""([\w.]+?)(?:\[|\.(?:get|getOrNull|getOrElse|elementAt|elementAtOrNull)\()step\.(expected|sung)\b""")
+        val reads = ui.listFiles { f -> f.extension == "kt" }.orEmpty().flatMap { file ->
+            read.findAll(KotlinSource.withoutComments(file.readText())).map { "${file.name}: ${it.groupValues[1]}" }.toList()
+        }
+        assertTrue("the analysis UI reads no step at all", reads.isNotEmpty())
+        assertEquals(emptyList<String>(), reads.filterNot { it.endsWith(": comparison.expected") || it.endsWith(": comparison.notes") })
     }
 }

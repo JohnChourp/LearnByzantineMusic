@@ -300,8 +300,7 @@ private fun CompareCard(
             TextButton(onClick = onClear) { Text(stringResource(R.string.analysis_compare_clear)) }
         }
         if (comparison != null) {
-            // Steps are read only through the comparison's own lists: [expected] above may already be
-            // newer than the alignment (MelodyComparison).
+            // Steps are read only through the comparison's own lists (MelodyComparison).
             val alignment = comparison.alignment
             Spacer(Modifier.height(10.dp))
             Text(

@@ -32,9 +32,10 @@ data class AlignmentResult(
  * A comparison as it was computed: the alignment, and the expected melody and sung notes its indices
  * point into.
  *
- * The screen reads every step through these two lists, never through the state's own. The expected
- * melody in the state changes the moment it is edited, while the alignment is recomputed afterwards,
- * so the old steps read against the new melody pointed past its end after «Καθαρισμός» or backspace.
+ * The screen reads every step through these two lists, never through the state's own, so a step is
+ * only ever read against the lists it was computed for. Until ClickUp `869f4tqef` the alignment was
+ * recomputed after the melody had changed, and an old step read against the new melody could point
+ * past its end after «Καθαρισμός» or backspace.
  */
 data class MelodyComparison(
     val expected: List<PhthongName>,
