@@ -29,6 +29,31 @@ data class AlignmentResult(
 }
 
 /**
+ * A comparison as it was computed: the alignment, and the expected melody and sung notes its indices
+ * point into.
+ *
+ * The screen reads every step through these two lists, never through the state's own, so a step is
+ * only ever read against the lists it was computed for. Until ClickUp `869f4tqef` the alignment was
+ * recomputed after the melody had changed, and an old step read against the new melody could point
+ * past its end after «Καθαρισμός» or backspace.
+ */
+data class MelodyComparison(
+    val expected: List<PhthongName>,
+    val notes: List<SungNote>,
+    val alignment: AlignmentResult,
+) {
+    companion object {
+        /** [notes] compared with [expected], or null when either is empty. */
+        fun of(expected: List<PhthongName>, notes: List<SungNote>): MelodyComparison? =
+            if (expected.isEmpty() || notes.isEmpty()) {
+                null
+            } else {
+                MelodyComparison(expected, notes, SequenceAligner.align(expected, notes.map { it.phthong }))
+            }
+    }
+}
+
+/**
  * «How correct was I»: the minimum-edit alignment (Levenshtein) of the phthongs the singer was
  * supposed to sing against the ones that were recognised. Octaves are ignored, as in the Melody
  * Trainer's voice check; order matters, timing does not.
