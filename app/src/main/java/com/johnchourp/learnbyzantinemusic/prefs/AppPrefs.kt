@@ -430,7 +430,7 @@ object AppPrefs {
         name = "<analysisContext>$ANALYSIS_EXPECTED_SUFFIX",
         store = Store.RECORDING_ANALYSIS,
         type = Type.STRING,
-        default = "empty — no expected melody has been typed for this context",
+        default = "empty — no expected melody has been entered for this context",
         allowed = "comma-separated PhthongName constant names (NI … ZO, frozen: see StoredPhthongs); " +
             "unknown names are dropped on read",
         writtenBy = "the «αναμενόμενη μελωδία» field on the analysis screen, typed or taken from an exercise " +

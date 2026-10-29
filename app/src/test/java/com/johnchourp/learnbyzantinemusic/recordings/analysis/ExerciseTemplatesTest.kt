@@ -63,7 +63,10 @@ class ExerciseTemplatesTest {
         assertTrue(picker.choices.isEmpty())
     }
 
-    /** The analysis reads the Trainer's exercises and its last melody, and writes neither. */
+    /**
+     * The analysis only reads the Trainer's exercises. This catches the Trainer's own writers and keys
+     * named under `recordings/analysis`; a write straight through the preferences file it would not see.
+     */
     @Test
     fun theAnalysisNeverWritesTheTrainersStore() {
         val analysis = File(KotlinSource.mainRoot, "com/johnchourp/learnbyzantinemusic/recordings/analysis")
