@@ -37,10 +37,10 @@ class AnastasimatarionActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Only on the first creation: after a rotation the mode on screen is the user's choice.
-        if (savedInstanceState == null) {
-            AnastasimatarionWeekMode.requestedModeKey(intent.getStringExtra(EXTRA_MODE_KEY))?.let(viewModel::selectMode)
-        }
+        AnastasimatarionWeekMode.openingModeKey(
+            savedModeKey = savedInstanceState?.getString(STATE_SELECTED_MODE_KEY),
+            requestedModeKey = intent.getStringExtra(EXTRA_MODE_KEY),
+        )?.let(viewModel::selectMode)
         setContent {
             LbmTheme(palette = currentPalette()) {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -62,8 +62,14 @@ class AnastasimatarionActivity : BaseActivity() {
         viewModel.refreshWeekMode()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_SELECTED_MODE_KEY, viewModel.uiState.value.selectedModeKey)
+    }
+
     companion object {
         private const val EXTRA_MODE_KEY = "com.johnchourp.learnbyzantinemusic.anastasimatarion.EXTRA_OPEN_MODE_KEY"
+        private const val STATE_SELECTED_MODE_KEY = "selected_mode_key"
 
         /** Opens on [modeKey] when it names one of the eight modes, otherwise on the current mode. */
         fun intent(context: Context, modeKey: String? = null): Intent =

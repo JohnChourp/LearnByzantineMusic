@@ -136,7 +136,7 @@ class WeeklyModeCalendarActivity : BaseActivity() {
             monthGrid = buildMonthGrid(),
             selectedDay = selectedDate.dayOfMonth,
             toneLabel = toneLabel(tone),
-            anastasimatarionModeKey = AnastasimatarionWeekMode.weekModeKey(selectedDate),
+            anastasimatarionModeKey = AnastasimatarionWeekMode.modeKeyOf(tone),
             weekRangeLabel = getString(
                 R.string.weekly_mode_calendar_week_range_template,
                 tone.weekStart.format(weekRangeFormatter),

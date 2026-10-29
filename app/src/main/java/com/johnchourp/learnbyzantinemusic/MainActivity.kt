@@ -456,7 +456,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun openAnastasimatarion() {
-        startActivity(Intent(this, AnastasimatarionActivity::class.java))
+        startActivity(AnastasimatarionActivity.intent(this))
     }
 
     private fun openLectern() {
