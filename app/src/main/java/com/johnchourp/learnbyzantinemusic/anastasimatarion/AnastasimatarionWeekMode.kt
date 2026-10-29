@@ -51,6 +51,12 @@ object AnastasimatarionWeekMode {
         return CurrentMode(Mode.ofToneIndex(today).key, badge)
     }
 
+    /**
+     * The mode a caller asked the page to open on, when it is one of the eight; otherwise null, and
+     * the page keeps [currentMode]. The calendar asks for the selected week's mode (ClickUp `869f4tqdf`).
+     */
+    fun requestedModeKey(modeKey: String?): String? = modeKey?.takeIf { it in AnastasimatarionLabels.MODE_ORDER }
+
     /** A mode key, and the badge template that names it (formatted with the mode's name). */
     data class CurrentMode(val modeKey: String, @StringRes val badgeRes: Int)
 }

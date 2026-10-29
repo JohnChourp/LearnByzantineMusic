@@ -1,6 +1,8 @@
 package com.johnchourp.learnbyzantinemusic.anastasimatarion
 
 import android.app.Application
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -25,12 +27,20 @@ import java.time.LocalDateTime
  * keeps for each hymn. Opens on the current mode ([AnastasimatarionWeekMode]: the tone of the week,
  * the day's own tone in Bright Week, from Saturday noon the tone of tonight's vespers, and the first
  * mode in the weeks that have no tone); tapping a hymn opens [HymnActivity].
+ *
+ * A caller may name another mode with [intent]: the calendar opens the selected week's mode, so
+ * a chanter can prepare for a week that is not this one (ClickUp `869f4tqdf`). The badge still names
+ * the current mode, so it stays true whichever mode is shown.
  */
 class AnastasimatarionActivity : BaseActivity() {
     private val viewModel: AnastasimatarionViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Only on the first creation: after a rotation the mode on screen is the user's choice.
+        if (savedInstanceState == null) {
+            AnastasimatarionWeekMode.requestedModeKey(intent.getStringExtra(EXTRA_MODE_KEY))?.let(viewModel::selectMode)
+        }
         setContent {
             LbmTheme(palette = currentPalette()) {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,6 +60,16 @@ class AnastasimatarionActivity : BaseActivity() {
         viewModel.refreshCounts()
         // And the clock may have passed the vespers hour; the badge follows it, the selection stays.
         viewModel.refreshWeekMode()
+    }
+
+    companion object {
+        private const val EXTRA_MODE_KEY = "com.johnchourp.learnbyzantinemusic.anastasimatarion.EXTRA_OPEN_MODE_KEY"
+
+        /** Opens on [modeKey] when it names one of the eight modes, otherwise on the current mode. */
+        fun intent(context: Context, modeKey: String? = null): Intent =
+            Intent(context, AnastasimatarionActivity::class.java).apply {
+                modeKey?.let { putExtra(EXTRA_MODE_KEY, it) }
+            }
     }
 }
 

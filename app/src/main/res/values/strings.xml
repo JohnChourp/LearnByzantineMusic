@@ -727,6 +727,7 @@
     <string name="weekly_mode_calendar_subtitle">Ο ήχος της εβδομάδας, οι εορτές και τα αναγνώσματα για κάθε ημέρα</string>
     <string name="weekly_mode_calendar_tone_section_title">Ήχος εβδομάδας</string>
     <string name="weekly_mode_calendar_tone_explainer">Ο ήχος αλλάζει κάθε εβδομάδα (Κυριακή–Σάββατο) ακολουθώντας τον κύκλο των 8 ήχων.</string>
+    <string name="weekly_mode_calendar_open_anastasimatarion">Αναστάσιμα του ήχου</string>
     <string name="weekly_mode_calendar_tone_none_holy_week">Κυριακή των Βαΐων – Μεγάλη Εβδομάδα: χωρίς ήχο εβδομάδας</string>
     <string name="weekly_mode_calendar_tone_bright_week">Διακαινήσιμος – ήχος ημέρας: %1$s</string>
     <string name="weekly_mode_calendar_tone_none_pentecost_week">Εβδομάδα της Πεντηκοστής: χωρίς ήχο εβδομάδας</string>

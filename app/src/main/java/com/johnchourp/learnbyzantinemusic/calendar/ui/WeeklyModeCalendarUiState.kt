@@ -35,6 +35,11 @@ data class WeeklyModeCalendarUiState(
      * week (Holy Week, Bright Week, the week of Pentecost). Never empty for a real date.
      */
     val toneLabel: String = "",
+    /**
+     * The selected date's mode key, for the tone card's «Αναστάσιμα του ήχου» button; null in a week
+     * with no tone, and then there is no button (ClickUp `869f4tqdf`).
+     */
+    val anastasimatarionModeKey: String? = null,
     /** Pre-formatted week range, e.g. "28 Ιουν 2026 – 4 Ιουλ 2026". */
     val weekRangeLabel: String = "",
     /** Pre-formatted full selected date, e.g. "Κυριακή, 28 Ιουνίου 2026". */
