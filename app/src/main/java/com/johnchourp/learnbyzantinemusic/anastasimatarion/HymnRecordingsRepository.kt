@@ -37,19 +37,20 @@ class HymnRecordingsRepository(context: Context) {
         val modeFolder = modeFolder(mode.key) ?: return@withContext emptyMap()
         val hymnFolders = modeFolder.listFiles().filter { it.isDirectory }
         mode.hymns.mapNotNull { hymn ->
-            val folder = hymnFolders.firstOrNull { HymnFolders.isHymnFolder(it.name, hymn) } ?: return@mapNotNull null
-            val count = folder.listFiles().count { it.isAudioFile() }
+            val count = HymnFolders.foldersOf(hymn, hymnFolders) { it.name }
+                .sumOf { folder -> folder.listFiles().count { it.isAudioFile() } }
             if (count > 0) hymn.code to count else null
         }.toMap()
     }
 
-    /** The hymn's recordings, newest first. */
+    /** The hymn's recordings from every folder of it, newest first. */
     suspend fun recordingsFor(modeKey: String, hymn: Hymn): List<HymnRecording> = withContext(Dispatchers.IO) {
-        val folder = modeFolder(modeKey)
+        val hymnFolders = modeFolder(modeKey)
             ?.listFiles()
-            ?.firstOrNull { it.isDirectory && HymnFolders.isHymnFolder(it.name, hymn) }
+            ?.filter { it.isDirectory }
             ?: return@withContext emptyList()
-        folder.listFiles()
+        HymnFolders.foldersOf(hymn, hymnFolders) { it.name }
+            .flatMap { it.listFiles().asList() }
             .filter { it.isAudioFile() }
             .map { file ->
                 HymnRecording(

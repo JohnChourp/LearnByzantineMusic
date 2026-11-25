@@ -1,6 +1,7 @@
 package com.johnchourp.learnbyzantinemusic.anastasimatarion
 
 import com.johnchourp.learnbyzantinemusic.music.Mode
+import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingTarget
 
 /**
  * Where a hymn's recordings live inside the user's recordings folder:
@@ -32,9 +33,16 @@ object HymnFolders {
 
     fun hymnFolderPrefix(hymn: Hymn): String = "${hymn.code} "
 
-    /** True when [folderName] is this hymn's folder, even if the user renamed its incipit part. */
+    /**
+     * True when [folderName] is this hymn's folder, even if the user renamed its incipit part or kept
+     * only the code. Saving a recording matches by the same rule ([RecordingTarget.matchesPrefix]).
+     */
     fun isHymnFolder(folderName: String?, hymn: Hymn): Boolean =
-        folderName != null && (folderName == hymn.code || folderName.startsWith(hymnFolderPrefix(hymn)))
+        RecordingTarget.matchesPrefix(folderName, hymnFolderPrefix(hymn))
+
+    /** Every folder of [hymn] in [folders]: there can be more than one (e.g. `01` and `01 …`). */
+    fun <T> foldersOf(hymn: Hymn, folders: List<T>, name: (T) -> String?): List<T> =
+        folders.filter { isHymnFolder(name(it), hymn) }
 
     /** Folder path segments from the recordings root to the hymn's folder. */
     fun pathSegments(modeKey: String, hymn: Hymn): List<String> =

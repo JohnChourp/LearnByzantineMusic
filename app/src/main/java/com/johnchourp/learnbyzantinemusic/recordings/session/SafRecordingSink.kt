@@ -97,8 +97,8 @@ class SafRecordingSink private constructor(
         /**
          * The folder to save into and its path below the picked root: the root itself, or the
          * target's sub-folders, created on first use. The last segment also matches an existing
-         * folder that starts with the target's match prefix, so a renamed hymn folder keeps
-         * receiving its recordings.
+         * folder by the target's match prefix ([RecordingTarget.matchesPrefix]), so a renamed hymn
+         * folder, or one named only by its code, keeps receiving its recordings.
          */
         private fun resolveTargetFolder(root: DocumentFile, target: RecordingTarget): Pair<DocumentFile, List<String>>? {
             val segments = target.folderSegments
@@ -108,7 +108,7 @@ class SafRecordingSink private constructor(
                 val prefix = target.folderMatchPrefix?.takeIf { index == segments.lastIndex }
                 val children = current.listFiles().filter { it.isDirectory }
                 val existing = children.firstOrNull { it.name == segment }
-                    ?: prefix?.let { p -> children.firstOrNull { it.name?.startsWith(p) == true } }
+                    ?: prefix?.let { p -> children.firstOrNull { RecordingTarget.matchesPrefix(it.name, p) } }
                 current = existing ?: current.createDirectory(segment) ?: return null
                 actualNames += current.name ?: segment
             }

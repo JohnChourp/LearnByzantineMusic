@@ -1,5 +1,6 @@
 package com.johnchourp.learnbyzantinemusic.anastasimatarion
 
+import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingTarget
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -31,6 +32,26 @@ class HymnFoldersTest {
         assertFalse(HymnFolders.isHymnFolder("020 other", hymn))
         assertFalse(HymnFolders.isHymnFolder("12 Κυκλώσατε", hymn))
         assertFalse(HymnFolders.isHymnFolder(null, hymn))
+    }
+
+    /** ClickUp `1amndjnkdym`: a recording saved for the hymn goes into every folder the hymn page shows. */
+    @Test
+    fun savingMatchesEveryFolderTheHymnPageShows() {
+        val prefix = HymnFolders.hymnFolderPrefix(hymn)
+        listOf("02", "02 Τὰς ἑσπερινὰς ἡμῶν εὐχάς", "02 my own name", "020 other", "12 Κυκλώσατε", "0", "").forEach { name ->
+            assertEquals(name, HymnFolders.isHymnFolder(name, hymn), RecordingTarget.matchesPrefix(name, prefix))
+        }
+    }
+
+    /** Two folders for the same hymn (e.g. `02` and `02 …`): both are the hymn's, none is hidden. */
+    @Test
+    fun everyFolderOfTheHymnIsKept() {
+        val folders = listOf("02", "01 Κύριε ἐκέκραξα", "02 Τὰς ἑσπερινὰς ἡμῶν εὐχάς", "020 other", "02 my own name")
+        assertEquals(
+            listOf("02", "02 Τὰς ἑσπερινὰς ἡμῶν εὐχάς", "02 my own name"),
+            HymnFolders.foldersOf(hymn, folders) { it },
+        )
+        assertEquals(emptyList<String>(), HymnFolders.foldersOf(hymn, listOf("03", "12")) { it })
     }
 
     @Test

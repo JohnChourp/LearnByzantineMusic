@@ -16,7 +16,19 @@ data class RecordingTarget(
     val folderSegments: List<String> = emptyList(),
     val folderMatchPrefix: String? = null,
     val label: String? = null,
-)
+) {
+    companion object {
+        /**
+         * True when [folderName] is the folder a match [prefix] such as `"01 "` stands for: a name that
+         * starts with the prefix, or the prefix alone without its trailing space (`"01"`). The one rule
+         * both saving a recording and listing a hymn's recordings use (ClickUp `1amndjnkdym`).
+         */
+        fun matchesPrefix(folderName: String?, prefix: String): Boolean {
+            if (folderName == null || prefix.isBlank()) return false
+            return folderName == prefix.trimEnd() || folderName.startsWith(prefix)
+        }
+    }
+}
 
 /** Everything about a recording that is not audio: its target and, once it has one, its file name. */
 data class RecordingMeta(
