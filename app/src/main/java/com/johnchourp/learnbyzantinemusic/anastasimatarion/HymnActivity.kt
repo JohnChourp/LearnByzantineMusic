@@ -171,6 +171,8 @@ class HymnActivity : BaseActivity() {
 data class HymnUiState(
     val ref: HymnRef? = null,
     val recordings: List<HymnRecording> = emptyList(),
+    /** The existing folder the next recording goes into; null when saving would create one. */
+    val savingFolder: String? = null,
     val hasRecordingsFolder: Boolean = false,
     val loading: Boolean = true,
 )
@@ -195,12 +197,19 @@ class HymnViewModel(application: Application) : AndroidViewModel(application) {
         val ref = _uiState.value.ref ?: return
         viewModelScope.launch {
             val hasFolder = withContext(Dispatchers.IO) { repository.rootFolder() != null }
-            val recordings = if (hasFolder) {
-                runCatching { repository.recordingsFor(ref.modeKey, ref.hymn) }.getOrDefault(emptyList())
+            val contents = if (hasFolder) {
+                runCatching { repository.recordingsFor(ref.modeKey, ref.hymn) }.getOrDefault(HymnFolderContents())
             } else {
-                emptyList()
+                HymnFolderContents()
             }
-            _uiState.update { it.copy(recordings = recordings, hasRecordingsFolder = hasFolder, loading = false) }
+            _uiState.update {
+                it.copy(
+                    recordings = contents.recordings,
+                    savingFolder = contents.savingFolder,
+                    hasRecordingsFolder = hasFolder,
+                    loading = false,
+                )
+            }
         }
     }
 }

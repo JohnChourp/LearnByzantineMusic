@@ -27,6 +27,17 @@ data class RecordingTarget(
             if (folderName == null || prefix.isBlank()) return false
             return folderName == prefix.trimEnd() || folderName.startsWith(prefix)
         }
+
+        /**
+         * The existing folder of [folders] that a sub-folder [segment] resolves to: the one named
+         * exactly [segment], else the first that [matchesPrefix] [prefix], in the given order; null
+         * when there is none (a new folder is then created). Saving a recording and the hymn page's
+         * «αποθηκεύονται στον φάκελο» label both use it, so they name the same folder (ClickUp
+         * `1amndjnrekd`).
+         */
+        fun <T> pickFolder(folders: List<T>, segment: String, prefix: String?, name: (T) -> String?): T? =
+            folders.firstOrNull { name(it) == segment }
+                ?: prefix?.let { p -> folders.firstOrNull { matchesPrefix(name(it), p) } }
     }
 }
 
