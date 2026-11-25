@@ -35,10 +35,11 @@ class HymnRecordingsRepository(context: Context) {
     /** Recording count per hymn code for one mode; hymns without recordings are absent. */
     suspend fun countsForMode(mode: HymnMode): Map<String, Int> = withContext(Dispatchers.IO) {
         val modeFolder = modeFolder(mode.key) ?: return@withContext emptyMap()
-        val hymnFolders = modeFolder.listFiles().filter { it.isDirectory }
+        // Each name is a provider query: read it once per folder, not once per hymn.
+        val hymnFolders = modeFolder.listFiles().filter { it.isDirectory }.map { it to it.name }
         mode.hymns.mapNotNull { hymn ->
-            val count = HymnFolders.foldersOf(hymn, hymnFolders) { it.name }
-                .sumOf { folder -> folder.listFiles().count { it.isAudioFile() } }
+            val count = HymnFolders.foldersOf(hymn, hymnFolders) { it.second }
+                .sumOf { (folder, _) -> folder.listFiles().count { it.isAudioFile() } }
             if (count > 0) hymn.code to count else null
         }.toMap()
     }
