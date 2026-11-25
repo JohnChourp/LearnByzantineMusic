@@ -122,15 +122,18 @@ fun HymnScreen(
         item(key = "record") {
             StaggeredAppear(delayMillis = 60, modifier = Modifier.padding(horizontal = 16.dp)) {
                 LessonCard(title = stringResource(R.string.anastasimatarion_record_title)) {
-                    Text(
-                        text = stringResource(
-                            R.string.anastasimatarion_record_folder_template,
-                            HymnFolders.displaySegments(ref.modeKey, ref.hymn, uiState.savingFolder).joinToString(" › "),
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = LbmTextSecondary,
-                    )
-                    Spacer(Modifier.height(12.dp))
+                    // Shown once the hymn's folders are read, so it never names a folder saving won't use.
+                    if (!uiState.loading) {
+                        Text(
+                            text = stringResource(
+                                R.string.anastasimatarion_record_folder_template,
+                                HymnFolders.displaySegments(ref.modeKey, ref.hymn, uiState.savingFolder).joinToString(" › "),
+                            ),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = LbmTextSecondary,
+                        )
+                        Spacer(Modifier.height(12.dp))
+                    }
                     Button(
                         onClick = onRecord,
                         modifier = Modifier
