@@ -3,6 +3,7 @@ package com.johnchourp.learnbyzantinemusic.anastasimatarion
 import com.johnchourp.learnbyzantinemusic.recordings.session.RecordingTarget
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -52,6 +53,20 @@ class HymnFoldersTest {
             HymnFolders.foldersOf(hymn, folders) { it },
         )
         assertEquals(emptyList<String>(), HymnFolders.foldersOf(hymn, listOf("03", "12")) { it })
+    }
+
+    /** ClickUp `1amndjnrekd`: the hymn page names the folder the next recording really goes into. */
+    @Test
+    fun theHymnPageShowsTheFolderThatReceivesTheNextRecording() {
+        val generated = HymnFolders.hymnFolder(hymn)
+        assertEquals("02", HymnFolders.savingFolderOf(hymn, listOf("01 Κύριε ἐκέκραξα", "02")) { it })
+        assertEquals(generated, HymnFolders.savingFolderOf(hymn, listOf("02", generated)) { it })
+        assertNull(HymnFolders.savingFolderOf(hymn, listOf("020 other", "12")) { it })
+        assertEquals(
+            listOf("Αναστασιματάριο", "Ήχος Α΄", "02 my own name"),
+            HymnFolders.displaySegments("first", hymn, "02 my own name"),
+        )
+        assertEquals(HymnFolders.pathSegments("first", hymn), HymnFolders.displaySegments("first", hymn, null))
     }
 
     @Test

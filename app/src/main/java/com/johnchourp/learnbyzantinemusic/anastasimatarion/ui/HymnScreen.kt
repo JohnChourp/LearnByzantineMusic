@@ -125,7 +125,7 @@ fun HymnScreen(
                     Text(
                         text = stringResource(
                             R.string.anastasimatarion_record_folder_template,
-                            HymnFolders.pathSegments(ref.modeKey, ref.hymn).joinToString(" › "),
+                            HymnFolders.displaySegments(ref.modeKey, ref.hymn, uiState.savingFolder).joinToString(" › "),
                         ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = LbmTextSecondary,

@@ -16,6 +16,12 @@ data class HymnRecording(
     val lastModified: Long,
 )
 
+/** What a hymn's folders hold: its recordings and the name of the folder that receives the next one. */
+data class HymnFolderContents(
+    val recordings: List<HymnRecording> = emptyList(),
+    val savingFolder: String? = null,
+)
+
 /**
  * Reads the hymn folders ([HymnFolders]) inside the recordings folder the user picked on the
  * «Ηχογραφήσεις» page (a SAF tree). Nothing is created here: RecordingsActivity creates a hymn's
@@ -44,14 +50,19 @@ class HymnRecordingsRepository(context: Context) {
         }.toMap()
     }
 
-    /** The hymn's recordings from every folder of it, newest first. */
-    suspend fun recordingsFor(modeKey: String, hymn: Hymn): List<HymnRecording> = withContext(Dispatchers.IO) {
+    /**
+     * The hymn's recordings from every folder of it, newest first, and the name of the folder the
+     * next recording goes into ([HymnFolders.savingFolderOf]; null when saving would create one).
+     */
+    suspend fun recordingsFor(modeKey: String, hymn: Hymn): HymnFolderContents = withContext(Dispatchers.IO) {
+        // Each name is a provider query: read it once per folder.
         val hymnFolders = modeFolder(modeKey)
             ?.listFiles()
             ?.filter { it.isDirectory }
-            ?: return@withContext emptyList()
-        HymnFolders.foldersOf(hymn, hymnFolders) { it.name }
-            .flatMap { it.listFiles().asList() }
+            ?.map { it to it.name }
+            ?: return@withContext HymnFolderContents()
+        val recordings = HymnFolders.foldersOf(hymn, hymnFolders) { it.second }
+            .flatMap { (folder, _) -> folder.listFiles().asList() }
             .filter { it.isAudioFile() }
             .map { file ->
                 HymnRecording(
@@ -62,6 +73,7 @@ class HymnRecordingsRepository(context: Context) {
                 )
             }
             .sortedByDescending { it.lastModified }
+        HymnFolderContents(recordings, HymnFolders.savingFolderOf(hymn, hymnFolders) { it.second }?.second)
     }
 
     private fun modeFolder(modeKey: String): DocumentFile? {

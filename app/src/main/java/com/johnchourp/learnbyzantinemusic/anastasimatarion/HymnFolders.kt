@@ -44,9 +44,23 @@ object HymnFolders {
     fun <T> foldersOf(hymn: Hymn, folders: List<T>, name: (T) -> String?): List<T> =
         folders.filter { isHymnFolder(name(it), hymn) }
 
+    /**
+     * The folder of [folders] the next recording for [hymn] is saved into, picked exactly as saving
+     * picks it ([RecordingTarget.pickFolder]); null when there is none and saving would create one.
+     */
+    fun <T> savingFolderOf(hymn: Hymn, folders: List<T>, name: (T) -> String?): T? =
+        RecordingTarget.pickFolder(folders, hymnFolder(hymn), hymnFolderPrefix(hymn), name)
+
     /** Folder path segments from the recordings root to the hymn's folder. */
     fun pathSegments(modeKey: String, hymn: Hymn): List<String> =
         listOf(ROOT, modeFolder(modeKey), hymnFolder(hymn))
+
+    /**
+     * The path the hymn page shows: [pathSegments], with the hymn's folder replaced by
+     * [existingFolder] — the folder that already receives its recordings — when there is one.
+     */
+    fun displaySegments(modeKey: String, hymn: Hymn, existingFolder: String?): List<String> =
+        listOf(ROOT, modeFolder(modeKey), existingFolder ?: hymnFolder(hymn))
 
     /** A name every document provider accepts: no path or reserved characters, bounded length. */
     fun sanitize(name: String): String =
