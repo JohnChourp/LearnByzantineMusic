@@ -42,7 +42,23 @@ data class MelodyComparison(
     val notes: List<SungNote>,
     val alignment: AlignmentResult,
 ) {
+    /**
+     * «Πού και πόσο αποκλίναμε» (ClickUp `1amndjnkdqy`): how many steps of the scale the phthong sung
+     * at [step] lies from the expected one, positive when it was sung higher.
+     */
+    fun stepsOff(step: AlignmentStep.Substitution): Int = scaleSteps(expected[step.expected], notes[step.sung].phthong)
+
     companion object {
+        /**
+         * Steps on the scale from [from] up to [to]. The expected melody carries no octaves, so this is
+         * the nearer way round the seven phthongs, -3..+3 (seven is odd, so there is never a tie): Πα
+         * sung as Γα is 2 up, Πα sung as Ζω is 2 down.
+         */
+        fun scaleSteps(from: PhthongName, to: PhthongName): Int {
+            val up = Math.floorMod(to.ordinal - from.ordinal, PhthongName.entries.size)
+            return if (up > PhthongName.entries.size / 2) up - PhthongName.entries.size else up
+        }
+
         /** [notes] compared with [expected], or null when either is empty. */
         fun of(expected: List<PhthongName>, notes: List<SungNote>): MelodyComparison? =
             if (expected.isEmpty() || notes.isEmpty()) {

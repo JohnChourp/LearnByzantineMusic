@@ -1353,9 +1353,18 @@
     <string name="analysis_compare_clear">Καθαρισμός</string>
     <string name="analysis_compare_score">Σωστοί φθόγγοι: %1$d από %2$d (%3$d%%)</string>
     <string name="analysis_compare_extras">Επιπλέον φθόγγοι που έψαλες: %1$d</string>
-    <string name="analysis_step_wrong">✗ %1$s → %2$s</string>
+    <string name="analysis_step_match">✓ %1$s · %2$s</string>
+    <string name="analysis_step_wrong">✗ %1$s → %2$s · %3$s · %4$s</string>
+    <plurals name="analysis_steps_up">
+        <item quantity="one">%d σκαλί πάνω</item>
+        <item quantity="other">%d σκαλιά πάνω</item>
+    </plurals>
+    <plurals name="analysis_steps_down">
+        <item quantity="one">%d σκαλί κάτω</item>
+        <item quantity="other">%d σκαλιά κάτω</item>
+    </plurals>
     <string name="analysis_step_missing">– %1$s</string>
-    <string name="analysis_step_extra">+ %1$s</string>
+    <string name="analysis_step_extra">+ %1$s · %2$s</string>
     <string name="analysis_compare_from_exercises">Από τις ασκήσεις μου</string>
     <string name="analysis_exercises_empty">Δεν έχεις αποθηκευμένη άσκηση με φθόγγους. Φτιάξε μία στον Γυμναστή Μελωδίας με «Αποθήκευση ως…».</string>
     <string name="analysis_exercise_count">%1$d φθόγγοι</string>

@@ -5,8 +5,10 @@ import com.johnchourp.learnbyzantinemusic.music.PhthongName
 import com.johnchourp.learnbyzantinemusic.music.PhthongName.DI
 import com.johnchourp.learnbyzantinemusic.music.PhthongName.GA
 import com.johnchourp.learnbyzantinemusic.music.PhthongName.KE
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.NI
 import com.johnchourp.learnbyzantinemusic.music.PhthongName.PA
 import com.johnchourp.learnbyzantinemusic.music.PhthongName.VOU
+import com.johnchourp.learnbyzantinemusic.music.PhthongName.ZO
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -53,6 +55,41 @@ class MelodyComparisonTest {
                 s?.let { assertTrue("$step outside the sung notes", it in comparison.notes.indices) }
             }
         }
+    }
+
+    /** «Πα → Γα, 2 σκαλιά πάνω» (ClickUp `1amndjnkdqy`): the nearer way round, never more than 3. */
+    @Test
+    fun scaleStepsTakeTheNearerWayRound() {
+        assertEquals(2, MelodyComparison.scaleSteps(PA, GA))
+        assertEquals(-2, MelodyComparison.scaleSteps(GA, PA))
+        assertEquals(-2, MelodyComparison.scaleSteps(PA, ZO))
+        assertEquals(1, MelodyComparison.scaleSteps(ZO, NI))
+        assertEquals(3, MelodyComparison.scaleSteps(PA, DI))
+        assertEquals(-3, MelodyComparison.scaleSteps(PA, KE))
+        for (from in PhthongName.entries) {
+            for (to in PhthongName.entries) {
+                val steps = MelodyComparison.scaleSteps(from, to)
+                assertTrue("$from → $to: $steps", steps in -3..3)
+                assertEquals("$from → $to lands on $to", to.ordinal, Math.floorMod(from.ordinal + steps, 7))
+                assertEquals("$from → $to and back", -steps, MelodyComparison.scaleSteps(to, from))
+                if (from == to) assertEquals(0, steps)
+            }
+        }
+    }
+
+    @Test
+    fun aSubstitutionSaysHowFarOff() {
+        // Expected Πα Βου Γα; sung Πα, Δι (for Βου), Γα, Ζω (extra).
+        val comparison = MelodyComparison.of(listOf(PA, VOU, GA), sung(PA, DI, GA, ZO))!!
+        val wrong = comparison.alignment.steps.filterIsInstance<AlignmentStep.Substitution>().single()
+        assertEquals(2, comparison.stepsOff(wrong))
+    }
+
+    @Test
+    fun aNoteSungLowerIsStepsDown() {
+        val comparison = MelodyComparison.of(listOf(GA), sung(NI))!!
+        val wrong = comparison.alignment.steps.single() as AlignmentStep.Substitution
+        assertEquals(-3, comparison.stepsOff(wrong))
     }
 
     /**

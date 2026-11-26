@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -350,12 +351,22 @@ private fun CompareCard(
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 alignment.steps.forEach { step ->
                     when (step) {
-                        is AlignmentStep.Match -> NoteChip("✓ ${comparison.expected[step.expected].displayName}", AccentGreenContainer, AccentGreenContent)
+                        is AlignmentStep.Match -> NoteChip(
+                            stringResource(
+                                R.string.analysis_step_match,
+                                comparison.expected[step.expected].displayName,
+                                formatDuration(comparison.notes[step.sung].startMs),
+                            ),
+                            AccentGreenContainer,
+                            AccentGreenContent,
+                        )
                         is AlignmentStep.Substitution -> NoteChip(
                             stringResource(
                                 R.string.analysis_step_wrong,
                                 comparison.expected[step.expected].displayName,
                                 phthongLabel(comparison.notes[step.sung].degree),
+                                stepsOffLabel(comparison.stepsOff(step)),
+                                formatDuration(comparison.notes[step.sung].startMs),
                             ),
                             AccentOrangeContainer,
                             AccentOrangeContent,
@@ -366,7 +377,11 @@ private fun CompareCard(
                             AccentCrimsonContent,
                         )
                         is AlignmentStep.Extra -> NoteChip(
-                            stringResource(R.string.analysis_step_extra, phthongLabel(comparison.notes[step.sung].degree)),
+                            stringResource(
+                                R.string.analysis_step_extra,
+                                phthongLabel(comparison.notes[step.sung].degree),
+                                formatDuration(comparison.notes[step.sung].startMs),
+                            ),
                             LbmSurfaceVariant,
                             LbmTextSecondary,
                         )
@@ -452,6 +467,15 @@ private fun NoteChip(text: String, container: Color, content: Color) {
         )
     }
 }
+
+/** «2 σκαλιά πάνω» or «1 σκαλί κάτω», for [MelodyComparison.stepsOff]. */
+@Composable
+private fun stepsOffLabel(steps: Int): String =
+    if (steps >= 0) {
+        pluralStringResource(R.plurals.analysis_steps_up, steps, steps)
+    } else {
+        pluralStringResource(R.plurals.analysis_steps_down, -steps, -steps)
+    }
 
 private fun formatDuration(ms: Long): String {
     val totalSeconds = ms / 1000
