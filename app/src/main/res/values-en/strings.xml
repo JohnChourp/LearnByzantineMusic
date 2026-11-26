@@ -1354,9 +1354,18 @@
     <string name="analysis_compare_clear">Clear</string>
     <string name="analysis_compare_score">Correct phthongs: %1$d of %2$d (%3$d%%)</string>
     <string name="analysis_compare_extras">Extra phthongs you sang: %1$d</string>
-    <string name="analysis_step_wrong">✗ %1$s → %2$s</string>
+    <string name="analysis_step_match">✓ %1$s · %2$s</string>
+    <string name="analysis_step_wrong">✗ %1$s → %2$s · %3$s · %4$s</string>
+    <plurals name="analysis_steps_up">
+        <item quantity="one">%d step up</item>
+        <item quantity="other">%d steps up</item>
+    </plurals>
+    <plurals name="analysis_steps_down">
+        <item quantity="one">%d step down</item>
+        <item quantity="other">%d steps down</item>
+    </plurals>
     <string name="analysis_step_missing">– %1$s</string>
-    <string name="analysis_step_extra">+ %1$s</string>
+    <string name="analysis_step_extra">+ %1$s · %2$s</string>
     <string name="analysis_compare_from_exercises">From my exercises</string>
     <string name="analysis_exercises_empty">You have no saved exercise with phthongs. Make one in the Melody Trainer with “Save as…”.</string>
     <string name="analysis_exercise_count">%1$d phthongs</string>
