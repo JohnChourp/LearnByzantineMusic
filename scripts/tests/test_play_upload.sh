@@ -22,17 +22,20 @@ SECRET="$(jq -cn --rawfile key "$tmp/key.pem" '{type: "service_account", client_
 cat > "$tmp/curl" <<'EOF'
 #!/usr/bin/env bash
 printf '%s\n' "$@" >> "$FAKE_LOG.args"
-out="" method="GET" url="" headers="" track_body=""
+out="" method="GET" url="" headers="" track_body="" has_body=0 max_time=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -o) out="$2"; shift 2 ;;
         -X) method="$2"; shift 2 ;;
         -H) [[ "$2" == @* ]] && headers+="$(cat "${2#@}")"; shift 2 ;;
-        --data-binary) [[ "$2" == *track.json ]] && track_body="${2#@}"; shift 2 ;;
+        --data-binary) has_body=1; [[ "$2" == *track.json ]] && track_body="${2#@}"; shift 2 ;;
         --data-urlencode)
+            has_body=1
             [[ "$2" == assertion@* ]] && cp "${2#assertion@}" "$FAKE_LOG.assertion"
             shift 2 ;;
-        -w|--data) shift 2 ;;
+        --data) has_body=1; shift 2 ;;
+        --max-time) max_time="$2"; shift 2 ;;
+        -w|--connect-timeout) shift 2 ;;
         -sS) shift ;;
         *) url="$1"; shift ;;
     esac
@@ -50,7 +53,19 @@ echo "$step" >> "$FAKE_LOG"
 if [[ "$step" != token && "$headers" != *"Authorization: Bearer tok-123"* ]]; then
     echo "no-auth:$step" >> "$FAKE_LOG"
 fi
+# Η Google απαντά 411 σε POST/PUT χωρίς σώμα (χωρίς Content-Length).
+if [[ "$method" == POST || "$method" == PUT ]] && [[ "$has_body" == 0 ]]; then
+    echo "no-body:$step" >> "$FAKE_LOG"
+fi
+[[ -n "$max_time" ]] || echo "no-timeout:$step" >> "$FAKE_LOG"
+[[ "$step" == upload && "$max_time" != 600 ]] && echo "short-upload-timeout" >> "$FAKE_LOG"
 [[ -n "$track_body" ]] && cp "$track_body" "$FAKE_LOG.track.json"
+# FAKE_FAIL_<βήμα>: το δίκτυο κόβεται, χωρίς απάντηση (όπως ένα curl που λήγει).
+fail_var="FAKE_FAIL_$step"
+if [[ -n "${!fail_var:-}" ]]; then
+    printf '000'
+    exit 28
+fi
 status_var="FAKE_STATUS_$step"
 body_var="FAKE_BODY_$step"
 printf '%s' "${!body_var:-$body}" > "$out"
@@ -141,6 +156,7 @@ run "secret that is not JSON cannot pass" 2 "client_email" "" PLAY_SERVICE_ACCOU
 run "missing AAB cannot pass" 2 "Δεν βρέθηκε το AAB" "" bash "$UPLOAD" --aab "$tmp/missing.aab" --version-code 61
 run "missing version code cannot pass" 2 "version-code" "" bash "$UPLOAD" --aab "$tmp/app.aab"
 run "bad track cannot pass" 2 "Μη έγκυρο --track" "" "${ARGS[@]}" --track 'alpha;rm'
+run "an option without its value cannot pass" 2 "Το --track θέλει τιμή" "" "${ARGS[@]}" --track
 run "unknown argument cannot pass" 2 "Άγνωστο όρισμα" "" "${ARGS[@]}" --production
 
 run "refused token: no edit is opened" 1 "δεν έδωσε access token" "token" \
@@ -157,6 +173,10 @@ run "refused commit: the edit is deleted" 1 "commit" "token insert upload tracks
     FAKE_STATUS_commit=400 "${ARGS[@]}"
 run "a failed delete still says nothing was published" 1 "δεν δημοσιεύτηκε τίποτα" "token insert upload delete" \
     FAKE_STATUS_upload=500 FAKE_STATUS_delete=500 "${ARGS[@]}"
+run "an error message belongs to its own call" 1 "edits.delete: HTTP 000
+" "token insert upload delete" \
+    FAKE_STATUS_upload=400 FAKE_BODY_upload='{"error":{"message":"version code already used"}}' \
+    FAKE_FAIL_delete=1 "${ARGS[@]}"
 
 if [[ "$failures" -gt 0 ]]; then
     echo "$failures test(s) failed"

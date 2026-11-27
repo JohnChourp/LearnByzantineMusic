@@ -44,10 +44,14 @@ fail_setup() {
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --aab) AAB="${2:-}"; shift 2 ;;
-        --version-code) VERSION_CODE="${2:-}"; shift 2 ;;
-        --track) TRACK="${2:-}"; shift 2 ;;
-        --notes-file) NOTES_FILE="${2:-}"; shift 2 ;;
+        --aab|--version-code|--track|--notes-file)
+            [[ $# -ge 2 ]] || { usage; fail_setup "Το $1 θέλει τιμή."; } ;;
+    esac
+    case "$1" in
+        --aab) AAB="$2"; shift 2 ;;
+        --version-code) VERSION_CODE="$2"; shift 2 ;;
+        --track) TRACK="$2"; shift 2 ;;
+        --notes-file) NOTES_FILE="$2"; shift 2 ;;
         --dry-run) DRY_RUN=1; shift ;;
         -h|--help) usage; exit 0 ;;
         *) usage; fail_setup "Άγνωστο όρισμα: $1" ;;
@@ -99,10 +103,13 @@ b64url() {
 }
 
 # api <name> <method> <url> [curl args...]: γράφει την απάντηση στο $work/resp, επιστρέφει 0 μόνο σε 2xx.
+# Κάθε κλήση έχει όριο χρόνου (MAX_TIME, 120 s· το upload του AAB 600 s), ώστε ένα κολλημένο δίκτυο να μην κρεμάει το job.
 api() {
     local name="$1" method="$2" url="$3" status
     shift 3
-    status="$("$CURL" -sS -X "$method" -o "$work/resp" -w '%{http_code}' "$@" "$url")" || status="000"
+    rm -f "$work/resp"
+    status="$("$CURL" -sS --connect-timeout 20 --max-time "${MAX_TIME:-120}" -X "$method" -o "$work/resp" \
+        -w '%{http_code}' "$@" "$url")" || status="000"
     if [[ ! "$status" =~ ^2[0-9][0-9]$ ]]; then
         local message
         message="$(jq -r '.error.message // .error_description // .error // empty' "$work/resp" 2>/dev/null || true)"
@@ -154,7 +161,7 @@ api "edits.insert" POST "$API/edits" -H @"$work/auth" -H "Content-Type: applicat
 EDIT_ID="$(jq -er '.id' "$work/resp" 2>/dev/null)" || { echo "ERROR: Το edits.insert δεν έδωσε id." >&2; exit 1; }
 echo "[play] Edit $EDIT_ID."
 
-api "edits.bundles.upload" POST "$UPLOAD_API/edits/$EDIT_ID/bundles?uploadType=media" \
+MAX_TIME=600 api "edits.bundles.upload" POST "$UPLOAD_API/edits/$EDIT_ID/bundles?uploadType=media" \
     -H @"$work/auth" -H "Content-Type: application/octet-stream" --data-binary @"$AAB" \
     || abort "Το Google Play δεν δέχτηκε το AAB."
 UPLOADED_CODE="$(jq -r '.versionCode // empty' "$work/resp")"
@@ -175,7 +182,8 @@ api "edits.tracks.update" PUT "$API/edits/$EDIT_ID/tracks/$TRACK" \
     || abort "Το Google Play δεν δέχτηκε την έκδοση στο track '$TRACK'."
 echo "[play] Track '$TRACK' → versionCode $VERSION_CODE."
 
-api "edits.commit" POST "$API/edits/$EDIT_ID:commit" -H @"$work/auth" \
+# Κενό σώμα: χωρίς αυτό το curl δεν στέλνει Content-Length και η Google απαντά 411 σε κάθε POST.
+api "edits.commit" POST "$API/edits/$EDIT_ID:commit" -H @"$work/auth" --data '' \
     || abort "Το Google Play δεν δέχτηκε το commit του edit."
 EDIT_ID=""
 echo "[play] OK: το versionCode $VERSION_CODE δημοσιεύτηκε στο track '$TRACK' του $PACKAGE."
