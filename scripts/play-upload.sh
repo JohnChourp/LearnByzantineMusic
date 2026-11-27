@@ -89,6 +89,8 @@ CLIENT_EMAIL="$(printf '%s' "$PLAY_SERVICE_ACCOUNT_JSON" | jq -er '.client_email
 
 work="$(mktemp -d)"
 EDIT_ID=""
+COMMIT_SENT=0
+LAST_STATUS=""
 cleanup() {
     rm -rf "$work"
 }
@@ -110,6 +112,7 @@ api() {
     rm -f "$work/resp"
     status="$("$CURL" -sS --connect-timeout 20 --max-time "${MAX_TIME:-120}" -X "$method" -o "$work/resp" \
         -w '%{http_code}' "$@" "$url")" || status="000"
+    LAST_STATUS="$status"
     if [[ ! "$status" =~ ^2[0-9][0-9]$ ]]; then
         local message
         message="$(jq -r '.error.message // .error_description // .error // empty' "$work/resp" 2>/dev/null || true)"
@@ -121,6 +124,12 @@ api() {
 # Από εδώ και πέρα κάθε αποτυχία σβήνει το edit, ώστε να μη μείνει τίποτα μισό στο Play.
 abort() {
     echo "ERROR: $*" >&2
+    # Ένα commit χωρίς απάντηση μπορεί να πέρασε στη Google: τότε δεν λέμε «δεν δημοσιεύτηκε τίποτα».
+    if [[ "$COMMIT_SENT" == 1 && "$LAST_STATUS" == "000" ]]; then
+        echo "ERROR: Το commit του edit $EDIT_ID δεν πήρε απάντηση και ίσως δημοσιεύτηκε." >&2
+        echo "ERROR: Έλεγξε στο Play Console το track '$TRACK' πριν το ξανατρέξεις (versionCode $VERSION_CODE)." >&2
+        exit 1
+    fi
     if [[ -n "$EDIT_ID" ]]; then
         if api "edits.delete" DELETE "$API/edits/$EDIT_ID" -H @"$work/auth"; then
             echo "[play] Το edit $EDIT_ID σβήστηκε· στο Google Play δεν άλλαξε τίποτα." >&2
@@ -183,6 +192,7 @@ api "edits.tracks.update" PUT "$API/edits/$EDIT_ID/tracks/$TRACK" \
 echo "[play] Track '$TRACK' → versionCode $VERSION_CODE."
 
 # Κενό σώμα: χωρίς αυτό το curl δεν στέλνει Content-Length και η Google απαντά 411 σε κάθε POST.
+COMMIT_SENT=1
 api "edits.commit" POST "$API/edits/$EDIT_ID:commit" -H @"$work/auth" --data '' \
     || abort "Το Google Play δεν δέχτηκε το commit του edit."
 EDIT_ID=""

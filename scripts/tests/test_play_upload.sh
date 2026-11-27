@@ -177,6 +177,11 @@ run "an error message belongs to its own call" 1 "edits.delete: HTTP 000
 " "token insert upload delete" \
     FAKE_STATUS_upload=400 FAKE_BODY_upload='{"error":{"message":"version code already used"}}' \
     FAKE_FAIL_delete=1 "${ARGS[@]}"
+run "a commit with no answer may have published: no delete, no false claim" 1 "ίσως δημοσιεύτηκε" \
+    "token insert upload tracks commit" FAKE_FAIL_commit=1 "${ARGS[@]}"
+check "that case never says nothing was published" \
+    bash -c "! env CURL='$tmp/curl' FAKE_LOG='$tmp/commitfail' PLAY_SERVICE_ACCOUNT_JSON='$SECRET' FAKE_FAIL_commit=1 \
+        bash '$UPLOAD' --aab '$tmp/app.aab' --version-code 61 2>&1 | grep -q 'δεν δημοσιεύτηκε τίποτα\\|δεν άλλαξε τίποτα'"
 
 if [[ "$failures" -gt 0 ]]; then
     echo "$failures test(s) failed"
