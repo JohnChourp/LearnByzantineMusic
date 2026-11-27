@@ -1,0 +1,111 @@
+name: Google Play Upload
+
+# Ανεβάζει το AAB ενός release στην κλειστή δοκιμή (track alpha) του Google Play (ClickUp 869fhmxpt).
+# Τρέχει μόνο του μετά από κάθε πετυχημένο «Android Tag Release», ή με το χέρι για ένα tag που έχει ήδη βγει.
+# Το AAB είναι το artifact aab-<tag> που έφτιαξε, υπέγραψε και έλεγξε (κλειδί, 16 KB) εκείνο το run· εδώ δεν ξαναχτίζεται.
+# Το κλειδί του service account είναι το secret PLAY_SERVICE_ACCOUNT_JSON, με δικαίωμα μόνο για δοκιμές.
+
+on:
+  workflow_run:
+    workflows: ["Android Tag Release"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag whose AAB goes to the closed test (e.g. v1.19.0)"
+        required: true
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: play-upload
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       startsWith(github.event.workflow_run.head_branch, 'v'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Find the release run and its AAB
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          RUN_TAG: ${{ github.event.workflow_run.head_branch }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            TAG="$INPUT_TAG"
+          else
+            TAG="$RUN_TAG"
+          fi
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Not a release tag: '$TAG'" >&2
+            exit 1
+          fi
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            RUN_ID="$(gh run list -R "$GITHUB_REPOSITORY" --workflow android-release.yml --branch "$TAG" \
+              --event push --status success -L 1 --json databaseId --jq '.[0].databaseId // empty')"
+          fi
+          if [[ -z "$RUN_ID" ]]; then
+            echo "No successful Android Tag Release run for $TAG" >&2
+            exit 1
+          fi
+
+          AAB_DIR="$RUNNER_TEMP/aab"
+          gh run download "$RUN_ID" -R "$GITHUB_REPOSITORY" -n "aab-$TAG" -D "$AAB_DIR"
+          AAB_PATH="$(find "$AAB_DIR" -maxdepth 1 -type f -name '*.aab' | sort | tail -n1)"
+          if [[ -z "$AAB_PATH" ]]; then
+            echo "The artifact aab-$TAG of run $RUN_ID has no AAB" >&2
+            exit 1
+          fi
+
+          # The versionCode the tag's own build file declares: Play must read the same one from the AAB.
+          git fetch --depth=1 origin "refs/tags/$TAG:refs/tags/$TAG"
+          VERSION_CODE="$(git show "$TAG:app/build.gradle.kts" | sed -nE 's/^[[:space:]]*versionCode = ([0-9]+)$/\1/p')"
+          if [[ ! "$VERSION_CODE" =~ ^[0-9]+$ ]]; then
+            echo "No versionCode in app/build.gradle.kts at $TAG" >&2
+            exit 1
+          fi
+
+          # «Τι νέο υπάρχει»: the summary line of the GitHub Release notes, when the release has one.
+          NOTES_PATH="$RUNNER_TEMP/notes.txt"
+          gh release view "$TAG" -R "$GITHUB_REPOSITORY" --json body --jq .body | sed -n '2p' > "$NOTES_PATH"
+          if [[ ! -s "$NOTES_PATH" ]] || grep -q '^#' "$NOTES_PATH"; then
+            : > "$NOTES_PATH"
+          fi
+
+          {
+            echo "tag=$TAG"
+            echo "aab_path=$AAB_PATH"
+            echo "version_code=$VERSION_CODE"
+            echo "notes_path=$NOTES_PATH"
+          } >> "$GITHUB_OUTPUT"
+          echo "Release $TAG (run $RUN_ID): $AAB_PATH, versionCode $VERSION_CODE"
+
+      - name: Upload to the closed test (alpha)
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          AAB_PATH: ${{ steps.release.outputs.aab_path }}
+          VERSION_CODE: ${{ steps.release.outputs.version_code }}
+          NOTES_PATH: ${{ steps.release.outputs.notes_path }}
+        run: |
+          set -euo pipefail
+          args=(--aab "$AAB_PATH" --version-code "$VERSION_CODE" --track alpha)
+          if [[ -s "$NOTES_PATH" ]]; then
+            args+=(--notes-file "$NOTES_PATH")
+          fi
+          ./scripts/play-upload.sh "${args[@]}"
